@@ -1,0 +1,43 @@
+:root {
+    --ui-color-primary: blue;
+    --ui-color-secondary: #3d5b7d;
+}
+
+body {
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.category-list .category-badge {
+    display: inline-flex;
+    background: var(--ui-color-primary);
+    padding: 5px;
+    color: white;
+}
+
+.category-list .category-thumb {
+    position: relative;
+    background: beige;
+    overflow: hidden;
+}
+
+.category-thumb img {
+    width: 100%;
+}
+
+.category-thumb .hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin-left: -100%;
+    transition: 0.6s ease all;
+}
+.category-thumb:hover .hover {
+    margin-left: 0;
+}
