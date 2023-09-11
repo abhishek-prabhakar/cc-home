@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from '~/root.css';
+import { createCache, extractStyle, StyleProvider } from "@ant-design/cssinjs";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -16,6 +17,10 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+  // const cache = createCache();
+  // const html = renderToString(<StyleProvider cache={cache}><Outlet /></StyleProvider>);
+  // const styleText = extractStyle(cache);
+
   return (
     <html lang="en">
       <head>
@@ -23,9 +28,10 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        {/* {styleText} */}
       </head>
       <body>
-        <Outlet />
+        <StyleProvider ><Outlet /></StyleProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
