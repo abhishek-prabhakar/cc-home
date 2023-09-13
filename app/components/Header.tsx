@@ -20,9 +20,11 @@ export function Header() {
                         <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
                     </Col>
                     <Col span={4} md={8} lg={4}>
-                        <Row gutter={[10, 0]} justify={'end'}>
-                            <Col xs={0} sm={0} md={20} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="text" icon={<SmileOutlined />}>Login</Button>
+                        <Row gutter={[10, 0]} justify={'end'} align="middle">
+                            <Col xs={0} sm={0} md={20}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <Button type="text" icon={<SmileOutlined />}>Login</Button>
+                                </div>
                             </Col>
                             <Col md={4}>
                                 <Badge count={5}>
