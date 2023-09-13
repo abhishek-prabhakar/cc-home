@@ -26,9 +26,9 @@ const menuList: {
 }];
 
 export const AppNavigation: React.FC = () => <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.id} ><Dropdown menu={{ items: item.children }}>
-    <a onClick={(e) => e.preventDefault()}>
-        <Space>
-            {item.label}
+    <a className="header-nav-item-text" onClick={(e) => e.preventDefault()}>
+        <Space size={'small'} direction="horizontal">
+            <span>{item.label}</span>
             <DownOutlined />
         </Space>
     </a>
