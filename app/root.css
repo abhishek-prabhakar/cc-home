@@ -112,3 +112,48 @@ position: absolute;
 .ant-space-gap-row-middle {
     row-gap: 16px;
 }
+
+.ant-badge {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    list-style: none;
+    -webkit-font-feature-settings: 'tnum';
+    font-feature-settings: 'tnum';
+    position: relative;
+    display: inline-block;
+    color: unset;
+    line-height: 1;
+}
+
+.ant-badge.ant-badge-status {
+    line-height: inherit;
+    vertical-align: baseline;
+}
+
+.ant-badge.ant-badge-status .ant-badge-status-dot {
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+.ant-badge.ant-badge .ant-badge-color-lime {
+    background: #a0d911;
+}
+.ant-badge.ant-badge .ant-badge-color-lime:not(.ant-badge-count) {
+    color: #a0d911;
+}
+.ant-badge.ant-badge-status .ant-badge-status-text {
+    margin-inline-start: 8px;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+}
