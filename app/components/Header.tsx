@@ -16,8 +16,10 @@ export function Header() {
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
                         <MenuOutlined />
                     </Col>
-                    <Col span={16} className="header-brand">
-                        <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
+                    <Col span={16}>
+                        <div className="header-brand">
+                            <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
+                        </div>
                     </Col>
                     <Col span={4} md={8} lg={4}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
