@@ -3,7 +3,7 @@ import { Badge, Button, Col, Input, Row } from "antd";
 import { AppNavigation } from "./navigation";
 import { Link } from "@remix-run/react";
 
-const logoStyle: React.CSSProperties = { fontSize: '20px', textTransform: 'uppercase', color: 'black' }
+const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
 
 export function Header() {
     return <>
@@ -16,7 +16,7 @@ export function Header() {
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
                         <MenuOutlined />
                     </Col>
-                    <Col flex={'auto'} className="header-brand">
+                    <Col span={16} className="header-brand">
                         <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
                     </Col>
                     <Col span={4} md={8} lg={4}>
