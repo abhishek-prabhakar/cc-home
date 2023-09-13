@@ -1,16 +1,13 @@
-import { MenuOutlined, RightOutlined } from "@ant-design/icons";
+import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import type { V2_MetaFunction } from "@remix-run/node";
 import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
-import { Footer } from "~/components/Footer";
-import { AppNavigation } from "~/components/navigation";
 import { Newsletter } from "~/components/Newsletter";
-import { Ticker } from "~/components/Ticker";
 const { Title } = Typography;
-const { Header, Content } = Layout;
 const { Meta } = Card;
+import { Link } from "@remix-run/react";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -18,15 +15,6 @@ export const meta: V2_MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
-
-const layoutStyle = { background: 'none' };
-
-const headerStyle: React.CSSProperties = {
-  height: 'auto',
-  padding: '20px 40px',
-  backgroundColor: '#fff',
-};
-
 
 const jumbotronWrapperStyle = { overflow: 'auto', };
 const jumbotronListStyle = { display: 'flex', gap: '20px', alignItems: 'center' }
@@ -107,6 +95,11 @@ const QuickPick = () => {
           <div className="hover">
             <img src={item.hoverImage} />
           </div>
+          <div className="link">
+            <Link to={'/collections/photography'}>
+              <RightCircleOutlined />
+            </Link>
+          </div>
         </div>
         <Title level={5}>{item.title}</Title>
       </Col>)}
@@ -160,7 +153,7 @@ const Collections = () => {
     </Col>
     <Col span={24} md={10}>
       <Space direction="vertical" size={'middle'}>
-        {listB.map((item, key) => <Badge.Ribbon text="Top Rated"><Card key={'cb' + key}
+        {listB.map((item, key) => <Badge.Ribbon key={'cb' + key} text="Top Rated"><Card
           hoverable
           cover={<img alt="example" src={item.thumb} />}
         >
@@ -195,36 +188,15 @@ const Collections = () => {
 export default function Index() {
   return (
     <div>
-      <Layout style={layoutStyle}>
-        <Ticker />
-        <Header style={headerStyle}>
-          <Row gutter={50}>
-            <Col>
-              <MenuOutlined />
-            </Col>
-            <Col>
-              CELEBRIA
-            </Col>
-            <Col>
-              <AppNavigation />
-            </Col>
-          </Row>
-        </Header>
-        <Content>
-          <Jumbotron />
-          <div className="container">
-            <Space direction="vertical" size={'large'}>
-              <QuickPick />
-              <Banner />
-              <Collections />
-              <Banner />
-            </Space>
-          </div>
-        </Content>
-        <Layout.Footer style={{ background: 'none' }}>
-          <Footer />
-        </Layout.Footer>
-      </Layout>
+      <Jumbotron />
+      <div className="container">
+        <Space direction="vertical" size={'large'}>
+          <QuickPick />
+          <Banner />
+          <Collections />
+          <Banner />
+        </Space>
+      </div>
     </div>
   );
 }
