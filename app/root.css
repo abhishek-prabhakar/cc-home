@@ -14,20 +14,10 @@ body {
     margin: auto;
     padding: 0 20px;
 }
-
-.header-top-menu{
+.header-brand{
     display: flex;
-    justify-content: center;
     align-items: center;
-    position: relative;
-}
-.header-search{
-    position: absolute;
-    left: 0;
-}
-.header-actions{
-    position: absolute;
-    right: 0;
+    justify-content: center;
 }
 .category-list .category-badge {
     display: inline-flex;
