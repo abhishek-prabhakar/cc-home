@@ -1,5 +1,5 @@
 import { DownOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps, Space } from "antd";
+import { Col, Dropdown, MenuProps, Row, Space } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 
 const menuList: {
@@ -25,12 +25,12 @@ const menuList: {
     label: 'Collections',
 }];
 
-export const AppNavigation: React.FC = () => <>{menuList.map(item => <Dropdown key={'menu-' + item.id} menu={{ items: item.children }}>
+export const AppNavigation: React.FC = () => <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.id} ><Dropdown menu={{ items: item.children }}>
     <a onClick={(e) => e.preventDefault()}>
         <Space>
             {item.label}
             <DownOutlined />
         </Space>
     </a>
-</Dropdown>
-)}</>
+</Dropdown></Col>
+)}</Row>

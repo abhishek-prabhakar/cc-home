@@ -15,6 +15,20 @@ body {
     padding: 0 20px;
 }
 
+.header-top-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.header-search{
+    position: absolute;
+    left: 0;
+}
+.header-actions{
+    position: absolute;
+    right: 0;
+}
 .category-list .category-badge {
     display: inline-flex;
     background: var(--ui-color-primary);
