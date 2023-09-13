@@ -1,6 +1,6 @@
 import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import type { V2_MetaFunction } from "@remix-run/node";
-import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
+import { Badge, Card, Carousel, Col, Layout, Row, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -184,11 +184,33 @@ const Collections = () => {
   </Row>
 }
 
+const contentStyle: React.CSSProperties = {
+  margin: 0,
+  height: '400px',
+  color: '#fff',
+  lineHeight: '160px',
+  textAlign: 'center',
+  background: '#364d79',
+};
 
 export default function Index() {
   return (
-    <div>
-      <Jumbotron />
+    <div style={{ marginTop: '-40px' }}>
+      {/* <Jumbotron /> */}
+      <Carousel>
+        <div>
+          <h3 style={contentStyle}>1</h3>
+        </div>
+        <div>
+          <h3 style={contentStyle}>2</h3>
+        </div>
+        <div>
+          <h3 style={contentStyle}>3</h3>
+        </div>
+        <div>
+          <h3 style={contentStyle}>4</h3>
+        </div>
+      </Carousel>
       <div className="container">
         <Space direction="vertical" size={'large'}>
           <QuickPick />

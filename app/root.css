@@ -28,9 +28,12 @@ body {
 }
 .category-list .category-badge {
     display: inline-flex;
-    background: var(--ui-color-primary);
-    padding: 5px;
-    color: white;
+    padding: 3px 10px;
+    text-transform: uppercase;
+        background: var(--ui-color-primary);
+            color: #fff;
+            font-size: 10px;
+            letter-spacing: 1px;
 }
 
 .category-list .category-thumb {
