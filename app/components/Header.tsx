@@ -6,7 +6,7 @@ const logoStyle: React.CSSProperties = { fontSize: '20px', textTransform: 'upper
 
 export function Header() {
     return <>
-        <div style={{ borderBottom: '1px solid var(--ui-color-black)' }} >
+        <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 40px' }} >
             <Row gutter={50} align={'middle'} justify={'space-between'}>
                 <Col>
                     <MenuOutlined />
@@ -20,7 +20,7 @@ export function Header() {
                 </Col>
             </Row>
         </div>
-        <div style={{ borderBottom: '1px solid var(--ui-color-black)' }} >
+        <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 40px' }} >
             <Row justify={'center'}>
                 <Col>
                     <AppNavigation />

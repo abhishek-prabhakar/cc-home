@@ -28,7 +28,7 @@ export const links: LinksFunction = () => [
 
 const headerStyle: React.CSSProperties = {
   height: 'auto',
-  padding: '20px 40px',
+  padding: '0',
   backgroundColor: '#fff',
 };
 
