@@ -41,3 +41,35 @@ body {
 .category-thumb:hover .hover {
     margin-left: 0;
 }
+
+.ant-ribbon-wrapper {
+    position: relative;
+}
+
+.ant-ribbon {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0 8px;
+    color: #1677ff;
+    font-size: 14px;
+    line-height: 22px;
+    list-style: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    position: absolute;
+    top: 8px;
+    white-space: nowrap;
+    background-color: #1677ff;
+    border-radius: 4px;
+}
+
+.ant-ribbon .ant-ribbon-corner {
+    position: absolute;
+    top: 100%;
+    width: 8px;
+    height: 8px;
+    color: currentcolor;
+    border: 4px solid;
+    transform: scaleY(0.75);
+    transform-origin: top;
+    filter: brightness(75%);
+}
