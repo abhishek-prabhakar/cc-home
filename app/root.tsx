@@ -16,7 +16,8 @@ import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
 import { Footer } from "~/components/Footer";
 import { AppNavigation } from "~/components/navigation";
 import { Ticker } from "~/components/Ticker";
-const { Header, Content } = Layout;
+import { Header } from "./components/Header";
+const { Content } = Layout;
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -24,8 +25,6 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/antd/4.4.3/antd.css" }
 ];
 
-
-const layoutStyle = { background: 'none' };
 
 const headerStyle: React.CSSProperties = {
   height: 'auto',
@@ -43,21 +42,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout style={layoutStyle}>
+        <Layout>
           <Ticker />
-          <Header style={headerStyle}>
-            <Row gutter={50}>
-              <Col>
-                <MenuOutlined />
-              </Col>
-              <Col>
-                CELEBRIA
-              </Col>
-              <Col>
-                <AppNavigation />
-              </Col>
-            </Row>
-          </Header>
+          <Layout.Header style={headerStyle}>
+            <Header />
+          </Layout.Header>
           <Content>
             <Outlet />
           </Content>

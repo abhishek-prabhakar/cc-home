@@ -2,11 +2,11 @@ import { DownOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps, Space } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 
-const menuList: [{
+const menuList: {
     id: string,
     label: string,
     children?: ItemType<MenuItemType>[]
-}] = [{
+}[] = [{
     id: 'photography',
     label: 'Photography',
     children: [
@@ -19,6 +19,10 @@ const menuList: [{
             ),
         },
     ]
+},
+{
+    id: 'collections',
+    label: 'Collections',
 }];
 
 export const AppNavigation: React.FC = () => <>{menuList.map(item => <Dropdown key={'menu-' + item.id} menu={{ items: item.children }}>
