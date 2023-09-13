@@ -82,3 +82,33 @@ position: absolute;
     border-inline-end-color: transparent;
     border-block-end-color: transparent;
 }
+
+
+.ant-space {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+}
+
+.ant-space-vertical {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+.ant-space-gap-col-large {
+    column-gap: 24px;
+}
+
+.ant-space-gap-row-large {
+    row-gap: 24px;
+}
+
+.ant-space-gap-col-middle {
+    column-gap: 16px;
+}
+
+.ant-space-gap-row-middle {
+    row-gap: 16px;
+}
