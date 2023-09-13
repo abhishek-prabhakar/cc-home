@@ -50,7 +50,7 @@ export default function App() {
           <Content style={{ paddingTop: '40px' }}>
             <Outlet />
           </Content>
-          <Layout.Footer style={{ background: 'none' }}>
+          <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
             <Footer />
           </Layout.Footer>
         </Layout>
