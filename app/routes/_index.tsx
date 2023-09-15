@@ -195,9 +195,9 @@ const contentStyle: React.CSSProperties = {
 
 export default function Index() {
   return (
-    <div style={{ marginTop: '-40px' }}>
-      {/* <Jumbotron /> */}
-      <Carousel>
+    <div >
+      <Jumbotron />
+      {/* <Carousel>
         <div>
           <h3 style={contentStyle}>1</h3>
         </div>
@@ -210,7 +210,7 @@ export default function Index() {
         <div>
           <h3 style={contentStyle}>4</h3>
         </div>
-      </Carousel>
+      </Carousel> */}
       <div className="container">
         <Space direction="vertical" size={'large'}>
           <QuickPick />

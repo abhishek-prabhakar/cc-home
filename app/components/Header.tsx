@@ -9,19 +9,19 @@ export function Header() {
     return <>
         <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
             <div className="container">
-                <Row >
-                    <Col span={0} md={8} lg={4}>
+                <Row justify={'space-between'}>
+                    <Col span={0} md={6} lg={4}>
                         <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
                         <MenuOutlined />
                     </Col>
-                    <Col span={16}>
+                    <Col span={12}>
                         <div className="header-brand">
                             <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
                         </div>
                     </Col>
-                    <Col span={4} md={8} lg={4}>
+                    <Col span={4} md={6} lg={4}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
                             <Col xs={0} sm={0} md={20}>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
