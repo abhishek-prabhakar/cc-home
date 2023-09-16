@@ -85,7 +85,7 @@ const ProfileHome = {
                 <div>
                     <Row justify={'center'}>
                         <Col span={8}>
-                            <Row>
+                            <Row gutter={20} align={'middle'}>
                                 <Col>
                                     <Avatar size={64} icon={<UserOutlined />} />
                                 </Col>
