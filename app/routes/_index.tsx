@@ -98,7 +98,7 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
 
-    return <div style={{ height: '520px', overflow: 'hidden' }}><div style={jumbotronWrapperStyle} >
+    return <div style={{ height: '520px', overflow: 'hidden', marginBottom: '40px' }}><div style={jumbotronWrapperStyle} >
       <div style={{ ...jumbotronListStyle, width: `calc(80vw * ${data.jumbotron.length})`, transform: `translate3d(-40vw, 0px, 0px)` }} >
         {
           data.jumbotron.map((item, key) => <div key={'slider-' + key} style={{ transform: active === key ? 'none' : 'scale(0.8)' }}><JumbotronItem key={key} /></div>)
@@ -165,7 +165,7 @@ const Home = {
       thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/blog/cat-3.png'
     }]
 
-    return <Row gutter={60}>
+    return <Row gutter={[60, 60]}>
       <Col span={24}>
         <Title level={2}>Collections</Title>
       </Col>
@@ -213,7 +213,6 @@ const Home = {
       </Col>
     </Row>
   }
-
 }
 
 

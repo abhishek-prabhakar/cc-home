@@ -16,7 +16,7 @@ export function Header() {
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
                         <MenuOutlined />
                     </Col>
-                    <Col span={12}>
+                    <Col flex={'auto'}>
                         <div className="header-brand">
                             <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
                         </div>
