@@ -27,7 +27,7 @@ export async function loader({ params }: LoaderArgs): Promise<Vendor> {
 
 
 const viewAllProjectsStyles: React.CSSProperties = { display: 'flex', justifyContent: 'center', overflow: "hidden", height: '50px', position: 'relative', boxShadow: '0px -40px 30px #fff' };
-const quoteStyle: React.CSSProperties = { fontSize: '24px', color: '#009e66' };
+const quoteStyle: React.CSSProperties = { fontSize: '30px', color: '#009e66' };
 
 const ProfileHome = {
     Index: () => {
@@ -45,7 +45,7 @@ const ProfileHome = {
             <Row>
                 <Col sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
                     <Card bordered={false}>
-                        <CameraOutlined size={30} />
+                        <CameraOutlined style={quoteStyle} />
                         <Title level={3}>Banding</Title>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     </Card>
