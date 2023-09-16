@@ -54,7 +54,7 @@ const SortResultsPanel = () => {
 const Results = () => {
     const list: { id: string, name: string, imgSet: string[] }[] = new Array(3).fill({ id: 'jessica', name: 'Jessica', imgSet: [1, 2, 3, 4] });
 
-    return <Row gutter={[40, 0]}>
+    return <Row gutter={[40, 40]}>
         {list.map((item, key) => <Col span={24} key={'profile' + key}>
             <div style={itemStyles}>
                 <Row>
