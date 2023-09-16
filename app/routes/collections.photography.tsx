@@ -54,7 +54,7 @@ const SortResultsPanel = () => {
 const Results = () => {
     const list: { id: string, name: string, imgSet: string[] }[] = new Array(3).fill({ id: 'jessica', name: 'Jessica', imgSet: [1, 2, 3, 4] });
 
-    return <Row gutter={40}>
+    return <Row gutter={[40, 0]}>
         {list.map((item, key) => <Col span={24} key={'profile' + key}>
             <div style={itemStyles}>
                 <Row>
@@ -67,10 +67,16 @@ const Results = () => {
                         <div style={itemDataWapperStyles}>
                             <div style={itemDataStyles}>
                                 <Title level={3}>Jessica</Title>
-                                <Rate allowHalf defaultValue={2.5} />
-                                <Button type="primary" shape="round" href={'/profile/' + item.id} >
-                                    View Profile
-                                </Button>
+                                <Row justify={'space-between'}>
+                                    <Col>
+                                        <Rate allowHalf defaultValue={2.5} />
+                                    </Col>
+                                    <Col>
+                                        <Button type="primary" shape="round" href={'/profile/' + item.id} >
+                                            View Profile
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </div>
                             <Row >
                                 {item.imgSet.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
@@ -92,7 +98,7 @@ export default function PhotographyPage() {
         <div className="container">
             <Space direction="vertical" size={'large'}>
                 <Banner />
-                <Row gutter={[0, 40]}>
+                <Row gutter={[40, 40]}>
                     <Col sm={24} xs={24} md={0} lg={0} xl={0} xxl={0}>
                         <div className="filters-section-wrapper"
                         >
