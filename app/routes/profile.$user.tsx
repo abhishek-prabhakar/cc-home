@@ -3,7 +3,7 @@ import { LoaderArgs, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { Button, Col, Form, Input, Row, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { Profile } from "~/types";
+import { VendorProfile } from "~/types";
 const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
 
@@ -12,22 +12,18 @@ const coverStyles: React.CSSProperties = { backgroundImage: 'url(https://demo.th
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
-export function loader({ params }: LoaderArgs): Profile {
+export async function loader({ params }: LoaderArgs): Promise<VendorProfile> {
     const id = params.user;
 
-    // return redirect(`/todos/${todo.id}`);
+    // return redirect(`/404`);
 
-    return { id: 'jessica' };
+    return { id: 'jessica', fullName: 'Jessica', location: 'Bangalore' };
 }
 
 const ProfileLayout = {
     Index: () => {
-        const data = useLoaderData<Profile>();
+        const data = useLoaderData<VendorProfile>();
 
-        useEffect(() => {
-            console.log('---')
-            console.log(data)
-        }, []);
         return <div>
             <ProfileLayout.Cover />
             <div style={pageWrapperStyles}>
@@ -38,12 +34,14 @@ const ProfileLayout = {
 
     },
     Cover: () => {
+        const data = useLoaderData<VendorProfile>();
+
         return <div style={coverStyles}>
             <div className="container">
                 <Row gutter={[0, 40]} align={'middle'}>
                     <Col sm={24} xs={24} span={12}>
                         <Title level={3}>Hi There!</Title>
-                        <Title level={1}>I am Jessica</Title>
+                        <Title level={1}>I am {data.fullName}</Title>
                     </Col>
                     <Col span={24}>
                         <Button type="primary">Contact Me</Button>
@@ -51,7 +49,7 @@ const ProfileLayout = {
                     <Col span={24}>
                         <div style={locationStyles}>
                             <Title level={4}>Location</Title>
-                            <Title color="" level={5}>Bangalore</Title>
+                            <Title color="" level={5}>{data.location}</Title>
                         </div>
                     </Col>
                 </Row>

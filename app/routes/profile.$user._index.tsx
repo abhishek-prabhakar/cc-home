@@ -4,12 +4,15 @@ import { useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { Profile } from "~/types";
+import { Vendor } from "~/types";
 
-export async function loader({ params }: LoaderArgs): Promise<Profile> {
+export async function loader({ params }: LoaderArgs): Promise<Vendor> {
     const id = params.user;
     return {
-        id: 'fg', portfolio: [
+        id: 'fg',
+        fullName: 'Jessica',
+        location: 'Bangalore',
+        portfolio: [
             'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio1-min.png',
             'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio2-min.png',
             'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio3-min.png',
@@ -51,7 +54,7 @@ const ProfileHome = {
         </div>
     },
     Gallery: () => {
-        const data = useLoaderData<Profile>();
+        const data = useLoaderData<Vendor>();
 
         return <Space direction="vertical" size={'large'}>
             <Row justify={'space-between'} align={'middle'} gutter={[10, 20]}>
@@ -81,7 +84,7 @@ const ProfileHome = {
     },
     Testimonials: () => {
         return <div className="container">
-            <Title level={2}>Testimonials</Title>
+            <Title level={2} style={{ textAlign: 'center' }}>Testimonials</Title>
             <Carousel>
                 <div>
                     <Row justify={'center'}>
