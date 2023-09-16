@@ -1,7 +1,7 @@
 import type { V2_MetaFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Space, Typography, theme } from 'antd';
+import { Button, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Space, Typography, theme } from 'antd';
 import { Banner } from "~/components/Banner";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -52,7 +52,7 @@ const SortResultsPanel = () => {
 }
 
 const Results = () => {
-    const list: { name: string, imgSet: string[] }[] = new Array(3).fill({ name: 'Jessica', imgSet: [1, 2, 3, 4] });
+    const list: { id: string, name: string, imgSet: string[] }[] = new Array(3).fill({ id: 'jessica', name: 'Jessica', imgSet: [1, 2, 3, 4] });
 
     return <Row gutter={40}>
         {list.map((item, key) => <Col span={24} key={'profile' + key}>
@@ -68,6 +68,9 @@ const Results = () => {
                             <div style={itemDataStyles}>
                                 <Title level={3}>Jessica</Title>
                                 <Rate allowHalf defaultValue={2.5} />
+                                <Button type="primary" shape="round" href={'/profile/' + item.id} >
+                                    View Profile
+                                </Button>
                             </div>
                             <Row >
                                 {item.imgSet.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
@@ -89,7 +92,7 @@ export default function PhotographyPage() {
         <div className="container">
             <Space direction="vertical" size={'large'}>
                 <Banner />
-                <Row gutter={40}>
+                <Row gutter={[0, 40]}>
                     <Col sm={24} xs={24} md={0} lg={0} xl={0} xxl={0}>
                         <div className="filters-section-wrapper"
                         >
