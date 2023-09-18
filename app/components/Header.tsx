@@ -11,7 +11,7 @@ const menuArtisantStyle: React.CSSProperties = {
     padding: '20px 30px', background: 'url(/assets/user-menu-bg.jpg) top', backgroundSize: 'cover'
 }
 
-const items: MenuProps['items'] = [
+const items = [
     {
         label: 'Bangalore',
         key: '0',
@@ -29,8 +29,8 @@ const items: MenuProps['items'] = [
 
 export function Header() {
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
-    function updateLocation(data: any) {
-        console.log(data)
+    function handleLocationMenuClick(data: any) {
+        setCurrentLocation(items[data.key].label);
     }
 
     return <>
@@ -51,7 +51,7 @@ export function Header() {
                     <Col span={4} md={7} lg={5}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
                             <Col>
-                                <Dropdown menu={{ items }} trigger={['click']}>
+                                <Dropdown menu={{ items, onClick: handleLocationMenuClick, }} trigger={['click']}>
                                     <Space className="cursor-pointer">
                                         <GlobalOutlined />
                                         {currentLocation}
