@@ -12,17 +12,19 @@ const menuList: {
     children: [
         {
             key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                    1st menu item
-                </a>
-            ),
+            label: 'item',
         },
     ]
 },
 {
     id: 'collections',
     label: 'Collections',
+    children: [
+        {
+            key: '1',
+            label: 'item',
+        },
+    ]
 }];
 
 export const AppNavigation: React.FC = () => <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.id} ><Dropdown menu={{ items: item.children }}>
