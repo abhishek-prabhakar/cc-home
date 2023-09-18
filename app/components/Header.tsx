@@ -1,16 +1,43 @@
-import { MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
-import { Badge, Button, Col, Input, Row } from "antd";
+import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
+import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
 import { AppNavigation } from "./navigation";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
+const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
+const userMenuStyle: React.CSSProperties = { background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
+const menuArtisantStyle: React.CSSProperties = {
+    padding: '20px 30px', background: 'url(/assets/user-menu-bg.jpg) top', backgroundSize: 'cover'
+}
+
+const items: MenuProps['items'] = [
+    {
+        label: 'Bangalore',
+        key: '0',
+    },
+    {
+        label: 'Mumbai',
+        key: '1',
+    },
+    {
+        label: 'Delhi',
+        key: '2',
+    },
+];
+
 
 export function Header() {
+    const [currentLocation, setCurrentLocation] = useState('Bangalore');
+    function updateLocation(data: any) {
+        console.log(data)
+    }
+
     return <>
         <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
             <div className="container">
                 <Row justify={'space-between'}>
-                    <Col span={0} md={6} lg={4}>
+                    <Col span={0} md={7} lg={5}>
                         <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
@@ -21,17 +48,41 @@ export function Header() {
                             <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
                         </div>
                     </Col>
-                    <Col span={4} md={6} lg={4}>
+                    <Col span={4} md={7} lg={5}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
-                            <Col xs={0} sm={0} md={20}>
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <Button type="text" icon={<SmileOutlined />}>Login</Button>
-                                </div>
+                            <Col>
+                                <Dropdown menu={{ items }} trigger={['click']}>
+                                    <a onClick={(e) => updateLocation(e)}>
+                                        <Space>
+                                            <GlobalOutlined />
+                                            {currentLocation}
+                                        </Space>
+                                    </a>
+                                </Dropdown>
                             </Col>
-                            <Col md={4}>
-                                <Badge count={5}>
-                                    <Button icon={<ShoppingCartOutlined />} href="/checkout" />
-                                </Badge>
+                            <Col xs={0} sm={0} md={12}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <Dropdown dropdownRender={() => (
+                                        <div style={userMenuStyle}>
+                                            <Space style={{ padding: '12px' }}>
+                                                <Row justify={'end'} gutter={[10, 10]}>
+                                                    <Col span={24}><Input prefix="+91" placeholder="Enter your phone number." /></Col>
+                                                    <Col><Button type="primary">Login</Button></Col>
+                                                </Row>
+                                            </Space>
+                                            <Divider style={{ margin: 0 }} />
+                                            <div style={menuArtisantStyle}>
+                                                <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
+                                                    <Title level={3}>Artisant?</Title>
+                                                    <Button>Signup</Button>
+                                                </Space>
+                                            </div>
+                                        </div>
+                                    )}
+                                    >
+                                        <Button>My Account</Button>
+                                    </Dropdown>
+                                </div>
                             </Col>
                         </Row>
                     </Col>

@@ -8,11 +8,11 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const sortPanelStyles: React.CSSProperties = { background: 'var(--ui-color-accent)', padding: '10px 20px' }
 
-const itemStyles: React.CSSProperties = { border: '1px solid var(--ui-color-black)' };
-const itemThumbStyles: React.CSSProperties = { background: 'beige', borderRight: '1px solid var(--ui-color-black)', padding: '5px' }
+const itemStyles: React.CSSProperties = {};
+const itemThumbStyles: React.CSSProperties = { padding: '5px' }
 const itemDataStyles: React.CSSProperties = { padding: '15px' };
-const itemDataThumbSetStyles: React.CSSProperties = { borderTop: '1px solid var(--ui-color-black)', padding: '5px', borderRight: '1px solid var(--ui-color-black)', };
-const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirection: 'column', justifyContent: 'space-between', height: '100%' };
+const itemDataThumbSetStyles: React.CSSProperties = { padding: '5px', };
+const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirection: 'column', justifyContent: 'space-between', height: '100%', background: '#f3f3f3', borderRadius: '10px', padding: '20px' };
 
 
 export const meta: V2_MetaFunction = () => {
@@ -57,13 +57,13 @@ const Results = () => {
     return <Row gutter={[40, 40]}>
         {list.map((item, key) => <Col span={24} key={'profile' + key}>
             <div style={itemStyles}>
-                <Row>
-                    <Col span={8}>
+                <Row gutter={20}>
+                    <Col span={5}>
                         <div style={itemThumbStyles}>
-                            <img width={'100%'} src="https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp" />
+                            <img width={'100%'} style={{ borderRadius: '50%' }} src="https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp" />
                         </div>
                     </Col>
-                    <Col span={16}>
+                    <Col span={19}>
                         <div style={itemDataWapperStyles}>
                             <div style={itemDataStyles}>
                                 <Title level={3}>Jessica</Title>
