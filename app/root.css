@@ -20,6 +20,9 @@ body {
     margin: auto;
     padding: 0 20px;
 }
+.cursor-pointer{
+    cursor: pointer;
+}
 .header-brand{
     display: flex;
     align-items: center;

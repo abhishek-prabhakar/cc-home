@@ -52,12 +52,10 @@ export function Header() {
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
                             <Col>
                                 <Dropdown menu={{ items }} trigger={['click']}>
-                                    <a onClick={(e) => updateLocation(e)}>
-                                        <Space>
-                                            <GlobalOutlined />
-                                            {currentLocation}
-                                        </Space>
-                                    </a>
+                                    <Space className="cursor-pointer">
+                                        <GlobalOutlined />
+                                        {currentLocation}
+                                    </Space>
                                 </Dropdown>
                             </Col>
                             <Col xs={0} sm={0} md={12}>
