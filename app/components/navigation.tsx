@@ -90,7 +90,7 @@ const AppNavigation = {
                 onClose={() => toggleDrawer()}
                 open={openDrawer}>
                 <Menu
-                    style={{ width: 250, marginBottom: '40px' }}
+                    style={{ width: 300, margin: '0 -24px 20px' }}
                     mode="inline"
                     openKeys={openKeys}
                     onOpenChange={onOpenChange}
