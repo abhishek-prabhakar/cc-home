@@ -14,7 +14,6 @@ import antdStyles from '~/antd.css';
 import { MenuOutlined, RightOutlined } from "@ant-design/icons";
 import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
 import { Footer } from "~/components/Footer";
-import { AppNavigation } from "~/components/navigation";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
 const { Content } = Layout;

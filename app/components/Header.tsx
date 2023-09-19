@@ -1,8 +1,9 @@
 import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
 import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
-import { AppNavigation } from "./navigation";
+
 import { Link } from "@remix-run/react";
 import { useState } from "react";
+import AppNavigation from "./Navigation";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
@@ -41,7 +42,7 @@ export function Header() {
                         <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
-                        <MenuOutlined />
+                        <AppNavigation.Drawer />
                     </Col>
                     <Col flex={'auto'}>
                         <div className="header-brand">
@@ -91,7 +92,7 @@ export function Header() {
             <Col span={0} md={24} style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '0px 40px' }} >
                 <Row justify={'center'}>
                     <Col>
-                        <AppNavigation />
+                        <AppNavigation.MainMenu />
                     </Col>
                 </Row>
             </Col>
