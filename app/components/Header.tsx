@@ -3,7 +3,7 @@ import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Ty
 
 import { Link } from "@remix-run/react";
 import { useState } from "react";
-import AppNavigation from "./Navigation";
+import AppNavigation from "./NavigationMenu";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
