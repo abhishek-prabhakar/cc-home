@@ -4,6 +4,7 @@ import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Ty
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import AppNavigation from "./NavigationMenu";
+import { locationList } from "~/data/locations.data";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
@@ -12,26 +13,11 @@ const menuArtisantStyle: React.CSSProperties = {
     padding: '20px 30px', background: 'url(/assets/user-menu-bg.jpg) top', backgroundSize: 'cover'
 }
 
-const items = [
-    {
-        label: 'Bangalore',
-        key: '0',
-    },
-    {
-        label: 'Mumbai',
-        key: '1',
-    },
-    {
-        label: 'Delhi',
-        key: '2',
-    },
-];
-
 
 export function Header() {
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
     function handleLocationMenuClick(data: any) {
-        setCurrentLocation(items[data.key].label);
+        setCurrentLocation(locationList[data.key].label);
     }
 
     return <>
@@ -51,8 +37,8 @@ export function Header() {
                     </Col>
                     <Col span={4} md={7} lg={5}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
-                            <Col>
-                                <Dropdown menu={{ items, onClick: handleLocationMenuClick, }} trigger={['click']}>
+                            <Col xs={0} sm={0} md={12}>
+                                <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
                                     <Space className="cursor-pointer">
                                         <GlobalOutlined />
                                         {currentLocation}

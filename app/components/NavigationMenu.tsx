@@ -1,10 +1,12 @@
-import { DownOutlined, MenuOutlined } from "@ant-design/icons";
-import { Button, Col, Drawer, Dropdown, Input, Menu, MenuProps, Row, Space, Typography } from "antd";
+import { DownOutlined, GlobalOutlined, MenuOutlined } from "@ant-design/icons";
+import { Button, Col, Divider, Drawer, Dropdown, Input, Menu, MenuProps, Row, Space, Typography } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 import { useState } from "react";
+import { locationList } from "~/data/locations.data";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
+    borderRadius: '3px',
     padding: '20px 20px', background: 'url(/assets/user-menu-bg.jpg) top', backgroundSize: 'cover'
 }
 
@@ -90,12 +92,13 @@ const AppNavigation = {
                 onClose={() => toggleDrawer()}
                 open={openDrawer}>
                 <Menu
-                    style={{ width: 300, margin: '0 -24px 20px' }}
+                    style={{ width: 295, margin: '0 -24px 20px' }}
                     mode="inline"
                     openKeys={openKeys}
                     onOpenChange={onOpenChange}
                     items={menuList}
                 />
+                <Divider />
                 <Space direction="vertical" size={"large"}>
                     <div>
                         <Title level={5}>Manage your booking</Title>
@@ -110,6 +113,11 @@ const AppNavigation = {
                             <Button>Signup</Button>
                         </Space>
                     </div>
+                    <Menu
+                        style={{ width: 295, margin: '0 -24px 20px' }}
+                        mode="inline"
+                        items={[{ key: 'location', icon: <GlobalOutlined />, label: 'Bangalore', children: locationList }]}
+                    />
                 </Space>
             </Drawer>
         </>;
