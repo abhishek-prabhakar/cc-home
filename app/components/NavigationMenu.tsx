@@ -114,7 +114,7 @@ const AppNavigation = {
                         </Space>
                     </div>
                     <Menu
-                        style={{ width: 295, margin: '0 -24px 20px' }}
+                        style={{ width: 295, margin: '0 -24px' }}
                         mode="inline"
                         items={[{ key: 'location', icon: <GlobalOutlined />, label: 'Bangalore', children: locationList }]}
                     />

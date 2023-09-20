@@ -19,3 +19,7 @@ export type Jumbotron = {
 }
 
 export type HomePage = { jumbotron: Jumbotron[] };
+
+export type UserLoginInput = {
+    phone: number
+}
