@@ -1,14 +1,11 @@
 import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
 import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
 
-import { Link } from "@remix-run/react";
+import { Form, Link, useNavigation } from "@remix-run/react";
 import { useState } from "react";
 import AppNavigation from "./NavigationMenu";
 import { locationList } from "~/data/locations.data";
-import { UserLogin } from "./UserLogin";
-import { useForm, Controller } from "react-hook-form";
-import { UserLoginInput } from "~/types";
-import axios from "axios";
+import UserLogin from "./UserLogin";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
@@ -19,24 +16,11 @@ const menuArtisantStyle: React.CSSProperties = {
 
 
 export function Header() {
-    const { control, register, handleSubmit } = useForm();
+    const navigation = useNavigation();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
-    const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
 
     function handleLocationMenuClick(data: any) {
         setCurrentLocation(locationList[data.key].label);
-    }
-
-    function toggleVerifyUserDialog(show = false) {
-        setVerifyUserDialogState(show);
-    }
-
-    function startUserLogin(params: any) {
-        console.log(params)
-
-        axios.post('/login').then(r => {
-            toggleVerifyUserDialog(true);
-        })
     }
 
     return <>
@@ -69,14 +53,7 @@ export function Header() {
                                     <Dropdown dropdownRender={() => (
                                         <div style={userMenuStyle}>
                                             <Space style={{ padding: '12px' }}>
-                                                <form onSubmit={handleSubmit(startUserLogin)}>
-                                                    <Row justify={'end'} gutter={[10, 10]}>
-                                                        <Col span={24}>
-                                                            <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." {...field} />} />
-                                                        </Col>
-                                                        <Col><Button type="primary" htmlType="submit">Login</Button></Col>
-                                                    </Row>
-                                                </form>
+                                                <UserLogin />
                                             </Space>
                                             <Divider style={{ margin: 0 }} />
                                             <div style={menuArtisantStyle}>
@@ -106,6 +83,5 @@ export function Header() {
                 </Row>
             </Col>
         </Row>
-        <UserLogin modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
     </>
 }

@@ -23,3 +23,19 @@ export type HomePage = { jumbotron: Jumbotron[] };
 export type UserLoginInput = {
     phone: number
 }
+export type UserVerifyOtpInput = {
+    phone: number,
+    otp: number
+}
+export type User = {
+    id: string,
+    name: string,
+    phone: number,
+    email?: string
+}
+
+export type UserBooking = {
+    id: string,
+    name: string,
+    date: Date
+}

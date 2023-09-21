@@ -1,8 +1,11 @@
 import { DownOutlined, GlobalOutlined, MenuOutlined } from "@ant-design/icons";
 import { Button, Col, Divider, Drawer, Dropdown, Input, Menu, MenuProps, Row, Space, Typography } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
+import axios from "axios";
 import { useState } from "react";
 import { locationList } from "~/data/locations.data";
+import UserLogin from "./UserLogin";
+import { Form } from "@remix-run/react";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -100,16 +103,10 @@ const AppNavigation = {
                 />
                 <Divider />
                 <Space direction="vertical" size={"large"}>
-                    <div>
-                        <Title level={5}>Manage your booking</Title>
-                        <Row justify={'end'} gutter={[10, 10]}>
-                            <Col span={24}><Input prefix="+91" placeholder="Enter your phone number." /></Col>
-                            <Col><Button type="primary">Login</Button></Col>
-                        </Row>
-                    </div>
+                    <UserLogin />
                     <div style={menuArtisantStyle}>
                         <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
-                            <Title level={3}>Artisant?</Title>
+                            <Title level={3}>Artisan?</Title>
                             <Button>Signup</Button>
                         </Space>
                     </div>
