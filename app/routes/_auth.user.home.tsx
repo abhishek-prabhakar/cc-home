@@ -1,7 +1,7 @@
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
 import { LoaderArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, List, Row, Space, Tag, Timeline, Typography } from "antd";
+import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Space, Tag, Timeline, Typography } from "antd";
 import { UserBooking, UserData } from "~/types";
 const { Title, Text } = Typography;
 
@@ -35,6 +35,16 @@ export async function loader({ params }: LoaderArgs): Promise<UserData> {
 
 }
 
+const bookingOptionsList: MenuProps['items'] = [
+    {
+        key: '1',
+        label: 'Reschedule',
+    },
+    {
+        key: '2',
+        label: <Text type="danger">Cancel</Text>,
+    }]
+
 const UserHome = {
     Index: () => {
         return <Row>
@@ -49,20 +59,22 @@ const UserHome = {
 
         return <Row >
             {data.bookings.map(booking => <Col span={24} key={booking.id}> <Card>
-                <Row justify={'space-between'} align={'middle'}>
+                <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
                     <Col>
                         <Space size={'middle'}>
                             <Text type="secondary" strong>Order ID: 123</Text>
                             <Tag color="#87d068">Confirmed</Tag>
                         </Space>
+                        <Title level={5}>Wednesday Sept 30, 2023</Title>
                     </Col>
                     <Col>
-                        <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
-                            Manage
-                        </Button>
+                        <Dropdown menu={{ items: bookingOptionsList }} placement="bottomRight">
+                            <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
+                                Manage
+                            </Button>
+                        </Dropdown>
                     </Col>
                 </Row>
-                <Title level={5}>Wednesday Sept 30, 2023</Title>
                 <Divider />
                 <div>
                     <Timeline
