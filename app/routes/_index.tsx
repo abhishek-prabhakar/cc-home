@@ -116,7 +116,7 @@ const Home = {
 
     return <div className="category-list">
       <Title level={2}>Featured</Title>
-      <Row gutter={40}>
+      <Row gutter={40} justify={'center'}>
         {list.map((item, key) => <Col key={'cat-' + key} span={12} md={8}>
           <div className="category-badge">
             {item.category}

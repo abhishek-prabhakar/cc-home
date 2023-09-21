@@ -22,5 +22,5 @@ export default function UserLayout() {
 
     return <div className="container">
         <Outlet />
-        t</div>
+    </div>
 }

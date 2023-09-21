@@ -2,6 +2,13 @@ export type VendorProfile = {
     id: string,
     fullName: string,
     location: string
+    gender: string;
+    email: string;
+    type: string;
+    avatar?: {
+        large: string;
+        thumbnail: string;
+    };
 }
 
 export type VendorPortfolio = {
@@ -37,5 +44,16 @@ export type User = {
 export type UserBooking = {
     id: string,
     name: string,
-    date: Date
+    date: Date,
+    vendors: VendorProfile[]
+}
+
+export type UserData = {
+    bookings: UserBooking[]
+}
+
+export enum OrderStatus {
+    CONFIRMED = 'CONFIRMED',
+    PENDING = 'PENDING',
+    CANCELLED = 'CANCELLED'
 }

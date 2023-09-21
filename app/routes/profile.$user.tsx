@@ -17,7 +17,10 @@ export async function loader({ params }: LoaderArgs): Promise<VendorProfile> {
 
     // return redirect(`/404`);
 
-    return { id: 'jessica', fullName: 'Jessica', location: 'Bangalore' };
+    return {
+        id: 'jessica', fullName: 'Jessica', location: 'Bangalore', gender: 'Female', email: '3ewwer',
+        type: 'Photographer',
+    };
 }
 
 const ProfileLayout = {
