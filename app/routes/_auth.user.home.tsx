@@ -13,14 +13,23 @@ export async function loader({ params }: LoaderArgs): Promise<UserData> {
             id: '1',
             name: 'booking 1',
             date: new Date(),
-            vendors: [{
-                id: 'jessica', fullName: 'Jessica', location: 'Bangalore', gender: 'Female', email: '3ewwer',
-                type: 'Photographer',
-                avatar: {
-                    large: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp',
-                    thumbnail: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp'
-                }
-            }]
+            vendors: [
+                {
+                    id: 'jessica', fullName: 'Jessica', location: 'Bangalore', gender: 'Female', email: '3ewwer',
+                    type: 'Photographer',
+                    avatar: {
+                        large: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp',
+                        thumbnail: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp'
+                    }
+                },
+                {
+                    id: 'jessica', fullName: 'Mike', location: 'Bangalore', gender: 'Female', email: '3ewwer',
+                    type: 'Stylist',
+                    avatar: {
+                        large: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp',
+                        thumbnail: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp'
+                    }
+                }]
         }],
     }
 
