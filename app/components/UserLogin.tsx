@@ -7,12 +7,16 @@ import { UserLoginInput } from "~/types";
 const { Title } = Typography;
 
 const UserLogin = {
-    Index: () => {
+    Index: ({ onSuccess }: { onSuccess?: Function }) => {
         const { control, handleSubmit } = useForm();
         const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
 
         function toggleVerifyUserDialog(show = false) {
             setVerifyUserDialogState(show);
+
+            if (!show && onSuccess) {
+                onSuccess();
+            }
         }
 
         function startUserLogin(params: any) {

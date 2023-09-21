@@ -103,7 +103,7 @@ const AppNavigation = {
                 />
                 <Divider />
                 <Space direction="vertical" size={"large"}>
-                    <UserLogin />
+                    <UserLogin onSuccess={() => toggleDrawer()} />
                     <div style={menuArtisantStyle}>
                         <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
                             <Title level={3}>Artisan?</Title>
