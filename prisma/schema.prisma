@@ -16,7 +16,15 @@ model User {
   createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   username     String @db.String(10) @unique
+ 
+  @@map("users")
+}
+
+model UserOtp {
+  id           String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  username     String @db.String(10) @unique
   otpHash String  @map("otp_hash")
 
-  @@map("users")
+  @@map("user_otp")
 }

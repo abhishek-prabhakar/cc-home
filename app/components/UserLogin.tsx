@@ -3,6 +3,7 @@ import { Button, Col, Input, Modal, Row, Typography } from "antd";
 import axios from "axios";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import UserService from "~/service/user.service";
 import { UserLoginInput } from "~/types";
 const { Title } = Typography;
 
@@ -22,7 +23,7 @@ const UserLogin = {
         function startUserLogin(params: any) {
             console.log(params)
 
-            axios.post('/login').then(r => {
+            UserService.Login({ phone: params.phone }).then(r => {
                 toggleVerifyUserDialog(true);
             })
         }
@@ -45,7 +46,7 @@ const UserLogin = {
 
         function verifyOtp() {
             console.log(getValues)
-            axios.post('/verify-otp').then(r => {
+            UserService.VerifyOtp({ phone: 234234, otp: 123 }).then(r => {
                 if (onClose) {
                     onClose();
                 }
