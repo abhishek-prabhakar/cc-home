@@ -5,7 +5,8 @@
     "build": "remix build",
     "dev": "remix dev",
     "start": "netlify serve",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.0",
