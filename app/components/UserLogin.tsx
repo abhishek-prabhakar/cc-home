@@ -11,6 +11,8 @@ const UserLogin = {
     Index: ({ onSuccess }: { onSuccess?: Function }) => {
         const { control, handleSubmit } = useForm();
         const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
+        const [isBusy, setBusy] = useState(false);
+        const [getUsername, setUsername] = useState<number>();
 
         function toggleVerifyUserDialog(show = false) {
             setVerifyUserDialogState(show);
@@ -21,8 +23,13 @@ const UserLogin = {
         }
 
         function startUserLogin(params: any) {
+            setBusy(true);
             UserService.Login({ phone: params.phone }).then(r => {
                 toggleVerifyUserDialog(true);
+                setUsername(params.phone);
+                setBusy(false);
+            }).catch(e => {
+                setBusy(false);
             })
         }
 
@@ -32,28 +39,35 @@ const UserLogin = {
                 <Col span={24}>
                     <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." {...field} />} />
                 </Col>
-                <Col><Button type="primary" htmlType="submit">Login</Button></Col>
+                <Col><Button type="primary" htmlType="submit" loading={isBusy}>Login</Button></Col>
             </Row>
         </Form>
-            <UserLogin.VerifyOtp modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
+            <UserLogin.VerifyOtp username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
         </>
     },
-    VerifyOtp: ({ modalOpen, onClose }: { modalOpen: boolean, onClose: Function }) => {
+    VerifyOtp: ({ username, modalOpen, onClose }: { username: number | null | undefined, modalOpen: boolean, onClose: Function }) => {
         const { control, getValues, handleSubmit } = useForm();
+        const [isBusy, setBusy] = useState(false);
         const navigate = useNavigate();
 
         function verifyOtp() {
-            console.log(getValues())
-            UserService.VerifyOtp({ phone: 234234, otp: 123 }).then(r => {
+            setBusy(true);
+            UserService.VerifyOtp({ phone: username || 0, otp: getValues().otp }).then(r => {
                 if (onClose) {
                     onClose();
                 }
-
+                setBusy(false);
                 navigate(`/user/home`);
+            }).catch(e => {
+                setBusy(false);
             })
         }
 
-        return <Modal title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
+        function closeModal() {
+            onClose();
+        }
+
+        return <Modal confirmLoading={isBusy} title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
             <Row justify={'end'} gutter={[10, 10]}>
                 <Col span={24}>
                     <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />

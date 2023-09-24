@@ -43,7 +43,6 @@ export async function action({
         success = true;
     } catch (r) {
         data = r;
-        console.log(r)
     }
 
 

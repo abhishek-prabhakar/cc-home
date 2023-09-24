@@ -11,27 +11,30 @@ export async function action({
     const otp = body.get('otp');
 
     let success = false;
+    let resCode = 400;
     try {
-        const otpHash = await bcrypt.hash(otp, 10);
         const existingUser = await prisma.userOtp.findFirstOrThrow({
             where: {
-                username,
-                otpHash
+                username
             }
         });
 
-        if (existingUser) {
-            success = true;
+        const verified = await bcrypt.compare(otp, existingUser.otpHash);
+        if (verified) {
             await prisma.userOtp.deleteMany({
                 where: {
                     username
                 },
             });
+            success = true;
         }
     } catch (r) {
-        console.log(r)
+
     }
 
+    if (success) {
+        resCode = 200;
+    }
 
-    return json({ success }, 200);
+    return json({ success }, resCode);
 }
