@@ -21,8 +21,6 @@ const UserLogin = {
         }
 
         function startUserLogin(params: any) {
-            console.log(params)
-
             UserService.Login({ phone: params.phone }).then(r => {
                 toggleVerifyUserDialog(true);
             })
@@ -41,11 +39,11 @@ const UserLogin = {
         </>
     },
     VerifyOtp: ({ modalOpen, onClose }: { modalOpen: boolean, onClose: Function }) => {
-        const { register, getValues, handleSubmit } = useForm();
+        const { control, getValues, handleSubmit } = useForm();
         const navigate = useNavigate();
 
         function verifyOtp() {
-            console.log(getValues)
+            console.log(getValues())
             UserService.VerifyOtp({ phone: 234234, otp: 123 }).then(r => {
                 if (onClose) {
                     onClose();
@@ -58,7 +56,7 @@ const UserLogin = {
         return <Modal title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
             <Row justify={'end'} gutter={[10, 10]}>
                 <Col span={24}>
-                    <Input placeholder="- - - -" max={4}  {...register('OTP')} />
+                    <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />
                 </Col>
             </Row>
         </Modal>
