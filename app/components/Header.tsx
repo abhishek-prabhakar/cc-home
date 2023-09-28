@@ -1,15 +1,16 @@
 import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
 import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
 
-import { Form, Link, useNavigation } from "@remix-run/react";
+import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 import { useState } from "react";
 import AppNavigation from "./NavigationMenu";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
+import { User } from "~/types";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
-const userMenuStyle: React.CSSProperties = { background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
+const userMenuStyle: React.CSSProperties = { width: '300px', background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
 const menuArtisantStyle: React.CSSProperties = {
     padding: '20px 30px', background: 'url(/assets/user-menu-bg.jpg) top', backgroundSize: 'cover'
 }
@@ -17,6 +18,7 @@ const menuArtisantStyle: React.CSSProperties = {
 
 export function Header() {
     const navigation = useNavigation();
+    const data = useLoaderData<User>();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
 
     function handleLocationMenuClick(data: any) {
@@ -53,7 +55,13 @@ export function Header() {
                                     <Dropdown dropdownRender={() => (
                                         <div style={userMenuStyle}>
                                             <Space style={{ padding: '12px' }}>
-                                                <UserLogin />
+                                                {data?.id ?
+                                                    <div>
+                                                        <Title level={5}>Hej!</Title>
+                                                        <Link to={'/user/home'}>My Bookings</Link>
+                                                        <Button href="/logout" >Logout</Button>
+                                                    </div>
+                                                    : <UserLogin />}
                                             </Space>
                                             <Divider style={{ margin: 0 }} />
                                             <div style={menuArtisantStyle}>

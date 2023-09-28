@@ -12,6 +12,7 @@ export async function action({
 
     let success = false;
     let resCode = 400;
+    let token;
     try {
         const existingUser = await prisma.userOtp.findFirstOrThrow({
             where: {
@@ -27,6 +28,7 @@ export async function action({
                 },
             });
             success = true;
+            token = username;
         }
     } catch (r) {
 
@@ -36,5 +38,5 @@ export async function action({
         resCode = 200;
     }
 
-    return json({ success }, resCode);
+    return json({ success, token }, resCode);
 }

@@ -57,7 +57,7 @@ const UserLogin = {
                     onClose();
                 }
                 setBusy(false);
-                navigate(`/user/home`);
+                navigate(`/login/redirect?id=${r.data.token}`);
             }).catch(e => {
                 setBusy(false);
             })

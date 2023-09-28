@@ -1,5 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -16,6 +16,9 @@ import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
+import { User } from "./types";
+import { getSessionUserId } from "./session.server";
+import { db } from "./utils/database";
 const { Content } = Layout;
 
 export const links: LinksFunction = () => [
@@ -30,6 +33,27 @@ const headerStyle: React.CSSProperties = {
   padding: '0',
   backgroundColor: '#fff',
 };
+
+export async function loader({ request }: LoaderArgs): Promise<any | User | null> {
+  const userId = await getSessionUserId(request);
+  if (!userId) {
+    return null;
+  }
+
+  const loggedInUser = await db.user.findFirst({
+    where: {
+      username: userId
+    }
+  });
+
+  if (loggedInUser) {
+    return {
+      id: loggedInUser.id,
+      phone: +loggedInUser.username,
+      name: ''
+    }
+  }
+}
 
 export default function App() {
   return (
