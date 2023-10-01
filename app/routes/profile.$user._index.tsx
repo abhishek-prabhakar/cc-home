@@ -4,9 +4,12 @@ import { useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { Vendor } from "~/types";
+import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 
-export async function loader({ params }: LoaderArgs): Promise<Vendor> {
+type loaderData = VendorProfile & VendorPortfolio;
+
+
+export async function loader({ params }: LoaderArgs): Promise<loaderData> {
     const id = params.user;
     return {
         id: 'fg',
@@ -57,7 +60,7 @@ const ProfileHome = {
         </div>
     },
     Gallery: () => {
-        const data = useLoaderData<Vendor>();
+        const data = useLoaderData<loaderData>();
 
         return <Space direction="vertical" size={'large'}>
             <Row justify={'space-between'} align={'middle'} gutter={[10, 20]}>

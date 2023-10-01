@@ -15,7 +15,20 @@ export type VendorPortfolio = {
     portfolio?: string[]
 }
 
-export type Vendor = VendorProfile & VendorPortfolio;
+export type VendorServiceOption = {
+    id: string,
+    title: string,
+    duration: number
+}
+
+export type VendorService = {
+    id: string,
+    title: string,
+    included: VendorServiceOption[],
+    addons: VendorServiceOption[]
+}
+
+export type Vendor = VendorProfile & VendorPortfolio & { services: VendorService[] };
 
 
 export type Jumbotron = {
@@ -56,4 +69,12 @@ export enum OrderStatus {
     CONFIRMED = 'CONFIRMED',
     PENDING = 'PENDING',
     CANCELLED = 'CANCELLED'
+}
+
+type CartActiveService = VendorServiceOption & { date: Date, time: string };
+export type CartItem = { vendor: VendorProfile, service: VendorService, selected: CartActiveService[] };
+
+export type CartInput = {
+    serviceId: string,
+    service: { id: string, date: Date, time: string }[]
 }

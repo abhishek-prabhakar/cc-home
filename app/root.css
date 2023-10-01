@@ -87,3 +87,15 @@ body {
     font-size: 18px;
     font-family: SemiBold;
 }
+
+.hidden{
+    display:none;
+}
+
+._success{
+    color: #52c41a;
+}
+
+._danger{
+    color:red;
+}

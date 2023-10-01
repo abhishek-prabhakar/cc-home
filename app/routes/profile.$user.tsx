@@ -1,9 +1,12 @@
-import { InfoCircleOutlined } from "@ant-design/icons";
-import { LoaderArgs, redirect } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
-import { Button, Col, Form, Input, Row, Typography } from "antd";
+import { CheckCircleFilled, InfoCircleOutlined, WarningFilled } from "@ant-design/icons";
+import { LoaderArgs, TypedResponse, redirect } from "@remix-run/node";
+import { Form, Outlet, useLoaderData } from "@remix-run/react";
+import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card } from "antd";
 import { useEffect, useState } from "react";
-import { VendorProfile } from "~/types";
+import { Controller, useForm } from "react-hook-form";
+import ConfigureBooking from "~/components/ConfigureBooking";
+import { VendorQuery } from "~/service/vendor.service";
+import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
 const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
 
@@ -12,20 +15,29 @@ const coverStyles: React.CSSProperties = { backgroundImage: 'url(https://demo.th
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
-export async function loader({ params }: LoaderArgs): Promise<VendorProfile> {
+type loaderData = VendorProfile & { services: VendorService[] };
+
+export async function loader({ params }: LoaderArgs): Promise<loaderData | TypedResponse<never>
+> {
     const id = params.user;
 
-    // return redirect(`/404`);
+    if (!id) {
+        return redirect(`/404`);
+    }
+
+
+    const vendorDetails = VendorQuery.getVendorById(id);
+    const serviceList: VendorService[] = VendorQuery.getServices(id);
 
     return {
-        id: 'jessica', fullName: 'Jessica', location: 'Bangalore', gender: 'Female', email: '3ewwer',
-        type: 'Photographer',
+        ...vendorDetails,
+        services: serviceList
     };
 }
 
 const ProfileLayout = {
     Index: () => {
-        const data = useLoaderData<VendorProfile>();
+        const data = useLoaderData<loaderData>();
 
         return <div>
             <ProfileLayout.Cover />
@@ -60,39 +72,85 @@ const ProfileLayout = {
         </div>
     },
     Contact: () => {
-        const [form] = Form.useForm();
+        const data = useLoaderData<loaderData>();
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
+        const [serviceId, setServiceId] = useState<string>();
+        const [addonsList, setAddonsList] = useState<VendorServiceOption[]>([]);
+        const [serviceList, setServiceList] = useState<VendorServiceOption[]>([]);
+        const [selectedAddons, setSelectedAddons] = useState<VendorServiceOption[]>([]);
 
         const onRequiredTypeChange = ({ requiredMarkValue }: { requiredMarkValue: RequiredMark }) => {
             setRequiredMarkType(requiredMarkValue);
         };
 
+
+        function setServiceOptions(id: string) {
+            const selected = data?.services.find(x => x.id === id);
+            setServiceId(id);
+            if (selected) {
+                setServiceList(selected.included);
+                setAddonsList(selected.addons);
+            } else {
+                setServiceList([]);
+                setAddonsList([]);
+            }
+        }
+
+        function removeAddon(id: string) {
+            const filtered = selectedAddons.filter(x => x.id !== id);
+            setSelectedAddons(filtered);
+        }
+
         return <div className="container">
-            <Row>
-                <Col span={24}>
-                    <Title level={2}>Get in Touch</Title>
-                </Col>
+            <Title level={2}>Check Availability</Title>
+            <Row gutter={[40, 40]}>
                 <Col span={24} md={12} lg={12} xl={8}>
-                    <Title level={5}>Message me!</Title>
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        initialValues={{ requiredMarkValue: requiredMark }}
-                        onValuesChange={onRequiredTypeChange}
-                    >
-                        <Form.Item label="Field A" required tooltip="This is a required field">
-                            <Input placeholder="input placeholder" />
-                        </Form.Item>
-                        <Form.Item
-                            label="Field B"
-                            tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-                        >
-                            <Input placeholder="input placeholder" />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary">Submit</Button>
-                        </Form.Item>
-                    </Form>
+                    <Space style={{ width: '100%' }} direction="vertical" size={'large'}>
+                        <Select
+                            style={{ width: '100%' }}
+                            showSearch
+                            placeholder="Search a service"
+                            options={data.services.map(x => ({ value: x.id, label: x.title }))}
+                            onChange={setServiceOptions}
+                        />
+
+                        {serviceList?.length ? [<Alert
+                            message="Services Included"
+                            description={
+                                <div>
+                                    {
+                                        serviceList.map((item) => <Tag
+                                            key={item.id} color="#108ee9"
+                                        >{item.title}</Tag>
+                                        )}
+                                    {
+                                        selectedAddons.map((item) => <Tag
+                                            key={item.id}
+                                            closable={true}
+                                            color="#108ee9"
+                                            onClose={() => removeAddon(item.id)}
+                                        >{item.title}</Tag>)
+                                    }
+                                </div>
+                            }
+                            showIcon
+                            type="success"
+                        />,
+                        <div>
+                            <Title level={5}>Available addons</Title>
+                            {
+                                addonsList.map((item) => <Tag
+                                    key={item.id}
+                                    color="blue"
+                                >{item.title}</Tag>)
+                            }
+                            {!addonsList?.length ?? <div>No addons</div>}
+                        </div>]
+                            : ''}
+                    </Space>
+                </Col>
+                <Col span={24} md={12} lg={12} xl={16}>
+                    {serviceId ? <ConfigureBooking id={serviceId} options={serviceList.concat(selectedAddons)} /> : ''}
                 </Col>
             </Row>
         </div>
