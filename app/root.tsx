@@ -7,12 +7,12 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
 import antdStyles from '~/antd.css';
-import { MenuOutlined, RightOutlined } from "@ant-design/icons";
-import { Badge, Card, Col, Layout, Row, Space, Tag } from "antd";
+import { Layout } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
@@ -20,6 +20,8 @@ import { User } from "./types";
 import { getSessionUserId } from "./session.server";
 import { db } from "./utils/database";
 const { Content } = Layout;
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -56,6 +58,7 @@ export async function loader({ request }: LoaderArgs): Promise<any | User | null
 }
 
 export default function App() {
+
   return (
     <html lang="en">
       <head>
@@ -65,18 +68,20 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout>
-          <Ticker />
-          <Layout.Header style={headerStyle}>
-            <Header />
-          </Layout.Header>
-          <Content style={{ paddingTop: '40px' }}>
-            <Outlet />
-          </Content>
-          <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
-            <Footer />
-          </Layout.Footer>
-        </Layout>
+        <Provider store={store}>
+          <Layout>
+            <Ticker />
+            <Layout.Header style={headerStyle}>
+              <Header />
+            </Layout.Header>
+            <Content style={{ paddingTop: '40px' }}>
+              <Outlet />
+            </Content>
+            <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
+              <Footer />
+            </Layout.Footer>
+          </Layout>
+        </Provider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

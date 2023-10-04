@@ -8,7 +8,7 @@ import { UserLoginInput } from "~/types";
 const { Title } = Typography;
 
 const UserLogin = {
-    Index: ({ onSuccess }: { onSuccess?: Function }) => {
+    Index: ({ title = 'Manage your booking', redirectUrl, onSuccess }: { title?: string, redirectUrl?: string, onSuccess?: Function }) => {
         const { control, handleSubmit } = useForm();
         const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
         const [isBusy, setBusy] = useState(false);
@@ -34,18 +34,18 @@ const UserLogin = {
         }
 
         return <><Form onSubmit={handleSubmit(startUserLogin)}>
-            <Title level={5}>Manage your booking</Title>
+            <Title level={5}>{title}</Title>
             <Row justify={'end'} gutter={[10, 10]}>
                 <Col span={24}>
                     <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." {...field} />} />
                 </Col>
-                <Col><Button type="primary" htmlType="submit" loading={isBusy}>Login</Button></Col>
+                <Col span={24}><Button block type="primary" htmlType="submit" loading={isBusy}>Login</Button></Col>
             </Row>
         </Form>
-            <UserLogin.VerifyOtp username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
+            <UserLogin.VerifyOtp redirectUrl={redirectUrl} username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
         </>
     },
-    VerifyOtp: ({ username, modalOpen, onClose }: { username: number | null | undefined, modalOpen: boolean, onClose: Function }) => {
+    VerifyOtp: ({ username, redirectUrl, modalOpen, onClose }: { username: number | null | undefined, modalOpen: boolean, redirectUrl?: string, onClose: Function }) => {
         const { control, getValues, handleSubmit } = useForm();
         const [isBusy, setBusy] = useState(false);
         const navigate = useNavigate();
@@ -57,7 +57,7 @@ const UserLogin = {
                     onClose();
                 }
                 setBusy(false);
-                navigate(`/login/redirect?id=${r.data.token}`);
+                navigate(`/login/redirect?id=${r.data.token}&redirect=${redirectUrl}`);
             }).catch(e => {
                 setBusy(false);
             })

@@ -2,11 +2,13 @@ import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, Smi
 import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
 
 import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppNavigation from "./NavigationMenu";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
 import { User } from "~/types";
+import { useDispatch } from "react-redux";
+import { setUser } from "~/store/user.store";
 const { Title } = Typography;
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
@@ -20,6 +22,14 @@ export function Header() {
     const navigation = useNavigation();
     const data = useLoaderData<User>();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (data?.id) {
+            dispatch(setUser(data?.id))
+        }
+        // dispatch(setUser('my-user-id'))
+    }, []);
 
     function handleLocationMenuClick(data: any) {
         setCurrentLocation(locationList[data.key].label);
