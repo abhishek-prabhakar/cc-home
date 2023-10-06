@@ -95,6 +95,8 @@ const ProfileLayout = {
                 setServiceList([]);
                 setAddonsList([]);
             }
+
+            setShowConfigPanel(false);
         }
 
         function removeAddon(id: string) {
