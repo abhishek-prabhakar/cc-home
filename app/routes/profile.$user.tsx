@@ -75,6 +75,7 @@ const ProfileLayout = {
         const data = useLoaderData<loaderData>();
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
         const [serviceId, setServiceId] = useState<string>();
+        const [showConfigPanel, setShowConfigPanel] = useState(false);
         const [addonsList, setAddonsList] = useState<VendorServiceOption[]>([]);
         const [serviceList, setServiceList] = useState<VendorServiceOption[]>([]);
         const [selectedAddons, setSelectedAddons] = useState<VendorServiceOption[]>([]);
@@ -147,10 +148,15 @@ const ProfileLayout = {
                             {!addonsList?.length ?? <div>No addons</div>}
                         </div>]
                             : ''}
+                        <Row justify={'end'}>
+                            <Col>
+                                {!showConfigPanel && serviceId && <Button onClick={() => setShowConfigPanel(true)} type="primary">Continue</Button>}
+                            </Col>
+                        </Row>
                     </Space>
                 </Col>
                 <Col span={24} md={12} lg={12} xl={16}>
-                    {serviceId ? <ConfigureBooking id={serviceId} options={serviceList.concat(selectedAddons)} /> : ''}
+                    {showConfigPanel && serviceId && <ConfigureBooking id={serviceId} options={serviceList.concat(selectedAddons)} />}
                 </Col>
             </Row>
         </div>
