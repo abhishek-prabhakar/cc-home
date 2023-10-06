@@ -11,7 +11,16 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
     const [serviceChecklist, setServiceChecklist] = useState<boolean[]>([]);
     const checkoutForm = useRef<any>(null);
     const checkoutFormInput = useRef<any>(null);
+    const [isMobileView, setMobileVIew] = useState(false);
+    const resize = () => {
+        setMobileVIew(window.innerWidth < 500);
+    };
 
+    useEffect(() => {
+        setMobileVIew(window.innerWidth < 500);
+        window.addEventListener("resize", resize);
+        return () => window.removeEventListener("resize", resize);
+    });
     useEffect(() => {
         setServiceChecklist(service.options.map(r => false));
     }, []);
@@ -52,7 +61,7 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
             <input className="hidden" {...register(`id`)} value={service.id} />
             <Tabs
-                tabPosition={'left'}
+                tabPosition={isMobileView ? 'top' : 'left'}
                 items={service.options.map((item, index) => {
                     return {
                         label: serviceChecklist[index] ? <span className="_success" ><CheckCircleFilled />{item.title}</span> : <Tooltip title="Date and time is required"><span className="_danger"><WarningFilled />{item.title}</span></Tooltip>,
