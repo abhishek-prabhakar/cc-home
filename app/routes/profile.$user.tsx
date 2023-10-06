@@ -97,6 +97,7 @@ const ProfileLayout = {
             }
 
             setShowConfigPanel(false);
+            setSelectedAddons([]);
         }
 
         function removeAddon(id: string) {
