@@ -1,6 +1,6 @@
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
 import { Form } from "@remix-run/react";
-import { Alert, Button, Calendar, Card, Col, Divider, Radio, Row, Tabs, Typography } from "antd";
+import { Alert, Button, Calendar, Card, Col, Divider, Radio, Row, Tabs, Tooltip, Typography } from "antd";
 const { Title } = Typography;
 import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,14 +48,14 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
         }
     }
 
-    return <Card title="Configure">
+    return <Card title="Configure Services">
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
             <input className="hidden" {...register(`id`)} value={service.id} />
             <Tabs
                 tabPosition={'left'}
                 items={service.options.map((item, index) => {
                     return {
-                        label: <span>{serviceChecklist[index] ? <span className="_success" ><CheckCircleFilled /></span> : <span className="_danger"><WarningFilled /></span>}{item.title}</span>,
+                        label: serviceChecklist[index] ? <span className="_success" ><CheckCircleFilled />{item.title}</span> : <Tooltip title="Date and time is required"><span className="_danger"><WarningFilled />{item.title}</span></Tooltip>,
                         key: item.id,
                         children: <Row gutter={[30, 30]}>
                             <Col sm={24} md={12}>

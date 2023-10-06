@@ -3,5 +3,6 @@ import { redirect } from "@remix-run/node";
 export async function action({
     request,
 }: any) {
-    redirect('/order/success');
+    const id = 'CC124'
+    redirect('/order/success?id=' + id);
 }
