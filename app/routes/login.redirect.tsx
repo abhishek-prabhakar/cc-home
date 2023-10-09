@@ -4,10 +4,10 @@ import { createUserSession, logout } from "~/session.server";
 export const loader: LoaderFunction = async ({ request, params }) => {
     const url = new URL(request.url)
     const userToken = url.searchParams.get('id');
-    const redirectUrl = url.searchParams.get('redirect')
+    const redirectUrl = url.searchParams.get('redirect') || '/user/home';
     if (!userToken) {
         return redirect(redirectUrl || "/");
     }
 
-    return createUserSession({ request, userId: userToken, remember: true, redirectTo: '/user/home' });
+    return createUserSession({ request, userId: userToken, remember: true, redirectTo: redirectUrl });
 };
