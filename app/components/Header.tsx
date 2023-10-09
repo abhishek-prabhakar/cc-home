@@ -25,11 +25,8 @@ export function Header() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (data?.id) {
-            dispatch(setUser(data?.id))
-        }
-        // dispatch(setUser('my-user-id'))
-    }, []);
+        dispatch(setUser(data?.id));
+    }, [data]);
 
     function handleLocationMenuClick(data: any) {
         setCurrentLocation(locationList[data.key].label);

@@ -42,7 +42,7 @@ const Cart = {
                 <Col xs={24} md={8} lg={6}>
                     <Space direction="vertical" size={'middle'}>
                         <Cart.Summary />
-                        {user ? <Form action="order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                        {user ? <Form action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                     </Space>
                 </Col>
             </Row>
