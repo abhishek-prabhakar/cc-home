@@ -3,7 +3,7 @@ import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+// import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 
 type loaderData = VendorProfile & VendorPortfolio;
@@ -73,11 +73,12 @@ const ProfileHome = {
                 </Col>
             </Row>
             <div>
-                <ResponsiveMasonry columnsCountBreakPoints={{ 350: 2, 750: 3, 900: 3 }}>
+                {/* <ResponsiveMasonry columnsCountBreakPoints={{ 350: 2, 750: 3, 900: 3 }}>
                     <Masonry gutter="20px" columnsCount={3}>
                         {data.portfolio?.map((image, key) => <img src={image} key={'thumb' + key} />)}
                     </Masonry>
-                </ResponsiveMasonry>
+                </ResponsiveMasonry> */}
+
                 <div style={viewAllProjectsStyles}>
                     <Button size="large" shape="round" href={data.id + '/portfolio'} >
                         View all project
