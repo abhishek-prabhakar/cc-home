@@ -40,9 +40,9 @@ const Cart = {
                     <Cart.Preview />
                 </Col>
                 <Col xs={24} md={8} lg={6}>
-                    <Space direction="vertical" size={'middle'}>
+                    <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
                         <Cart.Summary />
-                        {user ? <Form action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                        {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                     </Space>
                 </Col>
             </Row>
