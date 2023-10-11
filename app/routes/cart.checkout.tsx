@@ -1,14 +1,15 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { LoaderArgs, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
-import { useEffect } from "react";
+import { Avatar, Button, Card, Col, Divider, Modal, Row, Space, Typography } from "antd";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import ConfigureBooking from "~/components/ConfigureBooking";
 import UserLogin from "~/components/UserLogin";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { CartActiveService, CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 
 type loaderData = CartItem[];
 export async function loader({ request }: LoaderArgs): Promise<loaderData> {
@@ -19,7 +20,7 @@ export async function loader({ request }: LoaderArgs): Promise<loaderData> {
     const vendor: VendorProfile = VendorQuery.getVendorById(data.serviceId)
     const service: VendorService = VendorQuery.getServiceById(data.serviceId);
 
-    const selectedList = data.service.map(x => ({ id: 'sdf', title: 'Wedding', duration: 3, date: new Date(), time: '12 PM' }));
+    const selectedList = data.service.map(x => ({ id: 'sdf', title: 'Wedding', duration: 3, date: new Date().toDateString(), time: '12 PM' }));
 
     return [{ vendor, service, selected: selectedList }];
 }
@@ -50,30 +51,43 @@ const Cart = {
     },
     Preview: () => {
         const data = useLoaderData<loaderData>();
+        const [editService, setEditService] = useState<{ id: string, services: CartActiveService[] }>();
 
-        return <Row gutter={[30, 30]}>
-            <Col sm={24} xs={24} md={8}>
-                {data?.map(item => <Card
-                    key={item.vendor.id}
-                    cover={
-                        <img
-                            alt="example"
-                            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        function openEdtServiceDialog(id: string, services: CartActiveService[]) {
+            setEditService({ id, services });
+        }
+
+        return <>
+            <Row gutter={[30, 30]}>
+                <Col sm={24} xs={24} md={8}>
+                    {data?.map(item => <Card
+                        key={item.vendor.id}
+                        cover={
+                            <img
+                                alt="example"
+                                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                            />
+                        }
+                        actions={[
+                            <DeleteOutlined key="remove" />,
+                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog(item.service.id, item.selected)} />,
+                        ]}
+                    >
+                        <Card.Meta
+                            avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
+                            title={item.service.title}
+                            description="This is the description"
                         />
-                    }
-                    actions={[
-                        <DeleteOutlined key="remove" />,
-                        <EditOutlined key="edit" />,
-                    ]}
-                >
-                    <Card.Meta
-                        avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
-                        title={item.service.title}
-                        description="This is the description"
-                    />
-                </Card>)}
-            </Col>
-        </Row>
+                    </Card>)}
+                </Col>
+            </Row>
+            {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
+        </>
+    },
+    Edit: (params: { serviceId: string, services: CartActiveService[], onClose: Function }) => {
+        return <Modal open={true} width={'1000px'} footer={null} afterClose={() => params.onClose()}>
+            <ConfigureBooking id={params.serviceId} options={params.services} />
+        </Modal>
     },
     Summary: () => {
         const data = useLoaderData<loaderData>();

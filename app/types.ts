@@ -71,7 +71,7 @@ export enum OrderStatus {
     CANCELLED = 'CANCELLED'
 }
 
-type CartActiveService = VendorServiceOption & { date: Date, time: string };
+export type CartActiveService = VendorServiceOption & { date: string, time: string };
 export type CartItem = { vendor: VendorProfile, service: VendorService, selected: CartActiveService[] };
 
 export type CartInput = {
