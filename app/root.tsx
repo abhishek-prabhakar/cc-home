@@ -55,6 +55,8 @@ export async function loader({ request }: LoaderArgs): Promise<any | User | null
       name: ''
     }
   }
+
+  return null;
 }
 
 export default function App() {
