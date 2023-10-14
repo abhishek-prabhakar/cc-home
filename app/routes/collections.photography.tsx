@@ -149,7 +149,7 @@ export default function PhotographyPage() {
                     <Col sm={24} xs={24} md={16} lg={18}>
                         <Space direction="vertical" size={'large'}>
                             <Content>
-                                <Title>Photographers in Bengalore</Title>
+                                <Title>Photographers in Banglore</Title>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                             </Content>
                             <SortResultsPanel />
