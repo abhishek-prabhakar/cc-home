@@ -1,17 +1,19 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Button, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Space, Typography, theme } from 'antd';
+import { Button, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Space, Tag, Typography, theme } from 'antd';
 import { Banner } from "~/components/Banner";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
 const sortPanelStyles: React.CSSProperties = { background: 'var(--ui-color-accent)', padding: '10px 20px' }
 
 const itemStyles: React.CSSProperties = {};
-const itemThumbStyles: React.CSSProperties = { padding: '5px' }
+const itemThumbStyles: React.CSSProperties = { padding: '0 40px', marginBottom: '-50px' }
 const itemDataStyles: React.CSSProperties = { padding: '15px' };
-const itemDataThumbSetStyles: React.CSSProperties = { padding: '5px', };
+const itemDataItemStyles: React.CSSProperties = { padding: '5px', };
+const itemDataThumbSetStyles: React.CSSProperties = { width: '100%', height: '150px', objectFit: 'cover', cursor: 'pointer' };
 const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirection: 'column', justifyContent: 'space-between', height: '100%', background: '#f3f3f3', borderRadius: '10px', padding: '20px' };
 
 
@@ -21,6 +23,34 @@ export const meta: V2_MetaFunction = () => {
         { name: "description", content: "Welcome to Remix!" },
     ];
 };
+
+type loaderData = {
+    results: {
+        id: string,
+        name: string,
+        portfolio: string[],
+        rating: number,
+        tag?: string
+    }[]
+};
+
+export function loader({ params }: LoaderArgs): loaderData {
+
+    return {
+        results: [{
+            id: '123',
+            name: 'Mahesh Dalle',
+            portfolio: ['https://image.wedmegood.com/resized/1000X/uploads/member/435783/1696398061_279133354_1698789133795002_7258127304642091112_n.jpg?crop=12,206,1063,598',
+                'https://image.wedmegood.com/resized/1000X/uploads/project/218134/1664817582_DSC_5042.JPG',
+                'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168034_RAJ_3791_Edit.JPG',
+                'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
+            ],
+            rating: 4.2,
+            tag: 'Value of money'
+        }]
+    }
+
+}
 
 const items: CollapseProps['items'] = [
     {
@@ -52,42 +82,46 @@ const SortResultsPanel = () => {
 }
 
 const Results = () => {
-    const list: { id: string, name: string, imgSet: string[] }[] = new Array(3).fill({ id: 'jessica', name: 'Jessica', imgSet: [1, 2, 3, 4] });
+    const data = useLoaderData<loaderData>();
 
     return <Row gutter={[40, 40]}>
-        {list.map((item, key) => <Col span={24} key={'profile' + key}>
+        {data.results?.map(item => <Col span={24} key={'profile' + item.id}>
             <div style={itemStyles}>
-                <Row gutter={20}>
-                    <Col span={5}>
-                        <div style={itemThumbStyles}>
+                <div style={itemThumbStyles}>
+                    <Row justify={'end'}>
+                        <Col xs={6} sm={6} md={3} lg={3}>
                             <img width={'100%'} style={{ borderRadius: '50%' }} src="https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp" />
-                        </div>
-                    </Col>
-                    <Col span={19}>
-                        <div style={itemDataWapperStyles}>
-                            <div style={itemDataStyles}>
-                                <Title level={3}>Jessica</Title>
-                                <Row justify={'space-between'}>
-                                    <Col>
-                                        <Rate allowHalf defaultValue={2.5} />
-                                    </Col>
-                                    <Col>
-                                        <Button type="primary" shape="round" href={'/profile/' + item.id} >
-                                            View Profile
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </div>
-                            <Row >
-                                {item.imgSet.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
-                                    <div style={itemDataThumbSetStyles}>
-                                        <img width={'100%'} src="https://homely-themes.myshopify.com/cdn/shop/files/13-02.jpg?v=1691401206&width=533" alt={imgThumb} />
-                                    </div>
-                                </Col>)}
-                            </Row>
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                </div>
+                <div style={itemDataWapperStyles}>
+                    <div style={itemDataStyles}>
+                        <Space size={'middle'}>
+                            <Title level={3}>{item.name}</Title>
+                            {item.tag && <Tag color="green">{item.tag}</Tag>}
+                        </Space>
+                        <Row justify={'space-between'} gutter={[20, 20]}>
+                            <Col>
+                                <Rate allowHalf defaultValue={2.5} /> 4.8 <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
+                            </Col>
+                            <Col>
+                                <Button type="primary" shape="round" href={'/profile/' + item.id} >
+                                    View Profile
+                                </Button>
+                            </Col>
+                        </Row>
+                    </div>
+                    <PhotoProvider>
+                        <Row >
+                            {item.portfolio.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
+                                <PhotoView src={imgThumb}><div style={itemDataItemStyles}>
+                                    <img style={itemDataThumbSetStyles} src={imgThumb} alt={imgThumb} />
+                                </div>
+                                </PhotoView>
+                            </Col>)}
+                        </Row>
+                    </PhotoProvider>
+                </div>
             </div >
         </Col >)}
     </Row >
@@ -115,7 +149,7 @@ export default function PhotographyPage() {
                     <Col sm={24} xs={24} md={16} lg={18}>
                         <Space direction="vertical" size={'large'}>
                             <Content>
-                                <Title>PRODUCTS</Title>
+                                <Title>Photographers in Bengalore</Title>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                             </Content>
                             <SortResultsPanel />

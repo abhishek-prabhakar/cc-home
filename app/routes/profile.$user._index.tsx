@@ -4,6 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
+import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 
 type loaderData = VendorProfile & VendorPortfolio;
@@ -73,18 +74,20 @@ const ProfileHome = {
                 </Col>
             </Row>
             <div>
-                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
-                    {data.portfolio?.map((image, key) => <img src={image} key={'thumb' + key} />)}
-                </Masonry>
+                <PhotoProvider>
+                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
+                        {data.portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
+                            <img src={image} className="cursor-pointer" />
+                        </PhotoView>)}
+                    </Masonry>
+                </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
                     <Button size="large" shape="round" href={data.id + '/portfolio'} >
                         View all project
                     </Button>
                 </div>
             </div>
-        </Space>
-
-            ;
+        </Space>;
     },
     Testimonials: () => {
         return <div className="container">

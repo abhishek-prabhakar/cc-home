@@ -12,6 +12,7 @@ import {
 import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
 import antdStyles from '~/antd.css';
+import carouselStyles from 'react-photo-view/dist/react-photo-view.css';
 import { Layout } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
@@ -26,7 +27,8 @@ import store from './store/store';
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles }, { rel: "stylesheet", href: cssTransitions }, { rel: "stylesheet", href: antdStyles },
-  { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/antd/4.4.3/antd.css" }
+  { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/antd/4.4.3/antd.css" },
+  { rel: 'stylesheet', href: carouselStyles }
 ];
 
 
