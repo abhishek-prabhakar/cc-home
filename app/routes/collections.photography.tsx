@@ -13,7 +13,7 @@ const itemStyles: React.CSSProperties = {};
 const itemThumbStyles: React.CSSProperties = { padding: '0 40px', marginBottom: '-50px' }
 const itemDataStyles: React.CSSProperties = { padding: '15px' };
 const itemDataItemStyles: React.CSSProperties = { padding: '5px', };
-const itemDataThumbSetStyles: React.CSSProperties = { width: '100%', height: '150px', objectFit: 'cover', cursor: 'pointer' };
+const itemDataThumbSetStyles: React.CSSProperties = { width: '100%', height: '150px', objectFit: 'cover', cursor: 'pointer', borderRadius: '4px' };
 const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirection: 'column', justifyContent: 'space-between', height: '100%', background: '#f3f3f3', borderRadius: '10px', padding: '20px' };
 
 
