@@ -53,16 +53,18 @@ const AppNavigation = {
 
         function dropdownContent(item: MenuItem) {
 
-            return <div>
-                <Row gutter={[20, 20]}>
+            return <div style={{ margin: '-20px -24px' }}>
+                <Row gutter={[40, 40]}>
                     <Col span={8}>
-                        <img src="http://1.bp.blogspot.com/-xWlHs4y6IVk/U3lLsj5LXQI/AAAAAAAADS8/8Fx0eclSadg/s1600/c96f3c66ab2f483ca073adfb47dc8b44.jpg" width={'100%'} />
+                        <img src="http://1.bp.blogspot.com/-xWlHs4y6IVk/U3lLsj5LXQI/AAAAAAAADS8/8Fx0eclSadg/s1600/c96f3c66ab2f483ca073adfb47dc8b44.jpg" style={{ borderRadius: '4px' }} width={'100%'} />
                     </Col>
                     <Col span={16}>
-                        <Space direction="vertical">
-                            <Typography.Text color="primary" underline strong>Popular</Typography.Text>
-                            {item.children?.map(menuItem => <Link to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
-                        </Space>
+                        <div style={{ padding: '40px 0' }}>
+                            <Space direction="vertical">
+                                <Typography.Text color="primary" strong>Popular</Typography.Text>
+                                {item.children?.map(menuItem => <Link to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
+                            </Space>
+                        </div>
                     </Col>
                 </Row>
             </div>
