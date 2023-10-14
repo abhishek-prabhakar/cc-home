@@ -102,7 +102,7 @@ const Results = () => {
                         </Space>
                         <Row justify={'space-between'} gutter={[20, 20]}>
                             <Col>
-                                <Rate allowHalf defaultValue={2.5} /> 4.8 <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
+                                <Rate allowHalf disabled defaultValue={item.rating} /> {item.rating} <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
                             </Col>
                             <Col>
                                 <Button type="primary" shape="round" href={'/profile/' + item.id} >

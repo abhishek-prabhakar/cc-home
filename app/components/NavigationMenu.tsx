@@ -1,11 +1,11 @@
 import { DownOutlined, GlobalOutlined, MenuOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Drawer, Dropdown, Input, Menu, MenuProps, Row, Space, Typography } from "antd";
+import { Button, Col, Divider, Drawer, Dropdown, Input, Menu, MenuProps, Popover, Row, Space, Typography } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 import axios from "axios";
 import { useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -24,8 +24,12 @@ const menuList: MenuItem[] = [{
     label: 'Photography',
     children: [
         {
-            key: '1',
-            label: 'item',
+            key: 'pre-wedding',
+            label: 'Pre Wedding',
+        },
+        {
+            key: 'wedding',
+            label: 'Wedding',
         },
     ]
 },
@@ -34,38 +38,46 @@ const menuList: MenuItem[] = [{
     label: 'Collections',
     children: [
         {
-            key: '1',
-            label: 'item',
+            key: 'photography',
+            label: 'Photography',
+        },
+        {
+            key: 'makeup',
+            label: 'Makeup',
         },
     ]
 }];
 
-function getDrawerItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group',
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    } as MenuItem;
-}
-
 const AppNavigation = {
-    MainMenu: () => <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.key} ><Dropdown menu={{ items: item.children }}>
-        <a className="header-nav-item-text" onClick={(e) => e.preventDefault()}>
-            <Space size={'small'} direction="horizontal">
-                <span>{item.label}</span>
-                <DownOutlined />
-            </Space>
-        </a>
-    </Dropdown></Col>
-    )}</Row>,
+    MainMenu: () => {
+
+        function dropdownContent(item: MenuItem) {
+
+            return <div>
+                <Row gutter={[20, 20]}>
+                    <Col span={8}>
+                        <img src="http://1.bp.blogspot.com/-xWlHs4y6IVk/U3lLsj5LXQI/AAAAAAAADS8/8Fx0eclSadg/s1600/c96f3c66ab2f483ca073adfb47dc8b44.jpg" width={'100%'} />
+                    </Col>
+                    <Col span={16}>
+                        <Space direction="vertical">
+                            <Typography.Text color="primary" underline strong>Popular</Typography.Text>
+                            {item.children?.map(menuItem => <Link to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
+                        </Space>
+                    </Col>
+                </Row>
+            </div>
+        }
+
+        return <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.key} >
+            <Popover content={dropdownContent(item)} placement="bottom">
+                <Space className="header-nav-item-text" size={'small'} direction="horizontal">
+                    <span>{item.label}</span>
+                    <DownOutlined />
+                </Space>
+            </Popover>
+        </Col>
+        )}</Row>;
+    },
     Drawer: () => {
         const [openDrawer, setDrawerState] = useState(false);
         const [openKeys, setOpenKeys] = useState(['sub1']);
