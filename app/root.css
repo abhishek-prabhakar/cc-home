@@ -77,8 +77,10 @@ body {
 }
 
 .filters-section-wrapper{
-    border:  1px solid var(--ui-color-black) ;
+    border:  1px solid #d6d6d6 ;
+    border-radius: 4px;
     background: var(--ui-color-accent) !important;
+    overflow: hidden;
 }
 .filters-section-wrapper .section-title{
     padding: 15px;
