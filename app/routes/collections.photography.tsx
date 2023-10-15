@@ -1,13 +1,13 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Button, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Space, Tag, Typography, theme } from 'antd';
+import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Slider, Space, Tag, Typography, theme } from 'antd';
 import { Banner } from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
-const sortPanelStyles: React.CSSProperties = { background: 'var(--ui-color-accent)', padding: '10px 20px' }
+const sortPanelStyles: React.CSSProperties = { background: 'var(--ui-color-accent)', padding: '10px 20px', borderRadius: '4px' }
 
 const itemStyles: React.CSSProperties = {};
 const itemThumbStyles: React.CSSProperties = { padding: '0 40px', marginBottom: '-50px' }
@@ -52,16 +52,54 @@ export function loader({ params }: LoaderArgs): loaderData {
 
 }
 
+const budgetMarks = {
+    10: {
+        label: '10k', style: {
+            color: ' #8f8f8f',
+            fontSize: '12px'
+        }
+    },
+    20: {
+        label: '25k', style: {
+            color: ' #8f8f8f',
+            fontSize: '12px'
+        }
+    },
+    50: {
+        label: '50k', style: {
+            color: ' #8f8f8f',
+            fontSize: '12px'
+        }
+    },
+    80: {
+        label: '80k',
+        style: {
+            color: ' #8f8f8f',
+            fontSize: '12px'
+        }
+    },
+    100: {
+        label: 'upto 100k',
+        style: {
+            color: ' #8f8f8f',
+            fontSize: '12px'
+        }
+    },
+};
+
 const items: CollapseProps['items'] = [
     {
         key: '1',
-        label: 'Occassion',
-        children: <p>My filters</p>,
+        label: <><Typography.Text strong>Occassion</Typography.Text> <Badge count={5} color='#faad14' /></>,
+        children: <Space direction="vertical">
+            <Checkbox>Wedding</Checkbox>
+            <Checkbox>Wedding 2</Checkbox>
+        </Space>,
     },
     {
         key: '2',
-        label: 'Budget',
-        children: <p>My filters</p>,
+        label: <Typography.Text strong>Budget</Typography.Text>,
+        children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
     },
     {
         key: '3',
@@ -140,7 +178,7 @@ export default function PhotographyPage() {
                         </div>
                     </Col>
                     <Col sm={0} xs={0} md={8} lg={6}>
-                        <div className="filters-section-wrapper"
+                        <div className="filters-section-wrapper _sticky-top"
                         >
                             <div className="section-title">Filter:</div>
                             <Collapse defaultActiveKey={['1']} ghost items={items} />
