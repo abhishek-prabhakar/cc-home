@@ -1,8 +1,8 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Slider, Space, Tag, Typography, theme } from 'antd';
-import { Banner } from "~/components/Banner";
+import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Slider, Space, Tag, Typography, theme } from 'antd';
+import { Banner, BannerVertical } from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -39,7 +39,7 @@ export function loader({ params }: LoaderArgs): loaderData {
     return {
         results: [{
             id: '123',
-            name: 'Mahesh Dalle',
+            name: 'mahesh3113',
             portfolio: ['https://image.wedmegood.com/resized/1000X/uploads/member/435783/1696398061_279133354_1698789133795002_7258127304642091112_n.jpg?crop=12,206,1063,598',
                 'https://image.wedmegood.com/resized/1000X/uploads/project/218134/1664817582_DSC_5042.JPG',
                 'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168034_RAJ_3791_Edit.JPG',
@@ -113,8 +113,18 @@ const items: CollapseProps['items'] = [
 const SortResultsPanel = () => {
 
     return <div style={sortPanelStyles}>
-        <Row justify={'space-between'}>
+        <Row align={'middle'}>
             <Col>Sort By: </Col>
+            <Col>
+                <Select
+                    defaultValue="0"
+                    bordered={false}
+                    options={[
+                        { value: '0', label: 'Price' },
+                        { value: '1', label: 'Rating' },
+                    ]}
+                />
+            </Col>
         </Row>
     </div>
 }
@@ -128,14 +138,14 @@ const Results = () => {
                 <div style={itemThumbStyles}>
                     <Row justify={'end'}>
                         <Col xs={6} sm={6} md={3} lg={3}>
-                            <img width={'100%'} style={{ borderRadius: '50%' }} src="https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp" />
+                            <img width={'100%'} style={{ borderRadius: '50%' }} src="/assets/user-avatar.jpg" />
                         </Col>
                     </Row>
                 </div>
                 <div style={itemDataWapperStyles}>
                     <div style={itemDataStyles}>
                         <Space size={'middle'}>
-                            <Title level={3}>{item.name}</Title>
+                            <Title level={3}>@{item.name}</Title>
                             {item.tag && <Tag color="green">{item.tag}</Tag>}
                         </Space>
                         <Row justify={'space-between'} gutter={[20, 20]}>
