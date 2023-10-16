@@ -46,7 +46,7 @@ export function loader({ params }: LoaderArgs): loaderData {
                 'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
             ],
             rating: 4.2,
-            tag: 'Value of money'
+            tag: 'Value for money'
         }]
     }
 
