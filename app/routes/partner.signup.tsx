@@ -1,6 +1,6 @@
 import { FundOutlined } from "@ant-design/icons";
 import { LoaderArgs, V2_MetaFunction } from "@remix-run/node"
-import { Button, Col, Row, Space, Typography } from "antd";
+import { Button, Col, Image, Row, Space, Typography } from "antd";
 
 export async function loader({ params }: LoaderArgs) {
 
@@ -46,7 +46,7 @@ const PartnerSignup = {
     </div>,
     Counter: () => {
         return <div style={{ padding: '50px 0' }}>
-            <Row justify={'space-around'} gutter={[40, 40]}>
+            <Row justify={'center'} gutter={[100, 40]}>
                 <Col>
                     <Typography.Title>50+</Typography.Title>
                     <Typography.Title level={4}>Members</Typography.Title>
@@ -64,6 +64,8 @@ const PartnerSignup = {
     },
     Intro: () => {
         return <Row justify={'center'}>
+            <Col span={6}><div className="line"></div></Col>
+            <Col span={24}></Col>
             <Col className="_text-center" xs={24} sm={24} md={20} lg={16}>
                 <div style={{ padding: '50px 0' }}>
                     <Typography.Title level={2}> Lorem ipsum dolor sit amet</Typography.Title>
@@ -79,7 +81,7 @@ const PartnerSignup = {
         return <div className="_rounded" style={{ background: '#f8f8f8', padding: '20px' }}>
             <Row justify={'center'} align={'middle'} gutter={[100, 40]}>
                 <Col xs={24} sm={24} md={12}>
-                    <img src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg" className="_rounded" width={'100%'} />
+                    <Image src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg" className="_rounded" width={'100%'} />
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                     <Typography.Title level={2}>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Typography.Title>
