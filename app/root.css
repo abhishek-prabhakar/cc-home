@@ -107,6 +107,9 @@ body {
     color:red;
 }
 
+._rounded{
+    border-radius: 20px;
+}
 
 .masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */

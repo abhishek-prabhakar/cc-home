@@ -25,8 +25,10 @@ const UserLogin = {
         function startUserLogin(params: any) {
             setBusy(true);
             UserService.Login({ phone: params.phone }).then(r => {
-                toggleVerifyUserDialog(true);
-                setUsername(params.phone);
+                if (r.data.success) {
+                    toggleVerifyUserDialog(true);
+                    setUsername(params.phone);
+                }
                 setBusy(false);
             }).catch(e => {
                 setBusy(false);
@@ -37,7 +39,7 @@ const UserLogin = {
             <Title level={5}>{title}</Title>
             <Row justify={'end'} gutter={[10, 10]}>
                 <Col span={24}>
-                    <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." {...field} />} />
+                    <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." required {...field} />} />
                 </Col>
                 <Col span={24}><Button block type="primary" htmlType="submit" loading={isBusy}>Login</Button></Col>
             </Row>

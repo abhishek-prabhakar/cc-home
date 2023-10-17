@@ -74,7 +74,7 @@ export function Header() {
                                             <div style={menuArtisantStyle}>
                                                 <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
                                                     <Title level={3}>Artisan?</Title>
-                                                    <Button>Signup</Button>
+                                                    <Link to="/partner/signup"><Button>Signup</Button></Link>
                                                 </Space>
                                             </div>
                                         </div>

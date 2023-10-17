@@ -5,7 +5,8 @@ import axios from "axios";
 import { useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useNavigate } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -62,7 +63,7 @@ const AppNavigation = {
                         <div style={{ padding: '40px 0' }}>
                             <Space direction="vertical">
                                 <Typography.Text color="primary" strong>Popular</Typography.Text>
-                                {item.children?.map(menuItem => <Link to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
+                                {item.children?.map(menuItem => <Link key={item.key + menuItem.key} to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
                             </Space>
                         </div>
                     </Col>
@@ -81,12 +82,13 @@ const AppNavigation = {
         )}</Row>;
     },
     Drawer: () => {
+        const navigate = useNavigate();
         const [openDrawer, setDrawerState] = useState(false);
         const [openKeys, setOpenKeys] = useState(['sub1']);
         const rootSubmenuKeys = menuList.reduce((acc, item) => {
             acc.push(item.key);
             return acc;
-        }, [] as string[])
+        }, [] as string[]);
 
         const onOpenChange: MenuProps['onOpenChange'] = (keys) => {
             const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -96,6 +98,12 @@ const AppNavigation = {
                 setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
             }
         };
+
+        function navigateToPage(event: any) {
+            const path = event?.keyPath.reverse().join('/');
+            navigate(`/${path}`);
+            toggleDrawer();
+        }
 
         function toggleDrawer() {
             setDrawerState(!openDrawer);
@@ -113,6 +121,7 @@ const AppNavigation = {
                     mode="inline"
                     openKeys={openKeys}
                     onOpenChange={onOpenChange}
+                    onClick={navigateToPage}
                     items={menuList}
                 />
                 <Divider />
@@ -121,7 +130,7 @@ const AppNavigation = {
                     <div style={menuArtisantStyle}>
                         <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
                             <Title level={3}>Artisan?</Title>
-                            <Button>Signup</Button>
+                            <Link to="/partner/signup" onClick={() => toggleDrawer()}><Button>Signup</Button></Link>
                         </Space>
                     </div>
                     <Menu
