@@ -78,7 +78,7 @@ export default function App() {
             <Layout.Header style={headerStyle}>
               <Header />
             </Layout.Header>
-            <Content style={{ paddingTop: '40px' }}>
+            <Content style={{ paddingTop: '40px', overflow: 'hidden' }}>
               <Outlet />
             </Content>
             <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
