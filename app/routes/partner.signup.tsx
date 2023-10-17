@@ -25,6 +25,7 @@ const PartnerSignup = {
             <Space direction="vertical" size={'large'}>
                 <PartnerSignup.Jumbotron />
                 <PartnerSignup.Counter />
+                <PartnerSignup.Intro />
                 <PartnerSignup.Features />
             </Space>
         </div>
@@ -37,14 +38,15 @@ const PartnerSignup = {
                     <Typography.Title level={3}>
                         Become a part of a community with more than 50,000 service professionals
                     </Typography.Title>
+                    <br /><br />
                     <Button type="primary" size="large" color="white">Join Us</Button>
                 </Space>
             </Col>
         </Row>
     </div>,
     Counter: () => {
-        return <div style={{ padding: '100px 0' }}>
-            <Row justify={'center'} gutter={[40, 40]}>
+        return <div style={{ padding: '50px 0' }}>
+            <Row justify={'space-around'} gutter={[40, 40]}>
                 <Col>
                     <Typography.Title>50+</Typography.Title>
                     <Typography.Title level={4}>Members</Typography.Title>
@@ -60,9 +62,22 @@ const PartnerSignup = {
             </Row>
         </div>
     },
+    Intro: () => {
+        return <Row justify={'center'}>
+            <Col className="_text-center" xs={24} sm={24} md={20} lg={16}>
+                <div style={{ padding: '50px 0' }}>
+                    <Typography.Title level={2}> Lorem ipsum dolor sit amet</Typography.Title>
+                    <Typography.Text type="secondary">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                    </Typography.Text>
+                </div>
+            </Col>
+        </Row>
+    },
     Features: () => {
         return <div className="_rounded" style={{ background: '#f8f8f8', padding: '20px' }}>
-            <Row justify={'center'} align={'middle'} gutter={[100, 0]}>
+            <Row justify={'center'} align={'middle'} gutter={[100, 40]}>
                 <Col xs={24} sm={24} md={12}>
                     <img src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg" className="_rounded" width={'100%'} />
                 </Col>

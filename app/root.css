@@ -110,6 +110,9 @@ body {
 ._rounded{
     border-radius: 20px;
 }
+._text-center{
+    text-align: center;
+}
 
 .masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */
