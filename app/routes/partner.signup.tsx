@@ -81,7 +81,7 @@ const PartnerSignup = {
         return <div className="_rounded" style={{ background: '#f8f8f8', padding: '20px' }}>
             <Row justify={'center'} align={'middle'} gutter={[100, 40]}>
                 <Col xs={24} sm={24} md={12}>
-                    <Image src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg" className="_rounded" width={'100%'} />
+                    <Image src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg" className="_rounded" width={'100%'} preview={false} />
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                     <Typography.Title level={2}>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Typography.Title>
