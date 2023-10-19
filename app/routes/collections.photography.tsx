@@ -1,5 +1,5 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Slider, Space, Tag, Typography, theme } from 'antd';
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -131,6 +131,7 @@ const SortResultsPanel = () => {
 
 const Results = () => {
     const data = useLoaderData<loaderData>();
+    const navigate = useNavigate();
 
     return <Row gutter={[40, 40]}>
         {data.results?.map(item => <Col span={24} key={'profile' + item.id}>
@@ -153,7 +154,7 @@ const Results = () => {
                                 <Rate allowHalf disabled defaultValue={item.rating} /> {item.rating} <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
                             </Col>
                             <Col>
-                                <Button type="primary" shape="round" href={'/profile/' + item.id} >
+                                <Button type="primary" shape="round" onClick={() => navigate('/profile/' + item.id)} >
                                     View Profile
                                 </Button>
                             </Col>

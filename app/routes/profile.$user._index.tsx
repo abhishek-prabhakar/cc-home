@@ -1,6 +1,6 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
@@ -62,13 +62,14 @@ const ProfileHome = {
     },
     Gallery: () => {
         const data = useLoaderData<loaderData>();
+        const navigate = useNavigate();
 
         return <Space direction="vertical" size={'large'}>
             <Row justify={'space-between'} align={'middle'} gutter={[10, 20]}>
                 <Col span={24}><Title level={2}>Our amazing work</Title></Col>
                 <Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Col>
                 <Col>
-                    <Button type="primary" size="large" shape="round" href={data.id + '/portfolio'} >
+                    <Button type="primary" size="large" shape="round" onClick={() => navigate('/' + data.id + '/portfolio')} >
                         View all project
                     </Button>
                 </Col>
@@ -82,7 +83,7 @@ const ProfileHome = {
                     </Masonry>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
-                    <Button size="large" shape="round" href={data.id + '/portfolio'} >
+                    <Button size="large" shape="round" onClick={() => navigate('/' + data.id + '/portfolio')} >
                         View all project
                     </Button>
                 </div>
