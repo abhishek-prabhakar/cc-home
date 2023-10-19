@@ -1,9 +1,10 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Slider, Space, Tag, Typography, theme } from 'antd';
 import { Banner, BannerVertical } from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { useEffect, useState } from "react";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -87,29 +88,6 @@ const budgetMarks = {
     },
 };
 
-const items: CollapseProps['items'] = [
-    {
-        key: '1',
-        label: <><Typography.Text strong>Occassion</Typography.Text> <Badge count={5} color='#faad14' /></>,
-        children: <Space direction="vertical">
-            <Checkbox>Wedding</Checkbox>
-            <Checkbox>Wedding 2</Checkbox>
-        </Space>,
-    },
-    {
-        key: '2',
-        label: <Typography.Text strong>Budget</Typography.Text>,
-        children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
-    },
-    {
-        key: '3',
-        label: 'Filter 3',
-        children: <p>My filters</p>,
-    },
-];
-
-
-
 const SortResultsPanel = () => {
 
     return <div style={sortPanelStyles}>
@@ -129,84 +107,132 @@ const SortResultsPanel = () => {
     </div>
 }
 
-const Results = () => {
-    const data = useLoaderData<loaderData>();
-    const navigate = useNavigate();
 
-    return <Row gutter={[40, 40]}>
-        {data.results?.map(item => <Col span={24} key={'profile' + item.id}>
-            <div style={itemStyles}>
-                <div style={itemThumbStyles}>
-                    <Row justify={'end'}>
-                        <Col xs={6} sm={6} md={3} lg={3}>
-                            <img width={'100%'} style={{ borderRadius: '50%' }} src="/assets/user-avatar.jpg" />
-                        </Col>
-                    </Row>
+const Photography = {
+    Index: () => <div className="container">
+        <Space direction="vertical" size={'large'}>
+            <Banner />
+            <Row gutter={[40, 40]}>
+                <Photography.Filters />
+                <Col sm={24} xs={24} md={16} lg={18}>
+                    <Space direction="vertical" size={'large'}>
+                        <Content>
+                            <Title>Photographers in Banglore</Title>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        </Content>
+                        <SortResultsPanel />
+                        <Photography.Results />
+                    </Space>
+                </Col>
+            </Row>
+        </Space>
+    </div>,
+    Filters: () => {
+        const navigate = useNavigate();
+        const location = useLocation();
+        const [getCategory, setCategory] = useState<string[]>([]);
+
+        useEffect(() => {
+            const params = new URLSearchParams(location.search);
+            setCategory(params.get('category')?.split(',') || []);
+        }, []);
+
+        function toggleCategoryItem(checked: boolean, value: string) {
+            let list;
+            if (checked) {
+                list = [...getCategory, value];
+            } else {
+                list = [...getCategory.filter(x => x !== value)];
+            }
+
+            setCategory(list);
+
+            const params = new URLSearchParams(location.search);
+            params.set('category', list.join(','));
+            navigate(`${location.pathname}?${params.toString()}`);
+        }
+
+        const filterOptionsList: CollapseProps['items'] = [
+            {
+                key: '1',
+                label: <><Typography.Text strong>Occassion</Typography.Text> <Badge count={getCategory.length || 0} color='#faad14' /></>,
+                children: <Space direction="vertical">
+                    <Checkbox value={'w'} checked={getCategory.includes('w')} onChange={(e) => toggleCategoryItem(e?.target?.checked, e?.target?.value)}>Wedding</Checkbox>
+                </Space>,
+            },
+            {
+                key: '2',
+                label: <Typography.Text strong>Budget</Typography.Text>,
+                children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
+            },
+            {
+                key: '3',
+                label: 'Filter 3',
+                children: <p>My filters</p>,
+            },
+        ];
+
+        return <><Col sm={24} xs={24} md={0} lg={0} xl={0} xxl={0}>
+            <div className="filters-section-wrapper"
+            >
+                <div className="section-title">Filter:</div>
+            </div>
+        </Col>
+            <Col sm={0} xs={0} md={8} lg={6}>
+                <div className="filters-section-wrapper _sticky-top"
+                >
+                    <div className="section-title">Filter:</div>
+                    <Collapse defaultActiveKey={['1']} ghost items={filterOptionsList} />
                 </div>
-                <div style={itemDataWapperStyles}>
-                    <div style={itemDataStyles}>
-                        <Space size={'middle'}>
-                            <Title level={3}>@{item.name}</Title>
-                            {item.tag && <Tag color="green">{item.tag}</Tag>}
-                        </Space>
-                        <Row justify={'space-between'} gutter={[20, 20]}>
-                            <Col>
-                                <Rate allowHalf disabled defaultValue={item.rating} /> {item.rating} <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
-                            </Col>
-                            <Col>
-                                <Button type="primary" shape="round" onClick={() => navigate('/profile/' + item.id)} >
-                                    View Profile
-                                </Button>
+            </Col></>;
+    },
+    Results: () => {
+        const data = useLoaderData<loaderData>();
+        const navigate = useNavigate();
+
+        return <Row gutter={[40, 40]}>
+            {data.results?.map(item => <Col span={24} key={'profile' + item.id}>
+                <div style={itemStyles}>
+                    <div style={itemThumbStyles}>
+                        <Row justify={'end'}>
+                            <Col xs={6} sm={6} md={3} lg={3}>
+                                <img width={'100%'} style={{ borderRadius: '50%' }} src="/assets/user-avatar.jpg" />
                             </Col>
                         </Row>
                     </div>
-                    <PhotoProvider>
-                        <Row >
-                            {item.portfolio.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
-                                <PhotoView src={imgThumb}><div style={itemDataItemStyles}>
-                                    <img style={itemDataThumbSetStyles} src={imgThumb} alt={imgThumb} />
-                                </div>
-                                </PhotoView>
-                            </Col>)}
-                        </Row>
-                    </PhotoProvider>
-                </div>
-            </div >
-        </Col >)}
-    </Row >
+                    <div style={itemDataWapperStyles}>
+                        <div style={itemDataStyles}>
+                            <Space size={'middle'}>
+                                <Title level={3}>@{item.name}</Title>
+                                {item.tag && <Tag color="green">{item.tag}</Tag>}
+                            </Space>
+                            <Row justify={'space-between'} gutter={[20, 20]}>
+                                <Col>
+                                    <Rate allowHalf disabled defaultValue={item.rating} /> {item.rating} <Typography.Text type="secondary">(23 Reviews)</Typography.Text>
+                                </Col>
+                                <Col>
+                                    <Button type="primary" shape="round" onClick={() => navigate('/profile/' + item.id)} >
+                                        View Profile
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </div>
+                        <PhotoProvider>
+                            <Row >
+                                {item.portfolio.map((imgThumb, kj) => <Col span={6} key={'thumb' + kj}>
+                                    <PhotoView src={imgThumb}><div style={itemDataItemStyles}>
+                                        <img style={itemDataThumbSetStyles} src={imgThumb} alt={imgThumb} />
+                                    </div>
+                                    </PhotoView>
+                                </Col>)}
+                            </Row>
+                        </PhotoProvider>
+                    </div>
+                </div >
+            </Col >)}
+        </Row >
+    }
 }
 
-export default function PhotographyPage() {
-    return (
-        <div className="container">
-            <Space direction="vertical" size={'large'}>
-                <Banner />
-                <Row gutter={[40, 40]}>
-                    <Col sm={24} xs={24} md={0} lg={0} xl={0} xxl={0}>
-                        <div className="filters-section-wrapper"
-                        >
-                            <div className="section-title">Filter:</div>
-                        </div>
-                    </Col>
-                    <Col sm={0} xs={0} md={8} lg={6}>
-                        <div className="filters-section-wrapper _sticky-top"
-                        >
-                            <div className="section-title">Filter:</div>
-                            <Collapse defaultActiveKey={['1']} ghost items={items} />
-                        </div>
-                    </Col>
-                    <Col sm={24} xs={24} md={16} lg={18}>
-                        <Space direction="vertical" size={'large'}>
-                            <Content>
-                                <Title>Photographers in Banglore</Title>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            </Content>
-                            <SortResultsPanel />
-                            <Results />
-                        </Space>
-                    </Col>
-                </Row>
-            </Space>
-        </div>
-    );
-}
+
+export default Photography.Index;
