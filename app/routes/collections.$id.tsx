@@ -37,7 +37,7 @@ type Vendor = {
 };
 
 type Filter = {
-    category: serviceGroup[]
+    category: { id: string, name: string }[]
 }
 
 type loaderData = {
@@ -85,6 +85,10 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
         const category = await db.serviceGroup.findMany({
             orderBy: {
                 name: 'asc'
+            },
+            select: {
+                id: true,
+                name: true
             }
         })
         resolve({
@@ -248,7 +252,7 @@ const Photography = {
                     <div className="section-title">Filter:</div>
                     <Suspense fallback={<Skeleton active />}>
                         <Await resolve={data.filters}>
-                            {(filters: any) => <Collapse defaultActiveKey={['1']} ghost items={filterItems(filters)} />}
+                            {filters => <Collapse defaultActiveKey={['1']} ghost items={filterItems(filters)} />}
                         </Await>
                     </Suspense>
                 </div>
@@ -330,7 +334,7 @@ const Photography = {
                     </div >
                 </Col >)}
             </InfiniteScroll>
-        </Row>
+        </Row>;
     }
 }
 
