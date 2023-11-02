@@ -1,7 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-// MQFYil3WNlef2dv_AJE_pA
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,19 +8,127 @@ datasource db {
 }
 
 model User {
-  id           String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  username     String @db.String(10) @unique
- 
+  id        String     @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String?
+  username  String     @unique
+  email     String?
+  source    UserSource
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  Booking   Booking[]
+
   @@map("users")
 }
 
 model UserOtp {
-  id           String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  username     String @db.String(10) @unique
-  otpHash String  @map("otp_hash")
+  id        String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  username  String   @unique @db.String(10)
+  otpHash   String   @map("otp_hash")
 
   @@map("user_otp")
+}
+
+model Booking {
+  id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String           @db.Uuid
+  status         String
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  users          User             @relation(fields: [userId], references: [id])
+  BookingService BookingService[]
+}
+
+model BookingService {
+  id         String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId  String    @db.Uuid
+  vendorId   String    @db.Uuid
+  status     String
+  date       String
+  time       String
+  location   String
+  cost       String
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  Booking    Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model service {
+  id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String             @unique
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  serviceGroupItem serviceGroupItem[]
+  vendorServices   vendorServices[]
+}
+
+model serviceGroup {
+  id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  vendorTypeId     String             @db.Uuid
+  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  vendorType       vendorType         @relation(fields: [vendorTypeId], references: [id])
+  serviceGroupItem serviceGroupItem[]
+}
+
+model serviceGroupItem {
+  id           String       @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  groupId      String       @db.Uuid
+  serviceId    String       @db.Uuid
+  isOptional   Boolean      @default(false)
+  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
+  serviceGroup serviceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  service      service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model vendorServices {
+  id         String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vendorId   String    @db.Uuid
+  serviceId  String    @db.Uuid
+  duration   Int
+  cost       Int
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  service    service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendors    vendors   @relation(fields: [vendorId], references: [id])
+}
+
+model vendorType {
+  id           String         @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  created_at   DateTime?      @default(now()) @db.Timestamptz(6)
+  serviceGroup serviceGroup[]
+  vendors      vendors[]
+}
+
+model vendorfiles {
+  id         String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fileType   String
+  fileName   String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model vendors {
+  id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username       String           @unique
+  name           String
+  mobileNumber   String
+  email          String
+  categoryId     String           @db.Uuid
+  paymentMode    PaymentMode?
+  paymentDetails String?
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  vendorServices vendorServices[]
+  vendorType     vendorType       @relation(fields: [categoryId], references: [id])
+}
+
+enum PaymentMode {
+  NET_BANKING
+  UPI
+}
+
+enum UserSource {
+  ORGANIC
+  MANUAL
 }

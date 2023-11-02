@@ -6,7 +6,9 @@
     "dev": "remix dev",
     "start": "netlify serve",
     "typecheck": "tsc",
-    "migrate": "prisma migrate dev --name init"
+    "dbpull": "prisma db pull",
+    "format": "prisma format",
+    "migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.17.0",
@@ -27,6 +29,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-masonry-css": "^1.0.16",
     "react-photo-view": "^1.2.3",
     "react-redux": "^8.1.3",
