@@ -1,5 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction, LoaderArgs } from "@remix-run/node";
+import { defer, TypedDeferredData, type LinksFunction, type LoaderArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -17,7 +17,7 @@ import { Col, Layout, Row, Spin } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
-import { User } from "./types";
+import { RootLoaderData, User } from "./types";
 import { getSessionUserId } from "./session.server";
 import { db } from "./utils/database";
 const { Content } = Layout;
@@ -39,27 +39,51 @@ const headerStyle: React.CSSProperties = {
   backgroundColor: '#fff',
 };
 
-export async function loader({ request }: LoaderArgs): Promise<any | User | null> {
-  const userId = await getSessionUserId(request);
-  if (!userId) {
-    return null;
-  }
+type LoaderData = RootLoaderData;
 
-  const loggedInUser = await db.user.findFirst({
-    where: {
-      username: userId
+export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+
+  const user = new Promise<User | null>(async function (resolve) {
+    const userId = await getSessionUserId(request);
+    if (!userId) {
+      resolve(null);
+      return;
+    }
+
+    const loggedInUser = await db.user.findFirst({
+      where: {
+        username: userId
+      }
+    });
+
+    if (loggedInUser) {
+      resolve({
+        id: loggedInUser.id,
+        phone: +loggedInUser.username,
+        name: ''
+      });
     }
   });
 
-  if (loggedInUser) {
-    return {
-      id: loggedInUser.id,
-      phone: +loggedInUser.username,
-      name: ''
-    }
-  }
+  const pages = new Promise<{ id: string, name: string }[]>(async function (resolve) {
+    const list = await db.vendorType.findMany({
+      orderBy: {
+        name: 'asc'
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    });
 
-  return null;
+    resolve(list);
+  });
+
+
+  return defer({
+    user,
+    pages
+  });
 }
 
 export default function App() {

@@ -5,8 +5,9 @@ import axios from "axios";
 import { useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
-import { Form, Link, useNavigate } from "@remix-run/react";
+import { Await, Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
+import { RootLoaderData } from "~/types";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -20,37 +21,37 @@ type MenuItem = {
     children?: MenuItem[]
 }
 
-const menuList: MenuItem[] = [{
-    key: 'photography',
-    label: 'Photography',
-    children: [
-        {
-            key: 'pre-wedding',
-            label: 'Pre Wedding',
-        },
-        {
-            key: 'wedding',
-            label: 'Wedding',
-        },
-    ]
-},
-{
-    key: 'collections',
-    label: 'Collections',
-    children: [
-        {
-            key: 'photography',
-            label: 'Photography',
-        },
-        {
-            key: 'makeup',
-            label: 'Makeup',
-        },
-    ]
-}];
+function getPages(list: { id: string, name: string }[]) {
+    const menuList: MenuItem[] = [{
+        key: 'photography',
+        label: 'Photography',
+        children: [
+            {
+                key: 'pre-wedding',
+                label: 'Pre Wedding',
+            },
+            {
+                key: 'wedding',
+                label: 'Wedding',
+            },
+        ]
+    },
+    {
+        key: 'collections',
+        label: 'Collections',
+        children: list.map(x => ({
+            key: x.id,
+            label: x.name
+        }))
+    }];
+
+    return menuList;
+}
+
 
 const AppNavigation = {
     MainMenu: () => {
+        const data = useLoaderData<RootLoaderData>();
 
         function dropdownContent(item: MenuItem) {
 
@@ -71,24 +72,28 @@ const AppNavigation = {
             </div>
         }
 
-        return <Row justify={'center'} gutter={[20, 0]}>{menuList.map(item => <Col key={'menu-' + item.key} >
-            <Popover content={dropdownContent(item)} placement="bottom">
-                <Space className="header-nav-item-text" size={'small'} direction="horizontal">
-                    <span>{item.label}</span>
-                    <DownOutlined />
-                </Space>
-            </Popover>
-        </Col>
-        )}</Row>;
+        return <Await resolve={data.pages}>
+            {pageData => <Row justify={'center'} gutter={[20, 0]}>{getPages(pageData).map(item => <Col key={'menu-' + item.key} >
+                <Popover content={dropdownContent(item)} placement="bottom">
+                    <Space className="header-nav-item-text" size={'small'} direction="horizontal">
+                        <span>{item.label}</span>
+                        <DownOutlined />
+                    </Space>
+                </Popover>
+            </Col>
+            )}</Row>}
+        </Await>;
     },
     Drawer: () => {
+        const data = useLoaderData<RootLoaderData>();
         const navigate = useNavigate();
         const [openDrawer, setDrawerState] = useState(false);
         const [openKeys, setOpenKeys] = useState(['sub1']);
-        const rootSubmenuKeys = menuList.reduce((acc, item) => {
-            acc.push(item.key);
-            return acc;
-        }, [] as string[]);
+        // const rootSubmenuKeys = menuList.reduce((acc, item) => {
+        //     acc.push(item.key);
+        //     return acc;
+        // }, [] as string[]);
+        const rootSubmenuKeys: string[] = [];
 
         const onOpenChange: MenuProps['onOpenChange'] = (keys) => {
             const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -116,14 +121,16 @@ const AppNavigation = {
                 title="Browse"
                 onClose={() => toggleDrawer()}
                 open={openDrawer}>
-                <Menu
-                    style={{ width: 295, margin: '0 -24px 20px' }}
-                    mode="inline"
-                    openKeys={openKeys}
-                    onOpenChange={onOpenChange}
-                    onClick={navigateToPage}
-                    items={menuList}
-                />
+                <Await resolve={data.pages}>
+                    {pageData => <Menu
+                        style={{ width: 295, margin: '0 -24px 20px' }}
+                        mode="inline"
+                        openKeys={openKeys}
+                        onOpenChange={onOpenChange}
+                        onClick={navigateToPage}
+                        items={getPages(pageData)}
+                    />}
+                </Await>
                 <Divider />
                 <Space direction="vertical" size={"large"}>
                     <UserLogin onSuccess={() => toggleDrawer()} />

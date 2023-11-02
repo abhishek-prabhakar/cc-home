@@ -48,18 +48,27 @@ type loaderData = {
     filters: Filter
 };
 
-export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+export async function loader({ request, params }: LoaderArgs): Promise<TypedDeferredData<any>> {
+    const pageId = params.id;
+
     const url = new URL(request.url);
-    const params = url.searchParams;
-    const page = parseInt(params.get('page') || '') || 0;
+    const searchParams = url.searchParams;
+    const page = parseInt(searchParams.get('page') || '') || 0;
     const limit = 20;
-    const totalCount = await db.vendors.count();
+    const totalCount = await db.vendors.count({
+        where: {
+            categoryId: pageId
+        }
+    });
     const loadMore = (page * limit) + limit <= totalCount;
 
     const result = new Promise<Vendor[]>(async function (resolve) {
         const data = await db.vendors.findMany({
             skip: page * limit,
-            take: limit
+            take: limit,
+            where: {
+                categoryId: pageId
+            }
         });
 
 
@@ -89,6 +98,9 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
             select: {
                 id: true,
                 name: true
+            },
+            where: {
+                vendorTypeId: pageId
             }
         })
         resolve({
@@ -224,6 +236,7 @@ const Photography = {
                     label: <><Typography.Text strong>Occassion</Typography.Text> <Badge count={getCategory.length || 0} showZero={false} color='#faad14' /></>,
                     children: <Space direction="vertical">
                         {filters.category.map(item => <Checkbox value={item.id} checked={getCategory.includes(item.id)} onChange={(e) => toggleCategoryItem(e?.target?.checked, e?.target?.value)}>{item.name}</Checkbox>)}
+                        {!filters.category?.length && <div>Unavailable right now.</div>}
                     </Space>,
                 },
                 {

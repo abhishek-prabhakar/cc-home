@@ -1,3 +1,9 @@
+export type RootLoaderData = {
+    user: User | null,
+    pages: { id: string, name: string }[]
+}
+
+
 export type VendorProfile = {
     id: string,
     fullName: string,
