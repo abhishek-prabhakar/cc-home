@@ -103,6 +103,12 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
 
 
     const filters = new Promise<Filter>(async function (resolve) {
+        const categoryData = await db.vendorType.findFirstOrThrow({
+            where: {
+                keyName: pageId
+            }
+        });
+
         const category = await db.serviceGroup.findMany({
             orderBy: {
                 name: 'asc'
@@ -112,7 +118,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 name: true
             },
             where: {
-                vendorTypeId: pageId
+                vendorTypeId: categoryData.id
             }
         })
         resolve({
