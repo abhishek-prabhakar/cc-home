@@ -1,6 +1,6 @@
 export type RootLoaderData = {
     user: User | null,
-    pages: { id: string, name: string }[]
+    pages: { keyName: string, name: string }[]
 }
 
 

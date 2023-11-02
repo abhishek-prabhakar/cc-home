@@ -65,13 +65,13 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     }
   });
 
-  const pages = new Promise<{ id: string, name: string }[]>(async function (resolve) {
+  const pages = new Promise<{ keyName: string, name: string }[]>(async function (resolve) {
     const list = await db.vendorType.findMany({
       orderBy: {
         name: 'asc'
       },
       select: {
-        id: true,
+        keyName: true,
         name: true
       }
     });

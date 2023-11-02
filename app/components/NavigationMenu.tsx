@@ -21,7 +21,7 @@ type MenuItem = {
     children?: MenuItem[]
 }
 
-function getPages(list: { id: string, name: string }[]) {
+function getPages(list: { keyName: string, name: string }[]) {
     const menuList: MenuItem[] = [{
         key: 'photography',
         label: 'Photography',
@@ -40,7 +40,7 @@ function getPages(list: { id: string, name: string }[]) {
         key: 'collections',
         label: 'Collections',
         children: list.map(x => ({
-            key: x.id,
+            key: x.keyName,
             label: x.name
         }))
     }];

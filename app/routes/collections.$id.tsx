@@ -59,9 +59,15 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
 
 
     const result = new Promise<{ data: Vendor[], loadMore: boolean }>(async function (resolve) {
+        const categoryData = await db.vendorType.findFirstOrThrow({
+            where: {
+                keyName: pageId
+            }
+        });
+
         const totalCount = await db.vendors.count({
             where: {
-                categoryId: pageId
+                categoryId: categoryData.id
             }
         });
         const loadMore = (page * limit) + limit <= totalCount;
@@ -70,7 +76,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             skip: page * limit,
             take: limit,
             where: {
-                categoryId: pageId
+                categoryId: categoryData.id
             }
         });
 
