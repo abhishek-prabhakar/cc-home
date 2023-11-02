@@ -41,10 +41,11 @@ type Filter = {
 }
 
 type loaderData = {
-    total: number,
-    loadMore: boolean,
     page: number,
-    results: Vendor[],
+    result: {
+        data: Vendor[],
+        loadMore: boolean
+    },
     filters: Filter
 };
 
@@ -55,14 +56,16 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get('page') || '') || 0;
     const limit = 20;
-    const totalCount = await db.vendors.count({
-        where: {
-            categoryId: pageId
-        }
-    });
-    const loadMore = (page * limit) + limit <= totalCount;
 
-    const result = new Promise<Vendor[]>(async function (resolve) {
+
+    const result = new Promise<{ data: Vendor[], loadMore: boolean }>(async function (resolve) {
+        const totalCount = await db.vendors.count({
+            where: {
+                categoryId: pageId
+            }
+        });
+        const loadMore = (page * limit) + limit <= totalCount;
+
         const data = await db.vendors.findMany({
             skip: page * limit,
             take: limit,
@@ -80,13 +83,16 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
         ];
 
-        resolve(data.map(x => ({
-            id: x.username,
-            name: x.username,
-            portfolio,
-            rating,
-            tag
-        })))
+        resolve({
+            data: data.map(x => ({
+                id: x.username,
+                name: x.username,
+                portfolio,
+                rating,
+                tag
+            })),
+            loadMore
+        })
     });
 
 
@@ -111,9 +117,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
 
 
     return defer({
-        total: totalCount,
-        loadMore,
-        results: result,
+        result,
         filters,
         page
     });
@@ -192,8 +196,8 @@ const Photography = {
                             </Content>
                             <SortResultsPanel />
                             <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
-                                <Await resolve={data?.results}>
-                                    {vendors => <Photography.Results vendors={vendors} />}
+                                <Await resolve={data?.result}>
+                                    {response => <Photography.Results vendors={response.data} loadMore={response.loadMore} />}
                                 </Await>
                             </Suspense>
                         </Space>
@@ -272,12 +276,11 @@ const Photography = {
                 </div>
             </Col></>;
     },
-    Results: ({ vendors }: { vendors: Vendor[] }) => {
+    Results: ({ vendors, loadMore }: { vendors: Vendor[], loadMore: boolean }) => {
         const data = useLoaderData<loaderData>();
         const navigate = useNavigate();
         const location = useLocation();
         const [result, setResult] = useState<Vendor[]>([]);
-        const [loadMore, setLoadMore] = useState<boolean>(true);
 
         useEffect(() => {
             if (!vendors) {
@@ -285,7 +288,6 @@ const Photography = {
             }
 
             setResult(data.page === 0 ? vendors : result.concat(vendors));
-            setLoadMore(data.loadMore);
 
         }, [vendors]);
 
