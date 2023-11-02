@@ -213,6 +213,7 @@ const Photography = {
 
             const params = new URLSearchParams(location.search);
             params.set('category', list.join(','));
+            params.set('page', '0');
             navigate(`${location.pathname}?${params.toString()}`, { preventScrollReset: true });
         }
 
