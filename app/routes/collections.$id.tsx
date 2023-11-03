@@ -57,10 +57,12 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get('page') || '') || 0;
-    const categoryIds = searchParams.get('category')?.toString().split(',').filter(x => x);
+    let categoryIds = searchParams.get('category')?.toString()?.split(',').filter(x => x);
     const limit = 20;
 
-
+    if (!categoryIds?.length) {
+        categoryIds = undefined;
+    }
     const result = new Promise<{ data: Vendor[], loadMore: boolean }>(function (resolve) {
         db.vendorType.findFirstOrThrow({
             where: {
