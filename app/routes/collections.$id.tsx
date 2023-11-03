@@ -109,6 +109,11 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                             select: {
                                 service: true
                             },
+                            where: {
+                                serviceId: {
+                                    in: serviceIds
+                                },
+                            },
                             take: 5
                         }
                     },
