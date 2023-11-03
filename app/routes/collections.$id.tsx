@@ -8,6 +8,7 @@ import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { serviceGroup } from "@prisma/client";
+import { concat, forkJoin, of, switchMap } from "rxjs";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -58,75 +59,78 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     const limit = 20;
 
 
-    const result = new Promise<{ data: Vendor[], loadMore: boolean }>(async function (resolve) {
-        const categoryData = await db.vendorType.findFirstOrThrow({
+    const result = new Promise<{ data: Vendor[], loadMore: boolean }>(function (resolve) {
+        db.vendorType.findFirstOrThrow({
             where: {
                 keyName: pageId
             }
+        }).then(res => {
+            forkJoin({
+                count: db.vendors.count({
+                    where: {
+                        categoryId: res.id
+                    }
+                }),
+                data: db.vendors.findMany({
+                    skip: page * limit,
+                    take: limit,
+                    where: {
+                        categoryId: res.id
+                    }
+                })
+            }).subscribe(r => {
+                const rating = 4;
+                const tag = 'Popular';
+                const portfolio = ['https://image.wedmegood.com/resized/1000X/uploads/member/435783/1696398061_279133354_1698789133795002_7258127304642091112_n.jpg?crop=12,206,1063,598',
+                    'https://image.wedmegood.com/resized/1000X/uploads/project/218134/1664817582_DSC_5042.JPG',
+                    'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168034_RAJ_3791_Edit.JPG',
+                    'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
+                ];
+
+                const loadMore = (page * limit) + limit <= r.count;
+                resolve({
+                    data: r.data.map(x => ({
+                        id: x.username,
+                        name: x.username,
+                        portfolio,
+                        rating,
+                        tag
+                    })),
+                    loadMore
+                });
+            })
+
         });
-
-        const totalCount = await db.vendors.count({
-            where: {
-                categoryId: categoryData.id
-            }
-        });
-        const loadMore = (page * limit) + limit <= totalCount;
-
-        const data = await db.vendors.findMany({
-            skip: page * limit,
-            take: limit,
-            where: {
-                categoryId: categoryData.id
-            }
-        });
+    });
 
 
-        const rating = 4;
-        const tag = 'Popular';
-        const portfolio = ['https://image.wedmegood.com/resized/1000X/uploads/member/435783/1696398061_279133354_1698789133795002_7258127304642091112_n.jpg?crop=12,206,1063,598',
-            'https://image.wedmegood.com/resized/1000X/uploads/project/218134/1664817582_DSC_5042.JPG',
-            'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168034_RAJ_3791_Edit.JPG',
-            'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
-        ];
-
-        resolve({
-            data: data.map(x => ({
-                id: x.username,
-                name: x.username,
-                portfolio,
-                rating,
-                tag
+    const filters = new Promise<Filter>(function (resolve) {
+        of(true).pipe(
+            switchMap(_ => db.vendorType.findFirstOrThrow({
+                where: {
+                    keyName: pageId
+                }
             })),
-            loadMore
-        })
-    });
-
-
-    const filters = new Promise<Filter>(async function (resolve) {
-        const categoryData = await db.vendorType.findFirstOrThrow({
-            where: {
-                keyName: pageId
-            }
-        });
-
-        const category = await db.serviceGroup.findMany({
-            orderBy: {
-                name: 'asc'
-            },
-            select: {
-                id: true,
-                name: true
-            },
-            where: {
-                vendorTypeId: categoryData.id
-            }
-        })
-        resolve({
-            category
+            switchMap(res => {
+                return db.serviceGroup.findMany({
+                    orderBy: {
+                        name: 'asc'
+                    },
+                    select: {
+                        id: true,
+                        name: true
+                    },
+                    where: {
+                        vendorTypeId: res.id
+                    }
+                })
+            })
+        ).subscribe(res => {
+            resolve({
+                category: res
+            });
         });
     });
-
-
 
     return defer({
         result,
