@@ -413,7 +413,7 @@ const Photography = {
                                     </Col>)}
                                 </Row>
                             </PhotoProvider>
-                            <div style={{ padding: '20px 0' }}>
+                            <div style={{ padding: '20px 5px' }}>
                                 <Typography.Text strong>Services:</Typography.Text> {item.services.map(x => <Tag>{x}</Tag>)} & more.
                             </div>
                         </div>
