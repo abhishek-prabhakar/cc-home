@@ -34,7 +34,8 @@ type Vendor = {
     name: string,
     portfolio: string[],
     rating: number,
-    tag?: string
+    tag?: string,
+    services: string[]
 };
 
 type Filter = {
@@ -56,6 +57,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get('page') || '') || 0;
+    const categoryIds = searchParams.get('category')?.toString().split(',').filter(x => x);
     const limit = 20;
 
 
@@ -63,19 +65,60 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
         db.vendorType.findFirstOrThrow({
             where: {
                 keyName: pageId
+            },
+            select: {
+                id: true,
+                serviceGroup: {
+                    where: {
+                        id: {
+                            in: categoryIds
+                        }
+                    },
+                    include: {
+                        serviceGroupItem: true
+                    }
+                }
             }
         }).then(res => {
+            const serviceIds = res.serviceGroup.reduce<string[]>((array, x) => {
+                return array.concat(x.serviceGroupItem.map(y => y.serviceId))
+            }, []);
+
             forkJoin({
                 count: db.vendors.count({
                     where: {
-                        categoryId: res.id
+                        categoryId: res.id,
+                        vendorServices: {
+                            some: {
+                                serviceId: {
+                                    in: serviceIds
+                                }
+                            }
+                        }
                     }
                 }),
                 data: db.vendors.findMany({
                     skip: page * limit,
                     take: limit,
+                    select: {
+                        id: true,
+                        username: true,
+                        vendorServices: {
+                            select: {
+                                service: true
+                            },
+                            take: 5
+                        }
+                    },
                     where: {
-                        categoryId: res.id
+                        categoryId: res.id,
+                        vendorServices: {
+                            some: {
+                                serviceId: {
+                                    in: serviceIds
+                                }
+                            }
+                        }
                     }
                 })
             }).subscribe(r => {
@@ -94,7 +137,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         name: x.username,
                         portfolio,
                         rating,
-                        tag
+                        tag,
+                        services: x.vendorServices.map(x => x.service.name)
                     })),
                     loadMore
                 });
@@ -362,6 +406,9 @@ const Photography = {
                                     </Col>)}
                                 </Row>
                             </PhotoProvider>
+                            <div style={{ padding: '20px 0' }}>
+                                <Typography.Text strong>Services:</Typography.Text> {item.services.map(x => <Tag>{x}</Tag>)} & more.
+                            </div>
                         </div>
                     </div >
                 </Col >)}
