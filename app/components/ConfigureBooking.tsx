@@ -1,6 +1,6 @@
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
 import { Form } from "@remix-run/react";
-import { Alert, Button, Calendar, Card, Col, Divider, Radio, Row, Tabs, Tooltip, Typography } from "antd";
+import { Alert, Button, Calendar, Card, Checkbox, Col, Divider, Radio, Row, Tabs, Tooltip, Typography } from "antd";
 const { Title } = Typography;
 import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,12 +26,12 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
     }, []);
 
     const optionsWithDisabled = [
-        { label: '6 AM', value: 'Apple' },
-        { label: '9 AM', value: 'Pear' },
-        { label: '12 PM', value: 'Orange', disabled: true },
-        { label: '3 PM', value: '2', },
-        { label: '6 PM', value: '3', disabled: true },
-        { label: '9 PM', value: '4', },
+        { label: '6 AM', value: '6' },
+        { label: '9 AM', value: '9' },
+        { label: '12 PM', value: '12', disabled: true },
+        { label: '3 PM', value: '15', },
+        { label: '6 PM', value: '18', disabled: true },
+        { label: '9 PM', value: '21', },
     ];
 
     function setServiceOptionDate(index: number, date: Date) {
@@ -42,8 +42,15 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
         setServiceChecklist([...serviceChecklist]);
     }
 
-    function setServiceOptionTime(index: number, value: string) {
-        setValue(`service.${index}.time`, value);
+    function setServiceOptionTime(index: number, checked: boolean, value: string) {
+        const v = getValues();
+        let times: string[] = v.service[index].time || [];
+        if (times.includes(value)) {
+            times = times.filter(x => x !== value);
+        } else {
+            times.push(value);
+        }
+        setValue(`service.${index}.time`, times);
 
         serviceChecklist[index] = true;
         setServiceChecklist([...serviceChecklist]);
@@ -75,7 +82,9 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
                             </Col>
                             <Col sm={24} md={12}>
                                 <Title level={5}>Choose time slot</Title>
-                                <Radio.Group {...register(`service.${index}.time`)} options={optionsWithDisabled} optionType="button" onChange={r => setServiceOptionTime(index, r.target.value)} />
+                                {optionsWithDisabled.map(item => <div key={item.value} >
+                                    <Checkbox value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)}>{item.label}</Checkbox>
+                                </div>)}
                             </Col>
                         </Row>,
                     };
