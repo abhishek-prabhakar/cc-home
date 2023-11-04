@@ -34,7 +34,6 @@ export const VendorQuery = {
     },
     getServices: (username: string) => {
         return new Promise<VendorService[]>(function (resolve) {
-
             db.serviceGroup.findMany({
                 select: {
                     id: true,
@@ -51,6 +50,17 @@ export const VendorQuery = {
                                             cost: true,
                                             duration: true,
                                             vendorId: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        where: {
+                            service: {
+                                vendorServices: {
+                                    some: {
+                                        vendors: {
+                                            username
                                         }
                                     }
                                 }
