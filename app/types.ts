@@ -5,11 +5,11 @@ export type RootLoaderData = {
 
 
 export type VendorProfile = {
-    id: string,
+    username: string,
+    id?: string,
     fullName: string,
     location: string
     gender: string;
-    email: string;
     type: string;
     avatar?: {
         large: string;

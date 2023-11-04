@@ -1,8 +1,8 @@
 import { CheckCircleFilled, InfoCircleOutlined, WarningFilled } from "@ant-design/icons";
-import { LoaderArgs, TypedResponse, redirect } from "@remix-run/node";
-import { Form, Outlet, useLoaderData } from "@remix-run/react";
-import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card } from "antd";
-import { useEffect, useState } from "react";
+import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
+import { Await, Form, Outlet, useLoaderData } from "@remix-run/react";
+import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton } from "antd";
+import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import { VendorQuery } from "~/service/vendor.service";
@@ -15,40 +15,47 @@ const coverStyles: React.CSSProperties = { backgroundImage: 'url(https://demo.th
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
-type loaderData = VendorProfile & { services: VendorService[] };
+type loaderData = { profile: VendorProfile | null, services: VendorService[] };
 
-export async function loader({ params }: LoaderArgs): Promise<loaderData | TypedResponse<never>
-> {
+export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<any> | TypedResponse<never>> {
     const id = params.user;
 
     if (!id) {
         return redirect(`/404`);
     }
 
+    const vendorDetails = VendorQuery.getVendorByUsername(id);
 
-    const vendorDetails = VendorQuery.getVendorById(id);
-    const serviceList: VendorService[] = VendorQuery.getServices(id);
+    const serviceList = VendorQuery.getServices(id);
 
-    return {
-        ...vendorDetails,
+    return defer({
+        profile: vendorDetails,
         services: serviceList
-    };
+    });
 }
 
 const ProfileLayout = {
     Index: () => {
-        const data = useLoaderData<loaderData>();
+        const data: loaderData = useLoaderData();
 
         return <div>
-            <ProfileLayout.Cover />
+            <Suspense fallback={<Skeleton active />}>
+                <Await resolve={data.profile}>
+                    {profile => <ProfileLayout.Cover profile={profile} />}
+                </Await>
+            </Suspense>
             <div style={pageWrapperStyles}>
                 <Outlet />
             </div>
-            <ProfileLayout.Contact />
+            <Suspense fallback={<Skeleton active />}>
+                <Await resolve={data.services}>
+                    {services => <ProfileLayout.Contact services={services} />}
+                </Await>
+            </Suspense>
         </div>
 
     },
-    Cover: () => {
+    Cover: ({ profile }: { profile: VendorProfile | null }) => {
         const data = useLoaderData<VendorProfile>();
 
         return <div style={coverStyles}>
@@ -56,7 +63,7 @@ const ProfileLayout = {
                 <Row gutter={[0, 40]} align={'middle'}>
                     <Col sm={24} xs={24} span={12}>
                         <Title level={3}>Hi There!</Title>
-                        <Title level={1}>I am {data.fullName}</Title>
+                        <Title level={1}>I am {profile?.fullName}</Title>
                     </Col>
                     <Col span={24}>
                         <Button type="primary">Contact Me</Button>
@@ -71,8 +78,8 @@ const ProfileLayout = {
             </div>
         </div>
     },
-    Contact: () => {
-        const data = useLoaderData<loaderData>();
+    Contact: ({ services }: { services: VendorService[] }) => {
+        // const data = useLoaderData<loaderData>();
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
         const [serviceId, setServiceId] = useState<string>();
         const [showConfigPanel, setShowConfigPanel] = useState(false);
@@ -86,7 +93,7 @@ const ProfileLayout = {
 
 
         function setServiceOptions(id: string) {
-            const selected = data?.services.find(x => x.id === id);
+            const selected = services?.find(x => x.id === id);
             setServiceId(id);
             if (selected) {
                 setServiceList(selected.included);
@@ -114,7 +121,7 @@ const ProfileLayout = {
                             style={{ width: '100%' }}
                             showSearch
                             placeholder="Search a service"
-                            options={data.services.map(x => ({ value: x.id, label: x.title }))}
+                            options={services.map(x => ({ value: x.id, label: x.title }))}
                             onChange={setServiceOptions}
                         />
 
@@ -148,7 +155,7 @@ const ProfileLayout = {
                                     color="blue"
                                 >{item.title}</Tag>)
                             }
-                            {!addonsList?.length ?? <div>No addons</div>}
+                            {!addonsList?.length && <div>No addons</div>}
                         </div>]
                             : ''}
                         <Row justify={'end'}>

@@ -1,5 +1,5 @@
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Await, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
+import { Await, Link, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Skeleton, Slider, Space, Tag, Typography, theme } from 'antd';
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -82,7 +82,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 }
             }
         }).then(res => {
-            const serviceIds = res.serviceGroup.reduce<string[]>((array, x) => {
+            const serviceIds = res.serviceGroup?.reduce<string[]>((array, x) => {
                 return array.concat(x.serviceGroupItem.map(y => y.serviceId))
             }, []);
 
@@ -414,7 +414,7 @@ const Photography = {
                                 </Row>
                             </PhotoProvider>
                             <div style={{ padding: '20px 5px' }}>
-                                <Typography.Text strong>Services:</Typography.Text> {item.services.map(x => <Tag>{x}</Tag>)} & more.
+                                <Typography.Text strong>Services:</Typography.Text> {item.services.map(x => <Tag>{x}</Tag>)} <Link to={'/profile/' + item.id}>View all</Link>
                             </div>
                         </div>
                     </div >
