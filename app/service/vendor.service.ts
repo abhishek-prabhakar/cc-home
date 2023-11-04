@@ -21,7 +21,7 @@ export const VendorQuery = {
                 if (r) {
                     resolve({
                         username: r.username,
-                        fullName: r.name,
+                        fullName: r.username,
                         location: '',
                         gender: '',
                         type: r.vendorType.name
