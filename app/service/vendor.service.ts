@@ -55,8 +55,12 @@ export const VendorQuery = {
                                     }
                                 }
                             }
-                        },
-                        where: {
+                        }
+                    }
+                },
+                where: {
+                    serviceGroupItem: {
+                        some: {
                             service: {
                                 vendorServices: {
                                     some: {
