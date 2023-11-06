@@ -142,7 +142,7 @@ const Cart = {
             </Row>
             <Row gutter={[20, 20]} justify={'space-between'}>
                 <Col><Typography.Text type="secondary">GST({orderSummary?.gst}%)</Typography.Text></Col>
-                <Col><Typography.Text >100 INR</Typography.Text></Col>
+                <Col><Typography.Text >{orderSummary?.tax} INR</Typography.Text></Col>
             </Row>
             <Divider />
             <Row gutter={[20, 20]} justify={'space-between'}>
