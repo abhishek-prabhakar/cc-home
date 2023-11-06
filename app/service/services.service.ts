@@ -22,6 +22,17 @@ export const ServiceQuery = {
                 id: true,
                 name: true,
                 serviceGroupItem: {
+                    where: {
+                        service: {
+                            vendorServices: {
+                                some: {
+                                    id: {
+                                        in: serviceIds
+                                    }
+                                }
+                            }
+                        }
+                    },
                     select: {
                         isOptional: true,
                         service: {
