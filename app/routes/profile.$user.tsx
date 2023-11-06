@@ -79,7 +79,6 @@ const ProfileLayout = {
         </div>
     },
     Contact: ({ services }: { services: VendorService[] }) => {
-        // const data = useLoaderData<loaderData>();
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
         const [serviceId, setServiceId] = useState<string>();
         const [showConfigPanel, setShowConfigPanel] = useState(false);
@@ -166,7 +165,7 @@ const ProfileLayout = {
                     </Space>
                 </Col>
                 <Col span={24} md={12} lg={12} xl={16}>
-                    {showConfigPanel && serviceId && <ConfigureBooking id={serviceId} options={serviceList.concat(selectedAddons)} />}
+                    {showConfigPanel && serviceId && <ConfigureBooking serviceGroupId={serviceId} options={serviceList.concat(selectedAddons)} />}
                 </Col>
             </Row>
         </div>

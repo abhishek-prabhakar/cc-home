@@ -9,6 +9,7 @@ export const VendorQuery = {
                     username
                 },
                 select: {
+                    id: true,
                     username: true,
                     name: true,
                     vendorType: {
@@ -20,6 +21,7 @@ export const VendorQuery = {
             }).then(r => {
                 if (r) {
                     resolve({
+                        id: r.id,
                         username: r.username,
                         fullName: r.username,
                         location: '',
@@ -47,6 +49,7 @@ export const VendorQuery = {
                                     name: true,
                                     vendorServices: {
                                         select: {
+                                            id: true,
                                             cost: true,
                                             duration: true,
                                             vendorId: true
@@ -88,12 +91,12 @@ export const VendorQuery = {
                     id: x.id,
                     title: x.name,
                     included: x.serviceGroupItem.filter(y => !y.isOptional).map(y => ({
-                        id: y.service.id,
+                        id: y.service.vendorServices[0].id,
                         title: y.service.name,
                         duration: y.service.vendorServices[0]?.duration
                     })),
                     addons: x.serviceGroupItem.filter(y => y.isOptional).map(y => ({
-                        id: y.service.id,
+                        id: y.service.vendorServices[0].id,
                         title: y.service.name,
                         duration: y.service.vendorServices[0]?.duration
                     }))
@@ -101,26 +104,5 @@ export const VendorQuery = {
             });
         });
 
-    },
-    getServiceById: (serviceId: string) => {
-        return {
-            id: 's1',
-            title: 'Wedding',
-            included: [{
-                id: 'Pre-wedding',
-                title: 'Pre-wedding',
-                duration: 4
-            },
-            {
-                id: 'op2',
-                title: 'Wedding eve',
-                duration: 4
-            }],
-            addons: [{
-                id: 'ad1',
-                title: 'Kids shoot',
-                duration: 4
-            }]
-        };
     }
 }

@@ -6,7 +6,7 @@ import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { VendorServiceOption } from "~/types";
 
-function ConfigureBooking(service: { id: string, options: VendorServiceOption[] }) {
+function ConfigureBooking(service: { serviceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
     const [serviceChecklist, setServiceChecklist] = useState<boolean[]>([]);
     const checkoutForm = useRef<any>(null);
@@ -66,7 +66,7 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
 
     return <Card title="Configure Services">
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
-            <input className="hidden" {...register(`id`)} value={service.id} />
+            <input className="hidden" {...register(`serviceGroupId`)} value={service.serviceGroupId} />
             <Tabs
                 tabPosition={isMobileView ? 'top' : 'left'}
                 items={service.options.map((item, index) => {
@@ -75,7 +75,7 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
                         key: item.id,
                         children: <Row gutter={[30, 30]}>
                             <Col sm={24} md={12}>
-                                <input className="hidden" {...register(`service.${index}.id`)} value={item.id} />
+                                <input className="hidden" {...register(`service.${index}.vendorServiceId`)} value={item.id} />
                                 <input className="hidden" {...register(`service.${index}.date`)} />
                                 <Title level={5}>Select date</Title>
                                 <Calendar fullscreen={false} disabledDate={(e) => { return e.toDate() < (new Date()); }} headerRender={() => <></>} onSelect={r => setServiceOptionDate(index, r.toDate())} />
@@ -83,7 +83,7 @@ function ConfigureBooking(service: { id: string, options: VendorServiceOption[] 
                             <Col sm={24} md={12}>
                                 <Title level={5}>Choose time slot</Title>
                                 {optionsWithDisabled.map(item => <div key={item.value} >
-                                    <Checkbox value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)}>{item.label}</Checkbox>
+                                    <Checkbox value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox>
                                 </div>)}
                             </Col>
                         </Row>,

@@ -1,28 +1,45 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { LoaderArgs, json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Modal, Row, Space, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
+import { Await, Form, Link, useLoaderData } from "@remix-run/react";
+import { Avatar, Button, Card, Col, Divider, Modal, Row, Skeleton, Space, Typography } from "antd";
+import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import UserLogin from "~/components/UserLogin";
+import { ServiceQuery } from "~/service/services.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
 import { CartActiveService, CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 
-type loaderData = CartItem[];
-export async function loader({ request }: LoaderArgs): Promise<loaderData> {
+type LoaderData = { data: CartItem };
+export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
     const cookieHeader = request.headers.get("Cookie");
     const cookie = await userCartCookie.parse(cookieHeader);
     const data: CartInput = JSON.parse(cookie)
 
-    const vendor: VendorProfile = VendorQuery.getVendorById(data.serviceId)
-    const service: VendorService = VendorQuery.getServiceById(data.serviceId);
+    const response = new Promise(function (resolve) {
+        ServiceQuery.getVendorServices(data.service.map(x => x.vendorServiceId)).then(res => {
+            if (!res) {
+                resolve(null);
+            } else {
+                resolve({
+                    serviceGroupId: res.id,
+                    services: res.serviceGroupItem.map(x => ({
+                        name: x.service.name,
+                        vendorName: x.service.vendorServices[0].vendors.username,
+                        cost: x.service.vendorServices[0].cost,
+                        id: x.service.vendorServices[0].id,
+                        isOptional: x.isOptional
+                    }))
+                })
+            }
+        });
+    });
 
-    const selectedList = data.service.map(x => ({ id: 'sdf', title: 'Wedding', duration: 3, date: new Date().toDateString(), time: '12 PM' }));
-
-    return [{ vendor, service, selected: selectedList }];
+    return defer({
+        data: response
+    });
 }
 
 
@@ -30,27 +47,33 @@ export async function loader({ request }: LoaderArgs): Promise<loaderData> {
 const Cart = {
     Index: () => {
         const user = useSelector(getUser);
-        useEffect(() => {
+        const data: LoaderData = useLoaderData();
 
-        }, [])
         return <div className="container">
             <Typography.Title level={3}>Checkout</Typography.Title>
             <Divider />
             <Row gutter={[30, 30]}>
                 <Col xs={24} md={8} lg={18}>
-                    <Cart.Preview />
+                    <Suspense fallback={<Skeleton />}>
+                        <Await resolve={data.data}>
+                            {response => <Cart.Preview data={response} />}
+                        </Await>
+                    </Suspense>
                 </Col>
                 <Col xs={24} md={8} lg={6}>
                     <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-                        <Cart.Summary />
+                        <Suspense fallback={<Skeleton />}>
+                            <Await resolve={data.data}>
+                                {response => <Cart.Summary data={response} />}
+                            </Await>
+                        </Suspense>
                         {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                     </Space>
                 </Col>
             </Row>
         </div>
     },
-    Preview: () => {
-        const data = useLoaderData<loaderData>();
+    Preview: ({ data }: { data: CartItem }) => {
         const [editService, setEditService] = useState<{ id: string, services: CartActiveService[] }>();
 
         function openEdtServiceDialog(id: string, services: CartActiveService[]) {
@@ -59,9 +82,9 @@ const Cart = {
 
         return <>
             <Row gutter={[30, 30]}>
-                <Col sm={24} xs={24} md={8}>
-                    {data?.map(item => <Card
-                        key={item.vendor.id}
+                {data?.services?.map(service => <Col sm={24} xs={24} md={8}>
+                    <Card
+                        key={service.id}
                         cover={
                             <img
                                 alt="example"
@@ -69,44 +92,62 @@ const Cart = {
                             />
                         }
                         actions={[
-                            <DeleteOutlined key="remove" />,
-                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog(item.service.id, item.selected)} />,
+                            <DeleteOutlined key="remove" disabled={!service.isOptional} />,
+                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
                         ]}
                     >
                         <Card.Meta
                             avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
-                            title={item.service.title}
-                            description="This is the description"
+                            title={service.name}
+                            description={<Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>}
                         />
-                    </Card>)}
-                </Col>
+                    </Card>
+                </Col>)}
+                {!data?.services.length && <Col>Sorry, Your cart is empty.</Col>}
             </Row>
             {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
         </>
     },
     Edit: (params: { serviceId: string, services: CartActiveService[], onClose: Function }) => {
         return <Modal open={true} width={'1000px'} footer={null} afterClose={() => params.onClose()}>
-            <ConfigureBooking id={params.serviceId} options={params.services} />
+            <ConfigureBooking serviceGroupId={params.serviceId} options={params.services} />
         </Modal>
     },
-    Summary: () => {
-        const data = useLoaderData<loaderData>();
+    Summary: ({ data }: { data: CartItem }) => {
+        const [orderSummary, setOrderSummary] = useState<{ total: number, gst: number, tax: number, final: number }>();
+        useEffect(() => {
+            const gst = 3;
+            const total = data.services.reduce((sum, item) => sum + item.cost, 0);
+            const tax = (gst * total) / 100;
+
+            setOrderSummary({
+                total,
+                tax,
+                gst,
+                final: total + tax
+            })
+        }, []);
 
         return <div style={{ border: '1px solid #e1e1e1', padding: '10px' }}>
             <Typography.Title level={4}>Order Summary</Typography.Title>
-            {data?.map(item => <Row key={item.service.id} gutter={[20, 20]} justify={'space-between'}>
-                <Col><Typography.Text strong>{item.service.title}</Typography.Text></Col>
-                <Col><Typography.Text>100 INR</Typography.Text></Col>
-            </Row>)}
+            {data.services.map(service => <Row key={service.id} gutter={[20, 20]} justify={'space-between'}>
+                <Col><Typography.Text strong>{service.name}</Typography.Text></Col>
+                <Col><Typography.Text>{service.cost} INR</Typography.Text></Col>
+            </Row>
+            )}
             <Divider />
             <Row gutter={[20, 20]} justify={'space-between'}>
-                <Col><Typography.Text type="secondary">GST(2%)</Typography.Text></Col>
+                <Col><Typography.Text strong>Subtotal</Typography.Text></Col>
+                <Col><Typography.Text strong>{orderSummary?.total} INR</Typography.Text></Col>
+            </Row>
+            <Row gutter={[20, 20]} justify={'space-between'}>
+                <Col><Typography.Text type="secondary">GST({orderSummary?.gst}%)</Typography.Text></Col>
                 <Col><Typography.Text >100 INR</Typography.Text></Col>
             </Row>
             <Divider />
             <Row gutter={[20, 20]} justify={'space-between'}>
                 <Col><Typography.Text strong>Total</Typography.Text></Col>
-                <Col><Typography.Text strong>100 INR</Typography.Text></Col>
+                <Col><Typography.Text strong>{orderSummary?.final} INR</Typography.Text></Col>
             </Row>
         </div>
     }

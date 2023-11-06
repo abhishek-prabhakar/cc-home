@@ -6,7 +6,7 @@ export type RootLoaderData = {
 
 export type VendorProfile = {
     username: string,
-    id?: string,
+    id: string,
     fullName: string,
     location: string
     gender: string;
@@ -78,9 +78,19 @@ export enum OrderStatus {
 }
 
 export type CartActiveService = VendorServiceOption & { date: string, time: string };
-export type CartItem = { vendor: VendorProfile, service: VendorService, selected: CartActiveService[] };
+export type CartItem = {
+    serviceGroupId: string,
+    services: {
+        id: string,
+        name: string,
+        vendorName: string,
+        cost: number,
+        duration: number,
+        isOptional: boolean
+    }[]
+};
 
 export type CartInput = {
-    serviceId: string,
-    service: { id: string, date: Date, time: string }[]
+    serviceGroupId: string,
+    service: { vendorServiceId: string, date: Date, time: string[] }[]
 }
