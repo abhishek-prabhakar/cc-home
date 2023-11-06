@@ -3,11 +3,9 @@ import { db } from "~/utils/database";
 export const ServiceQuery = {
     getVendorServices: (serviceIds: string[]) => {
         return db.serviceGroup.findFirst({
-            select: {
-                id: true,
-                name: true,
+            where: {
                 serviceGroupItem: {
-                    where: {
+                    some: {
                         service: {
                             vendorServices: {
                                 some: {
@@ -18,6 +16,12 @@ export const ServiceQuery = {
                             }
                         }
                     },
+                }
+            },
+            select: {
+                id: true,
+                name: true,
+                serviceGroupItem: {
                     select: {
                         isOptional: true,
                         service: {
@@ -40,6 +44,5 @@ export const ServiceQuery = {
                 }
             }
         });
-
     }
 }
