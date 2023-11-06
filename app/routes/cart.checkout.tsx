@@ -19,6 +19,10 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     const data: CartInput = JSON.parse(cookie)
 
     const response = new Promise(function (resolve) {
+        if (!data?.service?.length) {
+            resolve(null);
+            return;
+        }
         ServiceQuery.getVendorServices(data.service.map(x => x.vendorServiceId)).then(res => {
             if (!res) {
                 resolve(null);
@@ -64,7 +68,7 @@ const Cart = {
                     <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>
-                                {response => <Cart.Summary data={response} />}
+                                {response => response?.services?.length && <Cart.Summary data={response} />}
                             </Await>
                         </Suspense>
                         {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
