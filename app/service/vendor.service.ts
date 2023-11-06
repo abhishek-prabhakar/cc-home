@@ -85,6 +85,9 @@ export const VendorQuery = {
                             }
                         }
                     }
+                },
+                orderBy: {
+                    name: 'asc'
                 }
             }).then(r => {
                 resolve(r.map(x => ({
