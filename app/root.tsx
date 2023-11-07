@@ -1,6 +1,7 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
 import { defer, TypedDeferredData, type LinksFunction, type LoaderArgs } from "@remix-run/node";
 import {
+  Await,
   Links,
   LiveReload,
   Meta,
@@ -88,6 +89,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 
 export default function App() {
   const [pageReady, setPageReady] = useState(false);
+  const data: LoaderData = useLoaderData();
 
   useEffect(() => {
     setPageReady(true);
@@ -107,7 +109,9 @@ export default function App() {
           <Layout>
             <Ticker />
             <Layout.Header style={headerStyle}>
-              <Header />
+              <Await resolve={data.user}>
+                {response => <Header user={response} />}
+              </Await>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
               {pageReady ? <Outlet /> : <Row justify={'center'}>

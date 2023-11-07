@@ -18,15 +18,14 @@ const menuArtisantStyle: React.CSSProperties = {
 }
 
 
-export function Header() {
+export function Header({ user }: { user?: User | null }) {
     const navigation = useNavigation();
-    const data = useLoaderData<User>();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(setUser(data?.id));
-    }, [data]);
+        dispatch(setUser(user?.id));
+    }, [user]);
 
     function handleLocationMenuClick(data: any) {
         setCurrentLocation(locationList[data.key].label);
@@ -62,7 +61,7 @@ export function Header() {
                                     <Dropdown dropdownRender={() => (
                                         <div style={userMenuStyle}>
                                             <Space style={{ padding: '12px' }}>
-                                                {data?.id ?
+                                                {user?.id ?
                                                     <div>
                                                         <Title level={5}>Hej!</Title>
                                                         <Link to={'/user/home'}>My Bookings</Link>

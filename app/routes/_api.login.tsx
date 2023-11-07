@@ -1,5 +1,5 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserSource } from "@prisma/client";
 var bcrypt = require('bcryptjs');
 
 export async function action({
@@ -20,7 +20,8 @@ export async function action({
         if (!existingUser?.id) {
             data = await prisma.user.create({
                 data: {
-                    username
+                    username,
+                    source: UserSource.ORGANIC
                 },
             });
         }

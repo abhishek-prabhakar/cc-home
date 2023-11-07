@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Modal, Row, Skeleton, Space, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Divider, Modal, Row, Skeleton, Space, Typography } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
@@ -18,11 +18,20 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     const cookie = await userCartCookie.parse(cookieHeader);
     const data: CartInput = JSON.parse(cookie)
 
-    const response = new Promise(function (resolve) {
+    const response = new Promise<CartItem | null>(function (resolve) {
         if (!data?.service?.length) {
             resolve(null);
             return;
         }
+
+        const params = data.service.reduce<{ [key in string]: { date: Date, time: number[] } }>((obj, x) => {
+            obj[x.vendorServiceId] = {
+                date: new Date(x.date),
+                time: x.time
+            };
+            return obj;
+        }, {});
+
         ServiceQuery.getVendorServices(data.service.map(x => x.vendorServiceId)).then(res => {
             if (!res) {
                 resolve(null);
@@ -31,10 +40,13 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
                     serviceGroupId: res.id,
                     services: res.serviceGroupItem.map(x => ({
                         name: x.service.name,
+                        vendorType: x.service.vendorServices[0].vendors.vendorType.name,
                         vendorName: x.service.vendorServices[0].vendors.username,
                         cost: x.service.vendorServices[0].cost,
                         id: x.service.vendorServices[0].id,
-                        isOptional: x.isOptional
+                        isOptional: x.isOptional,
+                        date: params[x.service.vendorServices[0].id].date,
+                        time: params[x.service.vendorServices[0].id].time
                     }))
                 })
             }
@@ -51,7 +63,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 const Cart = {
     Index: () => {
         const user = useSelector(getUser);
-        const data: LoaderData = useLoaderData();
+        const data = useLoaderData<LoaderData>();
 
         return <div className="container">
             <Typography.Title level={3}>Checkout</Typography.Title>
@@ -87,25 +99,31 @@ const Cart = {
         return <>
             <Row gutter={[30, 30]}>
                 {data?.services?.map(service => <Col sm={24} xs={24} md={8}>
-                    <Card
-                        key={service.id}
-                        cover={
-                            <img
-                                alt="example"
-                                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                    <Badge.Ribbon text={service.vendorType}>
+                        <Card
+                            key={service.id}
+                            cover={
+                                <img
+                                    alt="example"
+                                    src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                />
+                            }
+                            actions={[
+                                service.isOptional ? <DeleteOutlined key="remove" /> : <></>,
+                                <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
+                            ]}
+                        >
+                            <Card.Meta
+                                avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
+                                title={service.name}
+                                description={<div>
+                                    <Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>
+                                    <br />
+                                    <Typography.Text strong>{service.date.toString()}</Typography.Text>
+                                </div>}
                             />
-                        }
-                        actions={[
-                            <DeleteOutlined key="remove" disabled={!service.isOptional} />,
-                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
-                        ]}
-                    >
-                        <Card.Meta
-                            avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
-                            title={service.name}
-                            description={<Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>}
-                        />
-                    </Card>
+                        </Card>
+                    </Badge.Ribbon>
                 </Col>)}
                 {!data?.services.length && <Col>Sorry, Your cart is empty.</Col>}
             </Row>
