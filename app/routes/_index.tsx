@@ -73,7 +73,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
   const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
-      take: 10,
+      take: 3,
       select: {
         id: true,
         name: true,
@@ -126,6 +126,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
   const collections = new Promise<Collection[]>(function (resolve) {
     db.service.findMany({
+      take: 5,
       select: {
         id: true,
         name: true,
