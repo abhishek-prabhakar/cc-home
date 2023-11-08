@@ -28,14 +28,23 @@ type Collection = {
   cost: number,
 }
 
+type Page = {
+  id: string,
+  title: string,
+  path: string,
+}
+
+
 type HomePage = {
   jumbotron: Jumbotron[];
   collection: Collection[];
+  morePages: Page[];
 };
 
 export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<{
   jumbotron: Jumbotron[];
   collection: Promise<Collection[]>;
+  morePages: Promise<Page[]>;
 }>> {
   const id = params.user;
 
@@ -98,7 +107,23 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     })
   });
 
-  return defer({ jumbotron: jumbotronList, collection: collections });
+  const morePages = new Promise<Page[]>(function (resolve) {
+    db.vendorType.findMany({
+      take: 3,
+      orderBy: {
+        name: 'asc'
+      },
+      select: {
+        id: true,
+        name: true,
+        keyName: true
+      }
+    }).then(r => {
+      resolve(r.map(x => ({ path: '/collections/' + x.keyName, title: x.name, id: x.id })))
+    })
+  })
+
+  return defer({ jumbotron: jumbotronList, collection: collections, morePages });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -113,6 +138,8 @@ const jumbotronListStyle = { display: 'flex', gap: '20px', alignItems: 'center' 
 const jumbotronItemWrapperStyle: React.CSSProperties = { width: '60vw' }
 const jumbotronItemStyle: React.CSSProperties = { width: '100%', borderRadius: '15px', background: 'url(https://demo.craftdzine.com/html/xberg/assets/img/hero-bg1.png) center no-repeat #c0c0c0' }
 const jumbotronItemContentStyle = { padding: '40px' };
+
+const FALLBACK_IMG = 'https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png';
 
 const JumbotronItem = () => <div style={jumbotronItemWrapperStyle}><Row style={jumbotronItemStyle} justify={'end'}>
   <Col span={24} md={12}>
@@ -186,10 +213,10 @@ const Home = {
                   </div>
                   <div className="category-thumb">
                     <div className="cover">
-                      <Image preview={false} src={item.image || ''} fallback='https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png' />
+                      <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
                     </div>
                     <div className="hover">
-                      <Image preview={false} src={item.image || ''} fallback="https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png" />
+                      <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
                     </div>
                     <div className="link">
                       <Link to={item.path}>
@@ -200,7 +227,7 @@ const Home = {
                 </div>
                 <div>
                   <Link to={item.path}><Title level={4}>{item.title}</Title></Link>
-                  {item.cost && <div>From {item.cost}</div>}
+                  {item.cost && <div>Starting from {item.cost}</div>}
                 </div>
               </Space>
             </Col>)}
@@ -266,19 +293,28 @@ const Home = {
       <Col span={24} md={8}>
         <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
           <Title level={3}>More...</Title>
-          {moreCollections.map((item, key) => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1' }} key={'mc' + key}>
-            <Row gutter={[24, 0]} align="middle">
-              <Col>
-                <img src={item.thumb} height="100%" />
-              </Col>
-              <Col flex={'auto'}>
-                <Typography.Text strong>{item.name}</Typography.Text>
-              </Col>
-              <Col style={{ padding: '0 40px' }}>
-                <RightOutlined />
-              </Col>
-            </Row>
-          </div>)}
+          <Await resolve={data.morePages}>
+            {response => <Space direction="vertical">
+              {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
+                <Row gutter={[24, 0]} align="middle">
+                  <Col>
+                    <Link to={item.path}>
+                      <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
+                    </Link>
+                  </Col>
+                  <Col flex={'auto'}>
+                    <Link to={item.path}>
+                      <Typography.Text strong>{item.title}</Typography.Text>
+                    </Link>
+                  </Col>
+                  <Col style={{ padding: '0 40px' }}>
+                    <RightOutlined />
+                  </Col>
+                </Row>
+              </div>)
+              }
+            </Space>}
+          </Await>
           <BannerVertical />
           <Newsletter />
         </Space>
