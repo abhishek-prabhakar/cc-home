@@ -1,16 +1,42 @@
 import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { Badge, Card, Carousel, Col, Layout, Row, Space, Tag } from "antd";
+import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
+import { Badge, Card, Carousel, Col, Image, Layout, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
 import { Newsletter } from "~/components/Newsletter";
 const { Title } = Typography;
 const { Meta } = Card;
-import { Link, useLoaderData } from "@remix-run/react";
-import { HomePage, Jumbotron } from "~/types";
+import { Await, Link, useLoaderData } from "@remix-run/react";
+import { db } from "~/utils/database";
+import { PATH } from "~/path.data";
 
-export async function loader({ params }: LoaderArgs): Promise<HomePage> {
+
+type Jumbotron = {
+  title: string,
+  description: string,
+  label: string,
+  img: string
+}
+
+type Collection = {
+  id: string,
+  title: string,
+  label: string,
+  image: string | null,
+  path: string,
+  cost: number,
+}
+
+type HomePage = {
+  jumbotron: Jumbotron[];
+  collection: Collection[];
+};
+
+export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<{
+  jumbotron: Jumbotron[];
+  collection: Promise<Collection[]>;
+}>> {
   const id = params.user;
 
   const jumbotronList: Jumbotron[] = [{
@@ -35,7 +61,44 @@ export async function loader({ params }: LoaderArgs): Promise<HomePage> {
     img: 'https://demo.craftdzine.com/html/xberg/assets/img/hero-bg1.png'
   }];
 
-  return { jumbotron: jumbotronList };
+  const collections = new Promise<Collection[]>(function (resolve) {
+    db.serviceGroup.findMany({
+      take: 10,
+      select: {
+        id: true,
+        name: true,
+        imageName: true,
+        vendorType: {
+          select: {
+            name: true,
+            keyName: true,
+          }
+        },
+        serviceGroupItem: {
+          take: 1,
+          select: {
+            service: {
+              select: {
+                vendorServices: {
+                  take: 1,
+                  select: {
+                    cost: true
+                  },
+                  orderBy: {
+                    cost: 'asc'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }).then(r => {
+      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/collections/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorServices[0]?.cost })));
+    })
+  });
+
+  return defer({ jumbotron: jumbotronList, collection: collections });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -107,39 +170,48 @@ const Home = {
     </div></div>;
   },
   QuickPick: () => {
-    const list = new Array(3).fill({
-      title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-      category: 'Phography',
-      image: 'https://ld-wp.template-help.com/wordpress_63661/wp-content/uploads/2017/05/shutterstock_483145915-Converted-710x530.jpg',
-      hoverImage: 'https://ld-wp.template-help.com/wordpress_63661/wp-content/uploads/2017/05/shutterstock_358321670-Converted-710x530.jpg',
-    });
+    const data = useLoaderData<HomePage>();
+
 
     return <div className="category-list">
       <Title level={2}>Featured</Title>
-      <Row gutter={40} justify={'center'}>
-        {list.map((item, key) => <Col key={'cat-' + key} span={12} md={8}>
-          <div className="category-badge">
-            {item.category}
-          </div>
-          <div className="category-thumb">
-            <div className="cover">
-              <img src={item.image} />
-            </div>
-            <div className="hover">
-              <img src={item.hoverImage} />
-            </div>
-            <div className="link">
-              <Link to={'/collections/photography'}>
-                <RightCircleOutlined />
-              </Link>
-            </div>
-          </div>
-          <Title level={5}>{item.title}</Title>
-        </Col>)}
-      </Row>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.collection}>
+          {response => <Row gutter={40} justify={'center'}>
+            {response.map(item => <Col key={item.id} span={12} md={8}>
+              <Space direction="vertical">
+                <div>
+                  <div className="category-badge">
+                    {item.label}
+                  </div>
+                  <div className="category-thumb">
+                    <div className="cover">
+                      <Image preview={false} src={item.image || ''} fallback='https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png' />
+                    </div>
+                    <div className="hover">
+                      <Image preview={false} src={item.image || ''} fallback="https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png" />
+                    </div>
+                    <div className="link">
+                      <Link to={item.path}>
+                        <RightCircleOutlined />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <Link to={item.path}><Title level={4}>{item.title}</Title></Link>
+                  {item.cost && <div>From {item.cost}</div>}
+                </div>
+              </Space>
+            </Col>)}
+          </Row>}
+        </Await>
+      </Suspense>
     </div>;
   },
   Collections: () => {
+    const data = useLoaderData<HomePage>();
+
     const listA = new Array(3).fill({
       title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
       category: 'Phography',

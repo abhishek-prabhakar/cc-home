@@ -57,6 +57,7 @@ model service {
   id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String             @unique
   created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  imageName        String?
   serviceGroupItem serviceGroupItem[]
   vendorServices   vendorServices[]
 }
@@ -67,6 +68,7 @@ model serviceGroup {
   vendorTypeId     String             @db.Uuid
   created_at       DateTime?          @default(now()) @db.Timestamptz(6)
   updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  imageName        String?
   vendorType       vendorType         @relation(fields: [vendorTypeId], references: [id])
   serviceGroupItem serviceGroupItem[]
 }
@@ -110,18 +112,19 @@ model vendorfiles {
 }
 
 model vendors {
-  id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username       String           @unique
-  name           String
-  mobileNumber   String
-  email          String
-  categoryId     String           @db.Uuid
-  paymentMode    PaymentMode?
-  paymentDetails String?
-  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
-  vendorServices vendorServices[]
-  vendorType     vendorType       @relation(fields: [categoryId], references: [id])
+  id               String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String           @unique
+  name             String
+  mobileNumber     String
+  email            String
+  categoryId       String           @db.Uuid
+  paymentMode      PaymentMode?
+  paymentDetails   String?
+  created_at       DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?        @default(now()) @db.Timestamptz(6)
+  profileImageName String?
+  vendorServices   vendorServices[]
+  vendorType       vendorType       @relation(fields: [categoryId], references: [id])
 }
 
 enum PaymentMode {

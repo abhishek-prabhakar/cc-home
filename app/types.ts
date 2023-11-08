@@ -37,14 +37,6 @@ export type VendorService = {
 export type Vendor = VendorProfile & VendorPortfolio & { services: VendorService[] };
 
 
-export type Jumbotron = {
-    title: string,
-    description: string,
-    label: string,
-    img: string
-}
-
-export type HomePage = { jumbotron: Jumbotron[] };
 
 export type UserLoginInput = {
     phone: number
