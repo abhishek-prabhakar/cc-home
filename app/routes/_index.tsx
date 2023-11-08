@@ -38,6 +38,7 @@ type Page = {
 type HomePage = {
   jumbotron: Jumbotron[];
   collection: Collection[];
+  quickLinks: Collection[];
   morePages: Page[];
 };
 
@@ -70,7 +71,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     img: 'https://demo.craftdzine.com/html/xberg/assets/img/hero-bg1.png'
   }];
 
-  const collections = new Promise<Collection[]>(function (resolve) {
+  const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
       take: 10,
       select: {
@@ -121,9 +122,41 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     }).then(r => {
       resolve(r.map(x => ({ path: '/collections/' + x.keyName, title: x.name, id: x.id })))
     })
+  });
+
+  const collections = new Promise<Collection[]>(function (resolve) {
+    db.service.findMany({
+      select: {
+        id: true,
+        name: true,
+        serviceGroupItem: {
+          take: 1,
+          select: {
+            serviceGroup: {
+              select: {
+                vendorType: {
+                  select: {
+                    keyName: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }).then(r => {
+      resolve(r.map(x => ({
+        id: x.id,
+        title: x.name,
+        path: `/${x.serviceGroupItem[0]?.serviceGroup.vendorType.keyName}/${x.id}`,
+        label: '',
+        image: '',
+        cost: 0
+      })))
+    })
   })
 
-  return defer({ jumbotron: jumbotronList, collection: collections, morePages });
+  return defer({ jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -199,11 +232,10 @@ const Home = {
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
 
-
     return <div className="category-list">
       <Title level={2}>Featured</Title>
       <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.collection}>
+        <Await resolve={data.quickLinks}>
           {response => <Row gutter={40} justify={'center'}>
             {response.map(item => <Col key={item.id} span={12} md={8}>
               <Space direction="vertical">
@@ -245,25 +277,6 @@ const Home = {
       thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/recent-post/thumb6.png'
     });
 
-    const listB = new Array(2).fill({
-      title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-      category: 'Phography',
-      thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/recent-post/thumb3.png'
-    });
-
-    const moreCollections = [{
-      name: 'Wedding',
-      thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/blog/cat-4.png'
-    },
-    {
-      name: 'Party',
-      thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/blog/cat-1.png'
-    },
-    {
-      name: 'Wedding',
-      thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/blog/cat-3.png'
-    }]
-
     return <Row gutter={[60, 60]}>
       <Col span={24}>
         <Title level={2}>Collections</Title>
@@ -281,14 +294,17 @@ const Home = {
         </Space>
       </Col>
       <Col span={24} md={10}>
-        <Space direction="vertical" size={'middle'}>
-          {listB.map((item, key) => <Badge.Ribbon key={'cb' + key} text="Top Rated"><Card
-            hoverable
-            cover={<img alt="example" src={item.thumb} />}
-          >
-            <Meta title="Europe Street beat" description="www.instagram.com" />
-          </Card></Badge.Ribbon>)}
-        </Space>
+        <Await resolve={data.collection}>
+          {resolve => <Space direction="vertical" size={'middle'}>
+            {resolve.map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
+              hoverable
+              cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
+            >
+              <Meta title={item.title} description={'Starting from ' + item.cost} />
+            </Card></Link></Badge.Ribbon>)}
+          </Space>
+          }
+        </Await>
       </Col>
       <Col span={24} md={8}>
         <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
