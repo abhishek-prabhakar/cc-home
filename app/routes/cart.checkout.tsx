@@ -1,11 +1,12 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Badge, Button, Card, Col, Divider, Modal, Row, Skeleton, Space, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Divider, Image, Modal, Row, Skeleton, Space, Typography } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import UserLogin from "~/components/UserLogin";
+import { PATH } from "~/path.data";
 import { ServiceQuery } from "~/service/services.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
@@ -46,7 +47,8 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
                         id: x.service.vendorServices[0].id,
                         isOptional: x.isOptional,
                         date: params[x.service.vendorServices[0].id].date,
-                        time: params[x.service.vendorServices[0].id].time
+                        time: params[x.service.vendorServices[0].id].time,
+                        image: x.service.imageName ? PATH.RESOURCE_URL + x.service.imageName : ''
                     }))
                 })
             }
@@ -103,9 +105,11 @@ const Cart = {
                         <Card
                             key={service.id}
                             cover={
-                                <img
-                                    alt="example"
-                                    src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                <Image
+                                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                    alt={service.name} preview={false}
+                                    src={service.image || ''}
+                                    fallback={PATH.FALLBACK_IMG}
                                 />
                             }
                             actions={[

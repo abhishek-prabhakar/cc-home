@@ -130,6 +130,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       select: {
         id: true,
         name: true,
+        imageName: true,
         serviceGroupItem: {
           take: 1,
           select: {
@@ -151,7 +152,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         title: x.name,
         path: `/${x.serviceGroupItem[0]?.serviceGroup.vendorType.keyName}/${x.id}`,
         label: '',
-        image: '',
+        image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
         cost: 0
       })))
     })
@@ -272,32 +273,28 @@ const Home = {
   Collections: () => {
     const data = useLoaderData<HomePage>();
 
-    const listA = new Array(3).fill({
-      title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-      category: 'Phography',
-      thumb: 'https://demo.craftdzine.com/html/xberg/assets/img/recent-post/thumb6.png'
-    });
-
     return <Row gutter={[60, 60]}>
       <Col span={24}>
         <Title level={2}>Collections</Title>
       </Col>
       <Col span={24} md={6}>
-        <Space direction="vertical" size={'large'}>
-          {listA.map((item, key) => <div key={'cb' + key} >
-            <Space direction="vertical" size={'small'}>
-              <img style={{ borderRadius: '10px', width: '100%' }} src={item.thumb} />
-              <div><Badge color='lime' text='Some text' /></div>
-              <Typography.Text strong>{item.title}</Typography.Text>
-            </Space>
-          </div>)
-          }
-        </Space>
+        <Await resolve={data.collection}>
+          {resolve => <Space direction="vertical" size={'large'}>
+            {resolve.slice(2).map(item => <div key={item.id} >
+              <Space direction="vertical" size={'small'}>
+                <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                <div><Badge color='lime' text='Some text' /></div>
+                <Typography.Text strong>{item.title}</Typography.Text>
+              </Space>
+            </div>)
+            }
+          </Space>}
+        </Await>
       </Col>
       <Col span={24} md={10}>
         <Await resolve={data.collection}>
           {resolve => <Space direction="vertical" size={'middle'}>
-            {resolve.map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
+            {resolve.slice(0, 2).map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
               hoverable
               cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
             >

@@ -38,6 +38,7 @@ export const ServiceQuery = {
                         service: {
                             select: {
                                 name: true,
+                                imageName: true,
                                 vendorServices: {
                                     select: {
                                         id: true,
