@@ -9,6 +9,7 @@ import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { serviceGroup } from "@prisma/client";
 import { concat, forkJoin, of, switchMap } from "rxjs";
+import { PATH } from "~/path.data";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -35,6 +36,7 @@ type Vendor = {
     portfolio: string[],
     rating: number,
     tag?: string,
+    profileImg: string,
     services: string[]
 };
 
@@ -105,6 +107,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     select: {
                         id: true,
                         username: true,
+                        profileImageName: true,
                         vendorServices: {
                             select: {
                                 service: true
@@ -145,6 +148,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         portfolio,
                         rating,
                         tag,
+                        profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : '',
                         services: x.vendorServices.map(x => x.service.name)
                     })),
                     loadMore
@@ -382,7 +386,7 @@ const Photography = {
                         <div style={itemThumbStyles}>
                             <Row justify={'end'}>
                                 <Col xs={6} sm={6} md={3} lg={3}>
-                                    <img width={'100%'} style={{ borderRadius: '50%' }} src="/assets/user-avatar.jpg" />
+                                    <img width={'100%'} style={{ borderRadius: '50%' }} src={item.profileImg} />
                                 </Col>
                             </Row>
                         </div>

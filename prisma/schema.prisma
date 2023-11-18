@@ -59,6 +59,7 @@ model service {
   created_at       DateTime?          @default(now()) @db.Timestamptz(6)
   imageName        String?
   serviceGroupItem serviceGroupItem[]
+  vendorPortfolio  vendorPortfolio[]
   vendorServices   vendorServices[]
 }
 
@@ -112,19 +113,31 @@ model vendorfiles {
 }
 
 model vendors {
-  id               String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username         String           @unique
+  id               String            @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String            @unique
   name             String
   mobileNumber     String
   email            String
-  categoryId       String           @db.Uuid
+  categoryId       String            @db.Uuid
   paymentMode      PaymentMode?
   paymentDetails   String?
-  created_at       DateTime?        @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime?        @default(now()) @db.Timestamptz(6)
+  created_at       DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?         @default(now()) @db.Timestamptz(6)
   profileImageName String?
+  vendorPortfolio  vendorPortfolio[]
   vendorServices   vendorServices[]
-  vendorType       vendorType       @relation(fields: [categoryId], references: [id])
+  vendorType       vendorType        @relation(fields: [categoryId], references: [id])
+}
+
+model vendorPortfolio {
+  id         String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vendorId   String   @db.Uuid
+  serviceId  String   @db.Uuid
+  fileType   String
+  fileName   String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  service    service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendors    vendors  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 }
 
 enum PaymentMode {

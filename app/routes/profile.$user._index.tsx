@@ -6,19 +6,22 @@ const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
+import { db } from "~/utils/database";
 
 type loaderData = VendorProfile & VendorPortfolio;
 
 
 export async function loader({ params }: LoaderArgs): Promise<loaderData> {
     const id = params.user;
+
+
     return {
         id: 'fg',
         fullName: 'Jessica',
         location: 'Bangalore',
         gender: 'Male',
-        email: 'sss',
         type: 'Photo',
+        username: 'ddd',
         portfolio: [
             'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio1-min.png',
             'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio2-min.png',
