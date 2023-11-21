@@ -138,6 +138,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
               select: {
                 vendorType: {
                   select: {
+                    name: true,
                     keyName: true
                   }
                 }
@@ -151,7 +152,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         id: x.id,
         title: x.name,
         path: `/${x.serviceGroupItem[0]?.serviceGroup.vendorType.keyName}/${x.id}`,
-        label: '',
+        label: x.serviceGroupItem[0]?.serviceGroup.vendorType.name,
         image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
         cost: 0
       })))
@@ -283,7 +284,7 @@ const Home = {
             {resolve.slice(2).map(item => <div key={item.id} >
               <Space direction="vertical" size={'small'}>
                 <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                <div><Badge color='lime' text='Some text' /></div>
+                <div><Badge color='lime' text={item.label} /></div>
                 <Typography.Text strong>{item.title}</Typography.Text>
               </Space>
             </div>)

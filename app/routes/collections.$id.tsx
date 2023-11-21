@@ -118,6 +118,17 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                                 },
                             },
                             take: 5
+                        },
+                        vendorPortfolio: {
+                            select: {
+                                fileName: true,
+                                fileType: true
+                            },
+                            where: {
+                                serviceId: {
+                                    in: serviceIds
+                                }
+                            }
                         }
                     },
                     where: {
@@ -145,7 +156,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     data: r.data.map(x => ({
                         id: x.username,
                         name: x.username,
-                        portfolio,
+                        portfolio: x.vendorPortfolio.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''),
                         rating,
                         tag,
                         profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : '',
