@@ -18,7 +18,7 @@ export type VendorProfile = {
 }
 
 export type VendorPortfolio = {
-    portfolio?: string[]
+    portfolio: string[]
 }
 
 export type VendorServiceOption = {

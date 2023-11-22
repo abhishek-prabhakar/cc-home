@@ -145,11 +145,6 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             }).subscribe(r => {
                 const rating = 4;
                 const tag = 'Popular';
-                const portfolio = ['https://image.wedmegood.com/resized/1000X/uploads/member/435783/1696398061_279133354_1698789133795002_7258127304642091112_n.jpg?crop=12,206,1063,598',
-                    'https://image.wedmegood.com/resized/1000X/uploads/project/218134/1664817582_DSC_5042.JPG',
-                    'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168034_RAJ_3791_Edit.JPG',
-                    'https://image.wedmegood.com/resized/1000X/uploads/member/2221128/1635168215_RAJ_3980_Edit.JPG'
-                ];
 
                 const loadMore = (page * limit) + limit <= r.count;
                 resolve({

@@ -1,37 +1,46 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { LoaderArgs } from "@remix-run/node";
+import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { PATH } from "~/path.data";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 import { db } from "~/utils/database";
 
 type loaderData = VendorProfile & VendorPortfolio;
 
 
-export async function loader({ params }: LoaderArgs): Promise<loaderData> {
-    const id = params.user;
+export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<any>> {
+    const username = params.user;
+    const portfolio = new Promise<string[]>(function (resolve) {
+        db.vendorPortfolio.findMany({
+            select: {
+                fileName: true,
+                fileType: true
+            },
+            where: {
+                vendors: {
+                    username
+                }
+            }
+        }).then(r => {
+            resolve(r.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''))
+        });
+
+    });
 
 
-    return {
+    return defer({
         id: 'fg',
         fullName: 'Jessica',
         location: 'Bangalore',
         gender: 'Male',
         type: 'Photo',
         username: 'ddd',
-        portfolio: [
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio1-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio2-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio3-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio4-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio5-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio6-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio7-min.png'
-        ]
-    };
+        portfolio: portfolio
+    });
 }
 
 
