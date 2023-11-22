@@ -25,7 +25,8 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
                 vendors: {
                     username
                 }
-            }
+            },
+            take: 8
         }).then(r => {
             resolve(r.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''))
         });
@@ -89,15 +90,18 @@ const ProfileHome = {
             </Row>
             <div>
                 <PhotoProvider>
-                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
-                        <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
-                            <Await resolve={data.portfolio}>
-                                {portfolio => portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
+                    <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
+                        <Await resolve={data.portfolio}>
+                            {portfolio => <>
+                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
                                     <img src={image} className="cursor-pointer" />
                                 </PhotoView>)}
-                            </Await>
-                        </Suspense>
-                    </Masonry>
+                                </Masonry>
+                                {!portfolio.length ? 'Sorry, This profile doesnt contains any works to display' : ''}
+                            </>
+                            }
+                        </Await>
+                    </Suspense>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
                     <Button size="large" shape="round" onClick={() => navigate('/' + data.id + '/portfolio')} >
