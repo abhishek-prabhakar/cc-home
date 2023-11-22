@@ -1,7 +1,8 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
-import { useLoaderData, useNavigate } from "@remix-run/react";
-import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
+import { Await, useLoaderData, useNavigate } from "@remix-run/react";
+import { Avatar, Button, Card, Carousel, Col, Row, Skeleton, Space, Typography } from "antd";
+import { Suspense } from "react";
 const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -89,9 +90,13 @@ const ProfileHome = {
             <div>
                 <PhotoProvider>
                     <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
-                        {data.portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
-                            <img src={image} className="cursor-pointer" />
-                        </PhotoView>)}
+                        <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
+                            <Await resolve={data.portfolio}>
+                                {portfolio => portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
+                                    <img src={image} className="cursor-pointer" />
+                                </PhotoView>)}
+                            </Await>
+                        </Suspense>
                     </Masonry>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
