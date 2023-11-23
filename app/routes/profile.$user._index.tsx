@@ -114,7 +114,7 @@ const ProfileHome = {
                 <Col span={24}><Title level={2}>Our amazing work</Title></Col>
                 <Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Col>
                 <Col>
-                    <Button type="primary" size="large" shape="round" onClick={() => navigate('/' + data.id + '/portfolio')} >
+                    <Button type="primary" size="large" shape="round" onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
                 </Col>
@@ -135,7 +135,7 @@ const ProfileHome = {
                     </Suspense>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
-                    <Button size="large" shape="round" onClick={() => navigate('/' + data.id + '/portfolio')} >
+                    <Button size="large" shape="round" onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
                 </div>
