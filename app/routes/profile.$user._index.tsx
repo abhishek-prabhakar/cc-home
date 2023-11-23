@@ -36,6 +36,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
     const services = new Promise<ProfileService[]>(function (resolve) {
         db.service.findMany({
+            take: 3,
             select: {
                 name: true
             },
