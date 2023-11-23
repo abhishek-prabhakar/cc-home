@@ -17,7 +17,7 @@ model User {
   updatedAt DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   Booking   Booking[]
 
-  @@map("users")
+  @@map("user")
 }
 
 model UserOtp {
@@ -32,10 +32,14 @@ model UserOtp {
 model Booking {
   id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId         String           @db.Uuid
-  status         String
+  status         BookingStatus
+  total Int
+  tax Int
+  discount Int
+  coupon String
   created_at     DateTime?        @default(now()) @db.Timestamptz(6)
   updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
-  users          User             @relation(fields: [userId], references: [id])
+  user          User             @relation(fields: [userId], references: [id])
   BookingService BookingService[]
 }
 
@@ -43,9 +47,10 @@ model BookingService {
   id         String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   bookingId  String    @db.Uuid
   vendorId   String    @db.Uuid
-  status     String
+  status     BookingStatus
   date       String
   time       String
+  duration Int
   location   String
   cost       String
   created_at DateTime  @default(now()) @db.Timestamptz(6)
@@ -148,4 +153,13 @@ enum PaymentMode {
 enum UserSource {
   ORGANIC
   MANUAL
+}
+
+enum BookingStatus {
+  PENDING
+  CANCELLED
+  REJECTED
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
 }

@@ -10,7 +10,8 @@ import { PATH } from "~/path.data";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 import { db } from "~/utils/database";
 
-type loaderData = VendorProfile & VendorPortfolio;
+type ProfileService = { name: string, description: string };
+type loaderData = VendorProfile & VendorPortfolio & { services: ProfileService[] };
 
 
 export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<any>> {
@@ -33,6 +34,25 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
     });
 
+    const services = new Promise<ProfileService[]>(function (resolve) {
+        db.service.findMany({
+            select: {
+                name: true
+            },
+            where: {
+                vendorServices: {
+                    some: {
+                        vendors: {
+                            username
+                        }
+                    }
+                }
+            }
+        }).then(r => {
+            resolve(r.map(x => ({ name: x.name, description: '' })));
+        })
+    })
+
 
     return defer({
         id: 'fg',
@@ -41,7 +61,8 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         gender: 'Male',
         type: 'Photo',
         username: 'ddd',
-        portfolio: portfolio
+        portfolio: portfolio,
+        services
     });
 }
 
@@ -61,17 +82,26 @@ const ProfileHome = {
         </div>;
     },
     Services: () => {
+        const data = useLoaderData<loaderData>();
+
         return <div>
             <Title level={2}>My Services</Title>
-            <Row>
-                <Col sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
-                    <Card bordered={false}>
-                        <CameraOutlined style={quoteStyle} />
-                        <Title level={3}>Banding</Title>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    </Card>
-                </Col>
-            </Row>
+            <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
+                <Await resolve={data.services}>
+                    {services =>
+                        <Row>
+                            {services.map(x => <Col sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
+                                <Card bordered={false}>
+                                    <CameraOutlined style={quoteStyle} />
+                                    <Title level={3}>{x.name}</Title>
+                                    {x.description}
+                                </Card>
+                            </Col>
+                            )}
+                        </Row>
+                    }
+                </Await>
+            </Suspense>
         </div>
     },
     Gallery: () => {
