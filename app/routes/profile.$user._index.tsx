@@ -89,7 +89,7 @@ const ProfileHome = {
             <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
                 <Await resolve={data.services}>
                     {services =>
-                        <Row>
+                        <Row gutter={[40, 40]}>
                             {services.map(x => <Col sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
                                 <Card bordered={false}>
                                     <CameraOutlined style={quoteStyle} />
