@@ -55,12 +55,12 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
 
     return defer({
-        id: 'fg',
+        id: username,
         fullName: 'Jessica',
         location: 'Bangalore',
         gender: 'Male',
         type: 'Photo',
-        username: 'ddd',
+        username: username,
         portfolio: portfolio,
         services
     });
