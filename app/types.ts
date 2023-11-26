@@ -86,7 +86,7 @@ export type CartItem = {
         image?: string | null
     }[]
 };
-export type CartInputService = { vendorServiceId: string, date: Date, timeHour: number };
+export type CartInputService = { vendorServiceId: string, date: Date, timeHour: number, duration: number };
 export type CartInput = {
     serviceGroupId: string,
     service: CartInputService[]

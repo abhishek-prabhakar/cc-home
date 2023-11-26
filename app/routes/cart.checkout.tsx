@@ -91,6 +91,7 @@ const Cart = {
                                     <Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>
                                     <br />
                                     <Typography.Text strong>{service.date.toString()}</Typography.Text>
+                                    <Typography.Text strong>{service.timeHour} to {service.timeHour + service.duration}</Typography.Text>
                                 </div>}
                             />
                         </Card>

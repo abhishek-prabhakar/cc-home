@@ -29,7 +29,7 @@ export const CartService = {
                 obj[x.vendorServiceId] = {
                     date: new Date(x.date),
                     timeHour: x.timeHour,
-                    duration: 3
+                    duration: x.duration
                 };
                 return obj;
             }, {});
