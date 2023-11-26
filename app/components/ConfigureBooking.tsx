@@ -42,6 +42,13 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
         setServiceChecklist([...serviceChecklist]);
     }
 
+    function setServiceOptionDuration(index: number, duration?: number) {
+        setValue(`service.${index}.duration`, duration);
+
+        serviceChecklist[index] = true;
+        setServiceChecklist([...serviceChecklist]);
+    }
+
     function proceedToCheckout(params: any) {
         if (checkoutForm.current) {
             checkoutFormInput.current.value = JSON.stringify(params);
@@ -75,7 +82,7 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
 
                                 <Title level={5}>Duration of the service</Title>
                                 <Select
-                                    {...register(`service.${index}.duration`)}
+                                    onChange={(value) => setServiceOptionDuration(index, value)}
                                     placeholder="Choose"
                                     options={[
                                         {
