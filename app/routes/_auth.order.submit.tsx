@@ -1,6 +1,9 @@
+import { BookingStatus } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
-import { userCartCookie } from "~/session.server";
+import { CartService } from "~/service/cart.service";
+import UserService from "~/service/user.service";
+import { getSessionUserId, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 
@@ -8,6 +11,18 @@ export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
+    const userId = await getSessionUserId(request);
+    if (!userId) {
+        return;
+    }
+
+
+    const loggedInUser = await UserService.getUser(userId);
+    if (!loggedInUser) {
+        return;
+    }
+
+
     const cookie = await userCartCookie.parse(cookieHeader);
     const data: CartInput = JSON.parse(cookie)
 
@@ -15,7 +30,7 @@ export async function action({
         return redirect('/cart/checkout');
     }
 
-    const params = data.service.reduce<{ [key in string]: { date: Date, time: number[] } }>((obj, x) => {
+    const params = data.service.reduce<{ [key in string]: { date: Date, time: string } }>((obj, x) => {
         obj[x.vendorServiceId] = {
             date: new Date(x.date),
             time: x.time
@@ -23,17 +38,40 @@ export async function action({
         return obj;
     }, {});
 
-    db.booking.create({
-        data: {
-            userId
+    CartService.summary(data).then(async res => {
+        if (!res) {
+            return;
         }
+
+        const summary = CartService.calculate(res);
+
+        const data = await db.booking.create({
+            data: {
+                userId: loggedInUser.id,
+                status: BookingStatus.PENDING,
+                total: summary.total,
+                tax: summary.tax,
+                discount: 0,
+                coupon: null
+            }
+        });
+
+        await db.bookingService.createMany({
+            data: res.services.map(x => ({
+                bookingId: data.id,
+                vendorId: x.vendorId,
+                status: BookingStatus.PENDING,
+                date: x.date,
+                time: x.time,
+                duration: x.duration,
+                location: '',
+                cost: x.cost
+            }))
+        })
+
+        redirect('/order/success?id=' + data.id);
     })
 
-    const body = await request.formData();
-    //cookie = body.get('cart');
-
-
-    return redirect('/order/success?id=' + id);
 }
 
 export default () => {

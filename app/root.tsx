@@ -25,6 +25,7 @@ const { Content } = Layout;
 import { Provider } from 'react-redux';
 import store from './store/store';
 import { useEffect, useState } from "react";
+import UserService from "./service/user.service";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -51,11 +52,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
       return;
     }
 
-    const loggedInUser = await db.user.findFirst({
-      where: {
-        username: userId
-      }
-    });
+    const loggedInUser = await UserService.getUser(userId);
 
     if (loggedInUser) {
       resolve({

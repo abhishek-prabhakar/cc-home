@@ -75,16 +75,18 @@ export type CartItem = {
     services: {
         id: string,
         name: string,
+        vendorId: string,
         vendorName: string,
         vendorType: string,
         cost: number,
         isOptional: boolean,
-        date: Date | string,
-        time: number[],
+        date: Date,
+        time: string,
+        duration: number,
         image?: string | null
     }[]
 };
-export type CartInputService = { vendorServiceId: string, date: Date, time: number[] };
+export type CartInputService = { vendorServiceId: string, date: Date, time: string };
 export type CartInput = {
     serviceGroupId: string,
     service: CartInputService[]

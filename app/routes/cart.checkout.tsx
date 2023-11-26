@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import UserLogin from "~/components/UserLogin";
 import { PATH } from "~/path.data";
+import { CartService } from "~/service/cart.service";
 import { ServiceQuery } from "~/service/services.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
@@ -19,44 +20,8 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     const cookie = await userCartCookie.parse(cookieHeader);
     const data: CartInput = JSON.parse(cookie)
 
-    const response = new Promise<CartItem | null>(function (resolve) {
-        if (!data?.service?.length) {
-            resolve(null);
-            return;
-        }
-
-        const params = data.service.reduce<{ [key in string]: { date: Date, time: number[] } }>((obj, x) => {
-            obj[x.vendorServiceId] = {
-                date: new Date(x.date),
-                time: x.time
-            };
-            return obj;
-        }, {});
-
-        ServiceQuery.getVendorServices(data.service.map(x => x.vendorServiceId)).then(res => {
-            if (!res) {
-                resolve(null);
-            } else {
-                resolve({
-                    serviceGroupId: res.id,
-                    services: res.serviceGroupItem.map(x => ({
-                        name: x.service.name,
-                        vendorType: x.service.vendorServices[0].vendors.vendorType.name,
-                        vendorName: x.service.vendorServices[0].vendors.username,
-                        cost: x.service.vendorServices[0].cost,
-                        id: x.service.vendorServices[0].id,
-                        isOptional: x.isOptional,
-                        date: params[x.service.vendorServices[0].id].date,
-                        time: params[x.service.vendorServices[0].id].time,
-                        image: x.service.imageName ? PATH.RESOURCE_URL + x.service.imageName : ''
-                    }))
-                })
-            }
-        });
-    });
-
     return defer({
-        data: response
+        data: CartService.summary(data)
     });
 }
 

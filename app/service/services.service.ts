@@ -45,6 +45,7 @@ export const ServiceQuery = {
                                         cost: true,
                                         vendors: {
                                             select: {
+                                                id: true,
                                                 username: true,
                                                 vendorType: {
                                                     select: {

@@ -36,7 +36,7 @@ model Booking {
   total          Int
   tax            Int
   discount       Int
-  coupon         String
+  coupon         String?
   created_at     DateTime?        @default(now()) @db.Timestamptz(6)
   updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
   user           User             @relation(fields: [userId], references: [id])
@@ -48,11 +48,11 @@ model BookingService {
   bookingId  String        @db.Uuid
   vendorId   String        @db.Uuid
   status     BookingStatus
-  date       String
+  date       DateTime
   time       String
   duration   Int
   location   String
-  cost       String
+  cost       Int
   created_at DateTime      @default(now()) @db.Timestamptz(6)
   updated_at DateTime?     @default(now()) @db.Timestamptz(6)
   Booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
@@ -61,6 +61,7 @@ model BookingService {
 model service {
   id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String             @unique
+  description      String
   imageName        String?
   created_at       DateTime?          @default(now()) @db.Timestamptz(6)
   serviceGroupItem serviceGroupItem[]
@@ -73,6 +74,7 @@ model serviceGroup {
   name             String
   vendorTypeId     String             @db.Uuid
   imageName        String?
+  description      String
   created_at       DateTime?          @default(now()) @db.Timestamptz(6)
   updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
   vendorType       vendorType         @relation(fields: [vendorTypeId], references: [id])
@@ -104,6 +106,7 @@ model vendorServices {
 model vendorType {
   id           String         @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
+  description  String
   keyName      String         @unique
   created_at   DateTime?      @default(now()) @db.Timestamptz(6)
   serviceGroup serviceGroup[]
