@@ -1,10 +1,12 @@
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
 import { Form } from "@remix-run/react";
-import { Alert, Button, Calendar, Card, Checkbox, Col, Divider, Radio, Row, Tabs, Tooltip, Typography } from "antd";
+import { Alert, Button, Calendar, Card, Checkbox, Col, Divider, Radio, Row, Select, Tabs, TimePicker, Tooltip, Typography } from "antd";
 const { Title } = Typography;
 import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { VendorServiceOption } from "~/types";
+
+const timeFormat = 'hh';
 
 function ConfigureBooking(service: { serviceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
@@ -44,12 +46,13 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
 
     function setServiceOptionTime(index: number, checked: boolean, value: string) {
         const v = getValues();
-        let times: string[] = v.service[index].time || [];
-        if (times.includes(value)) {
-            times = times.filter(x => x !== value);
-        } else {
-            times.push(value);
-        }
+        let times: string = v.service[index].time;
+        // let times: string[] = v.service[index].time || [];
+        // // if (times.includes(value)) {
+        // //     times = times.filter(x => x !== value);
+        // // } else {
+        // //     times.push(value);
+        // // }
         setValue(`service.${index}.time`, times);
 
         serviceChecklist[index] = true;
@@ -83,8 +86,24 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                             <Col sm={24} md={12}>
                                 <Title level={5}>Choose time slot</Title>
                                 {optionsWithDisabled.map(item => <div key={item.value} >
-                                    <Checkbox value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox>
+                                    <TimePicker hourStep={1} format={timeFormat} />
+                                    {/* <Rad value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox> */}
                                 </div>)}
+                                <hr />
+                                <Title level={5}>Duration of the service</Title>
+                                <Select
+                                    {...register(`service.${index}.duration`)}
+                                    placeholder="Choose"
+                                    options={[
+                                        {
+                                            label: item.duration + ' hours',
+                                            value: item.duration,
+                                        },
+                                        new Array(24 - item.duration).fill(item.duration).map((x, i) => ({
+                                            label: (x + i + 1) + ' hours',
+                                            value: x + i + 1
+                                        }))
+                                    ]} />
                             </Col>
                         </Row>,
                     };
