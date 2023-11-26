@@ -44,14 +44,16 @@ const Cart = {
                     </Suspense>
                 </Col>
                 <Col xs={24} md={8} lg={6}>
-                    <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-                        <Suspense fallback={<Skeleton />}>
-                            <Await resolve={data.data}>
-                                {response => response?.services?.length && <Cart.Summary data={response} />}
-                            </Await>
-                        </Suspense>
-                        {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
-                    </Space>
+                    <Suspense fallback={<Skeleton />}>
+                        <Await resolve={data.data}>
+                            {response => response?.services?.length &&
+                                <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+                                    <Cart.Summary data={response} />
+                                    {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                </Space>
+                            }
+                        </Await>
+                    </Suspense>
                 </Col>
             </Row>
         </div>

@@ -1,8 +1,6 @@
 import { BookingStatus } from "@prisma/client";
-import { ActionArgs, redirect } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
-import UserService from "~/service/user.service";
 import { getSessionUserId, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
@@ -35,48 +33,49 @@ export async function action({
         return redirect('/cart/checkout');
     }
 
-    const params = data.service.reduce<{ [key in string]: { date: Date, time: string } }>((obj, x) => {
-        obj[x.vendorServiceId] = {
-            date: new Date(x.date),
-            time: x.time
-        };
-        return obj;
-    }, {});
-
-    CartService.summary(data).then(async res => {
-        if (!res) {
-            return;
-        }
-
-        const summary = CartService.calculate(res);
-
-        const data = await db.booking.create({
-            data: {
-                userId: loggedInUser.id,
-                status: BookingStatus.PENDING,
-                total: summary.total,
-                tax: summary.tax,
-                discount: 0,
-                coupon: null
+    const orderId = await new Promise<string>(function (resolve) {
+        CartService.summary(data).then(async res => {
+            console.log(res)
+            if (!res) {
+                return;
             }
+
+            const summary = CartService.calculate(res);
+
+            const data = await db.booking.create({
+                data: {
+                    userId: loggedInUser.id,
+                    status: BookingStatus.PENDING,
+                    total: summary.total,
+                    tax: summary.tax,
+                    discount: 0,
+                    coupon: null
+                }
+            });
+
+            await db.bookingService.createMany({
+                data: res.services.map(x => ({
+                    bookingId: data.id,
+                    vendorId: x.vendorId,
+                    status: BookingStatus.PENDING,
+                    date: x.date,
+                    time: x.time + '',
+                    duration: x.duration,
+                    location: '',
+                    cost: x.cost
+                }))
+            })
+
+            resolve(data.id);
         });
 
-        await db.bookingService.createMany({
-            data: res.services.map(x => ({
-                bookingId: data.id,
-                vendorId: x.vendorId,
-                status: BookingStatus.PENDING,
-                date: x.date,
-                time: x.time,
-                duration: x.duration,
-                location: '',
-                cost: x.cost
-            }))
-        })
+    });
 
-        redirect('/order/success?id=' + data.id);
-    })
-
+    return redirect('/order/success?id=' + orderId, {
+        headers: {
+            "Set-Cookie": await userCartCookie.serialize(null),
+        },
+    });
 }
 
 export default () => {
