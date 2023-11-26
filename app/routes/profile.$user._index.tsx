@@ -91,7 +91,7 @@ const ProfileHome = {
                 <Await resolve={data.services}>
                     {services =>
                         <Row gutter={[40, 40]}>
-                            {services.map(x => <Col sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
+                            {services.map((x, i) => <Col key={'card-' + i} sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
                                 <Card bordered={false}>
                                     <CameraOutlined style={quoteStyle} />
                                     <Title level={3}>{x.name}</Title>

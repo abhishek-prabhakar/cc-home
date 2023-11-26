@@ -80,7 +80,7 @@ export type CartItem = {
         vendorType: string,
         cost: number,
         isOptional: boolean,
-        date: Date,
+        date: Date | string,
         time: string,
         duration: number,
         image?: string | null

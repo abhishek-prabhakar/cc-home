@@ -17,7 +17,12 @@ export async function action({
     }
 
 
-    const loggedInUser = await UserService.getUser(userId);
+    const loggedInUser = await db.user.findFirst({
+        where: {
+            username: userId
+        }
+    });
+
     if (!loggedInUser) {
         return;
     }

@@ -25,7 +25,7 @@ export const CartService = {
                 return;
             }
 
-            const params = cart.service.reduce<{ [key in string]: { date: Date, time: number[], duration: number } }>((obj, x) => {
+            const params = cart.service.reduce<{ [key in string]: { date: Date, time: string, duration: number } }>((obj, x) => {
                 obj[x.vendorServiceId] = {
                     date: new Date(x.date),
                     time: x.time,

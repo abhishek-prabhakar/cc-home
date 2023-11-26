@@ -52,7 +52,12 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
       return;
     }
 
-    const loggedInUser = await UserService.getUser(userId);
+    const loggedInUser = await db.user.findFirst({
+      where: {
+        username: userId
+      }
+    });
+
 
     if (loggedInUser) {
       resolve({

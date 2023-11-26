@@ -44,16 +44,8 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
         setServiceChecklist([...serviceChecklist]);
     }
 
-    function setServiceOptionTime(index: number, checked: boolean, value: string) {
-        const v = getValues();
-        let times: string = v.service[index].time;
-        // let times: string[] = v.service[index].time || [];
-        // // if (times.includes(value)) {
-        // //     times = times.filter(x => x !== value);
-        // // } else {
-        // //     times.push(value);
-        // // }
-        setValue(`service.${index}.time`, times);
+    function setServiceOptionTime(index: number, hour?: number) {
+        setValue(`service.${index}.time`, hour);
 
         serviceChecklist[index] = true;
         setServiceChecklist([...serviceChecklist]);
@@ -86,10 +78,10 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                             <Col sm={24} md={12}>
                                 <Title level={5}>Choose time slot</Title>
                                 <div>
-                                    <TimePicker hourStep={1} format={timeFormat} />
+                                    <TimePicker hourStep={1} format={timeFormat} onChange={r => setServiceOptionTime(index, r?.hour())} />
                                     {/* <Rad value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox> */}
                                 </div>
-                                <hr />
+
                                 <Title level={5}>Duration of the service</Title>
                                 <Select
                                     {...register(`service.${index}.duration`)}
@@ -99,7 +91,6 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                                             label: item.duration + ' hours',
                                             value: item.duration,
                                         }
-                                       
                                     ].concat(
                                         new Array(24 - item.duration).fill(item.duration + 1).map((x, i) => ({
                                             label: (x + i) + ' hours',
