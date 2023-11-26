@@ -6,7 +6,7 @@ import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { VendorServiceOption } from "~/types";
 
-const timeFormat = 'hh';
+const timeFormat = 'hh a';
 
 function ConfigureBooking(service: { serviceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
@@ -85,10 +85,10 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                             </Col>
                             <Col sm={24} md={12}>
                                 <Title level={5}>Choose time slot</Title>
-                                {optionsWithDisabled.map(item => <div key={item.value} >
+                                <div>
                                     <TimePicker hourStep={1} format={timeFormat} />
                                     {/* <Rad value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox> */}
-                                </div>)}
+                                </div>
                                 <hr />
                                 <Title level={5}>Duration of the service</Title>
                                 <Select
@@ -99,9 +99,9 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                                             label: item.duration + ' hours',
                                             value: item.duration,
                                         },
-                                        new Array(24 - item.duration).fill(item.duration).map((x, i) => ({
-                                            label: (x + i + 1) + ' hours',
-                                            value: x + i + 1
+                                        new Array(24 - item.duration).fill(item.duration + 1).map((x, i) => ({
+                                            label: (x + i) + ' hours',
+                                            value: x + i
                                         }))
                                     ]} />
                             </Col>
