@@ -1,5 +1,6 @@
 import { ActionFunction, json, redirect } from "@remix-run/node"
 import { PrismaClient } from "@prisma/client";
+import { db } from "~/utils/database";
 var bcrypt = require('bcryptjs');
 
 export async function action({
@@ -27,8 +28,13 @@ export async function action({
                     username
                 },
             });
+            const user = await db.user.findFirst({
+                where: {
+                    username
+                }
+            })
             success = true;
-            token = username;
+            token = user?.id;
         }
     } catch (r) {
 

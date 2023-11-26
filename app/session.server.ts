@@ -35,7 +35,7 @@ export async function getSessionUserId(
 
 export async function getSessionUser(request: Request) {
     const userId = await getSessionUserId(request);
-    if (userId === undefined) return null;
+    if (!userId) return null;
 
     const user = await db.user.findFirst({ where: { id: userId } });;
     if (user) return user;
