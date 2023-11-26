@@ -45,6 +45,7 @@ export async function action({
             const data = await db.booking.create({
                 data: {
                     userId: loggedInUser.id,
+                    orderId: 'CC123',
                     status: BookingStatus.PENDING,
                     total: summary.total,
                     tax: summary.tax,
@@ -56,10 +57,10 @@ export async function action({
             await db.bookingService.createMany({
                 data: res.services.map(x => ({
                     bookingId: data.id,
-                    vendorId: x.vendorId,
+                    vendorServiceId: x.id,
                     status: BookingStatus.PENDING,
                     date: x.date,
-                    time: x.time + '',
+                    timeHour: x.timeHour,
                     duration: x.duration,
                     location: '',
                     cost: x.cost

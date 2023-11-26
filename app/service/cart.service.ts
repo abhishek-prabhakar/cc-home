@@ -25,10 +25,10 @@ export const CartService = {
                 return;
             }
 
-            const params = cart.service.reduce<{ [key in string]: { date: Date, time: string, duration: number } }>((obj, x) => {
+            const params = cart.service.reduce<{ [key in string]: { date: Date, timeHour: number, duration: number } }>((obj, x) => {
                 obj[x.vendorServiceId] = {
                     date: new Date(x.date),
-                    time: x.time,
+                    timeHour: x.timeHour,
                     duration: 3
                 };
                 return obj;
@@ -49,7 +49,7 @@ export const CartService = {
                             id: x.service.vendorServices[0].id,
                             isOptional: x.isOptional,
                             date: params[x.service.vendorServices[0].id].date,
-                            time: params[x.service.vendorServices[0].id].time,
+                            timeHour: params[x.service.vendorServices[0].id].timeHour,
                             duration: params[x.service.vendorServices[0].id].duration,
                             image: x.service.imageName ? PATH.RESOURCE_URL + x.service.imageName : ''
                         }))

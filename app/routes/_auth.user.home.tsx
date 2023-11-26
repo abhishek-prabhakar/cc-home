@@ -1,49 +1,60 @@
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
-import { LoaderArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Space, Tag, Timeline, Typography } from "antd";
+import { BookingStatus } from "@prisma/client";
+import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
+import { Await, Link, useLoaderData } from "@remix-run/react";
+import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Skeleton, Space, Tag, Timeline, Typography } from "antd";
+import { Suspense } from "react";
+import { getSessionUserId } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
+import { db } from "~/utils/database";
 const { Title, Text } = Typography;
 
-
-export async function loader({ params }: LoaderArgs): Promise<UserData> {
-
-    return {
-        bookings: [{
-            id: '1',
-            name: 'booking 1',
-            date: new Date(),
-            vendors: [
-                {
-                    id: 'jessica', fullName: 'Jessica', location: 'Bangalore', gender: 'Female', email: '3ewwer',
-                    type: 'Photographer',
-                    avatar: {
-                        large: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp',
-                        thumbnail: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp'
-                    }
-                },
-                {
-                    id: 'jessica', fullName: 'Mike', location: 'Bangalore', gender: 'Female', email: '3ewwer',
-                    type: 'Stylist',
-                    avatar: {
-                        large: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp',
-                        thumbnail: 'https://tenpo.balcomsoft.com/wp-content/uploads/2023/07/Frame-1000001329.webp'
-                    }
-                }]
-        }],
-    }
-
+type OrderItem = { id: string, status: BookingStatus, date: Date, services: string[] }
+type LoaderData = {
+    orders: OrderItem[]
 }
 
-const bookingOptionsList: MenuProps['items'] = [
-    {
-        key: '1',
-        label: 'Reschedule',
-    },
-    {
-        key: '2',
-        label: <Text type="danger">Cancel</Text>,
-    }]
+export async function loader({ params, request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+    const userId = await getSessionUserId(request);
+
+    const orders = new Promise<OrderItem[]>(function (resolve) {
+        db.booking.findMany({
+            where: {
+                userId
+            },
+            select: {
+                id: true,
+                orderId: true,
+                status: true,
+                created_at: true,
+                bookingService: {
+                    select: {
+                        vendorServices: {
+                            select: {
+                                service: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }).then(r => {
+            resolve(r.map(x => ({
+                id: x.orderId,
+                status: x.status,
+                date: x.created_at,
+                services: x.bookingService.map(i => i.vendorServices.service.name)
+            })))
+        })
+    });
+
+
+    return defer({ orders });
+}
+
 
 const UserHome = {
     Index: () => {
@@ -55,59 +66,37 @@ const UserHome = {
         </Row>
     },
     AllBookings: () => {
-        const data = useLoaderData<UserData>();
+        const data = useLoaderData<LoaderData>();
 
-        return <Row >
-            {data.bookings.map(booking => <Col span={24} key={booking.id}> <Card>
-                <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
-                    <Col>
-                        <Space size={'middle'}>
-                            <Text type="secondary" strong>Order ID: 123</Text>
-                            <Tag color="#87d068">Confirmed</Tag>
-                        </Space>
-                        <Title level={5}>Wednesday Sept 30, 2023</Title>
-                    </Col>
-                    <Col>
-                        <Dropdown menu={{ items: bookingOptionsList }} placement="bottomRight">
-                            <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
-                                Manage
-                            </Button>
-                        </Dropdown>
-                    </Col>
-                </Row>
-                <Divider />
-                <div>
-                    <Timeline
-                        pending="Waiting for confirmation..."
-                        items={[
-                            {
-                                children: 'Order Placed',
-                            },
-                        ]}
-                    />
-                </div>
-                <Divider />
-                <List
-                    dataSource={booking.vendors}
-                    renderItem={(item) => (
-                        <List.Item key={item.email}>
-                            <List.Item.Meta
-                                avatar={<Avatar src={item.avatar?.large} />}
-                                title={<Link to={'/profile/' + item.id}>{item.fullName}</Link>}
-                                description={item.type}
-                            />
-                            <div>
-                                <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'}>
-                                    Call
-                                </Button>
-                            </div>
-                        </List.Item>
-                    )}
-                />
-            </Card>
-            </Col>
-            )}
-        </Row>
+        return <div>
+            <Suspense fallback={<Skeleton />}>
+                <Await resolve={data.orders}>
+                    {response => <Row >
+                        {response.map(booking => <Col span={24} key={booking.id}> <Card>
+                            <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
+                                <Col>
+                                    <Space size={'middle'}>
+                                        <Text type="secondary" strong>Order ID: {booking.id}</Text>
+                                        <Tag color="#87d068">{booking.status}</Tag>
+                                    </Space>
+                                    <Title level={5}>Placed on: {booking.date}</Title>
+                                    <Text>{booking.services.join(', ')}</Text>
+                                </Col>
+                                <Col>
+                                    <Link to={'order/' + booking.id}>
+                                        <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
+                                            View
+                                        </Button>
+                                    </Link>
+                                </Col>
+                            </Row>
+                        </Card>
+                        </Col>
+                        )}
+                    </Row>}
+                </Await>
+            </Suspense>
+        </div>
     }
 }
 

@@ -1,26 +1,20 @@
 import { LoaderArgs, TypedResponse, redirect } from "@remix-run/node"
-import { Outlet } from "@remix-run/react"
-import { User } from "~/types"
+import { Outlet, useLoaderData } from "@remix-run/react"
+import { getSessionUserId } from "~/session.server";
 
-export async function loader({ params }: LoaderArgs): Promise<User | TypedResponse> {
-    const loginSuccess = true;
-
-    if (!loginSuccess) {
+export async function loader(args: LoaderArgs): Promise<boolean | TypedResponse> {
+    const userId = await getSessionUserId(args.request);
+    if (!userId) {
         return redirect('/');
     }
 
-    return {
-        id: '1',
-        name: 'booking 1',
-        phone: 1234,
-        email: 'test@test.com'
-    }
-
+    return true;
 }
 
 export default function UserLayout() {
+    const data = useLoaderData();
 
     return <div className="container">
-        <Outlet />
+        {data && <Outlet />}
     </div>
 }

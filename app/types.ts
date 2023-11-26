@@ -81,12 +81,12 @@ export type CartItem = {
         cost: number,
         isOptional: boolean,
         date: Date | string,
-        time: string,
+        timeHour: number,
         duration: number,
         image?: string | null
     }[]
 };
-export type CartInputService = { vendorServiceId: string, date: Date, time: string };
+export type CartInputService = { vendorServiceId: string, date: Date, timeHour: number };
 export type CartInput = {
     serviceGroupId: string,
     service: CartInputService[]
