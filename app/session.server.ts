@@ -40,7 +40,7 @@ export async function getSessionUser(request: Request) {
     const user = await db.user.findFirst({ where: { id: userId } });;
     if (user) return user;
 
-    throw await logout(request);
+    await logout(request);
 }
 
 export async function requireSessionId(
