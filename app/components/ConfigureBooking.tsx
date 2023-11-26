@@ -98,12 +98,14 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
                                         {
                                             label: item.duration + ' hours',
                                             value: item.duration,
-                                        },
+                                        }
+                                       
+                                    ].concat(
                                         new Array(24 - item.duration).fill(item.duration + 1).map((x, i) => ({
                                             label: (x + i) + ' hours',
                                             value: x + i
                                         }))
-                                    ]} />
+                                    )} />
                             </Col>
                         </Row>,
                     };
