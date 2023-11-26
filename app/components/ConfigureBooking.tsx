@@ -27,25 +27,16 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
         setServiceChecklist(service.options.map(r => false));
     }, []);
 
-    const optionsWithDisabled = [
-        { label: '6 AM', value: '6' },
-        { label: '9 AM', value: '9' },
-        { label: '12 PM', value: '12', disabled: true },
-        { label: '3 PM', value: '15', },
-        { label: '6 PM', value: '18', disabled: true },
-        { label: '9 PM', value: '21', },
-    ];
-
     function setServiceOptionDate(index: number, date: Date) {
         setValue(`service.${index}.date`, date);
-        setValue(`service.${index}.time`, null);
+        setValue(`service.${index}.timeHour`, null);
 
         serviceChecklist[index] = false;
         setServiceChecklist([...serviceChecklist]);
     }
 
     function setServiceOptionTime(index: number, hour?: number) {
-        setValue(`service.${index}.time`, hour);
+        setValue(`service.${index}.timeHour`, hour);
 
         serviceChecklist[index] = true;
         setServiceChecklist([...serviceChecklist]);

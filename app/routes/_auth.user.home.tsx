@@ -4,7 +4,7 @@ import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Skeleton, Space, Tag, Timeline, Typography } from "antd";
 import { Suspense } from "react";
-import { getSessionUserId } from "~/session.server";
+import { getSessionUser, getSessionUserId } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
 import { db } from "~/utils/database";
 const { Title, Text } = Typography;
@@ -15,12 +15,18 @@ type LoaderData = {
 }
 
 export async function loader({ params, request }: LoaderArgs): Promise<TypedDeferredData<any>> {
-    const userId = await getSessionUserId(request);
+    const user = await getSessionUser(request);
 
-    const orders = new Promise<OrderItem[]>(function (resolve) {
+    const orders = new Promise<OrderItem[]>(function (resolve, reject) {
+        console.log(user);
+        console.log('----')
+        if (!user) {
+            reject();
+            return;
+        }
         db.booking.findMany({
             where: {
-                userId
+                userId: user.id
             },
             select: {
                 id: true,
@@ -93,6 +99,7 @@ const UserHome = {
                         </Card>
                         </Col>
                         )}
+                        {!response.length && <Col span={12}>Sorry, You haven't scheduled any orders</Col>}
                     </Row>}
                 </Await>
             </Suspense>
