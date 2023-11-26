@@ -85,13 +85,13 @@ const Cart = {
                             ]}
                         >
                             <Card.Meta
-                                avatar={<Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel" />}
+                                avatar={<Avatar src={service.vendorImg} />}
                                 title={service.name}
                                 description={<div>
                                     <Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>
                                     <br />
                                     <Typography.Text strong>{service.date.toString()}</Typography.Text>
-                                    <Typography.Text strong>{service.timeHour} to {service.timeHour + service.duration}</Typography.Text>
+                                    <Typography.Text strong>{service.timeHour} to {service.timeHour + service.duration} ({service.duration} hours)</Typography.Text>
                                 </div>}
                             />
                         </Card>

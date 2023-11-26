@@ -44,6 +44,7 @@ export const CartService = {
                             name: x.service.name,
                             vendorType: x.service.vendorServices[0].vendors.vendorType.name,
                             vendorName: x.service.vendorServices[0].vendors.username,
+                            vendorImg: x.service.vendorServices[0].vendors.profileImageName ? PATH.RESOURCE_URL + x.service.vendorServices[0].vendors.profileImageName : PATH.AVATAR_PLACEHOLDER,
                             vendorId: x.service.vendorServices[0].vendors.id,
                             cost: x.service.vendorServices[0].cost,
                             id: x.service.vendorServices[0].id,

@@ -47,6 +47,7 @@ export const ServiceQuery = {
                                             select: {
                                                 id: true,
                                                 username: true,
+                                                profileImageName: true,
                                                 vendorType: {
                                                     select: {
                                                         name: true

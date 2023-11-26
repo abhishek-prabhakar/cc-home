@@ -78,6 +78,7 @@ export type CartItem = {
         vendorId: string,
         vendorName: string,
         vendorType: string,
+        vendorImg: string;
         cost: number,
         isOptional: boolean,
         date: Date | string,
