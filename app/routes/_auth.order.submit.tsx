@@ -12,18 +12,18 @@ export async function action({
     const session = await getSession(cookieHeader);
     const userId = session.get(USER_SESSION_KEY);
     if (!userId) {
-        return;
+        return redirect('/user/login');
     }
 
 
     const loggedInUser = await db.user.findFirst({
         where: {
-            username: userId
+            id: userId
         }
     });
 
     if (!loggedInUser) {
-        return;
+        return redirect('/user/login');
     }
 
 
@@ -74,7 +74,7 @@ export async function action({
                 }))
             })
 
-            resolve(data.id);
+            resolve(data.orderId);
         });
 
     });
