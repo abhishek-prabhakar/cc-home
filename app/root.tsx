@@ -44,29 +44,32 @@ const headerStyle: React.CSSProperties = {
 type LoaderData = RootLoaderData;
 
 export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get(USER_SESSION_KEY);
 
   const user = new Promise<User | null>(async function (resolve) {
-    const session = await getSession(request.headers.get('Cookie'));
-    const userId = session.get(USER_SESSION_KEY);
-
     if (!userId) {
       resolve(null);
       return;
     }
 
-    const loggedInUser = await db.user.findFirst({
-      where: {
-        username: userId
-      }
-    });
-
-
-    if (loggedInUser) {
-      resolve({
-        id: loggedInUser.id,
-        phone: +loggedInUser.username,
-        name: ''
+    try {
+      const loggedInUser = await db.user.findFirst({
+        where: {
+          id: userId
+        }
       });
+
+
+      if (loggedInUser) {
+        resolve({
+          id: loggedInUser.id,
+          phone: +loggedInUser.username,
+          name: ''
+        });
+      }
+    } catch (e) {
+      resolve(null);
     }
   });
 

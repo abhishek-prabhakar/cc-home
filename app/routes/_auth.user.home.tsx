@@ -53,8 +53,8 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 date: x.created_at,
                 services: x.bookingService.map(i => i.vendorServices.service.name)
             }));
-            console.log(p)
-            resolve(p)
+
+            resolve(p);
         })
     });
 
@@ -91,7 +91,7 @@ const UserHome = {
                                     <Text>{booking.services.join(', ')}</Text>
                                 </Col>
                                 <Col>
-                                    <Link to={'order/' + booking.id}>
+                                    <Link to={'/user/order/' + booking.id}>
                                         <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
                                             View
                                         </Button>

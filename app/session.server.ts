@@ -1,9 +1,5 @@
 import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
 // import invariant from "tiny-invariant";
-
-import type { User } from "@prisma/client";
-import { db } from "./utils/database";
-
 // invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 export const userCartCookie = createCookie("cart");
 

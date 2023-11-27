@@ -8,7 +8,6 @@ export async function loader(args: LoaderArgs): Promise<boolean | TypedResponse>
     );
     const userId = session.get(USER_SESSION_KEY);
 
-    console.log(userId, '----')
     if (!userId) {
         return redirect('/');
     }
