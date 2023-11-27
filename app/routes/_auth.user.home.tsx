@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
 import { db } from "~/utils/database";
+import { StatusMarker } from "~/utils/statusMarker.map";
 const { Title, Text } = Typography;
 
 type OrderItem = { id: string, status: BookingStatus, date: Date, services: string[] }
@@ -85,7 +86,7 @@ const UserHome = {
                                 <Col>
                                     <Space size={'middle'}>
                                         <Text type="secondary" strong>Order ID: {booking.id}</Text>
-                                        <Tag color="#87d068">{booking.status}</Tag>
+                                        <Tag color={StatusMarker.get(booking.status)}>{booking.status}</Tag>
                                     </Space>
                                     <Title level={5}>Placed on: {booking.date}</Title>
                                     <Text>{booking.services.join(', ')}</Text>

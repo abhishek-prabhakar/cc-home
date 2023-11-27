@@ -60,7 +60,6 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
         }
       });
 
-
       if (loggedInUser) {
         resolve({
           id: loggedInUser.id,

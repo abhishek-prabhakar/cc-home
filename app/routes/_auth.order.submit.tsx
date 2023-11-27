@@ -41,12 +41,18 @@ export async function action({
                 return;
             }
 
+            function extractTwoDigit(number: number) {
+                return number % 100;
+            }
+
             const summary = CartService.calculate(res);
+            const date = new Date();
+            const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
 
             const data = await db.booking.create({
                 data: {
                     userId: loggedInUser.id,
-                    orderId: 'CC123',
+                    orderId: orderId,
                     status: BookingStatus.PENDING,
                     total: summary.total,
                     tax: summary.tax,
