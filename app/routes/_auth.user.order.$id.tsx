@@ -166,7 +166,7 @@ const UserOrderHome = {
                                 <Title level={5}>{orderData.date}</Title>
                             </Col>
                             <Col>
-                                <Dropdown menu={{ items: bookingOptionsList }} placement="bottomRight">
+                                {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED} <Dropdown menu={{ items: bookingOptionsList }} placement="bottomRight">
                                     <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
                                         Manage
                                     </Button>
@@ -185,21 +185,25 @@ const UserOrderHome = {
                             />
                         </div>
                         <Divider />
+                        <Typography.Text strong underline>Services</Typography.Text>
                         <List
                             dataSource={orderData.services}
                             renderItem={(item) => (
-                                <List.Item key={item.id}>
+                                <List.Item key={item.id} actions={[<Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirms' : ''}>
+                                    <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={item.status !== BookingStatus.ACCEPTED}>
+                                        Call
+                                    </Button>
+                                </Tooltip>]}>
                                     <List.Item.Meta
                                         avatar={<Link to={'/profile/' + item.vendor.username}><Avatar src={item.vendor.profileImg} /></Link>}
                                         title={<Link to={'/profile/' + item.vendor.username}>{item.vendor.name}</Link>}
                                         description={item.vendor.jobType}
                                     />
                                     <div>
-                                        <Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirms' : ''}>
-                                            <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={item.status !== BookingStatus.ACCEPTED}>
-                                                Call
-                                            </Button>
-                                        </Tooltip>
+                                        <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
+                                        <Typography.Title level={4}>{item.name}</Typography.Title>
+                                        Scheduled on {item.date}
+                                        Time:{item.timeHour} ({item.duration} hours)
                                     </div>
                                 </List.Item>
                             )}
