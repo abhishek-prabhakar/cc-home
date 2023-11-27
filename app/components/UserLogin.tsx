@@ -1,14 +1,12 @@
-import { Form, useNavigate } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { Button, Col, Input, Modal, Row, Typography } from "antd";
-import axios from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import UserService from "~/service/user.service";
-import { UserLoginInput } from "~/types";
 const { Title } = Typography;
 
 const UserLogin = {
-    Index: ({ title = 'Manage your booking', redirectUrl, onSuccess }: { title?: string, redirectUrl?: string, onSuccess?: Function }) => {
+    Index: ({ title = 'Manage your booking', redirectUrl = '', onSuccess }: { title?: string, redirectUrl?: string, onSuccess?: Function }) => {
         const { control, handleSubmit } = useForm();
         const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
         const [isBusy, setBusy] = useState(false);
@@ -50,16 +48,21 @@ const UserLogin = {
     VerifyOtp: ({ username, redirectUrl, modalOpen, onClose }: { username: number | null | undefined, modalOpen: boolean, redirectUrl?: string, onClose: Function }) => {
         const { control, getValues, handleSubmit } = useForm();
         const [isBusy, setBusy] = useState(false);
-        const navigate = useNavigate();
+        const formRef = useRef<any>(null);
+        const formInputIdRef = useRef<any>(null);
+        const formInputUrlRef = useRef<any>(null);
 
-        function verifyOtp() {
+        const verifyOtp = () => {
             setBusy(true);
             UserService.VerifyOtp({ phone: username || 0, otp: getValues().otp }).then(r => {
-                if (onClose) {
-                    onClose();
-                }
+
                 setBusy(false);
-                navigate(`/login/redirect?id=${r.data.token}&redirect=${redirectUrl}`);
+                formInputIdRef.current.value = r.data.token;
+                formInputUrlRef.current.value = redirectUrl || '';
+                formRef.current.submit();
+                // if (onClose) {
+                //     onClose();
+                // }
             }).catch(e => {
                 setBusy(false);
             })
@@ -75,6 +78,10 @@ const UserLogin = {
                     <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />
                 </Col>
             </Row>
+            <Form method="post" action="/login/redirect" ref={formRef}>
+                <input type="hidden" name="id" ref={formInputIdRef} />
+                <input type="hidden" name="redirect" ref={formInputUrlRef} />
+            </Form>
         </Modal>
     }
 }

@@ -1,4 +1,4 @@
-import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
+import { Session, SessionData, createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
 // import invariant from "tiny-invariant";
 
 import type { User } from "@prisma/client";
@@ -38,9 +38,9 @@ export async function getSessionUser(request: Request) {
     if (!userId) return null;
 
     const user = await db.user.findFirst({ where: { id: userId } });;
-    if (user) return user;
+    if (user) return new Promise<User>(function (resolve) { resolve(user) });
 
-    await logout(request);
+    return await logout(request);
 }
 
 export async function requireSessionId(
@@ -68,6 +68,14 @@ export async function requireAdminSession(request: Request) {
     throw await logout(request);
 }
 
+export async function commitSession(session: Session<SessionData>, remember = true) {
+    return await SessionStorage.commitSession(session, {
+        maxAge: remember
+            ? 60 * 60 * 24 * 7 // 7 days
+            : undefined,
+    });
+}
+
 export async function createUserSession({
     request,
     userId,
@@ -81,13 +89,12 @@ export async function createUserSession({
 }) {
     const session = await getSession(request);
     session.set(USER_SESSION_KEY, userId);
+    console.log('-creating..')
+    const cookie = await commitSession(session);
+    console.log('-here')
     return redirect(redirectTo, {
         headers: {
-            "Set-Cookie": await SessionStorage.commitSession(session, {
-                maxAge: remember
-                    ? 60 * 60 * 24 * 7 // 7 days
-                    : undefined,
-            }),
+            "Set-Cookie": cookie,
         },
     });
 }
