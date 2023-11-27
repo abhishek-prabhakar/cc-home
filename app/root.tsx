@@ -19,7 +19,7 @@ import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
 import { RootLoaderData, User } from "./types";
-import { getSessionUserId } from "./session.server";
+import { USER_SESSION_KEY, getSessionUserId } from "./session.server";
 import { db } from "./utils/database";
 const { Content } = Layout;
 import { Provider } from 'react-redux';

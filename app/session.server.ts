@@ -1,4 +1,4 @@
-import { Session, SessionData, createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
+import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
 // import invariant from "tiny-invariant";
 
 import type { User } from "@prisma/client";
@@ -20,20 +20,45 @@ export const SessionStorage = createCookieSessionStorage({
 
 const USER_SESSION_KEY = "userId";
 
-export async function getSession(request: Request) {
-    const cookie = request.headers.get("Cookie");
-    return SessionStorage.getSession(cookie);
-}
 
-export async function getSessionUserId(
-    request: Request
-): Promise<User["id"] | undefined> {
-    const session = await getSession(request);
+type SessionData = {
+    userId: string;
+};
+
+type SessionFlashData = {
+    error: string;
+};
+
+const { getSession, commitSession, destroySession } =
+    createCookieSessionStorage<SessionData, SessionFlashData>(
+        {
+            // a Cookie from `createCookie` or the CookieOptions to create one
+            cookie: {
+                name: "__session",
+
+                // all of these are optional
+                domain: "remix.run",
+                // Expires can also be set (although maxAge overrides it when used in combination).
+                // Note that this method is NOT recommended as `new Date` creates only one date on each server deployment, not a dynamic date in the future!
+                //
+                // expires: new Date(Date.now() + 60_000),
+                httpOnly: true,
+                maxAge: 60,
+                path: "/",
+                sameSite: "lax",
+                secrets: ["s3cret1"],
+                secure: process.env.NODE_ENV === "production",
+            },
+        }
+    );
+
+const getSessionUserId = async (request: Request) => {
+    const session = await getSession(request.headers.get(USER_SESSION_KEY));
     const userId = session.get(USER_SESSION_KEY);
     return userId;
 }
 
-export async function getSessionUser(request: Request) {
+async function getSessionUser(request: Request) {
     const userId = await getSessionUserId(request);
     if (!userId) return null;
 
@@ -43,67 +68,14 @@ export async function getSessionUser(request: Request) {
     return await logout(request);
 }
 
-export async function requireSessionId(
-    request: Request,
-    redirectTo: string = new URL(request.url).pathname
-) {
-    const userId = await getSessionUserId(request);
-    if (!userId) {
-        const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-        throw redirect(`/login?${searchParams}`);
-    }
-    return userId;
-}
-
-export async function requireSession(request: Request) {
-    const userId = await requireSessionId(request);
-    const user = await db.user.findFirst({ where: { id: userId } });
-    if (user) return user;
-    throw await logout(request);
-}
-
-export async function requireAdminSession(request: Request) {
-    const user = await requireSession(request);
-    // if (user && user.type === "Admin") return user;
-    throw await logout(request);
-}
-
-export async function commitSession(session: Session<SessionData>, remember = true) {
-    return await SessionStorage.commitSession(session, {
-        maxAge: remember
-            ? 60 * 60 * 24 * 7 // 7 days
-            : undefined,
-    });
-}
-
-export async function createUserSession({
-    request,
-    userId,
-    remember,
-    redirectTo,
-}: {
-    request: Request;
-    userId: string;
-    remember: boolean;
-    redirectTo: string;
-}) {
-    const session = await getSession(request);
-    session.set(USER_SESSION_KEY, userId);
-    console.log('-creating..')
-    const cookie = await commitSession(session);
-    console.log('-here')
-    return redirect(redirectTo, {
-        headers: {
-            "Set-Cookie": cookie,
-        },
-    });
-}
-
-export async function logout(request: Request) {
-    const session = await getSession(request);
+const logout = async (request: Request) => {
+    const session = await getSession(request.headers.get('Cookie'));
     return redirect("/", {
         headers: {
             "Set-Cookie": await SessionStorage.destroySession(session),
         },
     });
 }
+
+
+export { getSession, commitSession, destroySession, USER_SESSION_KEY, getSessionUserId, getSessionUser, logout };
