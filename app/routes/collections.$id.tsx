@@ -154,7 +154,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         portfolio: x.vendorPortfolio.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''),
                         rating,
                         tag,
-                        profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : '',
+                        profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER,
                         services: x.vendorServices.map(x => x.service.name)
                     })),
                     loadMore

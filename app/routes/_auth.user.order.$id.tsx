@@ -2,7 +2,7 @@ import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
 import { BookingStatus } from "@prisma/client";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Space, Tag, Timeline, Typography } from "antd";
+import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Space, Tag, Timeline, Tooltip, Typography } from "antd";
 import { PATH } from "~/path.data";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -19,6 +19,7 @@ type BookingService = {
     status: BookingStatus,
     vendor: {
         name: string,
+        username: string,
         profileImg: string,
         jobType: string
     }
@@ -114,6 +115,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         duration: x.duration,
                         name: x.vendorServices.service.name,
                         vendor: {
+                            username: x.vendorServices.vendors.username,
                             name: x.vendorServices.vendors.username,
                             jobType: x.vendorServices.vendors.vendorType.name,
                             profileImg: x.vendorServices.vendors.profileImageName ?? PATH.AVATAR_PLACEHOLDER,
@@ -188,14 +190,16 @@ const UserOrderHome = {
                             renderItem={(item) => (
                                 <List.Item key={item.id}>
                                     <List.Item.Meta
-                                        avatar={<Avatar src={item.vendor.profileImg} />}
-                                        title={<Link to={'/profile/' + item.id}>{item.vendor.name}</Link>}
+                                        avatar={<Link to={'/profile/' + item.vendor.username}><Avatar src={item.vendor.profileImg} /></Link>}
+                                        title={<Link to={'/profile/' + item.vendor.username}>{item.vendor.name}</Link>}
                                         description={item.vendor.jobType}
                                     />
                                     <div>
-                                        <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'}>
-                                            Call
-                                        </Button>
+                                        <Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirms' : ''}>
+                                            <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={item.status !== BookingStatus.ACCEPTED}>
+                                                Call
+                                            </Button>
+                                        </Tooltip>
                                     </div>
                                 </List.Item>
                             )}
