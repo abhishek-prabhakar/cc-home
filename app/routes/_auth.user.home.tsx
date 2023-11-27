@@ -25,6 +25,9 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
             return;
         }
         db.booking.findMany({
+            orderBy: {
+                created_at: 'desc'
+            },
             where: {
                 userId: userId
             },
@@ -89,11 +92,11 @@ const UserHome = {
                                         <Tag color={StatusMarker.get(booking.status)}>{booking.status}</Tag>
                                     </Space>
                                     <Title level={5}>Placed on: {booking.date}</Title>
-                                    <Text>{booking.services.join(', ')}</Text>
+                                    <Text><strong>Services:</strong> {booking.services.join(', ')}</Text>
                                 </Col>
                                 <Col>
                                     <Link to={'/user/order/' + booking.id}>
-                                        <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
+                                        <Button type="default" shape="round" size={'middle'}>
                                             View
                                         </Button>
                                     </Link>
@@ -106,7 +109,7 @@ const UserHome = {
                     </Row>}
                 </Await>
             </Suspense>
-        </div>
+        </div >
     }
 }
 
