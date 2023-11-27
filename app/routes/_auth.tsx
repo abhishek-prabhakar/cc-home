@@ -4,6 +4,7 @@ import { getSessionUserId } from "~/session.server";
 
 export async function loader(args: LoaderArgs): Promise<boolean | TypedResponse> {
     const userId = await getSessionUserId(args.request);
+    console.log(userId, '----')
     if (!userId) {
         return redirect('/');
     }

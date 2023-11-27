@@ -68,7 +68,7 @@ export async function action({
     }
 
     session.set(USER_SESSION_KEY, userToken);
-
+    console.log(userToken)
     return redirect(redirectUrl, {
         headers: {
             "Set-Cookie": await commitSession(session),
