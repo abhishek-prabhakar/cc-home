@@ -60,20 +60,24 @@ export function Header({ user }: { user?: User | null }) {
                                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     <Dropdown dropdownRender={() => (
                                         <div style={userMenuStyle}>
-                                            <Space style={{ padding: '12px' }}>
+                                            <div style={{ padding: '12px' }}>
                                                 {user?.id ?
-                                                    <div>
-                                                        <Title level={5}>Hej!</Title>
-                                                        <Link to={'/user/home'}>My Bookings</Link>
-                                                        <Button href="/logout" >Logout</Button>
-                                                    </div>
+                                                    <Row justify={'space-between'}>
+                                                        <Col>
+                                                            <Title level={5}>Hej!</Title>
+                                                            <Link to={'/user/home'}>My Bookings</Link>
+                                                        </Col>
+                                                        <Col>
+                                                            <Button size="small" href="/logout" >Logout</Button>
+                                                        </Col>
+                                                    </Row>
                                                     : <UserLogin />}
-                                            </Space>
+                                            </div>
                                             <Divider style={{ margin: 0 }} />
                                             <div style={menuArtisantStyle}>
                                                 <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
                                                     <Title level={3}>Artisan?</Title>
-                                                    <Link to="/partner/signup"><Button>Signup</Button></Link>
+                                                    <Link to="/partner/signup"><Button shape="round" type="primary" >Signup</Button></Link>
                                                 </Space>
                                             </div>
                                         </div>
