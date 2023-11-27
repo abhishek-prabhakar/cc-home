@@ -4,7 +4,7 @@ import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Skeleton, Space, Tag, Timeline, Typography } from "antd";
 import { Suspense } from "react";
-import { getSessionUser, getSessionUserId } from "~/session.server";
+import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
 import { db } from "~/utils/database";
 const { Title, Text } = Typography;
@@ -15,16 +15,17 @@ type LoaderData = {
 }
 
 export async function loader({ params, request }: LoaderArgs): Promise<any> {
-    const user = await getSessionUser(request);
+    const session = await getSession(request.headers.get('Cookie'));
+    const userId = session.get(USER_SESSION_KEY);
 
     const orders = new Promise<OrderItem[]>(function (resolve, reject) {
-        if (!user) {
+        if (!userId) {
             reject();
             return;
         }
         db.booking.findMany({
             where: {
-                userId: (user as User).id
+                userId: userId
             },
             select: {
                 id: true,

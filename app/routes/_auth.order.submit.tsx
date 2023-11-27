@@ -1,7 +1,7 @@
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
-import { getSessionUserId, userCartCookie } from "~/session.server";
+import { USER_SESSION_KEY, getSession, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 
@@ -9,7 +9,8 @@ export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    const userId = await getSessionUserId(request);
+    const session = await getSession(cookieHeader);
+    const userId = session.get(USER_SESSION_KEY);
     if (!userId) {
         return;
     }

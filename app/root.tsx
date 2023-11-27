@@ -19,7 +19,7 @@ import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
 import { RootLoaderData, User } from "./types";
-import { USER_SESSION_KEY, getSessionUserId } from "./session.server";
+import { USER_SESSION_KEY, getSession } from "./session.server";
 import { db } from "./utils/database";
 const { Content } = Layout;
 import { Provider } from 'react-redux';
@@ -46,7 +46,9 @@ type LoaderData = RootLoaderData;
 export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
 
   const user = new Promise<User | null>(async function (resolve) {
-    const userId = await getSessionUserId(request);
+    const session = await getSession(request.headers.get('Cookie'));
+    const userId = session.get(USER_SESSION_KEY);
+
     if (!userId) {
       resolve(null);
       return;

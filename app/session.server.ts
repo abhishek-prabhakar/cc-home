@@ -32,12 +32,11 @@ type SessionFlashData = {
 const { getSession, commitSession, destroySession } =
     createCookieSessionStorage<SessionData, SessionFlashData>(
         {
-            // a Cookie from `createCookie` or the CookieOptions to create one
             cookie: {
                 name: "__session",
                 // expires: new Date(Date.now() + 60_000),
                 httpOnly: true,
-                maxAge: 60,
+                maxAge: 60 * 60 * 24 * 7,
                 path: "/",
                 sameSite: "lax",
                 secrets: ["s3cret1"],
@@ -45,22 +44,6 @@ const { getSession, commitSession, destroySession } =
             },
         }
     );
-
-const getSessionUserId = async (request: Request) => {
-    const session = await getSession(request.headers.get(USER_SESSION_KEY));
-    const userId = session.get(USER_SESSION_KEY);
-    return userId;
-}
-
-async function getSessionUser(request: Request) {
-    const userId = await getSessionUserId(request);
-    if (!userId) return null;
-
-    const user = await db.user.findFirst({ where: { id: userId } });;
-    if (user) return new Promise<User>(function (resolve) { resolve(user) });
-
-    return await logout(request);
-}
 
 const logout = async (request: Request) => {
     const session = await getSession(request.headers.get('Cookie'));
@@ -72,4 +55,4 @@ const logout = async (request: Request) => {
 }
 
 
-export { getSession, commitSession, destroySession, USER_SESSION_KEY, getSessionUserId, getSessionUser, logout };
+export { getSession, commitSession, destroySession, USER_SESSION_KEY, logout };
