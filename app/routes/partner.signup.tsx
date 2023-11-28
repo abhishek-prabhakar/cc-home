@@ -1,6 +1,7 @@
 import { FundOutlined } from "@ant-design/icons";
 import { LoaderArgs, V2_MetaFunction } from "@remix-run/node"
-import { Button, Col, Image, Row, Space, Typography } from "antd";
+import { Button, Card, Col, Image, Row, Space, Typography } from "antd";
+import { useState } from "react";
 
 export async function loader({ params }: LoaderArgs) {
 
@@ -19,6 +20,28 @@ const jumbotronStyle: React.CSSProperties = {
     background: 'url(https://livedemo00.template-help.com/wt_62267_v8/62267-default/images/slider-slide-2-1920x980.jpg) no-repeat center', minHeight: '500px', padding: '100px 20px', borderRadius: '20px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'
 }
 
+const VendorList = [{
+    background: 'linear-gradient(180deg, #03DBCB, #047DA6)',
+    id: 'photographer',
+    title: 'Photographer?',
+    description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
+    img: '/assets/vendor-card-1.svg'
+},
+{
+    background: 'linear-gradient(180deg, #681ACB, #4549E5)',
+    id: 'video',
+    title: 'Videographer?',
+    description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
+    img: '/assets/vendor-card-2.svg'
+},
+{
+    background: 'linear-gradient(185deg, #AF6316,#C27B15)',
+    id: 'makep',
+    title: 'Makeup?',
+    description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
+    img: '/assets/vendor-card-3.svg'
+}];
+
 const PartnerSignup = {
     Index: () => {
         return <div className="container">
@@ -27,6 +50,7 @@ const PartnerSignup = {
                 <PartnerSignup.Counter />
                 <PartnerSignup.Intro />
                 <PartnerSignup.Features />
+                <PartnerSignup.Form />
             </Space>
         </div>
     },
@@ -102,6 +126,33 @@ const PartnerSignup = {
                 </Col>
             </Row>
         </div>;
+    },
+    Form: () => {
+        const [activeCard, setActiveCard] = useState<string | null>(null);
+
+        return <Row gutter={[40, 40]}>
+            <Col span={24}>
+                <Typography.Title level={1}>Join Now!</Typography.Title>
+            </Col>
+            {VendorList.map(vendor => <Col key={vendor.id} sm={24} md={8} lg={8}>
+                <Card style={{
+                    background: vendor.background,
+                    color: '#fff',
+                    width: '100%',
+                    borderRadius: '8px'
+                }}
+                    cover={<img src={vendor.img} style={{ padding: '50px' }} />}
+                >
+                    <div style={{ marginTop: '-10px' }}>
+                        <Space direction="vertical" size={'large'}>
+                            <Typography.Title style={{ color: 'white' }} level={2}>{vendor.title}</Typography.Title>
+                            <Typography.Title style={{ color: 'white' }} level={4}>{vendor.description}</Typography.Title>
+                            <Button shape="round" type="primary" size="large" onClick={() => setActiveCard(vendor.id)}>Signup</Button>
+                        </Space>
+                    </div>
+                </Card>
+            </Col>)}
+        </Row>
     }
 }
 

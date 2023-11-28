@@ -295,7 +295,7 @@ const UserOrderHome = {
                                         avatar={<Link to={'/profile/' + item.vendor.username}><Avatar src={item.vendor.profileImg} /></Link>}
                                         title={<Link to={'/profile/' + item.vendor.username}>{item.vendor.name}</Link>}
                                         description={
-                                            <Space direction="vertical" size={'middle'}>
+                                            <Space direction="vertical" size={'small'}>
                                                 <div>{item.vendor.jobType}</div>
                                                 <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
                                             </Space>
