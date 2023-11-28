@@ -13,6 +13,7 @@ import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
 import { CartActiveService, CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { DateFormatter } from "~/utils/date.transform";
 
 type LoaderData = { data: CartItem };
 export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
@@ -90,7 +91,7 @@ const Cart = {
                                 description={<div>
                                     <Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>
                                     <br />
-                                    <Typography.Text strong>{service.date.toString()}</Typography.Text>
+                                    <Typography.Text strong>{DateFormatter.short(service.date)}</Typography.Text>
                                     <Typography.Text strong>{service.timeHour} to {service.timeHour + service.duration} ({service.duration} hours)</Typography.Text>
                                 </div>}
                             />
