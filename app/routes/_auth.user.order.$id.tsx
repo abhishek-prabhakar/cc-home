@@ -294,14 +294,15 @@ const UserOrderHome = {
                                     <List.Item.Meta
                                         avatar={<Link to={'/profile/' + item.vendor.username}><Avatar src={item.vendor.profileImg} /></Link>}
                                         title={<Link to={'/profile/' + item.vendor.username}>{item.vendor.name}</Link>}
-                                        description={item.vendor.jobType}
+                                        description={
+                                            <Space direction="vertical" size={'middle'}>
+                                                <div>{item.vendor.jobType}</div>
+                                                <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
+                                            </Space>
+                                        }
                                     />
                                     <div>
-                                        <Space>
-                                            <Typography.Title level={5}>{item.name}</Typography.Title>
-                                            <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
-                                        </Space>
-                                        <br />
+                                        <Typography.Title level={5}>{item.name}</Typography.Title>
                                         <div>
                                             Scheduled on {DateFormatter.short(item.date)}
                                             <br /> Time: {item.timeHour} ({item.duration} hours)
