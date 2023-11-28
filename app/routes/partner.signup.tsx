@@ -132,7 +132,9 @@ const PartnerSignup = {
 
         return <Row gutter={[40, 40]}>
             <Col span={24}>
-                <Typography.Title level={1}>Join Now!</Typography.Title>
+                <div style={{ paddingTop: '50px', textAlign: 'center' }}>
+                    <Typography.Title level={1}>Join now!</Typography.Title>
+                </div>
             </Col>
             {VendorList.map(vendor => <Col key={vendor.id} sm={24} md={8} lg={8}>
                 <Card style={{
@@ -141,7 +143,7 @@ const PartnerSignup = {
                     width: '100%',
                     borderRadius: '8px'
                 }}
-                    cover={<img src={vendor.img} style={{ padding: '50px' }} />}
+                    cover={<img src={vendor.img} style={{ padding: '50px', height: '300px' }} />}
                 >
                     <div style={{ marginTop: '-10px' }}>
                         <Space direction="vertical" size={'large'}>
