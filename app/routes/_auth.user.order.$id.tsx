@@ -216,6 +216,11 @@ const orderStatusCheckList: {
             children: 'Finished',
             filter: [BookingStatus.COMPLETED]
         },
+        {
+            color: 'green',
+            children: 'Refund processed',
+            filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
+        },
     ]
 
 const UserOrderHome = {
