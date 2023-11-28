@@ -183,11 +183,8 @@ const orderStatusCheckList: {
     color?: string,
     children: string,
     dot?: JSX.Element,
-    filter?: BookingStatus[]
+    filter: BookingStatus[]
 }[] = [
-        {
-            children: 'Order Placed',
-        },
         {
             color: 'red',
             children: 'Order Cancelled',
@@ -250,10 +247,9 @@ const UserOrderHome = {
                         <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
                             <Col>
                                 <Space size={'middle'}>
-                                    <Text type="secondary" strong>Order ID: {orderData.orderId}</Text>
+                                    <Title level={5}>Order ID: {orderData.orderId}</Title>
                                     <Tag color={StatusMarker.get(orderData.status)}>{orderData.status}</Tag>
                                 </Space>
-                                <Title level={5}>{DateFormatter.short(orderData.date)}</Title>
                             </Col>
                             <Col>
                                 {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED && <Dropdown menu={{ items: bookingOptionsList, onClick: onOptionMenuClick }} placement="bottomRight">
@@ -268,7 +264,16 @@ const UserOrderHome = {
                         <div>
                             <Timeline
                                 pending={orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED ? 'Waiting for updates...' : null}
-                                items={orderStatusCheckList.filter(x => !x.filter?.length || x.filter?.includes(orderData.status))}
+                                items={[
+                                    {
+                                        children: <div>
+                                            Order Placed
+                                            <br />
+                                            <Text type="secondary">{DateFormatter.short(orderData.date)}</Text>
+                                        </div>,
+                                    },
+                                    ...orderStatusCheckList.filter(x => x.filter?.includes(orderData.status))
+                                ]}
                             />
                         </div>
                         <Divider />
