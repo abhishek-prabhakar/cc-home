@@ -199,9 +199,14 @@ const orderStatusCheckList: {
             filter: [BookingStatus.REJECTED]
         },
         {
+            color: 'gold',
+            children: 'Vendors has been notified.',
+            filter: [BookingStatus.PENDING]
+        },
+        {
             color: 'green',
             children: 'Order Confirmed',
-            filter: [BookingStatus.ACCEPTED]
+            filter: [BookingStatus.ACCEPTED, BookingStatus.IN_PROGRESS, BookingStatus.COMPLETED]
         },
         {
             color: 'yellow',
