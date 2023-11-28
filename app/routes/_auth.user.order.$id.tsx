@@ -1,8 +1,10 @@
-import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
+import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
 import { BookingStatus } from "@prisma/client";
-import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
-import { Await, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Space, Tag, Timeline, Tooltip, Typography } from "antd";
+import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
+import { Await, Form, Link, useLoaderData } from "@remix-run/react";
+import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Modal, Row, Space, Tag, Timeline, Tooltip, Typography } from "antd";
+import Item from "antd/es/list/Item";
+import { useState } from "react";
 import { PATH } from "~/path.data";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -41,6 +43,41 @@ type LoaderData = {
     data: UserBooking
 }
 
+export async function action(args: ActionArgs) {
+    const formData = args.request.formData();
+    const _action = (await formData).get('action')?.toString();
+    const id = (await formData).get('id')?.toString();
+
+    if (!id) {
+        return false;
+    }
+
+    console.log(_action, id)
+
+    switch (_action) {
+        case 'cancel':
+            await db.booking.update({
+                where: {
+                    id
+                },
+                data: {
+                    status: BookingStatus.CANCELLED
+                }
+            });
+
+            await db.bookingService.updateMany({
+                where: {
+                    bookingId: id
+                },
+                data: {
+                    status: BookingStatus.CANCELLED
+                }
+            });
+            break;
+    }
+
+    return true;
+}
 
 export async function loader({ request, params }: LoaderArgs): Promise<TypedDeferredData<any>> {
     const orderId = params.id;
@@ -137,9 +174,47 @@ const bookingOptionsList: MenuProps['items'] = [
         label: 'Reschedule',
     },
     {
-        key: '2',
+        key: 'cancel',
         label: <Text type="danger">Cancel</Text>,
-    }]
+    }];
+
+
+const orderStatusCheckList: {
+    color?: string,
+    children: string,
+    dot?: JSX.Element,
+    filter?: BookingStatus[]
+}[] = [
+        {
+            children: 'Order Placed',
+        },
+        {
+            color: 'red',
+            children: 'Order Cancelled',
+            filter: [BookingStatus.CANCELLED]
+        },
+        {
+            color: 'red',
+            children: 'Sorry, Your order couldn\'t confirm due to unservicable.',
+            filter: [BookingStatus.REJECTED]
+        },
+        {
+            color: 'green',
+            children: 'Order Confirmed',
+            filter: [BookingStatus.ACCEPTED]
+        },
+        {
+            color: 'yellow',
+            children: 'Service is in progress',
+            filter: [BookingStatus.IN_PROGRESS]
+        },
+        {
+            color: '#00CCFF',
+            dot: <SmileOutlined />,
+            children: 'Finished',
+            filter: [BookingStatus.COMPLETED]
+        },
+    ]
 
 const UserOrderHome = {
     Index: () => {
@@ -152,6 +227,16 @@ const UserOrderHome = {
     },
     Order: () => {
         const data = useLoaderData<LoaderData>();
+        const [showModal, setModal] = useState(false);
+
+        const onOptionMenuClick = async ({ key }: { key: string }) => {
+            switch (key) {
+                case 'cancel':
+                    setModal(true);
+                    break;
+            }
+
+        };
 
         return <Row>
             <Col span={24}>
@@ -166,22 +251,19 @@ const UserOrderHome = {
                                 <Title level={5}>{orderData.date}</Title>
                             </Col>
                             <Col>
-                                {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED} <Dropdown menu={{ items: bookingOptionsList }} placement="bottomRight">
+                                {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED && <Dropdown menu={{ items: bookingOptionsList, onClick: onOptionMenuClick }} placement="bottomRight">
                                     <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
                                         Manage
                                     </Button>
                                 </Dropdown>
+                                }
                             </Col>
                         </Row>
                         <Divider />
                         <div>
                             <Timeline
-                                pending="Waiting for confirmation..."
-                                items={[
-                                    {
-                                        children: 'Order Placed',
-                                    },
-                                ]}
+                                pending={orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED ? 'Waiting for updates...' : null}
+                                items={orderStatusCheckList.filter(x => !x.filter?.length || x.filter?.includes(orderData.status))}
                             />
                         </div>
                         <Divider />
@@ -200,14 +282,28 @@ const UserOrderHome = {
                                         description={item.vendor.jobType}
                                     />
                                     <div>
-                                        <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
-                                        <Typography.Title level={4}>{item.name}</Typography.Title>
-                                        Scheduled on {item.date}
-                                        Time:{item.timeHour} ({item.duration} hours)
+                                        <Space>
+                                            <Typography.Title level={5}>{item.name}</Typography.Title>
+                                            <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
+                                        </Space>
+                                        <br />
+                                        <div>
+                                            Scheduled on {item.date}
+                                            <br /> Time: {item.timeHour} ({item.duration} hours)
+                                        </div>
                                     </div>
                                 </List.Item>
                             )}
                         />
+                        <Modal open={showModal} onCancel={() => setModal(false)} title="Confirm cancellation" footer={null}>
+                            <Form method="post" action="#">
+                                <Typography.Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Typography.Text>
+                                <input type="hidden" value={orderData.id} name="id" />
+                                <Row justify={'end'} style={{ marginTop: '40px' }}>
+                                    <Col><Button htmlType="submit" danger name="action" value={'cancel'} onClick={() => setModal(false)}>Confirm</Button></Col>
+                                </Row>
+                            </Form>
+                        </Modal>
                     </Card>
                     }
                 </Await>
