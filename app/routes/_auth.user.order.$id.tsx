@@ -286,7 +286,7 @@ const UserOrderHome = {
                         <List
                             dataSource={orderData.services}
                             renderItem={(item) => (
-                                <List.Item key={item.id} actions={[<Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirms' : ''}>
+                                <List.Item key={item.id} actions={[<Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
                                     <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={item.status !== BookingStatus.ACCEPTED}>
                                         Call
                                     </Button>
