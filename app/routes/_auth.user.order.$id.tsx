@@ -217,7 +217,7 @@ const orderStatusCheckList: {
             filter: [BookingStatus.COMPLETED]
         },
         {
-            color: 'green',
+            color: 'gray',
             children: 'Refund processed',
             filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
         },
