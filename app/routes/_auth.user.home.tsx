@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
 import { db } from "~/utils/database";
+import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 const { Title, Text } = Typography;
 
@@ -91,7 +92,7 @@ const UserHome = {
                                         <Text type="secondary" strong>Order ID: {booking.id}</Text>
                                         <Tag color={StatusMarker.get(booking.status)}>{booking.status}</Tag>
                                     </Space>
-                                    <Title level={5}>Placed on: {booking.date}</Title>
+                                    <Title level={5}>Placed on: {DateFormatter.short(booking.date)}</Title>
                                     <Text><strong>Services:</strong> {booking.services.join(', ')}</Text>
                                 </Col>
                                 <Col>

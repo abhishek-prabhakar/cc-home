@@ -3,11 +3,11 @@ import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Modal, Row, Space, Tag, Timeline, Tooltip, Typography } from "antd";
-import Item from "antd/es/list/Item";
 import { useState } from "react";
 import { PATH } from "~/path.data";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
+import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 const { Title, Text } = Typography;
 
@@ -253,7 +253,7 @@ const UserOrderHome = {
                                     <Text type="secondary" strong>Order ID: {orderData.orderId}</Text>
                                     <Tag color={StatusMarker.get(orderData.status)}>{orderData.status}</Tag>
                                 </Space>
-                                <Title level={5}>{orderData.date}</Title>
+                                <Title level={5}>{DateFormatter.short(orderData.date)}</Title>
                             </Col>
                             <Col>
                                 {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED && <Dropdown menu={{ items: bookingOptionsList, onClick: onOptionMenuClick }} placement="bottomRight">
@@ -293,7 +293,7 @@ const UserOrderHome = {
                                         </Space>
                                         <br />
                                         <div>
-                                            Scheduled on {item.date}
+                                            Scheduled on {DateFormatter.short(item.date)}
                                             <br /> Time: {item.timeHour} ({item.duration} hours)
                                         </div>
                                     </div>
