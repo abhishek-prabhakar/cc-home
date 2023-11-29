@@ -185,6 +185,7 @@ const PartnerSignup = {
             return !!type && <Form method="post" action="">
                 <Row gutter={[20, 20]}>
                     <Col>
+                        <Typography.Title level={5}>I'm a</Typography.Title>
                         <Radio.Group defaultValue={type} name="type">
                             {VendorList.map(item => <Radio.Button value={item.id}>{item.name}</Radio.Button>)}
                         </Radio.Group>
