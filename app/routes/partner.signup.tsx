@@ -1,6 +1,7 @@
 import { FundOutlined } from "@ant-design/icons";
 import { LoaderArgs, V2_MetaFunction } from "@remix-run/node"
-import { Button, Card, Col, Image, Row, Space, Typography } from "antd";
+import { Form } from "@remix-run/react";
+import { Button, Card, Col, Image, Input, Modal, Radio, Row, Space, Typography } from "antd";
 import { useState } from "react";
 
 export async function loader({ params }: LoaderArgs) {
@@ -23,6 +24,7 @@ const jumbotronStyle: React.CSSProperties = {
 const VendorList = [{
     background: 'linear-gradient(180deg, #03DBCB, #047DA6)',
     id: 'photographer',
+    name: 'Photographer',
     title: 'Photographer?',
     description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
     img: '/assets/vendor-card-1.svg'
@@ -30,6 +32,7 @@ const VendorList = [{
 {
     background: 'linear-gradient(180deg, #681ACB, #4549E5)',
     id: 'video',
+    name: 'Videographer',
     title: 'Videographer?',
     description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
     img: '/assets/vendor-card-2.svg'
@@ -37,6 +40,7 @@ const VendorList = [{
 {
     background: 'linear-gradient(185deg, #AF6316,#C27B15)',
     id: 'makep',
+    name: 'Makeup Artist',
     title: 'Makeup?',
     description: 'Counting objects: 5, done. Delta compression using up to 4 threads.',
     img: '/assets/vendor-card-3.svg'
@@ -133,7 +137,7 @@ const PartnerSignup = {
         return <Row gutter={[40, 40]}>
             <Col span={24}>
                 <div style={{ paddingTop: '50px', textAlign: 'center' }}>
-                    <Typography.Title level={1}>Join now!</Typography.Title>
+                    <Typography.Title level={1}>Join us in the following categories</Typography.Title>
                 </div>
             </Col>
             {VendorList.map(vendor => <Col key={vendor.id} sm={24} md={8} lg={8}>
@@ -154,7 +158,38 @@ const PartnerSignup = {
                     </div>
                 </Card>
             </Col>)}
+            <PartnerSignup.SignupForm type={activeCard} onClose={() => setActiveCard(null)} />
         </Row>
+    },
+    SignupForm: ({ type, onClose }: { type: string | null, onClose: () => void }) => {
+
+        return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
+            <Form method="post" action="">
+                <Row gutter={[20, 20]}>
+                    <Col>
+                        <Radio.Group defaultValue={type}>
+                            {VendorList.map(item => <Radio.Button value={item.id}>{item.name}</Radio.Button>)}
+                        </Radio.Group>
+                    </Col>
+                    <Col span={24}>
+                        <Typography.Title level={5}>Full Name</Typography.Title>
+                        <Input placeholder="Enter your full name" />
+                    </Col>
+                    <Col span={24}>
+                        <Typography.Title level={5}>Contact Number</Typography.Title>
+                        <Input addonBefore="+91" />
+                    </Col>
+                    <Col span={24}>
+                        <Typography.Title level={5}>Email</Typography.Title>
+                        <Input type="email" />
+                    </Col>
+                    <Col span={24}>
+                        <Button type="primary" shape="round" htmlType="submit">Submit</Button>
+                    </Col>
+                </Row>
+
+            </Form>
+        </Modal>;
     }
 }
 
