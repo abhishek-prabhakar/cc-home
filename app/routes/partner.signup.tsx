@@ -1,8 +1,14 @@
 import { FundOutlined } from "@ant-design/icons";
-import { LoaderArgs, V2_MetaFunction } from "@remix-run/node"
-import { Form } from "@remix-run/react";
-import { Button, Card, Col, Image, Input, Modal, Radio, Row, Space, Typography } from "antd";
+import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node"
+import { Form, useActionData } from "@remix-run/react";
+import { Button, Card, Col, Image, Input, Modal, Radio, Result, Row, Space, Typography } from "antd";
 import { useState } from "react";
+
+
+export async function action(args: ActionArgs) {
+
+    return true;
+}
 
 export async function loader({ params }: LoaderArgs) {
 
@@ -162,33 +168,48 @@ const PartnerSignup = {
         </Row>
     },
     SignupForm: ({ type, onClose }: { type: string | null, onClose: () => void }) => {
+        const actionData = useActionData();
 
-        return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
-            <Form method="post" action="">
+        const SuccessMessage = () => {
+            return <Result
+                status="success"
+                title="Thank you for your interest"
+                subTitle="Our representative will contact you soon."
+                extra={[
+                    <Button key="buy" onClick={onClose}>Close</Button>,
+                ]}
+            />
+        }
+
+        const RequestForm = () => {
+            return !!type && <Form method="post" action="">
                 <Row gutter={[20, 20]}>
                     <Col>
-                        <Radio.Group defaultValue={type}>
+                        <Radio.Group defaultValue={type} name="type">
                             {VendorList.map(item => <Radio.Button value={item.id}>{item.name}</Radio.Button>)}
                         </Radio.Group>
                     </Col>
                     <Col span={24}>
                         <Typography.Title level={5}>Full Name</Typography.Title>
-                        <Input placeholder="Enter your full name" />
+                        <Input name="fullName" placeholder="Enter your full name" required />
                     </Col>
                     <Col span={24}>
                         <Typography.Title level={5}>Contact Number</Typography.Title>
-                        <Input addonBefore="+91" />
+                        <Input name="phone" addonBefore="+91" maxLength={10} required />
                     </Col>
                     <Col span={24}>
                         <Typography.Title level={5}>Email</Typography.Title>
-                        <Input type="email" />
+                        <Input name="email" type="email" required />
                     </Col>
                     <Col span={24}>
                         <Button type="primary" shape="round" htmlType="submit">Submit</Button>
                     </Col>
                 </Row>
+            </Form>;
+        }
 
-            </Form>
+        return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
+            {actionData ? <SuccessMessage /> : <RequestForm />}
         </Modal>;
     }
 }
