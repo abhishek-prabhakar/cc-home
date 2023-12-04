@@ -151,6 +151,10 @@
     left: 50%;
     transform: translateX(-50%) translateY(-100%);
 }
+.ant-modal-close-x{
+    width: auto;
+    height: auto;
+}
 /* 
 .ant-popover .ant-popover-arrow:before {
     background: var(--antd-arrow-background-color);

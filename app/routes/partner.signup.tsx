@@ -98,7 +98,7 @@ const PartnerSignup = {
                         Become a part of a community with more than 50,000 service professionals
                     </Typography.Title>
                     <br /><br />
-                    <Button type="primary" size="large" color="white">Join Us</Button>
+                    <Button href="#signup-form" type="primary" size="large" color="white">Join Us</Button>
                 </Space>
             </Col>
         </Row>
@@ -165,7 +165,7 @@ const PartnerSignup = {
     Form: () => {
         const [activeCard, setActiveCard] = useState<string | null>(null);
 
-        return <Row gutter={[40, 40]}>
+        return <Row id="signup-form" gutter={[40, 40]}>
             <Col span={24}>
                 <div style={{ paddingTop: '50px', textAlign: 'center' }}>
                     <Typography.Title level={1}>Join us in the following categories</Typography.Title>
