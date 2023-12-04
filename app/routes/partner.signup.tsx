@@ -3,9 +3,34 @@ import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node"
 import { Form, useActionData } from "@remix-run/react";
 import { Button, Card, Col, Image, Input, Modal, Radio, Result, Row, Space, Typography } from "antd";
 import { useState } from "react";
+import { db } from "~/utils/database";
 
 
 export async function action(args: ActionArgs) {
+    const formData = await args.request.formData();
+    const fullName = formData.get('fullName')?.toString();
+    const socialUrl = formData.get('socialUrl')?.toString();
+    const mobileNumber = formData.get('phone')?.toString();
+    const email = formData.get('email')?.toString();
+    const category = formData.get('category')?.toString();
+
+    if (!fullName || !mobileNumber || !email || !socialUrl || !category) {
+        return false;
+    }
+
+    try {
+        await db.memberRequest.create({
+            data: {
+                fullName,
+                email,
+                mobileNumber,
+                socialUrl,
+                category
+            }
+        })
+    } catch (e) {
+        return false;
+    }
 
     return true;
 }
@@ -203,6 +228,11 @@ const PartnerSignup = {
                         <Input name="email" type="email" required />
                     </Col>
                     <Col span={24}>
+                        <Typography.Title level={5}>Social media url</Typography.Title>
+                        <Input name="socialUrl" type="url" required />
+                    </Col>
+                    <Col span={24}>
+                        <input type="hidden" name="category" value={type} />
                         <Button type="primary" shape="round" htmlType="submit">Submit</Button>
                     </Col>
                 </Row>
