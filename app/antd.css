@@ -152,8 +152,8 @@
     transform: translateX(-50%) translateY(-100%);
 }
 .ant-modal-close-x{
-    width: auto;
-    height: auto;
+    width: auto !important;
+    height: auto !important;
 }
 /* 
 .ant-popover .ant-popover-arrow:before {

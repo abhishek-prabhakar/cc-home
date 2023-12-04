@@ -98,7 +98,9 @@ const PartnerSignup = {
                         Become a part of a community with more than 50,000 service professionals
                     </Typography.Title>
                     <br /><br />
-                    <Button href="#signup-form" type="primary" size="large" color="white">Join Us</Button>
+                    <a href="#signup-form">
+                        <Button type="primary" size="large" color="white">Join Us</Button>
+                    </a>
                 </Space>
             </Col>
         </Row>
