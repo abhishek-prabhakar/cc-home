@@ -3,183 +3,205 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
-  id        String     @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        String     @id 
   name      String?
   username  String     @unique
   email     String?
   source    UserSource
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  Booking   Booking[]
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  bookings  Booking[]
 
   @@map("user")
 }
 
 model UserOtp {
-  id        String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  username  String   @unique @db.String(10)
+  id        String   @id 
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  username  String   @unique @db.VarChar(10)
   otpHash   String   @map("otp_hash")
 
   @@map("user_otp")
 }
 
+model Vendor {
+  id               String            @id 
+  username         String            @unique
+  name             String
+  mobileNumber     String
+  email            String
+  categoryId       String            
+  paymentMode      PaymentMode?
+  paymentDetails   String?
+  profileImageName String?
+  coverImageName   String?
+  location         String?
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  VendorPortfolio  VendorPortfolio[]
+  services         VendorService[]
+  vendorType       VendorType        @relation(fields: [categoryId], references: [id])
+
+  @@map("vendors")
+}
+
+model VendorPortfolio {
+  id        String   @id 
+  vendorId  String   
+  serviceId String   
+  fileType  String
+  fileName  String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("vendorPortfolio")
+}
+
+model VendorFiles {
+  id        String   @id 
+  fileType  String
+  fileName  String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("vendorfiles")
+}
+
 model Booking {
-  id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String           @id 
   orderId        String
-  userId         String           @db.Uuid
+  userId         String           
   status         BookingStatus
   total          Int
   tax            Int
   discount       Int
   coupon         String?
-  created_at     DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
   user           User             @relation(fields: [userId], references: [id])
   bookingService BookingService[]
 }
 
 model BookingService {
-  id              String         @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingId       String         @db.Uuid
-  vendorServiceId String         @db.Uuid
+  id              String        @id 
+  bookingId       String        
+  vendorServiceId String        
   status          BookingStatus
   date            DateTime
   timeHour        Int
   duration        Int
   location        String
   cost            Int
-  created_at      DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime?      @default(now()) @db.Timestamptz(6)
-  booking         Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  vendorServices  vendorServices @relation(fields: [vendorServiceId], references: [id])
+  created_at      DateTime      @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?     @default(now()) @db.Timestamp(6)
+  booking         Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  vendorService   VendorService @relation(fields: [vendorServiceId], references: [id])
 }
 
-model service {
-  id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model VendorService {
+  id             String           @id 
+  vendorId       String           
+  serviceId      String           
+  duration       Int
+  cost           Int
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  BookingService BookingService[]
+  service        Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendor         Vendor           @relation(fields: [vendorId], references: [id])
+
+  @@map("vendorServices")
+}
+
+model ServiceGroup {
+  id               String             @id 
+  name             String
+  vendorTypeId     String             
+  imageName        String?
+  description      String
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  vendorType       VendorType         @relation(fields: [vendorTypeId], references: [id])
+  ServiceGroupItem ServiceGroupItem[]
+
+  @@map("serviceGroup")
+}
+
+model Service {
+  id               String             @id 
   name             String             @unique
   description      String
   imageName        String?
-  created_at       DateTime           @default(now()) @db.Timestamptz(6)
-  serviceGroupItem serviceGroupItem[]
-  vendorPortfolio  vendorPortfolio[]
-  vendorServices   vendorServices[]
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  ServiceGroupItem ServiceGroupItem[]
+  VendorPortfolio  VendorPortfolio[]
+  VendorService    VendorService[]
+
+  @@map("service")
 }
 
-model serviceGroup {
-  id               String             @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name             String
-  vendorTypeId     String             @db.Uuid
-  imageName        String?
-  description      String
-  created_at       DateTime           @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime?          @default(now()) @db.Timestamptz(6)
-  vendorType       vendorType         @relation(fields: [vendorTypeId], references: [id])
-  serviceGroupItem serviceGroupItem[]
+model ServiceGroupItem {
+  id         String       @id 
+  groupId    String       
+  serviceId  String       
+  isOptional Boolean      @default(false)
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  group      ServiceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  service    Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@map("serviceGroupItem")
 }
 
-model serviceGroupItem {
-  id           String       @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  groupId      String       @db.Uuid
-  serviceId    String       @db.Uuid
-  isOptional   Boolean      @default(false)
-  created_at   DateTime     @default(now()) @db.Timestamptz(6)
-  serviceGroup serviceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  service      service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-}
-
-model vendorServices {
-  id             String           @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  vendorId       String           @db.Uuid
-  serviceId      String           @db.Uuid
-  duration       Int
-  cost           Int
-  created_at     DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime?        @default(now()) @db.Timestamptz(6)
-  BookingService BookingService[]
-  service        service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  vendors        vendors          @relation(fields: [vendorId], references: [id])
-}
-
-model vendorType {
-  id           String         @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model VendorType {
+  id           String         @id 
   name         String
   description  String
   keyName      String         @unique
-  created_at   DateTime       @default(now()) @db.Timestamptz(6)
-  serviceGroup serviceGroup[]
-  vendors      vendors[]
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  ServiceGroup ServiceGroup[]
+  Vendor       Vendor[]
+
+  @@map("vendorType")
 }
 
-model vendorfiles {
-  id         String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  fileType   String
-  fileName   String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-}
-
-model vendors {
-  id               String            @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username         String            @unique
-  name             String
-  mobileNumber     String
-  email            String
-  categoryId       String            @db.Uuid
-  paymentMode      PaymentMode?
-  paymentDetails   String?
-  profileImageName String?
-  coverImageName   String?
-  location         String?
-  created_at       DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime?         @default(now()) @db.Timestamptz(6)
-  vendorPortfolio  vendorPortfolio[]
-  vendorServices   vendorServices[]
-  vendorType       vendorType        @relation(fields: [categoryId], references: [id])
-}
-
-model vendorPortfolio {
-  id         String   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  vendorId   String   @db.Uuid
-  serviceId  String   @db.Uuid
-  fileType   String
-  fileName   String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  service    service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  vendors    vendors  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-}
-
-model memberRequest {
-  id                     String                   @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model MemberRequest {
+  id                     String                   @id 
   fullName               String
   mobileNumber           String
   email                  String
   category               String
   socialUrl              String
-  created_at             DateTime                 @default(now()) @db.Timestamptz(6)
-  memberRequestPortfolio memberRequestPortfolio[]
+  createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
+  memberRequestPortfolio MemberRequestPortfolio[]
+
+  @@map("memberRequest")
 }
 
-model memberRequestPortfolio {
-  id            String        @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  requestId     String        @db.Uuid
+model MemberRequestPortfolio {
+  id            String        @id 
+  requestId     String        
   imageName     String
-  created_at    DateTime      @default(now()) @db.Timestamptz(6)
-  memberRequest memberRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-}
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  memberRequest MemberRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
-enum PaymentMode {
-  NET_BANKING
-  UPI
+  @@map("memberRequestPortfolio")
 }
 
 enum UserSource {
   ORGANIC
   MANUAL
+}
+
+enum PaymentMode {
+  NET_BANKING
+  UPI
 }
 
 enum BookingStatus {
