@@ -3,14 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-  relationMode = "prisma"
+  relationMode      = "prisma"
 }
 
 model User {
-  id        String     @id 
+  id        String     @id
   name      String?
   username  String     @unique
   email     String?
@@ -23,7 +23,7 @@ model User {
 }
 
 model UserOtp {
-  id        String   @id 
+  id        String   @id
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   username  String   @unique @db.VarChar(10)
   otpHash   String   @map("otp_hash")
@@ -32,12 +32,12 @@ model UserOtp {
 }
 
 model Vendor {
-  id               String            @id 
+  id               String            @id
   username         String            @unique
   name             String
   mobileNumber     String
   email            String
-  categoryId       String            
+  categoryId       String
   paymentMode      PaymentMode?
   paymentDetails   String?
   profileImageName String?
@@ -53,9 +53,9 @@ model Vendor {
 }
 
 model VendorPortfolio {
-  id        String   @id 
-  vendorId  String   
-  serviceId String   
+  id        String   @id
+  vendorId  String
+  serviceId String
   fileType  String
   fileName  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
@@ -66,7 +66,7 @@ model VendorPortfolio {
 }
 
 model VendorFiles {
-  id        String   @id 
+  id        String   @id
   fileType  String
   fileName  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
@@ -75,9 +75,9 @@ model VendorFiles {
 }
 
 model Booking {
-  id             String           @id 
+  id             String           @id
   orderId        String
-  userId         String           
+  userId         String
   status         BookingStatus
   total          Int
   tax            Int
@@ -90,9 +90,9 @@ model Booking {
 }
 
 model BookingService {
-  id              String        @id 
-  bookingId       String        
-  vendorServiceId String        
+  id              String        @id
+  bookingId       String
+  vendorServiceId String
   status          BookingStatus
   date            DateTime
   timeHour        Int
@@ -106,9 +106,9 @@ model BookingService {
 }
 
 model VendorService {
-  id             String           @id 
-  vendorId       String           
-  serviceId      String           
+  id             String           @id
+  vendorId       String
+  serviceId      String
   duration       Int
   cost           Int
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
@@ -121,9 +121,9 @@ model VendorService {
 }
 
 model ServiceGroup {
-  id               String             @id 
+  id               String             @id
   name             String
-  vendorTypeId     String             
+  vendorTypeId     String
   imageName        String?
   description      String
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
@@ -135,7 +135,7 @@ model ServiceGroup {
 }
 
 model Service {
-  id               String             @id 
+  id               String             @id
   name             String             @unique
   description      String
   imageName        String?
@@ -148,9 +148,9 @@ model Service {
 }
 
 model ServiceGroupItem {
-  id         String       @id 
-  groupId    String       
-  serviceId  String       
+  id         String       @id
+  groupId    String
+  serviceId  String
   isOptional Boolean      @default(false)
   createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
   group      ServiceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -160,7 +160,7 @@ model ServiceGroupItem {
 }
 
 model VendorType {
-  id           String         @id 
+  id           String         @id
   name         String
   description  String
   keyName      String         @unique
@@ -172,7 +172,7 @@ model VendorType {
 }
 
 model MemberRequest {
-  id                     String                   @id 
+  id                     String                   @id
   fullName               String
   mobileNumber           String
   email                  String
@@ -185,8 +185,8 @@ model MemberRequest {
 }
 
 model MemberRequestPortfolio {
-  id            String        @id 
-  requestId     String        
+  id            String        @id
+  requestId     String
   imageName     String
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
   memberRequest MemberRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
