@@ -45,7 +45,7 @@ model Vendor {
   location         String?
   createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  VendorPortfolio  VendorPortfolio[]
+  vendorPortfolio  VendorPortfolio[]
   services         VendorService[]
   vendorType       VendorType        @relation(fields: [categoryId], references: [id])
 
@@ -113,7 +113,7 @@ model VendorService {
   cost           Int
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt      DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  BookingService BookingService[]
+  bookingService BookingService[]
   service        Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   vendor         Vendor           @relation(fields: [vendorId], references: [id])
 
@@ -129,7 +129,7 @@ model ServiceGroup {
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   vendorType       VendorType         @relation(fields: [vendorTypeId], references: [id])
-  ServiceGroupItem ServiceGroupItem[]
+  serviceGroupItem ServiceGroupItem[]
 
   @@map("serviceGroup")
 }
@@ -140,9 +140,9 @@ model Service {
   description      String
   imageName        String?
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
-  ServiceGroupItem ServiceGroupItem[]
-  VendorPortfolio  VendorPortfolio[]
-  VendorService    VendorService[]
+  serviceGroupItem ServiceGroupItem[]
+  vendorPortfolio  VendorPortfolio[]
+  vendorService    VendorService[]
 
   @@map("service")
 }
@@ -165,8 +165,8 @@ model VendorType {
   description  String
   keyName      String         @unique
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
-  ServiceGroup ServiceGroup[]
-  Vendor       Vendor[]
+  serviceGroup ServiceGroup[]
+  vendor       Vendor[]
 
   @@map("vendorType")
 }
