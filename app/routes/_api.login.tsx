@@ -1,5 +1,6 @@
 import { ActionFunction, json } from "@remix-run/node";
 import { PrismaClient, UserSource } from "@prisma/client";
+import generateUuid from "~/utils/uuid.generator";
 var bcrypt = require('bcryptjs');
 
 export async function action({
@@ -20,6 +21,7 @@ export async function action({
         if (!existingUser?.id) {
             data = await prisma.user.create({
                 data: {
+                    id: generateUuid(),
                     username,
                     source: UserSource.ORGANIC
                 },
@@ -36,6 +38,7 @@ export async function action({
 
         await prisma.userOtp.create({
             data: {
+                id: generateUuid(),
                 username,
                 otpHash
             },

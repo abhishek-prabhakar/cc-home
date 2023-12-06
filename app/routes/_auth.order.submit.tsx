@@ -4,6 +4,7 @@ import { CartService } from "~/service/cart.service";
 import { USER_SESSION_KEY, getSession, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
+import generateUuid from "~/utils/uuid.generator";
 
 export async function action({
     request,
@@ -51,6 +52,7 @@ export async function action({
 
             const data = await db.booking.create({
                 data: {
+                    id: generateUuid(),
                     userId: loggedInUser.id,
                     orderId: orderId,
                     status: BookingStatus.PENDING,
@@ -63,6 +65,7 @@ export async function action({
 
             await db.bookingService.createMany({
                 data: res.services.map(x => ({
+                    id: generateUuid(),
                     bookingId: data.id,
                     vendorServiceId: x.id,
                     status: BookingStatus.PENDING,
