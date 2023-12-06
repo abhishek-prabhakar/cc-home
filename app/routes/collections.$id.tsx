@@ -7,7 +7,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { serviceGroup } from "@prisma/client";
+import { ServiceGroup } from "@prisma/client";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
 const { Title } = Typography;
@@ -89,10 +89,10 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             }, []);
 
             forkJoin({
-                count: db.vendors.count({
+                count: db.vendor.count({
                     where: {
                         categoryId: res.id,
-                        vendorServices: {
+                        services: {
                             some: {
                                 serviceId: {
                                     in: serviceIds
@@ -101,14 +101,14 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         }
                     }
                 }),
-                data: db.vendors.findMany({
+                data: db.vendor.findMany({
                     skip: page * limit,
                     take: limit,
                     select: {
                         id: true,
                         username: true,
                         profileImageName: true,
-                        vendorServices: {
+                        services: {
                             select: {
                                 service: true
                             },
@@ -133,7 +133,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     },
                     where: {
                         categoryId: res.id,
-                        vendorServices: {
+                        services: {
                             some: {
                                 serviceId: {
                                     in: serviceIds
@@ -155,7 +155,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         rating,
                         tag,
                         profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                        services: x.vendorServices.map(x => x.service.name)
+                        services: x.services.map(x => x.service.name)
                     })),
                     loadMore
                 });

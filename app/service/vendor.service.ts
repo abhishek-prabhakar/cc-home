@@ -4,7 +4,7 @@ import { db } from "~/utils/database";
 export const VendorQuery = {
     getVendorByUsername: (username: string) => {
         return new Promise<VendorProfile | null>(function (resolve) {
-            db.vendors.findFirst({
+            db.vendor.findFirst({
                 where: {
                     username
                 },
@@ -47,7 +47,7 @@ export const VendorQuery = {
                                 select: {
                                     id: true,
                                     name: true,
-                                    vendorServices: {
+                                    vendorService: {
                                         select: {
                                             id: true,
                                             cost: true,
@@ -60,9 +60,9 @@ export const VendorQuery = {
                         },
                         where: {
                             service: {
-                                vendorServices: {
+                                vendorService: {
                                     some: {
-                                        vendors: {
+                                        vendor: {
                                             username
                                         }
                                     }
@@ -75,9 +75,9 @@ export const VendorQuery = {
                     serviceGroupItem: {
                         some: {
                             service: {
-                                vendorServices: {
+                                vendorService: {
                                     some: {
-                                        vendors: {
+                                        vendor: {
                                             username
                                         }
                                     }
@@ -94,14 +94,14 @@ export const VendorQuery = {
                     id: x.id,
                     title: x.name,
                     included: x.serviceGroupItem.filter(y => !y.isOptional).map(y => ({
-                        id: y.service.vendorServices[0].id,
+                        id: y.service.vendorService[0].id,
                         title: y.service.name,
-                        duration: y.service.vendorServices[0]?.duration
+                        duration: y.service.vendorService[0]?.duration
                     })),
                     addons: x.serviceGroupItem.filter(y => y.isOptional).map(y => ({
-                        id: y.service.vendorServices[0].id,
+                        id: y.service.vendorService[0].id,
                         title: y.service.name,
-                        duration: y.service.vendorServices[0]?.duration
+                        duration: y.service.vendorService[0]?.duration
                     }))
                 })))
             });
