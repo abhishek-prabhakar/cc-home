@@ -23,7 +23,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
                 fileType: true
             },
             where: {
-                vendors: {
+                vendor: {
                     username
                 }
             },
@@ -41,9 +41,9 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
                 name: true
             },
             where: {
-                vendorServices: {
+                vendorService: {
                     some: {
-                        vendors: {
+                        vendor: {
                             username
                         }
                     }
