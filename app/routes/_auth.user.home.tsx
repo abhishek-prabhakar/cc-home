@@ -39,7 +39,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 created_at: true,
                 bookingService: {
                     select: {
-                        vendorServices: {
+                        vendorService: {
                             select: {
                                 service: {
                                     select: {
@@ -56,7 +56,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 id: x.orderId,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.vendorServices.service.name)
+                services: x.bookingService.map(i => i.vendorService.service.name)
             }));
 
             resolve(p);

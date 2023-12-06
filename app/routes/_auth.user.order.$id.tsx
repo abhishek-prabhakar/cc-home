@@ -107,9 +107,9 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         date: true,
                         timeHour: true,
                         status: true,
-                        vendorServices: {
+                        vendorService: {
                             select: {
-                                vendors: {
+                                vendor: {
                                     select: {
                                         username: true,
                                         profileImageName: true,
@@ -150,12 +150,12 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         status: x.status,
                         timeHour: x.timeHour,
                         duration: x.duration,
-                        name: x.vendorServices.service.name,
+                        name: x.vendorService.service.name,
                         vendor: {
-                            username: x.vendorServices.vendors.username,
-                            name: x.vendorServices.vendors.username,
-                            jobType: x.vendorServices.vendors.vendorType.name,
-                            profileImg: x.vendorServices.vendors.profileImageName ?? PATH.AVATAR_PLACEHOLDER,
+                            username: x.vendorService.vendor.username,
+                            name: x.vendorService.vendor.username,
+                            jobType: x.vendorService.vendor.vendorType.name,
+                            profileImg: x.vendorService.vendor.profileImageName ?? PATH.AVATAR_PLACEHOLDER,
                         }
                     }))
                 })

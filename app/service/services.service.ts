@@ -7,7 +7,7 @@ export const ServiceQuery = {
                 serviceGroupItem: {
                     some: {
                         service: {
-                            vendorServices: {
+                            vendorService: {
                                 some: {
                                     id: {
                                         in: serviceIds
@@ -24,7 +24,7 @@ export const ServiceQuery = {
                 serviceGroupItem: {
                     where: {
                         service: {
-                            vendorServices: {
+                            vendorService: {
                                 some: {
                                     id: {
                                         in: serviceIds
@@ -39,11 +39,11 @@ export const ServiceQuery = {
                             select: {
                                 name: true,
                                 imageName: true,
-                                vendorServices: {
+                                vendorService: {
                                     select: {
                                         id: true,
                                         cost: true,
-                                        vendors: {
+                                        vendor: {
                                             select: {
                                                 id: true,
                                                 username: true,

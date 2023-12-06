@@ -42,16 +42,16 @@ export const CartService = {
                         serviceGroupId: res.id,
                         services: res.serviceGroupItem.map(x => ({
                             name: x.service.name,
-                            vendorType: x.service.vendorServices[0].vendors.vendorType.name,
-                            vendorName: x.service.vendorServices[0].vendors.username,
-                            vendorImg: x.service.vendorServices[0].vendors.profileImageName ? PATH.RESOURCE_URL + x.service.vendorServices[0].vendors.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                            vendorId: x.service.vendorServices[0].vendors.id,
-                            cost: x.service.vendorServices[0].cost,
-                            id: x.service.vendorServices[0].id,
+                            vendorType: x.service.vendorService[0].vendor.vendorType.name,
+                            vendorName: x.service.vendorService[0].vendor.username,
+                            vendorImg: x.service.vendorService[0].vendor.profileImageName ? PATH.RESOURCE_URL + x.service.vendorService[0].vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                            vendorId: x.service.vendorService[0].vendor.id,
+                            cost: x.service.vendorService[0].cost,
+                            id: x.service.vendorService[0].id,
                             isOptional: x.isOptional,
-                            date: params[x.service.vendorServices[0].id].date,
-                            timeHour: params[x.service.vendorServices[0].id].timeHour,
-                            duration: params[x.service.vendorServices[0].id].duration,
+                            date: params[x.service.vendorService[0].id].date,
+                            timeHour: params[x.service.vendorService[0].id].timeHour,
+                            duration: params[x.service.vendorService[0].id].duration,
                             image: x.service.imageName ? PATH.RESOURCE_URL + x.service.imageName : ''
                         }))
                     })
