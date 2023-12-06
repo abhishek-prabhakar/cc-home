@@ -201,13 +201,13 @@ const Home = {
           <Row justify={'center'}>
             <Col xs={24} sm={24} md={20} lg={18}>
               <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0` }}>
-                <Row gutter={[40, 40]} align={'bottom'}>
-                  <Col span={24}>
+                <Row gutter={[40, 40]} align={'bottom'} justify={'end'}>
+                  <Col xs={24} sm={24} md={18} >
                     <Title style={{ color: 'white' }} level={2}>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit
                     </Title>
                   </Col>
-                  <Col xs={24} sm={24} md={18} lg={16} xl={12}>
+                  <Col xs={24} sm={24} md={18} >
                     <Card bordered={false}>
                       <p><Tag color="cyan">Photography</Tag></p>
                       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
