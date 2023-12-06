@@ -89,7 +89,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
           select: {
             service: {
               select: {
-                vendorServices: {
+                vendorService: {
                   take: 1,
                   select: {
                     cost: true
@@ -104,7 +104,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         }
       }
     }).then(r => {
-      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/collections/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorServices[0]?.cost })));
+      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/collections/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
     })
   });
 
@@ -134,7 +134,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         serviceGroupItem: {
           take: 1,
           select: {
-            serviceGroup: {
+            group: {
               select: {
                 vendorType: {
                   select: {
@@ -151,8 +151,8 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       resolve(r.map(x => ({
         id: x.id,
         title: x.name,
-        path: `/${x.serviceGroupItem[0]?.serviceGroup.vendorType.keyName}/${x.id}`,
-        label: x.serviceGroupItem[0]?.serviceGroup.vendorType.name,
+        path: `/${x.serviceGroupItem[0]?.group.vendorType.keyName}/${x.id}`,
+        label: x.serviceGroupItem[0]?.group.vendorType.name,
         image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
         cost: 0
       })))
