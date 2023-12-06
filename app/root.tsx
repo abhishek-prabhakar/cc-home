@@ -8,7 +8,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useFetcher,
   useLoaderData,
+  useNavigation,
 } from "@remix-run/react";
 import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
@@ -94,13 +96,8 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 }
 
 export default function App() {
-  const [pageReady, setPageReady] = useState(false);
   const data: LoaderData = useLoaderData();
-
-  useEffect(() => {
-    setPageReady(true);
-  }, []);
-
+  const navigation = useNavigation();
 
   return (
     <html lang="en">
@@ -120,7 +117,7 @@ export default function App() {
               </Await>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
-              {pageReady ? <Outlet /> : <Row justify={'center'}>
+              {navigation.state !== 'loading' ? <Outlet /> : <Row justify={'center'}>
                 <Col>
                   <Spin />
                 </Col>
