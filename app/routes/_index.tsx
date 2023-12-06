@@ -195,7 +195,7 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
 
-    return <div className="home-slider-jumbotron"><Carousel>
+    return <div className="home-slider-jumbotron"><Carousel autoplay>
       {data.jumbotron.map((item, key) => <div key={'slider-' + key}>
         <div style={{ padding: '0 20px' }}>
           <Row justify={'center'}>
