@@ -206,7 +206,7 @@ const Home = {
     const [active, setActive] = useState(1);
 
     return <div className="home-slider-jumbotron"><Carousel>
-      {data.jumbotron.map((item, key) => <div key={'slider-' + key}>
+      {data.jumbotron.map((item, key) => <div key={'slider-' + key} style={{ padding: '0 20px' }}>
         <Row style={jumbotronItemStyle} justify={'center'}>
           <Col xs={24} sm={24} md={20}>
             <Row gutter={[40, 40]} align={'bottom'}>
