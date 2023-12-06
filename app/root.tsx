@@ -16,7 +16,7 @@ import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
 import antdStyles from '~/antd.css';
 import carouselStyles from 'react-photo-view/dist/react-photo-view.css';
-import { Col, Layout, Row, Spin } from "antd";
+import { Col, Layout, Row, Skeleton, Spin } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
@@ -117,9 +117,14 @@ export default function App() {
               </Await>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
-              {navigation.state !== 'loading' ? <Outlet /> : <Row justify={'center'}>
-                <Col>
-                  <Spin />
+              {navigation.state !== 'loading' ? <Outlet /> : <Row gutter={[80, 80]}>
+                <Col xs={12} md={8}>
+                  <Skeleton />
+                  <Skeleton />
+                  <Skeleton />
+                </Col>
+                <Col xs={12} md={4}>
+                  <Skeleton />
                 </Col>
               </Row>}
             </Content>
