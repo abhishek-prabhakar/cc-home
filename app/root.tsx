@@ -118,12 +118,12 @@ export default function App() {
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
               {navigation.state !== 'loading' ? <Outlet /> : <div className="container"><Row gutter={[80, 80]}>
-                <Col xs={12} md={16}>
+                <Col xs={24} sm={24} md={16}>
                   <Skeleton />
                   <Skeleton />
                   <Skeleton />
                 </Col>
-                <Col xs={12} md={8}>
+                <Col xs={24} sm={24} md={8}>
                   <Skeleton />
                 </Col>
               </Row></div>}
