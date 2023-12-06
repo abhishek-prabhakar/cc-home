@@ -172,28 +172,9 @@ export const meta: V2_MetaFunction = () => {
 const jumbotronWrapperStyle = { overflow: 'auto', };
 const jumbotronListStyle = { display: 'flex', gap: '20px', alignItems: 'center' }
 const jumbotronItemWrapperStyle: React.CSSProperties = { width: '60vw' }
-const jumbotronItemStyle: React.CSSProperties = { width: '100%', borderRadius: '15px', background: 'url(https://demo.craftdzine.com/html/xberg/assets/img/hero-bg1.png) center no-repeat #c0c0c0' }
-const jumbotronItemContentStyle = { padding: '40px' };
+const jumbotronItemStyle: React.CSSProperties = { padding: '50px 20px', width: '100%', borderRadius: '15px', background: 'url(https://demo.craftdzine.com/html/xberg/assets/img/hero-bg1.png) center no-repeat #c0c0c0' }
 
 const FALLBACK_IMG = 'https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png';
-
-const JumbotronItem = () => <div style={jumbotronItemWrapperStyle}><Row style={jumbotronItemStyle} justify={'end'}>
-  <Col span={24} md={12}>
-    <Row gutter={[40, 40]} align={'bottom'} style={jumbotronItemContentStyle}>
-      <Col span={24}>
-        <Title style={{ color: 'white' }} level={2}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit
-        </Title>
-      </Col>
-      <Col span={24}>
-        <Card bordered={false}>
-          <p><Tag color="cyan">Photography</Tag></p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        </Card>
-      </Col>
-    </Row>
-  </Col>
-</Row></div>;
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -224,13 +205,27 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
 
-    return <div style={{ height: '520px', overflow: 'hidden', marginBottom: '40px' }}><div style={jumbotronWrapperStyle} >
-      <div style={{ ...jumbotronListStyle, width: `calc(80vw * ${data.jumbotron.length})`, transform: `translate3d(-40vw, 0px, 0px)` }} >
-        {
-          data.jumbotron.map((item, key) => <div key={'slider-' + key} style={{ transform: active === key ? 'none' : 'scale(0.8)' }}><JumbotronItem key={key} /></div>)
-        }
-      </div>
-    </div></div>;
+    return <div className="home-slider-jumbotron"><Carousel>
+      {data.jumbotron.map((item, key) => <div key={'slider-' + key}>
+        <Row style={jumbotronItemStyle} justify={'center'}>
+          <Col xs={24} sm={24} md={20}>
+            <Row gutter={[40, 40]} align={'bottom'}>
+              <Col span={24}>
+                <Title style={{ color: 'white' }} level={2}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                </Title>
+              </Col>
+              <Col xs={24} sm={24} md={18} lg={16} xl={12}>
+                <Card bordered={false}>
+                  <p><Tag color="cyan">Photography</Tag></p>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </div>)}
+    </Carousel></div>;
   },
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
