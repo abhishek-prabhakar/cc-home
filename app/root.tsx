@@ -117,16 +117,16 @@ export default function App() {
               </Await>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
-              {navigation.state !== 'loading' ? <Outlet /> : <Row gutter={[80, 80]}>
+              {navigation.state !== 'loading' ? <Outlet /> : <div className="container"><Row gutter={[80, 80]}>
+                <Col xs={12} md={16}>
+                  <Skeleton />
+                  <Skeleton />
+                  <Skeleton />
+                </Col>
                 <Col xs={12} md={8}>
                   <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
                 </Col>
-                <Col xs={12} md={4}>
-                  <Skeleton />
-                </Col>
-              </Row>}
+              </Row></div>}
             </Content>
             <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
               <Footer />
