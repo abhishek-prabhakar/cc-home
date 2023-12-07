@@ -63,5 +63,53 @@ export const ServiceQuery = {
                 }
             }
         });
+    },
+    getServicesByJob: () => {
+        return db.vendorType.findMany({
+            orderBy: {
+                name: 'asc'
+            },
+            select: {
+                id: true,
+                name: true,
+                serviceGroup: {
+                    select: {
+                        id: true,
+                        name: true,
+                        serviceGroupItem: {
+                            select: {
+                                service: {
+                                    select: {
+                                        id: true,
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    },
+    getServiceByGroup: () => {
+        return db.serviceGroup.findMany({
+            orderBy: {
+                name: 'asc'
+            },
+            select: {
+                name: true,
+                id: true,
+                serviceGroupItem: {
+                    select: {
+                        service: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 }
