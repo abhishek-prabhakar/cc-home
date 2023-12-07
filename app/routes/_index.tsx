@@ -201,7 +201,7 @@ const Home = {
           <Row justify={'center'}>
             <Col xs={24} sm={24} md={20} lg={18}>
               <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0` }}>
-                <Row gutter={[40, 40]} align={'bottom'} justify={'end'}>
+                <Row gutter={[40, 40]} align={'bottom'}>
                   <Col xs={24} sm={24} md={14} >
                     <Title style={{ color: 'white' }} level={2}>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit

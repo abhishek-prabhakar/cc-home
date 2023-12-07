@@ -4,6 +4,7 @@ import { Form, useActionData } from "@remix-run/react";
 import { Button, Card, Col, Image, Input, Modal, Radio, Result, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import { db } from "~/utils/database";
+import generateUuid from "~/utils/uuid.generator";
 
 
 export async function action(args: ActionArgs) {
@@ -21,6 +22,7 @@ export async function action(args: ActionArgs) {
     try {
         await db.memberRequest.create({
             data: {
+                id: generateUuid(),
                 fullName,
                 email,
                 mobileNumber,
