@@ -1,6 +1,6 @@
 import { FundOutlined } from "@ant-design/icons";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node"
-import { Form, useActionData } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { Button, Card, Col, Image, Input, Modal, Radio, Result, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import { db } from "~/utils/database";
@@ -197,7 +197,7 @@ const PartnerSignup = {
         </Row>
     },
     SignupForm: ({ type, onClose }: { type: string | null, onClose: () => void }) => {
-        const actionData = useActionData();
+        const fetcher = useFetcher();
 
         const SuccessMessage = () => {
             return <Result
@@ -211,7 +211,7 @@ const PartnerSignup = {
         }
 
         const RequestForm = () => {
-            return !!type && <Form method="post" action="">
+            return !!type && <fetcher.Form method="post" action="">
                 <Row gutter={[20, 20]}>
                     <Col>
                         <Typography.Title level={5}>I'm a</Typography.Title>
@@ -240,11 +240,11 @@ const PartnerSignup = {
                         <Button type="primary" shape="round" htmlType="submit">Submit</Button>
                     </Col>
                 </Row>
-            </Form>;
+            </fetcher.Form>;
         }
 
         return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
-            {actionData ? <SuccessMessage /> : <RequestForm />}
+            {fetcher?.data ? <SuccessMessage /> : <RequestForm />}
         </Modal>;
     }
 }
