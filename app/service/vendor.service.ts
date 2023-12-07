@@ -26,7 +26,7 @@ export const VendorQuery = {
                         fullName: r.username,
                         location: '',
                         gender: '',
-                        type: r.vendorType.name
+                        type: r.vendorType?.name || ''
                     });
                 } else {
                     resolve(null);

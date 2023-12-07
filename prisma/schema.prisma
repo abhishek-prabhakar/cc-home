@@ -37,17 +37,20 @@ model Vendor {
   name             String
   mobileNumber     String
   email            String
-  categoryId       String
+  categoryId       String?
   paymentMode      PaymentMode?
   paymentDetails   String?
   profileImageName String?
   coverImageName   String?
   location         String?
+  source           vendors_source
+  isActive         Boolean
+  accountStatusMsg String?
   createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   vendorPortfolio  VendorPortfolio[]
   services         VendorService[]
-  vendorType       VendorType        @relation(fields: [categoryId], references: [id])
+  vendorType       VendorType?        @relation(fields: [categoryId], references: [id])
 
   @@map("vendors")
 }
@@ -67,6 +70,7 @@ model VendorPortfolio {
 
 model VendorFiles {
   id        String   @id
+  vendorId  String
   fileType  String
   fileName  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
@@ -211,4 +215,9 @@ enum BookingStatus {
   ACCEPTED
   IN_PROGRESS
   COMPLETED
+}
+
+enum vendors_source {
+  ORGANIC
+  MANUAL
 }
