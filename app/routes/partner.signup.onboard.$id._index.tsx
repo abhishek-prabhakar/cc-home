@@ -213,13 +213,11 @@ export default function () {
                     <Card size="small" title="2. Charges & Cost structure">
                         {data.profile.services.map((item, index) => <div>
                             <Row key={item.id} gutter={[20, 20]}>
-                                <Col>
-                                    <div><Typography.Text>Service</Typography.Text></div>
-                                    <Select defaultValue={item.serviceId} disabled placeholder="Select a category">
-                                        <Select.Option value={item.serviceId}>{item.service.name}</Select.Option>
-                                    </Select>
+                                <Col span={24}>
+                                    <div><Typography.Title level={5}>{item.service.name}</Typography.Title></div>
+                                    <input type="hidden" value={item.id} name="id" />
                                 </Col>
-                                <Col>
+                                <Col span={8}>
                                     <div><Typography.Text>Charged By</Typography.Text></div>
                                     <select name="fareMode" defaultValue={item.fareMode}>
                                         <option value="">Select...</option>
@@ -227,16 +225,13 @@ export default function () {
                                         <option value={vendorServices_fareMode.HOURLY}>Hourly</option>
                                     </select>
                                 </Col>
-                                <Col>
+                                <Col span={8}>
                                     <div><Typography.Text>Duration</Typography.Text></div>
                                     <Input defaultValue={item.duration} name="duration" type="number" required />
                                 </Col>
-                                <Col>
+                                <Col span={8}>
                                     <div><Typography.Text>Cost</Typography.Text></div>
                                     <Input defaultValue={item.cost} name="cost" type="number" required />
-                                </Col>
-                                <Col>
-                                    <input type="hidden" value={item.id} name="id" />
                                 </Col>
                             </Row>
                             <Divider />
