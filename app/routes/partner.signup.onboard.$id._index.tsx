@@ -90,19 +90,22 @@ export async function action(args: ActionArgs) {
             const vendorServiceId = formData.getAll('id');
             const fareMode = formData.getAll('fareMode');
 
-            const serviceItems = vendorServiceId.map((id, key) => ({
-                id: id.toString(),
-                duration: parseInt(duration[key].toString()),
-                cost: parseInt(cost[key].toString()),
-                fareMode: fareMode[key].toString()
-            }))
-
-            await db.vendorService.updateMany({
-                data: serviceItems,
-                where: {
-                    vendorId
+            vendorServiceId.forEach(async (id, key) => {
+                const udata = {
+                    duration: parseInt(duration[key].toString()),
+                    cost: parseInt(cost[key].toString()),
+                    fareMode: fareMode[key].toString() as vendorServices_fareMode
                 }
-            });
+
+                await db.vendorService.update({
+                    data: udata,
+                    where: {
+                        id: id.toString()
+                    }
+                });
+            })
+
+
             return true;
             break;
     }
