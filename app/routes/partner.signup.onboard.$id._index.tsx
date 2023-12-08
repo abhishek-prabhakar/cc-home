@@ -169,7 +169,7 @@ export default function () {
     }, [fetcher.data]);
 
     useEffect(() => {
-        setActiveGroup(data.profile.vendorType || '')
+        setActiveGroup(data.profile.vendorType?.id || '')
     }, [])
 
     function setActiveGroup(id: string) {
