@@ -78,7 +78,7 @@ export async function action(args: ActionArgs) {
 
             const serviceItems = vendorServiceId.map((id, key) => ({
                 id: id.toString(),
-                duration: duration[key].toString(),
+                duration: parseInt(duration[key].toString()),
                 cost: parseInt(cost[key].toString()),
                 fareMode: fareMode[key].toString()
             }))
@@ -148,7 +148,9 @@ export default function () {
     const [serviceList, setServiceList] = useState<{ id: string; name: string; }[]>([]);
 
     useEffect(() => {
-        console.log(fetcher.data)
+        if (data) {
+            alert('Thank you for updating your profile')
+        }
     }, [fetcher.data])
 
     function setActiveGroup(id: string) {
