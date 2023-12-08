@@ -54,6 +54,20 @@ export async function action(args: ActionArgs) {
     switch (type) {
         case STEPS.SERVICE:
             const items = formData.getAll('services');
+            const categoryId = formData.get('categoryId')?.toString();
+            await db.vendorService.deleteMany({
+                where: {
+                    vendorId
+                }
+            });
+            await db.vendor.update({
+                where: {
+                    id: vendorId
+                },
+                data: {
+                    categoryId
+                }
+            });
             items.forEach(async serviceId => {
                 await db.vendorService.create({
                     data: {
@@ -145,15 +159,21 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 export default function () {
     const data = useLoaderData<LoaderData>();
     const fetcher = useFetcher();
+    const [activeType, setJobType] = useState<string>('');
     const [serviceList, setServiceList] = useState<{ id: string; name: string; }[]>([]);
 
     useEffect(() => {
-        if (data) {
+        if (fetcher.data) {
             alert('Thank you for updating your profile')
         }
-    }, [fetcher.data])
+    }, [fetcher.data]);
+
+    useEffect(() => {
+        setActiveGroup(data.profile.vendorType || '')
+    }, [])
 
     function setActiveGroup(id: string) {
+        setJobType(id);
         const list = data.services.find(x => x.id === id);
         setServiceList(list?.service || []);
     }
@@ -176,6 +196,7 @@ export default function () {
             <Col xs={24} sm={24} md={12}>
                 <fetcher.Form method="post" action="">
                     <Card size="small" title="1. Choose your services">
+                        <input type="hidden" name="categoryId" value={activeType} />
                         <Space direction="vertical">
                             <Checkbox.Group name="services">
                                 {serviceList.map(service => <Checkbox value={service.id} key={service.id}>{service.name}</Checkbox>)}
