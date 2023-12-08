@@ -50,7 +50,7 @@ model Vendor {
   updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   vendorPortfolio  VendorPortfolio[]
   services         VendorService[]
-  vendorType       VendorType?        @relation(fields: [categoryId], references: [id])
+  vendorType       VendorType?       @relation(fields: [categoryId], references: [id])
 
   @@map("vendors")
 }
@@ -110,16 +110,17 @@ model BookingService {
 }
 
 model VendorService {
-  id             String           @id
+  id             String                  @id
   vendorId       String
   serviceId      String
   duration       Int
   cost           Int
-  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt      DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime?               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  fareMode       vendorServices_fareMode
   bookingService BookingService[]
-  service        Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  vendor         Vendor           @relation(fields: [vendorId], references: [id])
+  service        Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendor         Vendor                  @relation(fields: [vendorId], references: [id])
 
   @@map("vendorServices")
 }
@@ -220,4 +221,9 @@ enum BookingStatus {
 enum vendors_source {
   ORGANIC
   MANUAL
+}
+
+enum vendorServices_fareMode {
+  FLAT
+  HOURLY
 }

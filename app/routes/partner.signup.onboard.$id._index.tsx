@@ -1,6 +1,7 @@
+import { vendorServices_fareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Divider, Row, Select, Space, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { ServiceQuery } from "~/service/services.service";
 import { db } from "~/utils/database";
@@ -15,6 +16,16 @@ type LoaderData = {
         vendorType?: {
             id: string;
         } | null;
+        services: {
+            id: string;
+            serviceId: string;
+            duration: number;
+            cost: number;
+            fareMode: vendorServices_fareMode;
+            service: {
+                name: string;
+            };
+        }[];
     },
     services: {
         id: string;
@@ -50,12 +61,35 @@ export async function action(args: ActionArgs) {
                         serviceId: serviceId.toString(),
                         vendorId,
                         duration: 1,
-                        cost: 0
+                        cost: 0,
+                        fareMode: vendorServices_fareMode.HOURLY
                     },
                 });
             });
 
             return true
+            break;
+        case STEPS.COST:
+            const serviceId = formData.getAll('serviceId');
+            const duration = formData.getAll('duration');
+            const cost = formData.getAll('cost');
+            const vendorServiceId = formData.getAll('id');
+            const fareMode = formData.getAll('fareMode');
+
+            const serviceItems = vendorServiceId.map((id, key) => ({
+                id: id.toString(),
+                duration: duration[key].toString(),
+                cost: parseInt(cost[key].toString()),
+                fareMode: fareMode[key].toString()
+            }))
+
+            await db.vendorService.updateMany({
+                data: serviceItems,
+                where: {
+                    vendorId
+                }
+            });
+            return true;
             break;
     }
 
@@ -78,6 +112,20 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
             vendorType: {
                 select: {
                     id: true
+                }
+            },
+            services: {
+                select: {
+                    id: true,
+                    duration: true,
+                    cost: true,
+                    serviceId: true,
+                    fareMode: true,
+                    service: {
+                        select: {
+                            name: true
+                        }
+                    }
                 }
             }
         }
@@ -140,7 +188,36 @@ export default function () {
             <Col xs={24} sm={24} md={12}>
                 <fetcher.Form method="post" action="">
                     <Card size="small" title="2. Charges & Cost structure">
-
+                        {data.profile.services.map((item, index) => <div>
+                            <Row key={item.id} gutter={[20, 20]}>
+                                <Col>
+                                    <div><Typography.Text>Service</Typography.Text></div>
+                                    <Select defaultValue={item.serviceId} disabled placeholder="Select a category">
+                                        <Select.Option value={item.serviceId}>{item.service.name}</Select.Option>
+                                    </Select>
+                                </Col>
+                                <Col>
+                                    <div><Typography.Text>Charged By</Typography.Text></div>
+                                    <select name="fareMode" defaultValue={item.fareMode}>
+                                        <option value="">Select...</option>
+                                        <option value={vendorServices_fareMode.FLAT}>Flat Fee</option>
+                                        <option value={vendorServices_fareMode.HOURLY}>Hourly</option>
+                                    </select>
+                                </Col>
+                                <Col>
+                                    <div><Typography.Text>Duration</Typography.Text></div>
+                                    <Input defaultValue={item.duration} name="duration" type="number" required />
+                                </Col>
+                                <Col>
+                                    <div><Typography.Text>Cost</Typography.Text></div>
+                                    <Input defaultValue={item.cost} name="cost" type="number" required />
+                                </Col>
+                                <Col>
+                                    <input type="hidden" value={item.id} name="id" />
+                                </Col>
+                            </Row>
+                            <Divider />
+                        </div>)}
                         <Button type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
                     </Card>
                 </fetcher.Form>
