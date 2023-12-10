@@ -1,4 +1,4 @@
-import { CheckCircleFilled, InfoCircleOutlined, WarningFilled } from "@ant-design/icons";
+import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Outlet, useLoaderData } from "@remix-run/react";
 import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton } from "antd";
@@ -16,6 +16,7 @@ const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
 type loaderData = { profile: VendorProfile | null, services: VendorService[] };
+type VendorAddonOption = VendorServiceOption & { hide?: boolean }
 
 export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<any> | TypedResponse<never>> {
     const id = params.user;
@@ -66,7 +67,9 @@ const ProfileLayout = {
                         <Title level={1}>I am {profile?.fullName}</Title>
                     </Col>
                     <Col span={24}>
-                        <Button type="primary">Contact Me</Button>
+                        <a href="#book-now-section">
+                            <Button type="primary">Book Now</Button>
+                        </a>
                     </Col>
                     <Col span={24}>
                         <div style={locationStyles}>
@@ -82,9 +85,9 @@ const ProfileLayout = {
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
         const [serviceId, setServiceId] = useState<string>();
         const [showConfigPanel, setShowConfigPanel] = useState(false);
-        const [addonsList, setAddonsList] = useState<VendorServiceOption[]>([]);
+        const [addonsList, setAddonsList] = useState<VendorAddonOption[]>([]);
         const [serviceList, setServiceList] = useState<VendorServiceOption[]>([]);
-        const [selectedAddons, setSelectedAddons] = useState<VendorServiceOption[]>([]);
+        const [selectedAddons, setSelectedAddons] = useState<VendorAddonOption[]>([]);
 
         const onRequiredTypeChange = ({ requiredMarkValue }: { requiredMarkValue: RequiredMark }) => {
             setRequiredMarkType(requiredMarkValue);
@@ -106,13 +109,27 @@ const ProfileLayout = {
             setSelectedAddons([]);
         }
 
-        function removeAddon(id: string) {
-            const filtered = selectedAddons.filter(x => x.id !== id);
-            setSelectedAddons(filtered);
+        function setAddon(id: string) {
+            const addonItem = addonsList.find(x => x.id === id);
+            if (addonItem) {
+                setSelectedAddons(selectedAddons.concat([addonItem]));
+                addonItem.hide = true;
+            }
         }
 
-        return <div className="container">
-            <Title level={2}>Check Availability</Title>
+        function removeAddon(id: string) {
+            const addonItem = selectedAddons.find(x => x.id === id);
+            const filtered = selectedAddons.filter(x => x.id !== id);
+            // setAddonsList([...addonsList, ]);
+            setSelectedAddons(filtered);
+            if (addonItem) {
+                addonItem.hide = false;
+            }
+        }
+
+        return <div className="container" id="book-now-section">
+            <Divider />
+            <Title level={2}>Book Now, Pay later</Title>
             <Row gutter={[40, 40]}>
                 <Col span={24} md={12} lg={12} xl={8}>
                     <Space style={{ width: '100%' }} direction="vertical" size={'large'}>
@@ -149,12 +166,15 @@ const ProfileLayout = {
                         <div>
                             <Title level={5}>Available addons</Title>
                             {
-                                addonsList.map((item) => <Tag
+                                addonsList.filter(x => !x.hide).map((item) => <Tag
                                     key={item.id}
                                     color="blue"
+                                    closable={true}
+                                    closeIcon={<PlusOutlined color="primary" />}
+                                    onClose={() => setAddon(item.id)}
                                 >{item.title}</Tag>)
                             }
-                            {!addonsList?.length && <div>No addons</div>}
+                            {!addonsList.filter(x => !x.hide)?.length && <div>No addons</div>}
                         </div>]
                             : ''}
                         <Row justify={'end'}>
