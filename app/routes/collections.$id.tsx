@@ -377,25 +377,24 @@ const Photography = {
         }
 
 
-        return <Row gutter={[40, 40]}>
-            <InfiniteScroll
-                dataLength={result.length}
-                next={loadNextPage}
-                hasMore={loadMore}
-                loader={<div style={{ padding: '40px' }}><Skeleton active avatar paragraph={{ rows: 4 }} /></div>}
-                endMessage={
-                    <div style={{ textAlign: 'center', padding: '40px' }}>
-                        End of results.
-                    </div>
-                }
-            >
+        return <InfiniteScroll
+            dataLength={result.length}
+            next={loadNextPage}
+            hasMore={loadMore}
+            loader={<div style={{ padding: '40px' }}><Skeleton active avatar paragraph={{ rows: 4 }} /></div>}
+            endMessage={
+                <div style={{ textAlign: 'center', padding: '40px' }}>
+                    End of results.
+                </div>
+            }
+        > <Row gutter={[40, 40]}>
                 {result?.map(item => <Col span={24} key={'profile' + item.id}>
                     <div style={itemStyles}>
                         <div style={itemThumbStyles}>
                             <Row justify={'end'}>
                                 <Col xs={6} sm={6} md={3} lg={3}>
                                     <Avatar
-                                        size={{ xs: 100, sm: 100, md: 100, lg: 150, xl: 150, xxl: 150 }}
+                                        size={{ xs: 100, sm: 100, md: 100, lg: 120, xl: 120, xxl: 120 }}
                                         src={item.profileImg}
                                     />
                                 </Col>
@@ -434,8 +433,8 @@ const Photography = {
                         </div>
                     </div >
                 </Col >)}
-            </InfiniteScroll>
-        </Row>;
+            </Row>
+        </InfiniteScroll>;
     }
 }
 
