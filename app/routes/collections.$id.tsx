@@ -387,7 +387,7 @@ const Photography = {
                     End of results.
                 </div>
             }
-        > <Row gutter={[40, 40]}>
+        > <Row gutter={[0, 40]}>
                 {result?.map(item => <Col span={24} key={'profile' + item.id}>
                     <div style={itemStyles}>
                         <div style={itemThumbStyles}>
