@@ -1,7 +1,7 @@
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Skeleton, Slider, Space, Tag, Typography, theme } from 'antd';
+import { Avatar, Badge, Button, Checkbox, Col, Collapse, CollapseProps, Layout, Menu, Rate, Row, Select, Skeleton, Slider, Space, Tag, Typography, theme } from 'antd';
 import { Banner, BannerVertical } from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
@@ -394,7 +394,10 @@ const Photography = {
                         <div style={itemThumbStyles}>
                             <Row justify={'end'}>
                                 <Col xs={6} sm={6} md={3} lg={3}>
-                                    <img width={'100%'} style={{ borderRadius: '50%' }} src={item.profileImg} />
+                                    <Avatar
+                                        size={{ xs: 100, sm: 100, md: 100, lg: 150, xl: 150, xxl: 150 }}
+                                        src={item.profileImg}
+                                    />
                                 </Col>
                             </Row>
                         </div>
