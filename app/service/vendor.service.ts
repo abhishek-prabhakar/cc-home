@@ -6,7 +6,8 @@ export const VendorQuery = {
         return new Promise<VendorProfile | null>(function (resolve) {
             db.vendor.findFirst({
                 where: {
-                    username
+                    username,
+                    isActive: true
                 },
                 select: {
                     id: true,

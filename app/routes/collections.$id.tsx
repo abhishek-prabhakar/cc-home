@@ -91,6 +91,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             forkJoin({
                 count: db.vendor.count({
                     where: {
+                        isActive: true,
                         categoryId: res.id,
                         services: {
                             some: {
@@ -133,6 +134,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     },
                     where: {
                         categoryId: res.id,
+                        isActive: true,
                         services: {
                             some: {
                                 serviceId: {
