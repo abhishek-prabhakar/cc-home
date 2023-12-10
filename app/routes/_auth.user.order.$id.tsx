@@ -154,8 +154,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         vendor: {
                             username: x.vendorService.vendor.username,
                             name: x.vendorService.vendor.username,
-                            jobType: x.vendorService.vendor.vendorType.name,
-                            profileImg: x.vendorService.vendor.profileImageName ?? PATH.AVATAR_PLACEHOLDER,
+                            jobType: x.vendorService.vendor.vendorType?.name,
+                            profileImg: x.vendorService.vendor.profileImageName ? PATH.RESOURCE_URL + x.vendorService.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
                         }
                     }))
                 })

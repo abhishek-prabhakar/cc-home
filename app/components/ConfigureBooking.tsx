@@ -51,9 +51,9 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
 
     function proceedToCheckout(params: any) {
         if (checkoutForm.current) {
-            checkoutFormInput.current.value = JSON.stringify(params);
+            const validParams = params?.service.filter((x: any) => service.options.find(i => i.id === x.vendorServiceId));
+            checkoutFormInput.current.value = JSON.stringify(validParams);
             checkoutForm.current.submit()
-
         }
     }
 

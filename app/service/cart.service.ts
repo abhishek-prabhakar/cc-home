@@ -42,7 +42,7 @@ export const CartService = {
                         serviceGroupId: res.id,
                         services: res.serviceGroupItem.map(x => ({
                             name: x.service.name,
-                            vendorType: x.service.vendorService[0].vendor.vendorType.name,
+                            vendorType: x.service.vendorService[0].vendor.vendorType?.name || '',
                             vendorName: x.service.vendorService[0].vendor.username,
                             vendorImg: x.service.vendorService[0].vendor.profileImageName ? PATH.RESOURCE_URL + x.service.vendorService[0].vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
                             vendorId: x.service.vendorService[0].vendor.id,
