@@ -344,9 +344,9 @@ const Home = {
         <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
           <Title level={3}>More...</Title>
           <Await resolve={data.morePages}>
-            {response => <Space direction="vertical">
+            {response => <Space direction="vertical" size={'middle'}>
               {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
-                <Row gutter={[0, 24]} align="middle">
+                <Row gutter={[24, 0]} align="middle">
                   <Col>
                     <Link to={item.path}>
                       <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
