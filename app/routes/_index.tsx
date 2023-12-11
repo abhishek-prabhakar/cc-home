@@ -1,6 +1,6 @@
 import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Badge, Card, Carousel, Col, Image, Layout, Row, Skeleton, Space, Tag } from "antd";
+import { Badge, Button, Card, Carousel, Col, Image, Layout, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { Suspense, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -15,8 +15,8 @@ import { PATH } from "~/path.data";
 type Jumbotron = {
   title: string,
   description: string,
-  label: string,
-  img: string
+  img: string,
+  url: string
 }
 
 type Collection = {
@@ -43,23 +43,40 @@ type HomePage = {
 };
 
 export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<{
-  jumbotron: Jumbotron[];
+  jumbotron: Promise<Jumbotron[]>;
   collection: Promise<Collection[]>;
   morePages: Promise<Page[]>;
 }>> {
   const id = params.user;
+  const jumbotronList = new Promise<Jumbotron[]>(function (resolve) {
+    db.websiteSlider.findMany({
+      orderBy: {
+        created_at: 'desc'
+      },
+      where: {
+        hide: false
+      }
+    }).then(r => {
+      resolve(r.map(x => {
+        let url: string = '';
+        if (x.vendorTypeId) {
+          url = '/collections/' + x.vendorTypeId
+        } else if (x.serviceGroupId) {
+          url = '/collections/' + x.serviceGroupId
+        } else if (x.serviceId) {
+          url = '/collections/' + x.serviceGroupId + '?category=' + x.serviceId
+        }
+        return {
+          title: x.title,
+          description: x.description,
+          img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+          url
+        }
+      })
+      );
+    });
 
-  const jumbotronList: Jumbotron[] = [{
-    label: 'Photography',
-    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    img: 'https://www.bollywoodshaadis.com/img-scale/640/article-2015822113182847908000.jpg'
-  }, {
-    label: 'Photography',
-    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    img: 'https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/k-53-teddy-3307_0.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=e92a96a06ad219e23a637e8a2e784b78'
-  }];
+  });
 
   const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
@@ -169,10 +186,6 @@ const FALLBACK_IMG = 'https://static.miraheze.org/widdershinswiki/thumb/4/47/Pla
 const contentStyle: React.CSSProperties = {
   margin: 0,
   height: '400px',
-  color: '#fff',
-  lineHeight: '160px',
-  textAlign: 'center',
-  background: '#364d79',
 };
 
 const Home = {
@@ -195,31 +208,41 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
 
-    return <div className="home-slider-jumbotron"><Carousel autoplay>
-      {data.jumbotron.map((item, key) => <div key={'slider-' + key}>
-        <div style={{ padding: '0 20px' }}>
-          <Row justify={'center'}>
-            <Col xs={24} sm={24} md={20} lg={18}>
-              <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0` }}>
-                <Row gutter={[40, 40]} align={'bottom'}>
-                  <Col xs={24} sm={24} md={14} >
-                    <Title style={{ color: 'white' }} level={2}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                    </Title>
-                  </Col>
-                  <Col xs={24} sm={24} md={14} >
-                    <Card bordered={false}>
-                      <p><Tag color="cyan">Photography</Tag></p>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </Card>
+    return <div className="home-slider-jumbotron">
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.jumbotron}>
+          {jumbotron => <Carousel autoplay>
+            {jumbotron.map((item, key) => <div key={'slider-' + key}>
+              <div style={{ padding: '0 20px' }}>
+                <Row justify={'center'}>
+                  <Col xs={24} sm={24} md={20} lg={18}>
+                    <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0`, backgroundSize: 'cover', minHeight: '500px' }}>
+                      <Row gutter={[40, 40]} style={{ height: '100%' }} align={'bottom'}>
+                        <Col xs={24} sm={24} md={14} >
+                          <Title style={{ color: 'white' }} level={1}>
+                            {item.title}
+                          </Title>
+                        </Col>
+                        <Col xs={24} sm={24} md={14} >
+                          <Card bordered={false}>
+                            <Title level={3}>{item.description}</Title>
+                            <div>
+                              <Link to={item.url}>
+                                <Button size="large" type="primary">Visit</Button>
+                              </Link>
+                            </div>
+                          </Card>
+                        </Col>
+                      </Row>
+                    </div>
                   </Col>
                 </Row>
               </div>
-            </Col>
-          </Row>
-        </div>
-      </div>)}
-    </Carousel></div>;
+            </div>)}
+          </Carousel>}
+        </Await>
+      </Suspense>
+    </div>;
   },
   QuickPick: () => {
     const data = useLoaderData<HomePage>();

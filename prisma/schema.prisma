@@ -199,6 +199,19 @@ model MemberRequestPortfolio {
   @@map("memberRequestPortfolio")
 }
 
+model websiteSlider {
+  id             String   @id
+  title          String   @unique
+  description    String
+  imageName      String?
+  hide           Boolean
+  serviceGroupId String?
+  serviceId      String?
+  vendorId       String?
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  vendorTypeId   String?
+}
+
 enum UserSource {
   ORGANIC
   MANUAL
