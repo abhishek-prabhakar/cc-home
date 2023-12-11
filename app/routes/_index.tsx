@@ -53,6 +53,29 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       orderBy: {
         created_at: 'desc'
       },
+      select: {
+        title: true,
+        description: true,
+        imageName: true,
+        vendorId: true,
+        vendorTypeId: true,
+        serviceGroupId: true,
+        serviceId: true,
+        vendorType: {
+          select: {
+            keyName: true
+          }
+        },
+        group: {
+          select: {
+            vendorType: {
+              select: {
+                keyName: true
+              }
+            }
+          }
+        }
+      },
       where: {
         hide: false
       }
@@ -60,9 +83,9 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       resolve(r.map(x => {
         let url: string = '';
         if (x.vendorTypeId) {
-          url = '/collections/' + x.vendorTypeId
+          url = '/collections/' + x.vendorType?.keyName;
         } else if (x.serviceGroupId) {
-          url = '/collections/' + x.serviceGroupId
+          url = '/collections/' + x.group?.vendorType.keyName + '?category=' + x.serviceGroupId;
         } else if (x.serviceId) {
           url = '/collections/' + x.serviceGroupId + '?category=' + x.serviceId
         }
@@ -225,12 +248,12 @@ const Home = {
                         </Col>
                         <Col xs={24} sm={24} md={14} >
                           <Card bordered={false}>
-                            <Title level={3}>{item.description}</Title>
-                            <div>
+                            <Space direction="vertical" size={'middle'}>
+                              <Title level={3}>{item.description}</Title>
                               <Link to={item.url}>
                                 <Button size="large" type="primary">Visit</Button>
                               </Link>
-                            </div>
+                            </Space>
                           </Card>
                         </Col>
                       </Row>
