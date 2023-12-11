@@ -239,7 +239,7 @@ const Home = {
               <div style={{ padding: '0 20px' }}>
                 <Row justify={'center'}>
                   <Col xs={24} sm={24} md={20} lg={18}>
-                    <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0`, backgroundSize: 'cover', minHeight: '500px' }}>
+                    <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0`, backgroundSize: 'cover', minHeight: '400px' }}>
                       <Row gutter={[40, 40]} style={{ height: '100%' }} align={'bottom'}>
                         <Col xs={24} sm={24} md={14} >
                           <Title style={{ color: 'white' }} level={1}>
