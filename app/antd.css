@@ -155,6 +155,13 @@
     width: auto !important;
     height: auto !important;
 }
+.ant-carousel .slick-dots li button{
+background: gray !important;
+}
+.ant-carousel .slick-dots li.slick-active button{
+background: black !important;
+}
+
 /* 
 .ant-popover .ant-popover-arrow:before {
     background: var(--antd-arrow-background-color);
