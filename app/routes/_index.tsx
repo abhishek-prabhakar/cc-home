@@ -10,14 +10,10 @@ const { Meta } = Card;
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
+import { BannerLocation } from "@prisma/client";
+import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
+import { BannerItem, Jumbotron } from "~/types";
 
-
-type Jumbotron = {
-  title: string,
-  description: string,
-  img: string,
-  url: string
-}
 
 type Collection = {
   id: string,
@@ -36,6 +32,7 @@ type Page = {
 
 
 type HomePage = {
+  bannerAds: BannerItem[];
   jumbotron: Jumbotron[];
   collection: Collection[];
   quickLinks: Collection[];
@@ -82,19 +79,17 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       }
     }).then(r => {
       resolve(r.map(x => x.jumbotron).map(x => {
-        let url: string = '';
-        if (x.vendorTypeId) {
-          url = '/collections/' + x.vendorType?.keyName;
-        } else if (x.serviceGroupId) {
-          url = '/collections/' + x.group?.vendorType.keyName + '?category=' + x.serviceGroupId;
-        } else if (x.serviceId) {
-          url = '/collections/' + x.serviceGroupId + '?category=' + x.serviceId
-        }
+        const url = generateJumbotronUrl({
+          vendorTypeId: x.vendorTypeId,
+          serviceGroupId: x.serviceGroupId,
+          serviceId: x.serviceId
+        });
+
         return {
           title: x.title,
           description: x.description,
           img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
-          url
+          url: url.replace(':vendorType', x.vendorType?.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
         }
       })
       );
@@ -188,9 +183,66 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
         cost: 0
       })))
     })
-  })
+  });
 
-  return defer({ jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
+  const bannerAds = new Promise(async function (resolve) {
+    const bannerlist = await db.websiteBanner.findMany({
+      where: {
+        targetPage: {
+          in: [BannerLocation.HOME_1, BannerLocation.HOME_2, BannerLocation.HOME_3]
+        }
+      },
+      select: {
+        targetPage: true,
+        jumbotron: {
+          select: {
+            title: true,
+            description: true,
+            imageName: true,
+            vendorId: true,
+            vendorTypeId: true,
+            serviceGroupId: true,
+            serviceId: true,
+            vendorType: {
+              select: {
+                keyName: true
+              }
+            },
+            group: {
+              select: {
+                vendorType: {
+                  select: {
+                    keyName: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const finalList = bannerlist.map<BannerItem>(item => {
+      const x = item.jumbotron;
+      const url = generateJumbotronUrl({
+        vendorTypeId: x.vendorTypeId,
+        serviceGroupId: x.serviceGroupId,
+        serviceId: x.serviceId
+      });
+
+      return {
+        title: x.title,
+        description: x.description,
+        img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+        url: url.replace(':vendorType', x.vendorType?.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || ''),
+        bannerLocation: item.targetPage
+      }
+    });
+
+    resolve(finalList);
+  });
+
+  return defer({ bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -214,15 +266,21 @@ const contentStyle: React.CSSProperties = {
 
 const Home = {
   Index: () => {
+    const data = useLoaderData<HomePage>();
+
     return (
       <div >
         <Home.Jumbotron />
         <div className="container">
           <Space direction="vertical" size={'large'}>
             <Home.QuickPick />
-            <Banner />
+            <Await resolve={data.bannerAds}>
+              {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
+            </Await>
             <Home.Collections />
-            <Banner />
+            <Await resolve={data.bannerAds}>
+              {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_3)} />}
+            </Await>
           </Space>
         </div>
       </div>
@@ -366,7 +424,9 @@ const Home = {
               }
             </Space>}
           </Await>
-          <BannerVertical />
+          <Await resolve={data.bannerAds}>
+            {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
+          </Await>
           <Newsletter />
         </Space>
       </Col>

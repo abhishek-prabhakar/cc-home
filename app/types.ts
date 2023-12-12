@@ -1,3 +1,5 @@
+import { BannerLocation } from "@prisma/client";
+
 export type RootLoaderData = {
     user: User | null,
     pages: { keyName: string, name: string }[]
@@ -92,3 +94,13 @@ export type CartInput = {
     serviceGroupId: string,
     service: CartInputService[]
 }
+
+
+
+export type Jumbotron = {
+    title: string,
+    description: string,
+    img: string,
+    url: string
+}
+export type BannerItem = Jumbotron & { bannerLocation: BannerLocation }
