@@ -43,7 +43,7 @@ model Vendor {
   profileImageName String?
   coverImageName   String?
   location         String?
-  source           vendors_source
+  source           UserSource
   isActive         Boolean
   accountStatusMsg String?
   createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
@@ -51,7 +51,8 @@ model Vendor {
   vendorPortfolio  VendorPortfolio[]
   services         VendorService[]
   vendorType       VendorType?       @relation(fields: [categoryId], references: [id])
-  websiteSlider    websiteSlider[]
+  VendorFiles      VendorFiles[]
+  JumbotronData    JumbotronData[]
 
   @@map("vendors")
 }
@@ -75,6 +76,7 @@ model VendorFiles {
   fileType  String
   fileName  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@map("vendorfiles")
 }
@@ -111,17 +113,17 @@ model BookingService {
 }
 
 model VendorService {
-  id             String                  @id
+  id             String           @id
   vendorId       String
   serviceId      String
+  fareMode       FareMode
   duration       Int
   cost           Int
-  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt      DateTime?               @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  fareMode       vendorServices_fareMode
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   bookingService BookingService[]
-  service        Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  vendor         Vendor                  @relation(fields: [vendorId], references: [id])
+  service        Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  vendor         Vendor           @relation(fields: [vendorId], references: [id])
 
   @@map("vendorServices")
 }
@@ -136,7 +138,7 @@ model ServiceGroup {
   updatedAt        DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   vendorType       VendorType         @relation(fields: [vendorTypeId], references: [id])
   serviceGroupItem ServiceGroupItem[]
-  websiteSlider    websiteSlider[]
+  JumbotronData    JumbotronData[]
 
   @@map("serviceGroup")
 }
@@ -150,7 +152,7 @@ model Service {
   serviceGroupItem ServiceGroupItem[]
   vendorPortfolio  VendorPortfolio[]
   vendorService    VendorService[]
-  websiteSlider    websiteSlider[]
+  JumbotronData    JumbotronData[]
 
   @@map("service")
 }
@@ -175,7 +177,7 @@ model VendorType {
   createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
   serviceGroup  ServiceGroup[]
   vendor        Vendor[]
-  websiteSlider websiteSlider[]
+  JumbotronData JumbotronData[]
 
   @@map("vendorType")
 }
@@ -203,21 +205,43 @@ model MemberRequestPortfolio {
   @@map("memberRequestPortfolio")
 }
 
-model websiteSlider {
-  id             String        @id
-  title          String        @unique
+model JumbotronData {
+  id             String          @id
+  title          String          @unique
   description    String
   imageName      String?
-  hide           Boolean
+  vendorTypeId   String?
   serviceGroupId String?
   serviceId      String?
   vendorId       String?
-  created_at     DateTime      @default(now()) @db.Timestamp(6)
-  vendorTypeId   String?
-  vendorType     VendorType?   @relation(fields: [vendorTypeId], references: [id])
-  group          ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
-  vendor         Vendor?       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  service        Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  vendorType     VendorType?     @relation(fields: [vendorTypeId], references: [id])
+  group          ServiceGroup?   @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  vendor         Vendor?         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  service        Service?        @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  WebsiteSlider  WebsiteSlider[]
+  WebsiteBanner  WebsiteBanner[]
+
+  @@map("jumbotronData")
+}
+
+model WebsiteSlider {
+  id          String        @id
+  jumbotronId String
+  jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("websiteSlider")
+}
+
+model WebsiteBanner {
+  id          String         @id
+  jumbotronId String
+  targetPage  BannerLocation
+  jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("websiteBanner")
 }
 
 enum UserSource {
@@ -239,12 +263,14 @@ enum BookingStatus {
   COMPLETED
 }
 
-enum vendors_source {
-  ORGANIC
-  MANUAL
-}
-
-enum vendorServices_fareMode {
+enum FareMode {
   FLAT
   HOURLY
+}
+
+enum BannerLocation {
+  HOME_1
+  HOME_2
+  HOME_3
+  SERVICE_RESULT_1
 }

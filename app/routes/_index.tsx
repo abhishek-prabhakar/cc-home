@@ -51,36 +51,37 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
   const jumbotronList = new Promise<Jumbotron[]>(function (resolve) {
     db.websiteSlider.findMany({
       orderBy: {
-        created_at: 'desc'
+        createdAt: 'desc'
       },
       select: {
-        title: true,
-        description: true,
-        imageName: true,
-        vendorId: true,
-        vendorTypeId: true,
-        serviceGroupId: true,
-        serviceId: true,
-        vendorType: {
+        jumbotron: {
           select: {
-            keyName: true
-          }
-        },
-        group: {
-          select: {
+            title: true,
+            description: true,
+            imageName: true,
+            vendorId: true,
+            vendorTypeId: true,
+            serviceGroupId: true,
+            serviceId: true,
             vendorType: {
               select: {
                 keyName: true
               }
+            },
+            group: {
+              select: {
+                vendorType: {
+                  select: {
+                    keyName: true
+                  }
+                }
+              }
             }
           }
         }
-      },
-      where: {
-        hide: false
       }
     }).then(r => {
-      resolve(r.map(x => {
+      resolve(r.map(x => x.jumbotron).map(x => {
         let url: string = '';
         if (x.vendorTypeId) {
           url = '/collections/' + x.vendorType?.keyName;
