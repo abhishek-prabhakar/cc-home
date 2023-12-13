@@ -467,7 +467,7 @@ const Home = {
             {data => <Row gutter={[20, 20]}>
               {data.map(item => <Col sm={12} md={8} lg={8} xl={8}>
                 <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
-                  <Image preview={false} src={FALLBACK_IMG} />
+                  <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
                   {item.title}
                 </div>
               </Col>)}
