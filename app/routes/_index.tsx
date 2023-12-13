@@ -465,8 +465,8 @@ const Home = {
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
           <Await resolve={loaderData.morePages}>
             {data => <Row gutter={[20, 20]}>
-              {data.map(item => <Col sm={12} md={6} lg={6} xl={6}>
-                <div onClick={() => showModal(item)}>
+              {data.map(item => <Col sm={12} md={8} lg={8} xl={8}>
+                <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
                   <Image preview={false} src={FALLBACK_IMG} />
                   {item.title}
                 </div>
@@ -476,7 +476,7 @@ const Home = {
         </Card>
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
-            {modalData?.serviceGroup.map(item => <Col span={6}>
+            {modalData?.serviceGroup.map(item => <Col span={8}>
               <Link to={modalData.path + '?category=' + item.id}>
                 <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
                 <div>{item.name}</div>
