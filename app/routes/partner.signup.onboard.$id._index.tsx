@@ -1,8 +1,9 @@
-import { vendorServices_fareMode } from "@prisma/client";
+import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
+import FileUploader from "~/components/FileUploader";
 import { ServiceQuery } from "~/service/services.service";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -21,7 +22,7 @@ type LoaderData = {
             serviceId: string;
             duration: number;
             cost: number;
-            fareMode: vendorServices_fareMode;
+            fareMode: FareMode;
             service: {
                 name: string;
             };
@@ -34,6 +35,11 @@ type LoaderData = {
             id: string;
             name: string;
         }[];
+    }[],
+    files: {
+        id: string;
+        fileType: string;
+        fileName: string;
     }[]
 }
 
@@ -42,6 +48,19 @@ enum STEPS {
     COST = "COST",
     DOCUMENTS = "DOCUMENTS"
 }
+
+const fileTypes = [{
+    name: 'Aadhar'
+}, {
+    name: 'PAN'
+},
+{
+    name: 'Passport'
+}, {
+    name: 'Voters ID'
+}, {
+    name: 'Driving Licence'
+}]
 
 export async function action(args: ActionArgs) {
     const vendorId = args.params.id;
@@ -76,7 +95,7 @@ export async function action(args: ActionArgs) {
                         vendorId,
                         duration: 1,
                         cost: 0,
-                        fareMode: vendorServices_fareMode.HOURLY
+                        fareMode: FareMode.HOURLY
                     },
                 });
             });
@@ -94,7 +113,7 @@ export async function action(args: ActionArgs) {
                 const udata = {
                     duration: parseInt(duration[key].toString()),
                     cost: parseInt(cost[key].toString()),
-                    fareMode: fareMode[key].toString() as vendorServices_fareMode
+                    fareMode: fareMode[key].toString() as FareMode
                 }
 
                 await db.vendorService.update({
@@ -104,9 +123,21 @@ export async function action(args: ActionArgs) {
                     }
                 });
             })
-
-
             return true;
+            break;
+        case STEPS.DOCUMENTS:
+            const fileName = formData.get('fileId')?.toString();
+            const fileType = formData.get('fileType')?.toString();
+            if (fileName && fileType) {
+                await db.vendorFiles.create({
+                    data: {
+                        id: generateUuid(),
+                        vendorId: vendorId,
+                        fileName: fileName,
+                        fileType: fileType
+                    }
+                });
+            }
             break;
     }
 
@@ -150,8 +181,19 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     const services = await ServiceQuery.getServicesByJob();
 
+    const files = await db.vendorFiles.findMany({
+        where: {
+            vendorId: applicationId
+        },
+        select: {
+            id: true,
+            fileName: true,
+            fileType: true
+        }
+    });
+
     if (data) {
-        return { profile: data, services: services.map(x => ({ id: x.id, name: x.name, service: x.serviceGroup.map(i => i.serviceGroupItem).reduce((acc, i) => acc.concat(i), []).map(i => i.service) })) }
+        return { profile: data, services: services.map(x => ({ id: x.id, name: x.name, service: x.serviceGroup.map(i => i.serviceGroupItem).reduce((acc, i) => acc.concat(i), []).map(i => i.service) })), files }
     }
 
     return null;
@@ -224,8 +266,8 @@ export default function () {
                                     <div><Typography.Text>Charged By</Typography.Text></div>
                                     <select name="fareMode" defaultValue={item.fareMode}>
                                         <option value="">Select...</option>
-                                        <option value={vendorServices_fareMode.FLAT}>Flat Fee</option>
-                                        <option value={vendorServices_fareMode.HOURLY}>Hourly</option>
+                                        <option value={FareMode.FLAT}>Flat Fee</option>
+                                        <option value={FareMode.HOURLY}>Hourly</option>
                                     </select>
                                 </Col>
                                 <Col span={8}>
@@ -244,11 +286,46 @@ export default function () {
                 </fetcher.Form>
             </Col>
             <Col xs={24} sm={24} md={12}>
-                <fetcher.Form method="post" action="">
+                <Form method="post" action="">
                     <Card size="small" title="3. Confirm your identity">
-
+                        <select name="fileType">
+                            <option value="">Select</option>
+                            {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
+                        </select>
+                        {/* <FileUploader id={data.profile.id} label="Choose file" /> */}
                     </Card>
-                </fetcher.Form>
+                </Form>
+
+                <Table dataSource={data.files}
+                    columns={[
+                        {
+                            title: 'File Type',
+                            dataIndex: 'fileType',
+                            key: 'fileType',
+                        },
+                        {
+                            title: 'File Name',
+                            dataIndex: 'fileName',
+                            key: 'fileName',
+                        },
+                    ]} />
+
+                {/* <Table dataSource={data.files}
+                    columns={[
+                        {
+                            title: 'FIle Type',
+                            key: 'fileType',
+                        },
+                        {
+                            title: 'FIle Type',
+                            key: 'fileName',
+                        },
+                    ]}>
+                    {data.files.map(col => <Table.ColumnGroup>
+                        <Table.Column><div>{col.fileType}</div></Table.Column>
+                        <Table.Column>{col.fileName}</Table.Column>
+                        </Table.ColumnGroup>)}
+                        </Table> */}
             </Col>
         </Row>
     </div>;

@@ -1,6 +1,6 @@
 import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Badge, Button, Card, Carousel, Col, Image, Layout, Row, Skeleton, Space, Tag } from "antd";
+import { Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { Suspense, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -28,6 +28,11 @@ type Page = {
   id: string,
   title: string,
   path: string,
+  serviceGroup: {
+    id: string;
+    name: string;
+    imageName?: string | null;
+  }[]
 }
 
 
@@ -89,7 +94,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
           title: x.title,
           description: x.description,
           img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
-          url: url.replace(':vendorType', x.vendorType?.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
+          url: url.replace(':vendorType', x.vendorType?.keyName || x.group?.vendorType.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
         }
       })
       );
@@ -143,10 +148,19 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
       select: {
         id: true,
         name: true,
-        keyName: true
+        keyName: true,
+        serviceGroup: {
+          select: {
+            id: true,
+            name: true,
+            imageName: true
+          }
+        }
       }
     }).then(r => {
-      resolve(r.map(x => ({ path: '/collections/' + x.keyName, title: x.name, id: x.id })))
+      resolve(r.map(x => ({
+        path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+      })))
     })
   });
 
@@ -273,6 +287,7 @@ const Home = {
         <Home.Jumbotron />
         <div className="container">
           <Space direction="vertical" size={'large'}>
+            <Home.Services />
             <Home.QuickPick />
             <Await resolve={data.bannerAds}>
               {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
@@ -429,6 +444,46 @@ const Home = {
           </Await>
           <Newsletter />
         </Space>
+      </Col>
+    </Row>
+  },
+  Services: () => {
+    const loaderData = useLoaderData<typeof loader>();
+    const [modalData, setIsModalOpen] = useState<Page | null>(null);
+
+    const showModal = (data: Page) => {
+      setIsModalOpen(data);
+    };
+
+    const handleCancel = () => {
+      setIsModalOpen(null);
+    };
+
+    return <Row>
+      <Col span={10}>
+        <Card>
+          <Typography.Title level={3}>What are you looking for?</Typography.Title>
+          <Await resolve={loaderData.morePages}>
+            {data => <Row gutter={[20, 20]}>
+              {data.map(item => <Col sm={12} md={6} lg={6} xl={6}>
+                <div onClick={() => showModal(item)}>
+                  <Image preview={false} src={FALLBACK_IMG} />
+                  {item.title}
+                </div>
+              </Col>)}
+            </Row>}
+          </Await>
+        </Card>
+        <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
+          <Row gutter={[20, 20]}>
+            {modalData?.serviceGroup.map(item => <Col span={6}>
+              <Link to={modalData.path + '?category=' + item.id}>
+                <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
+                <div>{item.name}</div>
+              </Link>
+            </Col>)}
+          </Row>
+        </Modal>
       </Col>
     </Row>
   }
