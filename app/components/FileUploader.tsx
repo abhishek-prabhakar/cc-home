@@ -1,6 +1,7 @@
-// import { Form } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import Uploady, { useUploady, useItemFinishListener } from "@rpldy/uploady";
-import { useRef, useCallback } from "react";
+import { Button } from "antd";
+import { useRef, useCallback, useEffect, useState } from "react";
 
 const Uploader = (props: { id?: string, label?: string }) => {
     const { showFileUpload } = useUploady();
@@ -13,25 +14,31 @@ const Uploader = (props: { id?: string, label?: string }) => {
 
     useItemFinishListener((item, options) => {
         const data = item.uploadResponse.data;
-        formInput.current.value = data.fileName;
-        formButton.current.click();
+        if (data) {
+            formInput.current.value = data.fileName;
+            formButton.current.click();
+        }
     });
 
-    return <div>
+    return <>
         <button disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</button>
         <div style={{ display: 'none' }}>
-            <form method="post" action="">
+            <Form method="post" action="">
                 <input type="hidden" name="id" value={props.id} />
                 <input type="hidden" name="fileId" ref={formInput} />
-                <button type="submit" name="action" value="upload" ref={formButton}>save</button>
-            </form>
+                <Button type="primary" htmlType="submit" name="action" value="upload" ref={formButton}>save</Button>
+            </Form>
         </div>
-    </div>;
+    </>;
 }
 
 
 export default (props: { id?: string, label?: string }) => {
-    return <Uploady
+    const [pageReady, setReady] = useState(false);
+    useEffect(() => {
+        setReady(true);
+    }, [])
+    return pageReady ? <Uploady
         inputFieldName="image"
         destination={{
             url: "https://celebria.makewithabhishek.com/upload/",
@@ -43,5 +50,5 @@ export default (props: { id?: string, label?: string }) => {
         accept="image/*"
     >
         <Uploader id={props.id} label={props.label} />
-    </Uploady>
+    </Uploady> : '...'
 }

@@ -148,6 +148,7 @@ model Service {
   name             String             @unique
   description      String
   imageName        String?
+  minHour          Int                @default(1)
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   serviceGroupItem ServiceGroupItem[]
   vendorPortfolio  VendorPortfolio[]
