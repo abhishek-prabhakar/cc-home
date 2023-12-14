@@ -21,13 +21,10 @@ const Uploader = (props: { id?: string, label?: string }) => {
     });
 
     return <>
-        <button disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</button>
+        <Button type="primary" htmlType="submit" disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
         <div style={{ display: 'none' }}>
-            <Form method="post" action="">
-                <input type="hidden" name="id" value={props.id} />
-                <input type="hidden" name="fileId" ref={formInput} />
-                <Button type="primary" htmlType="submit" name="action" value="upload" ref={formButton}>save</Button>
-            </Form>
+            <input type="hidden" name="fileId" ref={formInput} />
+            <button type="submit" name="action" value="DOCUMENTS" ref={formButton}>save</button>
         </div>
     </>;
 }

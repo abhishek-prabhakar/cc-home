@@ -240,7 +240,7 @@ export default function () {
                     {data.services.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
                 </Select>
             </Col>
-            <Col xs={24} sm={24} md={24}>
+            <Col xs={24} sm={24} md={12}>
                 <fetcher.Form method="post" action="">
                     <Card size="small" title="1. Choose your services">
                         <input type="hidden" name="categoryId" value={activeType} />
@@ -255,7 +255,8 @@ export default function () {
                     </Card>
                 </fetcher.Form>
             </Col>
-            <Col xs={24} sm={24} md={24}>
+            <Col xs={24}></Col>
+            <Col xs={24} sm={24} md={12}>
                 <fetcher.Form method="post" action="">
                     <Card size="small" title="2. Charges & Cost structure">
                         {data.profile.services.map((item, index) => <div>
@@ -287,14 +288,20 @@ export default function () {
                     </Card>
                 </fetcher.Form>
             </Col>
-            <Col xs={24} sm={24} md={24}>
+            <Col xs={24}></Col>
+            <Col xs={24} sm={24} md={12}>
                 <Form method="post" action="">
                     <Card size="small" title="3. Confirm your identity">
-                        <select name="fileType">
-                            <option value="">Select</option>
-                            {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
-                        </select>
-                        <FileUploader id={data.profile.id} label="Choose file" />
+                        <Row gutter={[40, 40]}>
+                            <Col>
+                                <select name="fileType">
+                                    {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
+                                </select>
+                            </Col>
+                            <Col>
+                                <FileUploader id={data.profile.id} label="Choose file" />
+                            </Col>
+                        </Row>
                     </Card>
                 </Form>
 
