@@ -1,7 +1,7 @@
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Table, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Spin, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { ServiceQuery } from "~/service/services.service";
@@ -290,7 +290,7 @@ export default function () {
             </Col>
             <Col xs={24}></Col>
             <Col xs={24} sm={24} md={12}>
-                <Form method="post" action="">
+                <fetcher.Form method="post" action="">
                     <Card size="small" title="3. Confirm your identity">
                         <Row gutter={[40, 40]}>
                             <Col>
@@ -301,9 +301,12 @@ export default function () {
                             <Col>
                                 <FileUploader id={data.profile.id} label="Choose file" />
                             </Col>
+                            <Col>
+                                {fetcher.state === 'submitting' && <Spin />}
+                            </Col>
                         </Row>
                     </Card>
-                </Form>
+                </fetcher.Form>
 
                 <Table dataSource={data.files}
                     columns={[
