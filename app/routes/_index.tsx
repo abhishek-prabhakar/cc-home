@@ -465,7 +465,7 @@ const Home = {
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
           <Await resolve={loaderData.morePages}>
             {data => <Row gutter={[20, 20]}>
-              {data.map(item => <Col sm={8} md={8} lg={8} xl={8}>
+              {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
                 <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
                   <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
                   {item.title}
