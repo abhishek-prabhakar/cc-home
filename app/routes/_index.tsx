@@ -186,7 +186,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
             }
           }
         }
-      }
+      },
     }).then(r => {
       resolve(r.map(x => ({
         id: x.id,
@@ -488,7 +488,7 @@ const Home = {
         </Card>
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
-            {modalData?.serviceGroup.map(item => <Col span={8}>
+            {modalData?.serviceGroup.map(item => <Col xs={12} sm={12} md={8}>
               <Link to={modalData.path + '?category=' + item.id}>
                 <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
                 <div>{item.name}</div>
