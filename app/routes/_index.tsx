@@ -477,7 +477,7 @@ const Home = {
             {data => <Row gutter={[20, 20]}>
               {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
                 <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
-                  <Space size={'small'}>
+                  <Space direction="vertical" size={'small'}>
                     <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
                     <Typography.Text strong>{item.title}</Typography.Text>
                   </Space>
