@@ -261,8 +261,8 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
 export const meta: V2_MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Celebria Collective" },
+    { name: "description", content: "Book a service with us!" },
   ];
 };
 
@@ -306,10 +306,10 @@ const Home = {
     const [active, setActive] = useState(1);
 
     return <div className="home-slider-jumbotron">
-      <Carousel autoplay>
-        <Suspense fallback={<div className="container"><Skeleton active /></div>}>
-          <Await resolve={data.jumbotron}>
-            {jumbotron => jumbotron.map((item, key) => <div key={'slider-' + key}>
+      <Suspense fallback={<div className="container"><Skeleton active /></div>}>
+        <Await resolve={data.jumbotron}>
+          {jumbotron => <Carousel autoplay>
+            {jumbotron.map((item, key) => <div key={'slider-' + key}>
               <div style={{ padding: '0 20px' }}>
                 <Row justify={'center'}>
                   <Col xs={24} sm={24} md={20} lg={18}>
@@ -336,9 +336,9 @@ const Home = {
                 </Row>
               </div>
             </div>)}
-          </Await>
-        </Suspense>
-      </Carousel>
+          </Carousel>}
+        </Await>
+      </Suspense>
     </div>;
   },
   QuickPick: () => {
@@ -465,7 +465,7 @@ const Home = {
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
           <Await resolve={loaderData.morePages}>
             {data => <Row gutter={[20, 20]}>
-              {data.map(item => <Col sm={12} md={8} lg={8} xl={8}>
+              {data.map(item => <Col sm={8} md={8} lg={8} xl={8}>
                 <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
                   <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
                   {item.title}
