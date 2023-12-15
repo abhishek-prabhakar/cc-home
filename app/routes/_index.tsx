@@ -306,10 +306,10 @@ const Home = {
     const [active, setActive] = useState(1);
 
     return <div className="home-slider-jumbotron">
-      <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.jumbotron}>
-          {jumbotron => <Carousel autoplay>
-            {jumbotron.map((item, key) => <div key={'slider-' + key}>
+      <Carousel autoplay>
+        <Suspense fallback={<div className="container"><Skeleton active /></div>}>
+          <Await resolve={data.jumbotron}>
+            {jumbotron => jumbotron.map((item, key) => <div key={'slider-' + key}>
               <div style={{ padding: '0 20px' }}>
                 <Row justify={'center'}>
                   <Col xs={24} sm={24} md={20} lg={18}>
@@ -336,9 +336,9 @@ const Home = {
                 </Row>
               </div>
             </div>)}
-          </Carousel>}
-        </Await>
-      </Suspense>
+          </Await>
+        </Suspense>
+      </Carousel>
     </div>;
   },
   QuickPick: () => {
@@ -460,7 +460,7 @@ const Home = {
     };
 
     return <Row>
-      <Col span={10}>
+      <Col sm={24} xs={24} md={12} lg={10}>
         <Card>
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
           <Await resolve={loaderData.morePages}>
