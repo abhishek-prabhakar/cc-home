@@ -40,7 +40,7 @@ const ProfileLayout = {
         const data: loaderData = useLoaderData();
 
         return <div>
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<div className="container"><Skeleton active /></div>}>
                 <Await resolve={data.profile}>
                     {profile => <ProfileLayout.Cover profile={profile} />}
                 </Await>
@@ -48,7 +48,7 @@ const ProfileLayout = {
             <div style={pageWrapperStyles}>
                 <Outlet />
             </div>
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<div className="container"><Skeleton active /></div>}>
                 <Await resolve={data.services}>
                     {services => <ProfileLayout.Contact services={services} />}
                 </Await>
