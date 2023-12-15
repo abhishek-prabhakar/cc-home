@@ -402,7 +402,7 @@ const Home = {
               {resolve.slice(2).map(item => <div key={item.id} >
                 <Space direction="vertical" size={'small'}>
                   <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                  <div><Badge color='lime' text={item.label} /></div>
+                  <div><Tag color="success">{item.label}</Tag></div>
                   <Typography.Text strong>{item.title}</Typography.Text>
                 </Space>
               </div>)
