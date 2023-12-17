@@ -58,25 +58,31 @@ const ProfileLayout = {
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
 
-        return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: `linear-gradient(#c0c0c0, ${profile?.primaryColor})` }}>
+        return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: profile?.primaryColor }}>
             <div className="container">
-                <Row gutter={[0, 40]} align={'middle'}>
-                    <Col sm={24} xs={24} span={12}>
-                        <Title level={3}>Hi There!</Title>
-                        <Avatar size={{ xs: 100, sm: 100, md: 100, lg: 120, xl: 120, xxl: 120 }}
-                            src={profile?.avatar} />
-                        <Title level={1}>I am {profile?.fullName}</Title>
-                    </Col>
-                    <Col span={24}>
-                        <a href="#book-now-section">
-                            <Button type="primary">Book Now</Button>
-                        </a>
-                    </Col>
-                    <Col span={24}>
-                        <div style={locationStyles}>
-                            <Title level={4}>Location</Title>
-                            <Title color="" level={5}>{profile?.location}</Title>
-                        </div>
+                <Row wrap={false}>
+                    <Col sm={24} xs={24} flex={'none'}>
+                        <Card style={{ borderRadius: '14px' }}>
+                            <Row gutter={[0, 40]} align={'middle'}>
+                                <Col span={24}>
+                                    <Title level={3}>Hi There!</Title>
+                                    <Title level={2} style={{ marginTop: 0 }}>I am {profile?.fullName}</Title>
+                                    <Avatar size={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100, xxl: 100 }}
+                                        src={profile?.avatar} />
+                                    <div style={{ paddingTop: '20px' }}>
+                                        <a href="#book-now-section">
+                                            <Button type="primary">Book Now</Button>
+                                        </a>
+                                    </div>
+                                </Col>
+                                <Col span={24}>
+                                    <div style={locationStyles}>
+                                        <Title level={4}>Location</Title>
+                                        <Title color="" level={5}>{profile?.location}</Title>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Card>
                     </Col>
                 </Row>
             </div>
