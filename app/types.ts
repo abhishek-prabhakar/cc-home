@@ -15,10 +15,7 @@ export type VendorProfile = {
     type: string;
     coverImageName?: string | null;
     primaryColor?: string;
-    avatar?: {
-        large: string;
-        thumbnail: string;
-    };
+    avatar?: string;
 }
 
 export type VendorPortfolio = {

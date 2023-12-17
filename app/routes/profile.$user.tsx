@@ -1,7 +1,7 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Outlet, useLoaderData } from "@remix-run/react";
-import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton } from "antd";
+import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton, Avatar } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
@@ -63,6 +63,8 @@ const ProfileLayout = {
                 <Row gutter={[0, 40]} align={'middle'}>
                     <Col sm={24} xs={24} span={12}>
                         <Title level={3}>Hi There!</Title>
+                        <Avatar size={{ xs: 100, sm: 100, md: 100, lg: 120, xl: 120, xxl: 120 }}
+                            src={profile?.avatar} />
                         <Title level={1}>I am {profile?.fullName}</Title>
                     </Col>
                     <Col span={24}>
