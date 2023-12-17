@@ -58,7 +58,7 @@ const ProfileLayout = {
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
 
-        return <div style={{ ...coverStyles, background: profile?.coverImageName ? `url(${profile?.coverImageName})` : `linear-gradient(#c0c0c0, ${profile?.primaryColor})` }}>
+        return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: `linear-gradient(#c0c0c0, ${profile?.primaryColor})` }}>
             <div className="container">
                 <Row gutter={[0, 40]} align={'middle'}>
                     <Col sm={24} xs={24} span={12}>
