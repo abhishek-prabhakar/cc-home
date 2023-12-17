@@ -1,3 +1,4 @@
+import { PATH } from "~/path.data";
 import { VendorProfile, VendorService } from "~/types";
 import { db } from "~/utils/database";
 
@@ -13,6 +14,8 @@ export const VendorQuery = {
                     id: true,
                     username: true,
                     name: true,
+                    primaryColor: true,
+                    coverImageName: true,
                     vendorType: {
                         select: {
                             name: true
@@ -27,7 +30,9 @@ export const VendorQuery = {
                         fullName: r.username,
                         location: '',
                         gender: '',
-                        type: r.vendorType?.name || ''
+                        type: r.vendorType?.name || '',
+                        primaryColor: r.primaryColor,
+                        coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
                     });
                 } else {
                     resolve(null);

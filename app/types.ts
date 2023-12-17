@@ -13,6 +13,8 @@ export type VendorProfile = {
     location: string
     gender: string;
     type: string;
+    coverImageName?: string | null;
+    primaryColor?: string;
     avatar?: {
         large: string;
         thumbnail: string;

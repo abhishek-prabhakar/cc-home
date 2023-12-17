@@ -10,7 +10,7 @@ import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
 const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
 
-const coverStyles: React.CSSProperties = { backgroundImage: 'url(https://demo.themerec.com/item/wordpress/thepro-light/wp-content/uploads/sites/9/2022/06/header-bg-white.jpg)', backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', minHeight: '500px', padding: '40px 0', marginTop: '-40px' }
+const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', minHeight: '500px', padding: '40px 0', marginTop: '-40px' }
 
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
@@ -57,9 +57,8 @@ const ProfileLayout = {
 
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
-        const data = useLoaderData<VendorProfile>();
 
-        return <div style={coverStyles}>
+        return <div style={{ ...coverStyles, background: profile?.coverImageName ? `url(${profile?.coverImageName})` : `linear-gradient(#c0c0c0, ${profile?.primaryColor})` }}>
             <div className="container">
                 <Row gutter={[0, 40]} align={'middle'}>
                     <Col sm={24} xs={24} span={12}>
@@ -74,7 +73,7 @@ const ProfileLayout = {
                     <Col span={24}>
                         <div style={locationStyles}>
                             <Title level={4}>Location</Title>
-                            <Title color="" level={5}>{data.location}</Title>
+                            <Title color="" level={5}>{profile?.location}</Title>
                         </div>
                     </Col>
                 </Row>

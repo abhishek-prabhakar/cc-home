@@ -187,6 +187,15 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
           }
         }
       },
+      where: {
+        serviceGroupItem: {
+          some: {
+            id: {
+              not: undefined
+            }
+          }
+        }
+      }
     }).then(r => {
       resolve(r.map(x => ({
         id: x.id,

@@ -48,6 +48,7 @@ model Vendor {
   accountStatusMsg String?
   createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  primaryColor     String            @default("#4caf50")
   vendorPortfolio  VendorPortfolio[]
   services         VendorService[]
   vendorType       VendorType?       @relation(fields: [categoryId], references: [id])
@@ -116,11 +117,11 @@ model VendorService {
   id             String           @id
   vendorId       String
   serviceId      String
-  fareMode       FareMode
   duration       Int
   cost           Int
   createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt      DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  fareMode       FareMode
   bookingService BookingService[]
   service        Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   vendor         Vendor           @relation(fields: [vendorId], references: [id])
@@ -148,8 +149,8 @@ model Service {
   name             String             @unique
   description      String
   imageName        String?
-  minHour          Int                @default(1)
   createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  minHour          Int                @default(1)
   serviceGroupItem ServiceGroupItem[]
   vendorPortfolio  VendorPortfolio[]
   vendorService    VendorService[]
@@ -229,8 +230,8 @@ model JumbotronData {
 model WebsiteSlider {
   id          String        @id
   jumbotronId String
-  jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
   createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
 
   @@map("websiteSlider")
 }
@@ -239,8 +240,8 @@ model WebsiteBanner {
   id          String         @id
   jumbotronId String
   targetPage  BannerLocation
-  jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
 
   @@map("websiteBanner")
 }
