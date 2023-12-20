@@ -300,7 +300,7 @@ const Home = {
               <Home.Services />
             </Col>
             <Col span={24}>
-              <Home.QuickPick />
+              {/* <Home.QuickPick /> */}
             </Col>
             <Col span={24}>
               <Await resolve={data.bannerAds}>
@@ -308,7 +308,7 @@ const Home = {
               </Await>
             </Col>
             <Col span={24}>
-              <Home.Collections />
+              {/* <Home.Collections /> */}
             </Col>
             <Col span={24}>
               <Await resolve={data.bannerAds}>
