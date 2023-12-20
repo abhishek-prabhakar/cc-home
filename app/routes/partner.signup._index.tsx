@@ -211,7 +211,7 @@ const PartnerSignup = {
         }
 
         const RequestForm = () => {
-            return !!type && <fetcher.Form method="post" action="">
+            return type ? <fetcher.Form method="post" action="">
                 <Row gutter={[20, 20]}>
                     <Col>
                         <Typography.Title level={5}>I'm a</Typography.Title>
@@ -240,7 +240,7 @@ const PartnerSignup = {
                         <Button type="primary" shape="round" htmlType="submit">Submit</Button>
                     </Col>
                 </Row>
-            </fetcher.Form>;
+            </fetcher.Form> : <></>;
         }
 
         return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
