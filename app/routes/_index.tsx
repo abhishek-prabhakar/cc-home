@@ -303,17 +303,21 @@ const Home = {
               <Home.QuickPick />
             </Col>
             <Col span={24}>
-              {/* <Await resolve={data.bannerAds}>
-                {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
-              </Await> */}
+              <Suspense fallback={<Skeleton active />}>
+                <Await resolve={data.bannerAds}>
+                  {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
+                </Await>
+              </Suspense>
             </Col>
             <Col span={24}>
-              {/* <Home.Collections /> */}
+              <Home.Collections />
             </Col>
             <Col span={24}>
-              {/* <Await resolve={data.bannerAds}>
-                {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_3)} />}
-              </Await> */}
+              <Suspense fallback={<Skeleton active />}>
+                <Await resolve={data.bannerAds}>
+                  {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_3)} />}
+                </Await>
+              </Suspense>
             </Col>
           </Row>
         </div>
@@ -406,60 +410,68 @@ const Home = {
       <Title level={2}>Collections</Title>
       <Row gutter={[60, 60]}>
         <Col span={24} md={6}>
-          <Await resolve={data.collection}>
-            {resolve => <Space direction="vertical" size={'large'}>
-              {resolve.slice(2).map(item => <div key={item.id} >
-                <Space direction="vertical" size={'small'}>
-                  <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                  <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                  <Typography.Text strong>{item.title}</Typography.Text>
-                </Space>
-              </div>)
-              }
-            </Space>}
-          </Await>
-        </Col>
-        <Col span={24} md={10}>
-          <Await resolve={data.collection}>
-            {resolve => <Space direction="vertical" size={'middle'}>
-              {resolve.slice(0, 2).map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
-                hoverable
-                cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
-              >
-                <Meta title={item.title} description={'Starting from ' + item.cost} />
-              </Card></Link></Badge.Ribbon>)}
-            </Space>
-            }
-          </Await>
-        </Col>
-        <Col span={24} md={8}>
-          <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-            <Title level={3}>More...</Title>
-            <Await resolve={data.morePages}>
-              {response => <Space direction="vertical" size={'middle'}>
-                {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
-                  <Row gutter={[24, 0]} align="middle">
-                    <Col>
-                      <Link to={item.path}>
-                        <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
-                      </Link>
-                    </Col>
-                    <Col flex={'auto'}>
-                      <Link to={item.path}>
-                        <Typography.Text strong>{item.title}</Typography.Text>
-                      </Link>
-                    </Col>
-                    <Col style={{ padding: '0 40px' }}>
-                      <RightOutlined />
-                    </Col>
-                  </Row>
+          <Suspense fallback={<Skeleton active />}>
+            <Await resolve={data.collection}>
+              {resolve => <Space direction="vertical" size={'large'}>
+                {resolve.slice(2).map(item => <div key={item.id} >
+                  <Space direction="vertical" size={'small'}>
+                    <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                    <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
+                    <Typography.Text strong>{item.title}</Typography.Text>
+                  </Space>
                 </div>)
                 }
               </Space>}
             </Await>
-            <Await resolve={data.bannerAds}>
-              {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
+          </Suspense>
+        </Col>
+        <Col span={24} md={10}>
+          <Suspense fallback={<Skeleton active />}>
+            <Await resolve={data.collection}>
+              {resolve => <Space direction="vertical" size={'middle'}>
+                {resolve.slice(0, 2).map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
+                  hoverable
+                  cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
+                >
+                  <Meta title={item.title} description={'Starting from ' + item.cost} />
+                </Card></Link></Badge.Ribbon>)}
+              </Space>
+              }
             </Await>
+          </Suspense>
+        </Col>
+        <Col span={24} md={8}>
+          <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+            <Title level={3}>More...</Title>
+            <Suspense fallback={<Skeleton active />}>
+              <Await resolve={data.morePages}>
+                {response => <Space direction="vertical" size={'middle'}>
+                  {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
+                    <Row gutter={[24, 0]} align="middle">
+                      <Col>
+                        <Link to={item.path}>
+                          <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
+                        </Link>
+                      </Col>
+                      <Col flex={'auto'}>
+                        <Link to={item.path}>
+                          <Typography.Text strong>{item.title}</Typography.Text>
+                        </Link>
+                      </Col>
+                      <Col style={{ padding: '0 40px' }}>
+                        <RightOutlined />
+                      </Col>
+                    </Row>
+                  </div>)
+                  }
+                </Space>}
+              </Await>
+            </Suspense>
+            <Suspense fallback={<Skeleton active />}>
+              <Await resolve={data.bannerAds}>
+                {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
+              </Await>
+            </Suspense>
             <Newsletter />
           </Space>
         </Col>
@@ -482,18 +494,20 @@ const Home = {
       <Col sm={24} xs={24} md={12} lg={10}>
         <Card>
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
-          <Await resolve={loaderData.morePages}>
-            {data => <Row gutter={[20, 20]}>
-              {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
-                <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
-                  <Space direction="vertical" size={'small'}>
-                    <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
-                    <Typography.Text strong>{item.title}</Typography.Text>
-                  </Space>
-                </div>
-              </Col>)}
-            </Row>}
-          </Await>
+          <Suspense fallback={<Skeleton active />}>
+            <Await resolve={loaderData.morePages}>
+              {data => <Row gutter={[20, 20]}>
+                {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
+                  <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
+                    <Space direction="vertical" size={'small'}>
+                      <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
+                      <Typography.Text strong>{item.title}</Typography.Text>
+                    </Space>
+                  </div>
+                </Col>)}
+              </Row>}
+            </Await>
+          </Suspense>
         </Card>
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
