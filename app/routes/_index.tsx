@@ -293,11 +293,11 @@ const Home = {
 
     return (
       <div >
-        <Home.Jumbotron />
+        {/* <Home.Jumbotron /> */}
         <div className="container">
           <Row gutter={[0, 50]}>
             <Col span={24}>
-              <Home.Services />
+              {/* <Home.Services /> */}
             </Col>
             <Col span={24}>
               {/* <Home.QuickPick /> */}
