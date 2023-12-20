@@ -116,7 +116,18 @@ export default function App() {
                 {response => <Header user={response} />}
               </Await>
             </Layout.Header>
-
+            <Content style={{ paddingTop: '40px' }}>
+              {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <div className="container"><Row gutter={[80, 80]}>
+                <Col xs={24} sm={24} md={16}>
+                  <Skeleton />
+                  <Skeleton />
+                  <Skeleton />
+                </Col>
+                <Col xs={24} sm={24} md={8}>
+                  <Skeleton />
+                </Col>
+              </Row></div>}
+            </Content>
             <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
               <Footer />
             </Layout.Footer>
