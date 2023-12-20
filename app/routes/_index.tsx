@@ -303,17 +303,17 @@ const Home = {
               {/* <Home.QuickPick /> */}
             </Col>
             <Col span={24}>
-              <Await resolve={data.bannerAds}>
+              {/* <Await resolve={data.bannerAds}>
                 {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
-              </Await>
+              </Await> */}
             </Col>
             <Col span={24}>
               {/* <Home.Collections /> */}
             </Col>
             <Col span={24}>
-              <Await resolve={data.bannerAds}>
+              {/* <Await resolve={data.bannerAds}>
                 {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_3)} />}
-              </Await>
+              </Await> */}
             </Col>
           </Row>
         </div>
