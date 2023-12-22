@@ -42,12 +42,14 @@ type HomePage = {
   collection: Collection[];
   quickLinks: Collection[];
   morePages: Page[];
+  categories: Page[];
 };
 
 export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<{
   jumbotron: Promise<Jumbotron[]>;
   collection: Promise<Collection[]>;
   morePages: Promise<Page[]>;
+  categories: Promise<Page[]>
 }>> {
   const id = params.user;
   const jumbotronList = new Promise<Jumbotron[]>(function (resolve) {
@@ -142,6 +144,30 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
   const morePages = new Promise<Page[]>(function (resolve) {
     db.vendorType.findMany({
       take: 3,
+      orderBy: {
+        name: 'asc'
+      },
+      select: {
+        id: true,
+        name: true,
+        keyName: true,
+        serviceGroup: {
+          select: {
+            id: true,
+            name: true,
+            imageName: true
+          }
+        }
+      }
+    }).then(r => {
+      resolve(r.map(x => ({
+        path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+      })))
+    })
+  });
+
+  const categories = new Promise<Page[]>(function (resolve) {
+    db.vendorType.findMany({
       orderBy: {
         name: 'asc'
       },
@@ -265,7 +291,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     resolve(finalList);
   });
 
-  return defer({ bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
+  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -495,7 +521,7 @@ const Home = {
         <Card>
           <Typography.Title level={3}>What are you looking for?</Typography.Title>
           <Suspense fallback={<Skeleton active />}>
-            <Await resolve={loaderData.morePages}>
+            <Await resolve={loaderData.categories}>
               {data => <Row gutter={[20, 20]}>
                 {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
                   <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
