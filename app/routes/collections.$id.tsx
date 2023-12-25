@@ -24,10 +24,9 @@ const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirecti
 
 
 export const meta: V2_MetaFunction = () => {
-    const data = useLoaderData<loaderData>();
     return [
-        { title: data.meta.name },
-        { name: "description", content: data.meta.description },
+        { title: 'Celebria Collective' },
+        { name: "description", content: 'Find your Pefect vendor' },
     ];
 };
 
