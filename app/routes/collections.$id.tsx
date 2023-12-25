@@ -24,9 +24,10 @@ const itemDataWapperStyles: React.CSSProperties = { display: "flex", flexDirecti
 
 
 export const meta: V2_MetaFunction = () => {
+    const data = useLoaderData<loaderData>();
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: data.meta.name },
+        { name: "description", content: data.meta.description },
     ];
 };
 
@@ -43,14 +44,20 @@ type Vendor = {
 type Filter = {
     category: { id: string, name: string }[]
 }
-
+type MetaData = {
+    name: string,
+    id: string,
+    description: string
+}
+type Result = {
+    data: Vendor[],
+    loadMore: boolean
+}
 type loaderData = {
     page: number,
-    result: {
-        data: Vendor[],
-        loadMore: boolean
-    },
-    filters: Filter
+    result: Result,
+    filters: Filter,
+    meta: MetaData
 };
 
 export async function loader({ request, params }: LoaderArgs): Promise<TypedDeferredData<any>> {
@@ -65,7 +72,18 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     if (!categoryIds?.length) {
         categoryIds = undefined;
     }
-    const result = new Promise<{ data: Vendor[], loadMore: boolean }>(function (resolve) {
+    const metaInfo = await db.vendorType.findFirstOrThrow({
+        where: {
+            keyName: pageId
+        },
+        select: {
+            id: true,
+            name: true,
+            description: true,
+        }
+    });
+
+    const result = new Promise<Result>(function (resolve) {
         db.vendorType.findFirstOrThrow({
             where: {
                 keyName: pageId
@@ -198,7 +216,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     return defer({
         result,
         filters,
-        page
+        page,
+        meta: metaInfo
     });
 
 }
@@ -270,8 +289,8 @@ const Photography = {
                     <Col sm={24} xs={24} md={16} lg={18}>
                         <Space direction="vertical" size={'large'}>
                             <Content>
-                                <Title>Photographers in Banglore</Title>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                <Title>{data.meta.name} in Banglore</Title>
+                                <p>{data.meta.description}</p>
                             </Content>
                             <SortResultsPanel />
                             <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
