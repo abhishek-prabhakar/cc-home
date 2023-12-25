@@ -43,7 +43,7 @@ export function Header({ user }: { user?: User | null }) {
                     </Col>
                     <Col flex={'auto'}>
                         <div className="header-brand">
-                            <Link to="/" style={logoStyle}>CELEBRIA COLLECTIONS</Link>
+                            <Link to="/" style={logoStyle}><img src="/assets/brand-logo.png" width={'100px'} /></Link>
                         </div>
                     </Col>
                     <Col span={4} md={7} lg={5}>
