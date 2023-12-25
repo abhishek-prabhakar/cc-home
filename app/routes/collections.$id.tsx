@@ -281,12 +281,12 @@ const Photography = {
         const data = useLoaderData<loaderData>();
 
         return <div className="container">
-            <Space direction="vertical" size={'large'}>
+            <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                 <Banner />
                 <Row gutter={[40, 40]}>
                     <Photography.Filters />
                     <Col sm={24} xs={24} md={16} lg={18}>
-                        <Space direction="vertical" size={'large'}>
+                        <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                             <Content>
                                 <Title>{data.meta.name} in Banglore</Title>
                                 <p>{data.meta.description}</p>
