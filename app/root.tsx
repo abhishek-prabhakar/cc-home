@@ -26,7 +26,7 @@ import { db } from "./utils/database";
 const { Content } = Layout;
 import { Provider } from 'react-redux';
 import store from './store/store';
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
 
 export const links: LinksFunction = () => [
@@ -112,9 +112,11 @@ export default function App() {
           <Layout>
             <Ticker />
             <Layout.Header style={headerStyle}>
-              <Await resolve={data.user}>
-                {response => <Header user={response} />}
-              </Await>
+              <Suspense fallback={<Skeleton />}>
+                <Await resolve={data.user}>
+                  {response => <Header user={response} />}
+                </Await>
+              </Suspense>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
               {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <div className="container"><Row gutter={[80, 80]}>
