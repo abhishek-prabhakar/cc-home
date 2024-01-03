@@ -25,7 +25,7 @@ export const CartService = {
                 return;
             }
 
-            ServiceQuery.getVendorServices(cart.serviceGroupId, cart.services.map(x => x.id)).then(res => {
+            ServiceQuery.getVendorServices(cart.serviceGroupId, cart.services.map(x => x.id).filter(x => !!x)).then(res => {
                 if (!res) {
                     resolve(null);
                 } else {
@@ -40,7 +40,7 @@ export const CartService = {
                         date: cart.date,
                         timeHour: cart.timeHour,
                         duration: cart.duration,
-                        services: [{ name: 'Base charge', cost: res.cost, id: res.group.id }].concat(res.vendorService.map(x => ({
+                        services: [{ name: 'Base charge', cost: res.cost, id: '' }].concat(res.vendorService.map(x => ({
                             name: x.service.name,
                             cost: x.cost,
                             id: x.service.id

@@ -31,13 +31,12 @@ export async function action({
     const cookie = await userCartCookie.parse(cookieHeader);
     const data: CartInput = JSON.parse(cookie)
 
-    if (!data?.service?.length) {
+    if (!data?.services?.length) {
         return redirect('/cart/checkout');
     }
 
     const orderId = await new Promise<string>(function (resolve) {
         CartService.summary(data).then(async res => {
-            console.log(res)
             if (!res) {
                 return;
             }
@@ -69,9 +68,9 @@ export async function action({
                     bookingId: data.id,
                     vendorServiceId: x.id,
                     status: BookingStatus.PENDING,
-                    date: x.date,
-                    timeHour: x.timeHour,
-                    duration: x.duration,
+                    date: res.date,
+                    timeHour: res.timeHour,
+                    duration: res.duration,
                     location: '',
                     cost: x.cost
                 }))
