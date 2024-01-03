@@ -1,68 +1,104 @@
 import { db } from "~/utils/database";
 
 export const ServiceQuery = {
-    getVendorServices: (serviceIds: string[]) => {
-        return db.serviceGroup.findFirst({
+    getVendorServices: (serviceGroupId: string, serviceIds: string[]) => {
+
+        return db.vendorServiceGroup.findFirst({
             where: {
-                serviceGroupItem: {
-                    some: {
-                        service: {
-                            vendorService: {
-                                some: {
-                                    id: {
-                                        in: serviceIds
-                                    }
-                                }
-                            }
-                        }
-                    },
-                }
+                groupId: serviceGroupId
             },
             select: {
-                id: true,
-                name: true,
-                serviceGroupItem: {
-                    where: {
-                        service: {
-                            vendorService: {
-                                some: {
-                                    id: {
-                                        in: serviceIds
-                                    }
-                                }
+                cost: true,
+                vendor: {
+                    select: {
+                        username: true,
+                        profileImageName: true,
+                        vendorType: {
+                            select: {
+                                name: true
                             }
+                        }
+                    }
+                },
+                group: {
+                    select: {
+                        id: true,
+                        name: true,
+                        imageName: true
+                    }
+                },
+                vendorService: {
+                    where: {
+                        serviceId: {
+                            in: serviceIds
                         }
                     },
                     select: {
-                        isOptional: true,
+                        cost: true,
                         service: {
                             select: {
-                                name: true,
-                                imageName: true,
-                                vendorService: {
-                                    select: {
-                                        id: true,
-                                        cost: true,
-                                        vendor: {
-                                            select: {
-                                                id: true,
-                                                username: true,
-                                                profileImageName: true,
-                                                vendorType: {
-                                                    select: {
-                                                        name: true
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                id: true,
+                                name: true
                             }
                         }
                     }
                 }
             }
-        });
+        })
+
+        // return db.serviceGroup.findFirst({
+        //     where: {
+        //         serviceGroupItem: {
+        //             some: {
+        //                 service: {
+        //                     id: {
+        //                         in: serviceIds
+        //                     }
+        //                 }
+        //             },
+        //         }
+        //     },
+        //     select: {
+        //         id: true,
+        //         name: true,
+        //         serviceGroupItem: {
+        //             where: {
+        //                 service: {
+        //                     id: {
+        //                         in: serviceIds
+        //                     }
+        //                 }
+        //             },
+        //             select: {
+        //                 isOptional: true,
+        //                 service: {
+        //                     select: {
+        //                         name: true,
+        //                         imageName: true,
+        //                         vendorService: {
+        //                             select: {
+        //                                 id: true,
+        //                                 cost: true,
+        //                                 vendor: {
+        //                                     select: {
+        //                                         id: true,
+        //                                         username: true,
+        //                                         profileImageName: true,
+        //                                         vendorType: {
+        //                                             select: {
+        //                                                 name: true
+        //                                             }
+        //                                         }
+        //                                     }
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
     },
     getServicesByJob: () => {
         return db.vendorType.findMany({
@@ -81,7 +117,8 @@ export const ServiceQuery = {
                                 service: {
                                     select: {
                                         id: true,
-                                        name: true
+                                        name: true,
+                                        fareMode: true
                                     }
                                 }
                             }

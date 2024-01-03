@@ -20,40 +20,32 @@ export const CartService = {
     },
     summary: function (cart: CartInput) {
         return new Promise<CartItem | null>(function (resolve) {
-            if (!cart?.service?.length) {
+            if (!cart?.services?.length) {
                 resolve(null);
                 return;
             }
 
-            const params = cart.service.reduce<{ [key in string]: { date: Date, timeHour: number, duration: number } }>((obj, x) => {
-                obj[x.vendorServiceId] = {
-                    date: new Date(x.date),
-                    timeHour: x.timeHour,
-                    duration: x.duration
-                };
-                return obj;
-            }, {});
-
-            ServiceQuery.getVendorServices(cart.service.map(x => x.vendorServiceId)).then(res => {
+            ServiceQuery.getVendorServices(cart.serviceGroupId, cart.services.map(x => x.id)).then(res => {
                 if (!res) {
                     resolve(null);
                 } else {
+                    // resolve(null)
                     resolve({
-                        serviceGroupId: res.id,
-                        services: res.serviceGroupItem.map(x => ({
+                        name: res.group.name,
+                        coverImg: res.group.imageName ? PATH.RESOURCE_URL + res.group.imageName : '',
+                        serviceGroupId: res.group.id,
+                        vendorType: res.vendor.vendorType?.name || '',
+                        vendorName: res.vendor.username,
+                        vendorImg: res.vendor.profileImageName ? PATH.RESOURCE_URL + res.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                        vendorId: res.vendor.username,
+                        date: cart.date,
+                        timeHour: cart.timeHour,
+                        duration: cart.duration,
+                        services: [{ name: 'Base charge', cost: res.cost, id: res.group.id }].concat(res.vendorService.map(x => ({
                             name: x.service.name,
-                            vendorType: x.service.vendorService[0].vendor.vendorType?.name || '',
-                            vendorName: x.service.vendorService[0].vendor.username,
-                            vendorImg: x.service.vendorService[0].vendor.profileImageName ? PATH.RESOURCE_URL + x.service.vendorService[0].vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                            vendorId: x.service.vendorService[0].vendor.id,
-                            cost: x.service.vendorService[0].cost,
-                            id: x.service.vendorService[0].id,
-                            isOptional: x.isOptional,
-                            date: params[x.service.vendorService[0].id].date,
-                            timeHour: params[x.service.vendorService[0].id].timeHour,
-                            duration: params[x.service.vendorService[0].id].duration,
-                            image: x.service.imageName ? PATH.RESOURCE_URL + x.service.imageName : ''
-                        }))
+                            cost: x.cost,
+                            id: x.service.id
+                        })))
                     })
                 }
             });

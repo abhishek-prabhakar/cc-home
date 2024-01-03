@@ -193,7 +193,7 @@ const ProfileLayout = {
                         </Row>
                     </Space>
                 </Col>
-                <Col span={24} md={12} lg={12} xl={16}>
+                <Col span={24} md={12} lg={12} xl={16}>{serviceId}
                     {showConfigPanel && serviceId && <ConfigureBooking serviceGroupId={serviceId} options={serviceList.concat(selectedAddons)} />}
                 </Col>
             </Row>

@@ -9,7 +9,7 @@ export async function action({
     let cookie = await userCartCookie.parse(cookieHeader);
     const body = await request.formData();
     cookie = body.get('cart');
-
+    console.log(cookie)
     return redirect('/cart/checkout', {
         headers: {
             "Set-Cookie": await userCartCookie.serialize(cookie),

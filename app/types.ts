@@ -72,26 +72,29 @@ export enum OrderStatus {
 
 export type CartActiveService = VendorServiceOption & { date: string, time: string };
 export type CartItem = {
+    name: string,
+    coverImg?: string | null,
+    vendorId: string,
+    vendorName: string,
+    vendorType: string,
+    vendorImg: string;
     serviceGroupId: string,
+    date: Date | string,
+    timeHour: number,
+    duration: number,
     services: {
         id: string,
         name: string,
-        vendorId: string,
-        vendorName: string,
-        vendorType: string,
-        vendorImg: string;
-        cost: number,
-        isOptional: boolean,
-        date: Date | string,
-        timeHour: number,
-        duration: number,
-        image?: string | null
+        cost: number
     }[]
 };
-export type CartInputService = { vendorServiceId: string, date: Date, timeHour: number, duration: number };
+export type CartInputService = { id: string };
 export type CartInput = {
     serviceGroupId: string,
-    service: CartInputService[]
+    date: Date,
+    timeHour: number,
+    duration: number,
+    services: CartInputService[]
 }
 
 

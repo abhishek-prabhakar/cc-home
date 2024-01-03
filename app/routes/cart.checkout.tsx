@@ -68,36 +68,35 @@ const Cart = {
 
         return <>
             <Row gutter={[30, 30]}>
-                {data?.services?.map(service => <Col sm={24} xs={24} md={8}>
-                    <Badge.Ribbon text={service.vendorType}>
+                <Col sm={24} xs={24} md={8}>
+                    <Badge.Ribbon text={data.vendorType}>
                         <Card
-                            key={service.id}
                             cover={
                                 <Image
                                     style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                                    alt={service.name} preview={false}
-                                    src={service.image || ''}
+                                    preview={false}
+                                    src={data.coverImg || ''}
                                     fallback={PATH.FALLBACK_IMG}
                                 />
                             }
                             actions={[
-                                service.isOptional ? <DeleteOutlined key="remove" /> : <></>,
+                                <DeleteOutlined key="remove" />,
                                 <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
                             ]}
                         >
                             <Card.Meta
-                                avatar={<Avatar src={service.vendorImg} />}
-                                title={service.name}
+                                avatar={<Avatar src={data.vendorImg} />}
+                                title={data.name}
                                 description={<div>
-                                    <Link to={`/profile/${service.vendorName}`}>{service.vendorName}</Link>
+                                    <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
                                     <br />
-                                    <Typography.Text strong>{DateFormatter.short(service.date)}</Typography.Text>
-                                    <Typography.Text strong>{service.timeHour} to {service.timeHour + service.duration} ({service.duration} hours)</Typography.Text>
+                                    <Typography.Text strong>{DateFormatter.short(data.date)}</Typography.Text> -
+                                    <Typography.Text strong>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Typography.Text>
                                 </div>}
                             />
                         </Card>
                     </Badge.Ribbon>
-                </Col>)}
+                </Col>
                 {!data?.services.length && <Col>Sorry, Your cart is empty.</Col>}
             </Row>
             {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
