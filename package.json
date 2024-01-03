@@ -9,7 +9,6 @@
     "dbpull": "prisma db pull",
     "format": "prisma format",
     "generate": "prisma generate",
-    "migrate": "prisma migrate dev",
     "postinstall": "prisma generate"
   },
   "dependencies": {
