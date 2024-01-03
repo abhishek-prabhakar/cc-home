@@ -484,21 +484,21 @@ const OnBoardPage = {
                 </Col>
                 <Col span={8}>
                     <b>{service.service.name}</b>
-                    <div>{service.isOptional && 'Add-On'} {service.addonGroup && '(' + service.addonGroup?.name + ')'}</div>
+                    <div>{service.isOptional ? 'Add-On' + service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : '' : '(inclusive)'}</div>
                 </Col>
                 <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
-                    <div><Typography.Text>Charged By:</Typography.Text></div>
-                    {FareModeLabel.get(service.service.fareMode)}
+                    {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged By:</Typography.Text></div>,
+                    FareModeLabel.get(service.service.fareMode)]}
                 </Col>
-                <Col span={4}>
+                <Col md={4} sm={12} xs={12}>
                     {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
                     <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration} name="duration" type="number" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
                 </Col>
-                <Col span={4}>
+                <Col md={4} sm={12} xs={12}>
                     {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
                     <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" type="number" required />] : <input type="hidden" name="cost" value={0} />}
                 </Col>
-                <Col span={24}><Divider /></Col>
+                <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
             </Row>)}
             <input type="hidden" name="vendorGroupId" value={item.id} />
             <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
