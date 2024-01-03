@@ -29,7 +29,6 @@ export const CartService = {
                 if (!res) {
                     resolve(null);
                 } else {
-                    // resolve(null)
                     resolve({
                         name: res.group.name,
                         coverImg: res.group.imageName ? PATH.RESOURCE_URL + res.group.imageName : '',
