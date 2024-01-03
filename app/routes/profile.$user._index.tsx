@@ -35,22 +35,24 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     });
 
     const services = new Promise<ProfileService[]>(function (resolve) {
-        db.service.findMany({
+        db.vendorServiceGroup.findMany({
             take: 3,
             select: {
-                name: true
+                group: {
+                    select: {
+                        name: true,
+                        description: true
+                    }
+                },
+                cost: true
             },
             where: {
-                vendorService: {
-                    some: {
-                        vendor: {
-                            username
-                        }
-                    }
+                vendor: {
+                    username
                 }
             }
         }).then(r => {
-            resolve(r.map(x => ({ name: x.name, description: '' })));
+            resolve(r.map(x => ({ name: x.group.name, description: 'Starts from: ₹' + x.cost })));
         })
     })
 
@@ -94,7 +96,7 @@ const ProfileHome = {
                             {services.map((x, i) => <Col key={'card-' + i} sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
                                 <Card bordered={false}>
                                     <CameraOutlined style={quoteStyle} />
-                                    <Title level={3}>{x.name}</Title>
+                                    <Title level={4}>{x.name}</Title>
                                     {x.description}
                                 </Card>
                             </Col>

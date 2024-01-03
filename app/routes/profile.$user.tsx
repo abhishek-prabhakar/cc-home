@@ -10,7 +10,7 @@ import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
 const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
 
-const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', minHeight: '500px', padding: '40px 0', marginTop: '-40px' }
+const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
@@ -40,11 +40,13 @@ const ProfileLayout = {
         const data: loaderData = useLoaderData();
 
         return <div>
-            <Suspense fallback={<div className="container"><Skeleton active /></div>}>
-                <Await resolve={data.profile}>
-                    {profile => <ProfileLayout.Cover profile={profile} />}
-                </Await>
-            </Suspense>
+            <div className="container" style={{ paddingTop: '20px' }}>
+                <Suspense fallback={<Skeleton active />}>
+                    <Await resolve={data.profile}>
+                        {profile => <ProfileLayout.Cover profile={profile} />}
+                    </Await>
+                </Suspense>
+            </div>
             <div style={pageWrapperStyles}>
                 <Outlet />
             </div>
@@ -53,7 +55,7 @@ const ProfileLayout = {
                     {services => <ProfileLayout.Contact services={services} />}
                 </Await>
             </Suspense>
-        </div>
+        </div >
 
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
