@@ -61,6 +61,8 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
 
             resolve(p);
         })
+
+        resolve([])
     });
 
 
