@@ -13,6 +13,7 @@ import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, Jumbotron } from "~/types";
+import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
 
 
 type Collection = {
@@ -45,64 +46,15 @@ type HomePage = {
   categories: Page[];
 };
 
-export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<{
-  jumbotron: Promise<Jumbotron[]>;
-  collection: Promise<Collection[]>;
-  morePages: Promise<Page[]>;
-  categories: Promise<Page[]>
-}>> {
+// : Promise<TypedDeferredData<{
+//   jumbotron: Promise<Jumbotron[]>;
+//   collection: Promise<Collection[]>;
+//   morePages: Promise<Page[]>;
+//   categories: Promise<Page[]>
+// }>>
+export async function loader({ params }: LoaderArgs) {
   const id = params.user;
-  const jumbotronList = new Promise<Jumbotron[]>(function (resolve) {
-    db.websiteSlider.findMany({
-      orderBy: {
-        createdAt: 'desc'
-      },
-      select: {
-        jumbotron: {
-          select: {
-            title: true,
-            description: true,
-            imageName: true,
-            vendorId: true,
-            vendorTypeId: true,
-            serviceGroupId: true,
-            serviceId: true,
-            vendorType: {
-              select: {
-                keyName: true
-              }
-            },
-            group: {
-              select: {
-                vendorType: {
-                  select: {
-                    keyName: true
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }).then(r => {
-      resolve(r.map(x => x.jumbotron).map(x => {
-        const url = generateJumbotronUrl({
-          vendorTypeId: x.vendorTypeId,
-          serviceGroupId: x.serviceGroupId,
-          serviceId: x.serviceId
-        });
-
-        return {
-          title: x.title,
-          description: x.description,
-          img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
-          url: url.replace(':vendorType', x.vendorType?.keyName || x.group?.vendorType.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
-        }
-      })
-      );
-    });
-
-  });
+  const jumbotronList = getJumbotronList()
 
   const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
@@ -166,29 +118,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
     })
   });
 
-  const categories = new Promise<Page[]>(function (resolve) {
-    db.vendorType.findMany({
-      orderBy: {
-        name: 'asc'
-      },
-      select: {
-        id: true,
-        name: true,
-        keyName: true,
-        serviceGroup: {
-          select: {
-            id: true,
-            name: true,
-            imageName: true
-          }
-        }
-      }
-    }).then(r => {
-      resolve(r.map(x => ({
-        path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
-      })))
-    })
-  });
+  const categories = getCategoryCollection();
 
   const collections = new Promise<Collection[]>(function (resolve) {
     db.service.findMany({
@@ -506,7 +436,17 @@ const Home = {
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
-    const [modalData, setIsModalOpen] = useState<Page | null>(null);
+    const [modalData, setIsModalOpen] = useState<{
+      id: string,
+      title: string,
+      path: string,
+      serviceGroup: {
+        id: string;
+        name: string;
+        imageName?: string | null;
+        collection?: string;
+      }[]
+    } | null>(null);
 
     const showModal = (data: Page) => {
       setIsModalOpen(data);
@@ -523,7 +463,7 @@ const Home = {
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={loaderData.categories}>
               {data => <Row gutter={[20, 20]}>
-                {data.map(item => <Col xs={12} sm={12} md={8} lg={8} xl={8}>
+                {data.map(item => <Col key={item.id} xs={12} sm={12} md={8} lg={8} xl={8}>
                   <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
                     <Space direction="vertical" size={'small'}>
                       <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
@@ -537,12 +477,14 @@ const Home = {
         </Card>
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
-            {modalData?.serviceGroup.map(item => <Col xs={12} sm={12} md={8}>
-              <Link to={modalData.path + '?category=' + item.id}>
-                <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
-                <div>{item.name}</div>
-              </Link>
-            </Col>)}
+            {modalData?.serviceGroup.map((item, index) => <>
+              {index - 1 < 0 || item.collection !== modalData.serviceGroup[index - 1]?.collection ? <Col xs={12} sm={12} md={12} key={item.id}><Title level={5}>{item.collection || 'Other services'}</Title></Col> : ''}
+              <Col xs={12} sm={12} md={8} key={item.id}>
+                <Link to={modalData.path + '?category=' + item.id}>
+                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
+                  <div>{item.name}</div>
+                </Link>
+              </Col></>)}
           </Row>
         </Modal>
       </Col>
