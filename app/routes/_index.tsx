@@ -478,7 +478,7 @@ const Home = {
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
             {modalData?.serviceGroup.map((item, index) => <>
-              {index - 1 < 0 || item.collection !== modalData.serviceGroup[index - 1]?.collection ? <Col xs={24} key={item.id}><Title level={5}>{item.collection || 'Other services'}</Title></Col> : ''}
+              {index - 1 < 0 || item.collection !== modalData.serviceGroup[index - 1]?.collection ? <Col xs={24} sm={24} key={item.id}><Title level={5}>{item.collection || 'Other services'}</Title></Col> : ''}
               <Col xs={12} sm={12} md={8} key={item.id}>
                 <Link to={modalData.path + '?category=' + item.id}>
                   <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
