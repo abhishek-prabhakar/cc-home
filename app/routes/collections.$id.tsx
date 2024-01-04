@@ -95,25 +95,23 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                             in: categoryIds
                         }
                     },
-                    include: {
-                        serviceGroupItem: true
+                    select: {
+                        id: true
                     }
                 }
             }
         }).then(res => {
-            const serviceIds = res.serviceGroup?.reduce<string[]>((array, x) => {
-                return array.concat(x.serviceGroupItem.map(y => y.serviceId))
-            }, []);
+            const serviceGrpIds = res.serviceGroup.map(x => x.id);
 
             forkJoin({
                 count: db.vendor.count({
                     where: {
                         isActive: true,
                         categoryId: res.id,
-                        services: {
+                        VendorServiceGroup: {
                             some: {
-                                serviceId: {
-                                    in: serviceIds
+                                groupId: {
+                                    in: serviceGrpIds
                                 }
                             }
                         }
@@ -128,12 +126,18 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         profileImageName: true,
                         services: {
                             select: {
-                                service: true
+                                service: {
+                                    select: {
+                                        name: true
+                                    }
+                                },
                             },
                             where: {
-                                serviceId: {
-                                    in: serviceIds
-                                },
+                                serviceGroup: {
+                                    groupId: {
+                                        in: serviceGrpIds
+                                    }
+                                }
                             },
                             take: 5
                         },
@@ -144,7 +148,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                             },
                             where: {
                                 serviceId: {
-                                    in: serviceIds
+                                    in: []
                                 }
                             }
                         }
@@ -152,10 +156,10 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     where: {
                         categoryId: res.id,
                         isActive: true,
-                        services: {
+                        VendorServiceGroup: {
                             some: {
-                                serviceId: {
-                                    in: serviceIds
+                                groupId: {
+                                    in: serviceGrpIds
                                 }
                             }
                         }
