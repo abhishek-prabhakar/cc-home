@@ -62,9 +62,9 @@ export const VendorQuery = {
                     }
                 },
                 select: {
+                    id: true,
                     group: {
                         select: {
-                            id: true,
                             name: true,
                             serviceGroupItem: {
                                 select: {
@@ -89,7 +89,7 @@ export const VendorQuery = {
                 },
             }).then(r => {
                 resolve(r.map(x => ({
-                    id: x.group.id,
+                    vendorServiceGroupId: x.id,
                     title: x.group.name,
                     included: x.vendorService.reduce<VendorServiceOption[]>((arr, i) => {
                         const item = x.group.serviceGroupItem.find(y => y.serviceId === i.service.id);

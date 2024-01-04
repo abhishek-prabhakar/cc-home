@@ -25,6 +25,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
             reject();
             return;
         }
+
         db.booking.findMany({
             orderBy: {
                 created_at: 'desc'
@@ -39,13 +40,9 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 created_at: true,
                 bookingService: {
                     select: {
-                        vendorService: {
+                        service: {
                             select: {
-                                service: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
+                                name: true
                             }
                         }
                     }
@@ -56,13 +53,12 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 id: x.orderId,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.vendorService.service.name)
+                services: x.bookingService.map(i => i.service?.name || 'Deleted service')
             }));
 
             resolve(p);
         })
 
-        resolve([])
     });
 
 

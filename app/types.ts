@@ -29,7 +29,7 @@ export type VendorServiceOption = {
 }
 
 export type VendorService = {
-    id: string,
+    vendorServiceGroupId: string,
     title: string,
     included: VendorServiceOption[],
     addons: VendorServiceOption[]
@@ -78,7 +78,7 @@ export type CartItem = {
     vendorName: string,
     vendorType: string,
     vendorImg: string;
-    serviceGroupId: string,
+    vendorServiceGroupId: string,
     date: Date | string,
     timeHour: number,
     duration: number,
@@ -90,7 +90,7 @@ export type CartItem = {
 };
 export type CartInputService = { id: string };
 export type CartInput = {
-    serviceGroupId: string,
+    vendorServiceGroupId: string,
     date: Date,
     timeHour: number,
     duration: number,

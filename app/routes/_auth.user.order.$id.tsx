@@ -18,13 +18,7 @@ type BookingService = {
     date: Date,
     timeHour: number,
     duration: number,
-    status: BookingStatus,
-    vendor: {
-        name: string,
-        username: string,
-        profileImg: string,
-        jobType: string
-    }
+    status: BookingStatus
 }
 type UserBooking = {
     id: string,
@@ -35,7 +29,16 @@ type UserBooking = {
     tax: number,
     status: BookingStatus,
     date: Date,
-    services: BookingService[]
+    serviceGroup: {
+        name: string
+    },
+    services: BookingService[],
+    vendor: {
+        name: string,
+        username: string,
+        profileImg: string,
+        jobType: string
+    }
 }
 
 
@@ -99,6 +102,26 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 total: true,
                 tax: true,
                 status: true,
+                vendorServiceGroup: {
+                    select: {
+                        group: {
+                            select: {
+                                name: true
+                            }
+                        },
+                        vendor: {
+                            select: {
+                                username: true,
+                                profileImageName: true,
+                                vendorType: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 bookingService: {
                     select: {
                         id: true,
@@ -107,24 +130,9 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         date: true,
                         timeHour: true,
                         status: true,
-                        vendorService: {
+                        service: {
                             select: {
-                                vendor: {
-                                    select: {
-                                        username: true,
-                                        profileImageName: true,
-                                        vendorType: {
-                                            select: {
-                                                name: true
-                                            }
-                                        }
-                                    }
-                                },
-                                service: {
-                                    select: {
-                                        name: true,
-                                    }
-                                }
+                                name: true,
                             }
                         }
                     }
@@ -135,6 +143,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 resolve(null);
             }
             else {
+                const vendor = r.vendorServiceGroup.vendor;
                 resolve({
                     id: r?.id,
                     orderId: r.orderId,
@@ -144,19 +153,22 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     tax: r.tax,
                     discount: r.discount,
                     total: r.total,
+                    vendor: {
+                        username: vendor.username,
+                        name: vendor.username,
+                        jobType: vendor.vendorType?.name || '',
+                        profileImg: vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                    },
+                    serviceGroup: {
+                        name: r.vendorServiceGroup.group.name
+                    },
                     services: r.bookingService.map(x => ({
                         id: x.id,
                         date: x.date,
                         status: x.status,
                         timeHour: x.timeHour,
                         duration: x.duration,
-                        name: x.vendorService.service.name,
-                        vendor: {
-                            username: x.vendorService.vendor.username,
-                            name: x.vendorService.vendor.username,
-                            jobType: x.vendorService.vendor.vendorType?.name || '',
-                            profileImg: x.vendorService.vendor.profileImageName ? PATH.RESOURCE_URL + x.vendorService.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                        }
+                        name: x.service?.name || 'Deleted Service'
                     }))
                 })
             }
@@ -252,7 +264,10 @@ const UserOrderHome = {
                         <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
                             <Col>
                                 <Space size={'middle'}>
-                                    <Title level={5}>Order ID: {orderData.orderId}</Title>
+                                    <div>
+                                        <Title level={5}>Order ID: {orderData.orderId}</Title>
+                                        {orderData.serviceGroup.name}
+                                    </div>
                                     <Tag color={StatusMarker.get(orderData.status)}>{orderData.status}</Tag>
                                 </Space>
                             </Col>
@@ -282,31 +297,36 @@ const UserOrderHome = {
                             />
                         </div>
                         <Divider />
+                        <List>
+                            <List.Item actions={[<Tooltip title={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
+                                <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
+                                    Call
+                                </Button>
+                            </Tooltip>]}>
+                                <List.Item.Meta
+                                    avatar={<Link to={'/profile/' + orderData.vendor.username}><Avatar src={orderData.vendor.profileImg} /></Link>}
+                                    title={<Link to={'/profile/' + orderData.vendor.username}>{orderData.vendor.name}</Link>}
+                                    description={
+                                        <Space direction="vertical" size={'small'}>
+                                            <div>{orderData.vendor.jobType}</div>
+                                        </Space>
+                                    }
+                                />
+                            </List.Item>
+                        </List>
+                        <Divider />
                         <Typography.Text strong underline>Services</Typography.Text>
                         <List
                             dataSource={orderData.services}
                             renderItem={(item) => (
-                                <List.Item key={item.id} actions={[<Tooltip title={item.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
-                                    <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={item.status !== BookingStatus.ACCEPTED}>
-                                        Call
-                                    </Button>
-                                </Tooltip>]}>
-                                    <List.Item.Meta
-                                        avatar={<Link to={'/profile/' + item.vendor.username}><Avatar src={item.vendor.profileImg} /></Link>}
-                                        title={<Link to={'/profile/' + item.vendor.username}>{item.vendor.name}</Link>}
-                                        description={
-                                            <Space direction="vertical" size={'small'}>
-                                                <div>{item.vendor.jobType}</div>
-                                                <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
-                                            </Space>
-                                        }
-                                    />
+                                <List.Item key={item.id}>
                                     <div>
                                         <Typography.Title level={5}>{item.name}</Typography.Title>
                                         <div>
                                             Scheduled on {DateFormatter.short(item.date)}
                                             <br /> Time: {item.timeHour} ({item.duration} hours)
                                         </div>
+                                        <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
                                     </div>
                                 </List.Item>
                             )}

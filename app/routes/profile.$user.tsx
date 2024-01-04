@@ -104,7 +104,7 @@ const ProfileLayout = {
 
 
         function setServiceOptions(id: string) {
-            const selected = services?.find(x => x.id === id);
+            const selected = services?.find(x => x.vendorServiceGroupId === id);
             setServiceId(id);
             if (selected) {
                 setServiceList(selected.included);
@@ -146,7 +146,7 @@ const ProfileLayout = {
                             style={{ width: '100%' }}
                             showSearch
                             placeholder="Search a service"
-                            options={services.map(x => ({ value: x.id, label: x.title }))}
+                            options={services.map(x => ({ value: x.vendorServiceGroupId, label: x.title }))}
                             onChange={setServiceOptions}
                         />
 
@@ -194,7 +194,7 @@ const ProfileLayout = {
                     </Space>
                 </Col>
                 <Col span={24} md={12} lg={12} xl={16}>
-                    {showConfigPanel && serviceId && <ConfigureBooking serviceGroupId={serviceId} options={serviceList.concat(selectedAddons)} />}
+                    {showConfigPanel && serviceId && <ConfigureBooking vendorServiceGroupId={serviceId} options={serviceList.concat(selectedAddons)} />}
                 </Col>
             </Row>
         </div>

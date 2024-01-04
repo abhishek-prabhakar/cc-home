@@ -8,7 +8,7 @@ import { VendorServiceOption } from "~/types";
 
 const timeFormat = 'hh a';
 
-function ConfigureBooking(service: { serviceGroupId: string, options: VendorServiceOption[] }) {
+function ConfigureBooking(service: { vendorServiceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
     const [serviceChecklist, setServiceChecklist] = useState<boolean[]>([]);
     const checkoutForm = useRef<any>(null);
@@ -44,7 +44,6 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
     }
 
     function proceedToCheckout(params: any) {
-        console.log(params)
         if (checkoutForm.current) {
             const validParams: any[] = params?.services.filter((x: any) => service.options.find(i => i.id === x.id));
             if (validParams.length) {
@@ -62,7 +61,7 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
 
     return <Card title="Configure Services">
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
-            <input type="hidden" {...register(`serviceGroupId`)} value={service.serviceGroupId} />
+            <input type="hidden" {...register(`vendorServiceGroupId`)} value={service.vendorServiceGroupId} />
             <Row gutter={[30, 30]}>
                 <Col sm={24} md={12}>
                     {service.options.map((item, key) => <input key={item.id} type="hidden" {...register(`services.${key}.id`)} value={item.id} />)}

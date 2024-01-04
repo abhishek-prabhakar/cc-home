@@ -25,14 +25,14 @@ export const CartService = {
                 return;
             }
 
-            ServiceQuery.getVendorServices(cart.serviceGroupId, cart.services.map(x => x.id).filter(x => !!x)).then(res => {
+            ServiceQuery.getVendorServices(cart.vendorServiceGroupId, cart.services.map(x => x.id).filter(x => !!x)).then(res => {
                 if (!res) {
                     resolve(null);
                 } else {
                     resolve({
                         name: res.group.name,
                         coverImg: res.group.imageName ? PATH.RESOURCE_URL + res.group.imageName : '',
-                        serviceGroupId: res.group.id,
+                        vendorServiceGroupId: res.id,
                         vendorType: res.vendor.vendorType?.name || '',
                         vendorName: res.vendor.username,
                         vendorImg: res.vendor.profileImageName ? PATH.RESOURCE_URL + res.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,

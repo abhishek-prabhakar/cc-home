@@ -104,7 +104,7 @@ const Cart = {
     },
     Edit: (params: { serviceId: string, services: CartActiveService[], onClose: Function }) => {
         return <Modal open={true} width={'1000px'} footer={null} afterClose={() => params.onClose()}>
-            <ConfigureBooking serviceGroupId={params.serviceId} options={params.services} />
+            <ConfigureBooking vendorServiceGroupId={params.serviceId} options={params.services} />
         </Modal>
     },
     Summary: ({ data }: { data: CartItem }) => {

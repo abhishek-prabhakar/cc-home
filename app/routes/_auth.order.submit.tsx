@@ -54,6 +54,7 @@ export async function action({
                     id: generateUuid(),
                     userId: loggedInUser.id,
                     orderId: orderId,
+                    vendorServiceGroupId: res.vendorServiceGroupId,
                     status: BookingStatus.PENDING,
                     total: summary.total,
                     tax: summary.tax,
@@ -66,7 +67,7 @@ export async function action({
                 data: res.services.filter(x => !!x.id).map(x => ({
                     id: generateUuid(),
                     bookingId: data.id,
-                    vendorServiceId: x.id,
+                    serviceId: x.id,
                     status: BookingStatus.PENDING,
                     date: res.date,
                     timeHour: res.timeHour,
