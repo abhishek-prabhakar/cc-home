@@ -15,6 +15,10 @@ import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
 import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
 
+const collectionBg = [
+  'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
+  'linear-gradient(90deg, rgba(238,174,202,0.4) 0%, rgba(148,187,233,0.4) 100%)',
+]
 
 type Collection = {
   id: string,
@@ -470,12 +474,28 @@ const Home = {
             {modalData?.serviceGroup.map((item, index) => <>
 
               {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
-              <Col xs={12} sm={12} md={8} key={item.id}>
+              {item.isCollection ? <Col xs={24} key={item.id}>
                 <Link to={item.path}>
-                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
-                  <div>{item.name}</div>
+                  <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
+                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
+                      <Title level={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
+                      <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
+                    </div>
+                  </div>
                 </Link>
-              </Col></>)}
+              </Col> : <Col xs={12} sm={12} md={8} key={item.id}>
+                <Link to={item.path}>
+                  <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
+                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
+                    <div style={{
+                      background: 'linear-gradient(90deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
+                    }}>
+                      <Title level={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
+                    </div>
+                  </div>
+                </Link>
+              </Col>}</>)}
             {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
           </Row>
         </Modal>

@@ -111,6 +111,7 @@ export type BannerItem = Jumbotron & { bannerLocation: BannerLocation }
 export type CollectionType = {
     id: string;
     name: string;
+    description?: string;
     imageName?: string | null;
     collection?: string | null;
     isCollection: boolean;

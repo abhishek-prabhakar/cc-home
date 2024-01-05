@@ -110,8 +110,11 @@ function getCategoryCollection() {
                             imageName: item.imageName,
                             isCollection: true,
                             collection: item.serviceGroupType?.keyName,
-                            path: '/services/' + item.serviceGroupType?.keyName
+                            path: '/collections/' + item.serviceGroupType?.keyName,
+                            description: item.name
                         })
+                    } else {
+                        items[items.length - 1].description += ', ' + item.name;
                     }
                     return items;
                 }, []);
