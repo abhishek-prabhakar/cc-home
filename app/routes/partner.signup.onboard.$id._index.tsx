@@ -1,13 +1,39 @@
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Divider, Input, Row, Select, Space, Spin, Table, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { ServiceQuery } from "~/service/services.service";
 import { db } from "~/utils/database";
+import { FareModeLabel } from "~/utils/statusMarker.map";
 import generateUuid from "~/utils/uuid.generator";
 
+type VendorServiceGroup = {
+    id: string;
+    vendorService: {
+        serviceId: string;
+        duration: number;
+        cost: number;
+    }[];
+    group: {
+        id: string;
+        name: string;
+        serviceGroupItem: {
+            addonGroup: {
+                name: string;
+            } | null;
+            isOptional: boolean;
+            service: {
+                id: string;
+                name: string;
+                fareMode: FareMode;
+                minHour: number;
+            };
+        }[];
+    };
+}
 type LoaderData = {
     profile: {
         id: string;
@@ -17,6 +43,7 @@ type LoaderData = {
         vendorType?: {
             id: string;
         } | null;
+        VendorServiceGroup: VendorServiceGroup[],
         services: {
             id: string;
             serviceId: string;
@@ -29,12 +56,17 @@ type LoaderData = {
             };
         }[];
     },
-    services: {
+    categories: {
         id: string;
         name: string;
-        service: {
+        serviceGroups: {
             id: string;
             name: string;
+            service: {
+                id: string;
+                name: string;
+                fareMode: FareMode;
+            }[]
         }[];
     }[],
     files: {
@@ -47,7 +79,8 @@ type LoaderData = {
 enum STEPS {
     SERVICE = 'SERVICE',
     COST = "COST",
-    DOCUMENTS = "DOCUMENTS"
+    DOCUMENTS = "DOCUMENTS",
+    REMOVE_SERVICE = 'REMOVE_SERVICE'
 }
 
 const fileTypes = [{
@@ -73,13 +106,32 @@ export async function action(args: ActionArgs) {
 
     switch (type) {
         case STEPS.SERVICE:
-            const items = formData.getAll('services');
+            const groupId = formData.get('serviceGroupId');
+            const groupCost = formData.get('cost');
             const categoryId = formData.get('categoryId')?.toString();
+            if (!categoryId) { return; }
+
             await db.vendorService.deleteMany({
                 where: {
-                    vendorId
+                    vendorId,
+                    vendor: {
+                        categoryId: {
+                            not: categoryId
+                        }
+                    }
                 }
             });
+            await db.vendorServiceGroup.deleteMany({
+                where: {
+                    vendorId,
+                    vendor: {
+                        categoryId: {
+                            not: categoryId
+                        }
+                    }
+                }
+            });
+
             await db.vendor.update({
                 where: {
                     id: vendorId
@@ -88,42 +140,50 @@ export async function action(args: ActionArgs) {
                     categoryId
                 }
             });
-            items.forEach(async serviceId => {
+            if (groupId && groupCost) {
+                await db.vendorServiceGroup.create({
+                    data: {
+                        id: generateUuid(),
+                        groupId: groupId?.toString(),
+                        vendorId,
+                        cost: parseInt(groupCost?.toString() || '0')
+                    },
+                });
+
+                return true
+            }
+            break;
+        case STEPS.COST:
+            const serviceIds = formData.getAll('serviceId');
+            const durations = formData.getAll('duration');
+            const costs = formData.getAll('cost');
+            const vendorGroupId = formData.get('vendorGroupId')?.toString();
+            const fareModes = formData.getAll('fareMode');
+
+            if (!vendorGroupId) {
+                return;
+            }
+
+            await db.vendorService.deleteMany({
+                where: {
+                    vendorId,
+                    vendorServiceGroupId: vendorGroupId
+                }
+            });
+
+            serviceIds.forEach(async (data, index) => {
                 await db.vendorService.create({
                     data: {
                         id: generateUuid(),
-                        serviceId: serviceId.toString(),
                         vendorId,
-                        duration: 1,
-                        cost: 0,
-                        fareMode: FareMode.HOURLY
-                    },
-                });
-            });
-
-            return true
-            break;
-        case STEPS.COST:
-            const serviceId = formData.getAll('serviceId');
-            const duration = formData.getAll('duration');
-            const cost = formData.getAll('cost');
-            const vendorServiceId = formData.getAll('id');
-            const fareMode = formData.getAll('fareMode');
-
-            vendorServiceId.forEach(async (id, key) => {
-                const udata = {
-                    duration: parseInt(duration[key].toString()),
-                    cost: parseInt(cost[key].toString()),
-                    fareMode: fareMode[key].toString() as FareMode
-                }
-
-                await db.vendorService.update({
-                    data: udata,
-                    where: {
-                        id: id.toString()
+                        vendorServiceGroupId: vendorGroupId,
+                        serviceId: data.toString(),
+                        cost: parseInt(costs[index]?.toString()),
+                        duration: parseInt(durations[index]?.toString()),
+                        fareMode: fareModes[index]?.toString() as FareMode
                     }
-                });
-            })
+                })
+            });
             return true;
             break;
         case STEPS.DOCUMENTS:
@@ -139,6 +199,15 @@ export async function action(args: ActionArgs) {
                     }
                 });
             }
+            break;
+        case STEPS.REMOVE_SERVICE:
+            const remDelId = formData.get('vendorGroupId')?.toString();
+            if (!remDelId) { return; }
+            await db.vendorServiceGroup.delete({
+                where: {
+                    id: remDelId
+                }
+            });
             break;
     }
 
@@ -163,6 +232,46 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                     id: true
                 }
             },
+            VendorServiceGroup: {
+                select: {
+                    id: true,
+                    vendorService: {
+                        select: {
+                            serviceId: true,
+                            duration: true,
+                            cost: true
+                        }
+                    },
+                    group: {
+                        select: {
+                            id: true,
+                            name: true,
+                            serviceGroupItem: {
+                                orderBy: {
+                                    isOptional: 'asc'
+                                },
+                                select: {
+                                    addonGroup: {
+                                        select: {
+                                            name: true
+                                        }
+                                    },
+                                    isOptional: true,
+                                    service: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            fareMode: true,
+                                            minHour: true,
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    },
+                }
+            },
             services: {
                 select: {
                     id: true,
@@ -181,7 +290,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
         }
     });
 
-    const services = await ServiceQuery.getServicesByJob();
+    const vendorTypes = await ServiceQuery.getServicesByJob();
 
     const files = await db.vendorFiles.findMany({
         where: {
@@ -195,134 +304,95 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
     });
 
     if (data) {
-        return { profile: data, services: services.map(x => ({ id: x.id, name: x.name, service: x.serviceGroup.map(i => i.serviceGroupItem).reduce((acc, i) => acc.concat(i), []).map(i => i.service) })), files }
+        return { profile: data, categories: vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.map(y => ({ id: y.id, name: y.name, service: y.serviceGroupItem.map(z => z.service) })) })), files }
     }
 
     return null;
 }
 
+type ServiceListItem = { id: string; name: string; };
 
 
-export default function () {
-    const data = useLoaderData<LoaderData>();
-    const fetcher = useFetcher();
-    const [activeType, setJobType] = useState<string>('');
-    const [serviceList, setServiceList] = useState<{ id: string; name: string; }[]>([]);
+const OnBoardPage = {
+    Index: () => {
+        const data = useLoaderData<LoaderData>();
+        const fetcher = useFetcher();
+        const [activeType, setJobType] = useState<string>('');
+        const [serviceList, setServiceList] = useState<ServiceListItem[]>([]);
 
-    useEffect(() => {
-        if (fetcher.data) {
-            alert('Thank you for updating your profile')
+        useEffect(() => {
+            if (fetcher.data) {
+                alert('Thank you for updating your profile')
+            }
+        }, [fetcher.data]);
+
+        useEffect(() => {
+            setActiveGroup(data.profile.vendorType?.id || '')
+        }, [])
+
+        function setActiveGroup(id: string) {
+            setJobType(id);
+            const list = data.categories.find(x => x.id === id);
+            setServiceList(list?.serviceGroups || []);
         }
-    }, [fetcher.data]);
 
-    useEffect(() => {
-        setActiveGroup(data.profile.vendorType?.id || '')
-    }, [])
-
-    function setActiveGroup(id: string) {
-        setJobType(id);
-        const list = data.services.find(x => x.id === id);
-        setServiceList(list?.service || []);
-    }
-
-    return <div className="container">
-        <Row gutter={[40, 40]}>
-            <Col span={24}>
-                <Typography.Title>Welcome</Typography.Title>
-                <Typography.Title level={4}>Hello {data.profile.name}, Please fill up the following details.</Typography.Title>
-            </Col>
-            <Col span={24}>
-                <Divider />
-            </Col>
-            <Col span={24}>
-                <Typography.Title level={5}>Select a category</Typography.Title>
-                <Select defaultValue={data.profile?.vendorType?.id} onChange={value => setActiveGroup(value)} placeholder="Select a category">
-                    {data.services.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
-                </Select>
-            </Col>
-            <Col xs={24} sm={24} md={12}>
-                <fetcher.Form method="post" action="">
-                    <Card size="small" title="1. Choose your services">
-                        <input type="hidden" name="categoryId" value={activeType} />
-                        <Space direction="vertical">
-                            <Checkbox.Group name="services">
-                                {serviceList.map(service => <Checkbox value={service.id} key={service.id}>{service.name}</Checkbox>)}
-                            </Checkbox.Group>
-                            {!serviceList.length && 'Sorry, no services found'}
-                            <br />
-                            <Button type="primary" htmlType="submit" name="action" value={STEPS.SERVICE}>Save & Continue</Button>
-                        </Space>
-                    </Card>
-                </fetcher.Form>
-            </Col>
-            <Col xs={24}></Col>
-            <Col xs={24} sm={24} md={12}>
-                <fetcher.Form method="post" action="">
-                    <Card size="small" title="2. Charges & Cost structure">
-                        {data.profile.services.map((item, index) => <div>
-                            <Row key={item.id} gutter={[20, 20]}>
-                                <Col span={24}>
-                                    <div><Typography.Title level={5}>{item.service.name}</Typography.Title></div>
-                                    <input type="hidden" value={item.id} name="id" />
-                                </Col>
-                                <Col span={8}>
-                                    <div><Typography.Text>Charged By</Typography.Text></div>
-                                    <select name="fareMode" defaultValue={item.fareMode}>
-                                        <option value="">Select...</option>
-                                        <option value={FareMode.FLAT}>Flat Fee</option>
-                                        <option value={FareMode.HOURLY}>Hourly</option>
+        return <div className="container">
+            <Row gutter={[40, 40]}>
+                <Col span={24}>
+                    <Typography.Title>Welcome</Typography.Title>
+                    <Typography.Title level={4}>Hello {data.profile.name}, Please fill up the following details.</Typography.Title>
+                </Col>
+                <Col span={24}>
+                    <Divider />
+                </Col>
+                <Col span={24}>
+                    <Typography.Title level={5}>Select a category</Typography.Title>
+                    <Select defaultValue={data.profile?.vendorType?.id} onChange={value => setActiveGroup(value)} placeholder="Select a category">
+                        {data.categories.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
+                    </Select>
+                </Col>
+                <Col xs={24} sm={24} md={12}>
+                    <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} />
+                </Col>
+                <Col xs={24}></Col>
+                <Col xs={24} sm={24} md={12}>
+                    <OnBoardPage.CostSection />
+                </Col>
+                <Col xs={24}></Col>
+                <Col xs={24} sm={24} md={12}>
+                    <fetcher.Form method="post" action="">
+                        <Card size="small" title="3. Confirm your identity">
+                            <Row gutter={[40, 40]}>
+                                <Col>
+                                    <select name="fileType">
+                                        {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
                                     </select>
                                 </Col>
-                                <Col span={8}>
-                                    <div><Typography.Text>Duration</Typography.Text></div>
-                                    <Input defaultValue={item.duration} name="duration" type="number" required min={item.service.minHour} />
+                                <Col>
+                                    <FileUploader id={data.profile.id} label="Choose file" />
                                 </Col>
-                                <Col span={8}>
-                                    <div><Typography.Text>Cost</Typography.Text></div>
-                                    <Input defaultValue={item.cost} name="cost" type="number" required />
+                                <Col>
+                                    {fetcher.state === 'submitting' && <Spin />}
                                 </Col>
                             </Row>
-                            <Divider />
-                        </div>)}
-                        <Button type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
-                    </Card>
-                </fetcher.Form>
-            </Col>
-            <Col xs={24}></Col>
-            <Col xs={24} sm={24} md={12}>
-                <fetcher.Form method="post" action="">
-                    <Card size="small" title="3. Confirm your identity">
-                        <Row gutter={[40, 40]}>
-                            <Col>
-                                <select name="fileType">
-                                    {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
-                                </select>
-                            </Col>
-                            <Col>
-                                <FileUploader id={data.profile.id} label="Choose file" />
-                            </Col>
-                            <Col>
-                                {fetcher.state === 'submitting' && <Spin />}
-                            </Col>
-                        </Row>
-                    </Card>
-                </fetcher.Form>
+                        </Card>
+                    </fetcher.Form>
 
-                <Table dataSource={data.files}
-                    columns={[
-                        {
-                            title: 'File Type',
-                            dataIndex: 'fileType',
-                            key: 'fileType',
-                        },
-                        {
-                            title: 'File Name',
-                            dataIndex: 'fileName',
-                            key: 'fileName',
-                        },
-                    ]} />
+                    <Table dataSource={data.files}
+                        columns={[
+                            {
+                                title: 'File Type',
+                                dataIndex: 'fileType',
+                                key: 'fileType',
+                            },
+                            {
+                                title: 'File Name',
+                                dataIndex: 'fileName',
+                                key: 'fileName',
+                            },
+                        ]} />
 
-                {/* <Table dataSource={data.files}
+                    {/* <Table dataSource={data.files}
                     columns={[
                         {
                             title: 'FIle Type',
@@ -338,8 +408,107 @@ export default function () {
                         <Table.Column>{col.fileName}</Table.Column>
                         </Table.ColumnGroup>)}
                         </Table> */}
-            </Col>
-        </Row>
-    </div>;
+                </Col>
+            </Row>
+        </div>;
+    },
+    SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceListItem[] }) => {
+        const fetcher = useFetcher();
 
+        return <fetcher.Form method="post" action="">
+            <Card size="small" title="1. Choose your services">
+                <input type="hidden" name="categoryId" value={activeType} />
+                <Space direction="vertical">
+                    <Row>
+                        <Col><select name="serviceGroupId">
+                            {serviceList.map(service => <option key={service.id} value={service.id}>{service.name}</option>)}
+                            {!serviceList.length && <option>Sorry, no services found under this category</option>}
+                        </select>
+                        </Col>
+                        <Col>
+                            <div><Typography.Text>Cost</Typography.Text></div>
+                            <Input name="cost" />
+                        </Col>
+                    </Row>
+                    <br />
+                    <Button type="primary" htmlType="submit" name="action" value={STEPS.SERVICE}>Add</Button>
+                </Space>
+            </Card>
+        </fetcher.Form>
+    },
+    CostSection: () => {
+        const data = useLoaderData<LoaderData>();
+
+        return <Card size="small" title="2. Charges & Cost structure">
+            <Collapse accordion>
+                {data.profile.VendorServiceGroup.map((item, index) => <Collapse.Panel key={index} header={item.group.name}>
+                    <OnBoardPage.UpdateGroupServiceCost item={item} />
+                </Collapse.Panel>)}
+            </Collapse>
+        </Card>
+    },
+    UpdateGroupServiceCost: ({ item }: { item: VendorServiceGroup }) => {
+        const fetcher = useFetcher();
+        const [enabledIds, setIds] = useState<string[]>([]);
+
+        useEffect(() => {
+            const addonIds = item.group.serviceGroupItem.filter(x => x.isOptional).map(x => x.service.id)
+            setIds(item.vendorService.filter(x => addonIds.includes(x.serviceId)).map(x => x.serviceId));
+        }, [])
+
+        useEffect(() => {
+            if (fetcher.data) {
+                alert('Thank you for updating your profile')
+            }
+        }, [fetcher.data])
+
+        function setEnabledList(id: string, enabled: boolean) {
+            const ids = enabledIds.filter(x => x != id);
+            if (enabled) {
+                ids.push(id)
+            }
+
+            setIds(ids);
+        }
+
+
+        return [<fetcher.Form method="post" action="">
+            {item.group.serviceGroupItem.map(service => <Row key={service.service.id} gutter={[20, 20]}>
+                <Col>
+                    {service.isOptional ? <Checkbox
+                        defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
+                        value={service.service.id}
+                        onChange={v => setEnabledList(service.service.id, v.target.checked)}
+                    /> : <input type="hidden" name="serviceId"
+                        value={service.service.id} />}
+                </Col>
+                <Col span={8}>
+                    <b>{service.service.name}</b>
+                    <div>{service.isOptional ? 'Add-On' + service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : '' : '(inclusive)'}</div>
+                </Col>
+                <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
+                    {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged By:</Typography.Text></div>,
+                    FareModeLabel.get(service.service.fareMode)]}
+                </Col>
+                <Col md={4} sm={12} xs={12}>
+                    {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                    <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration} name="duration" type="number" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                </Col>
+                <Col md={4} sm={12} xs={12}>
+                    {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
+                    <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" type="number" required />] : <input type="hidden" name="cost" value={0} />}
+                </Col>
+                <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
+            </Row>)}
+            <input type="hidden" name="vendorGroupId" value={item.id} />
+            <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
+        </fetcher.Form>,
+        <fetcher.Form method="post" action="">
+            <input type="hidden" name="vendorGroupId" value={item.id} />
+            <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
+        </fetcher.Form>];
+    }
 }
+
+
+export default OnBoardPage.Index;

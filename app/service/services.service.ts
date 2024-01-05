@@ -1,62 +1,45 @@
 import { db } from "~/utils/database";
 
 export const ServiceQuery = {
-    getVendorServices: (serviceIds: string[]) => {
-        return db.serviceGroup.findFirst({
+    getVendorServices: (vendorServiceGroupId: string, serviceIds: string[]) => {
+
+        return db.vendorServiceGroup.findFirst({
             where: {
-                serviceGroupItem: {
-                    some: {
-                        service: {
-                            vendorService: {
-                                some: {
-                                    id: {
-                                        in: serviceIds
-                                    }
-                                }
-                            }
-                        }
-                    },
-                }
+                id: vendorServiceGroupId
             },
             select: {
                 id: true,
-                name: true,
-                serviceGroupItem: {
-                    where: {
-                        service: {
-                            vendorService: {
-                                some: {
-                                    id: {
-                                        in: serviceIds
-                                    }
-                                }
+                cost: true,
+                vendor: {
+                    select: {
+                        username: true,
+                        profileImageName: true,
+                        vendorType: {
+                            select: {
+                                name: true
                             }
+                        }
+                    }
+                },
+                group: {
+                    select: {
+                        id: true,
+                        name: true,
+                        imageName: true
+                    }
+                },
+                vendorService: {
+                    where: {
+                        serviceId: {
+                            in: serviceIds
                         }
                     },
                     select: {
-                        isOptional: true,
+                        cost: true,
                         service: {
                             select: {
-                                name: true,
-                                imageName: true,
-                                vendorService: {
-                                    select: {
-                                        id: true,
-                                        cost: true,
-                                        vendor: {
-                                            select: {
-                                                id: true,
-                                                username: true,
-                                                profileImageName: true,
-                                                vendorType: {
-                                                    select: {
-                                                        name: true
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                id: true,
+                                name: true
                             }
                         }
                     }
@@ -81,7 +64,8 @@ export const ServiceQuery = {
                                 service: {
                                     select: {
                                         id: true,
-                                        name: true
+                                        name: true,
+                                        fareMode: true
                                     }
                                 }
                             }

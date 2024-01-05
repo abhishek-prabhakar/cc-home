@@ -11,7 +11,7 @@ import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 const { Title, Text } = Typography;
 
-type OrderItem = { id: string, status: BookingStatus, date: Date, services: string[] }
+type OrderItem = { id: string, status: BookingStatus, name: string, date: Date, services: string[] }
 type LoaderData = {
     orders: OrderItem[]
 }
@@ -25,6 +25,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
             reject();
             return;
         }
+
         db.booking.findMany({
             orderBy: {
                 created_at: 'desc'
@@ -37,15 +38,20 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 orderId: true,
                 status: true,
                 created_at: true,
+                vendorServiceGroup: {
+                    select: {
+                        group: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                },
                 bookingService: {
                     select: {
-                        vendorService: {
+                        service: {
                             select: {
-                                service: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
+                                name: true
                             }
                         }
                     }
@@ -54,13 +60,15 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
         }).then(r => {
             const p = r.map(x => ({
                 id: x.orderId,
+                name: x.vendorServiceGroup.group.name,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.vendorService.service.name)
+                services: x.bookingService.map(i => i.service?.name || 'Deleted service')
             }));
 
             resolve(p);
-        })
+        });
+
     });
 
 
@@ -92,8 +100,9 @@ const UserHome = {
                                         <Text type="secondary" strong>Order ID: {booking.id}</Text>
                                         <Tag color={StatusMarker.get(booking.status)}>{booking.status}</Tag>
                                     </Space>
-                                    <Title level={5}>Placed on: {DateFormatter.short(booking.date)}</Title>
-                                    <Text><strong>Services:</strong> {booking.services.join(', ')}</Text>
+                                    <Title level={5}>{booking.name}</Title>
+                                    Placed on: <b>{DateFormatter.short(booking.date)}</b>
+                                    <p><Text><strong>Services:</strong> {booking.services.join(', ')}</Text></p>
                                 </Col>
                                 <Col>
                                     <Link to={'/user/order/' + booking.id}>

@@ -8,42 +8,36 @@ import { VendorServiceOption } from "~/types";
 
 const timeFormat = 'hh a';
 
-function ConfigureBooking(service: { serviceGroupId: string, options: VendorServiceOption[] }) {
+function ConfigureBooking(service: { vendorServiceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
     const [serviceChecklist, setServiceChecklist] = useState<boolean[]>([]);
     const checkoutForm = useRef<any>(null);
     const checkoutFormInput = useRef<any>(null);
-    const [isMobileView, setMobileVIew] = useState(false);
-    const resize = () => {
-        setMobileVIew(window.innerWidth < 500);
-    };
+    const [minDuration, setMinDuration] = useState(1);
 
     useEffect(() => {
-        setMobileVIew(window.innerWidth < 500);
-        window.addEventListener("resize", resize);
-        return () => window.removeEventListener("resize", resize);
-    });
-    useEffect(() => {
-        setServiceChecklist(service.options.map(r => false));
+        const minDur = Math.max.apply(0, service.options.map(x => x.duration));
+        setMinDuration(minDur);
+        setServiceChecklist([false]);
     }, []);
 
-    function setServiceOptionDate(index: number, date: Date) {
-        setValue(`service.${index}.date`, date);
-        setValue(`service.${index}.timeHour`, null);
+    function setServiceOptionDate(date: Date) {
+        setValue(`date`, date);
+        setValue(`timeHour`, null);
 
-        serviceChecklist[index] = false;
+        serviceChecklist[0] = false;
         setServiceChecklist([...serviceChecklist]);
     }
 
     function setServiceOptionTime(index: number, hour?: number) {
-        setValue(`service.${index}.timeHour`, hour);
+        setValue(`timeHour`, hour);
 
         serviceChecklist[index] = true;
         setServiceChecklist([...serviceChecklist]);
     }
 
     function setServiceOptionDuration(index: number, duration?: number) {
-        setValue(`service.${index}.duration`, duration);
+        setValue(`duration`, duration);
 
         serviceChecklist[index] = true;
         setServiceChecklist([...serviceChecklist]);
@@ -51,55 +45,53 @@ function ConfigureBooking(service: { serviceGroupId: string, options: VendorServ
 
     function proceedToCheckout(params: any) {
         if (checkoutForm.current) {
-            const validParams = params?.service.filter((x: any) => service.options.find(i => i.id === x.vendorServiceId));
-            checkoutFormInput.current.value = JSON.stringify(validParams);
-            checkoutForm.current.submit()
+            const validParams: any[] = params?.services.filter((x: any) => service.options.find(i => i.id === x.id));
+            if (validParams.length) {
+                checkoutFormInput.current.value = JSON.stringify({
+                    ...params,
+                    services: validParams
+                }
+                );
+                checkoutForm.current.submit()
+            } else {
+                alert('Nothing to add')
+            }
         }
     }
 
     return <Card title="Configure Services">
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
-            <input className="hidden" {...register(`serviceGroupId`)} value={service.serviceGroupId} />
-            <Tabs
-                tabPosition={isMobileView ? 'top' : 'left'}
-                items={service.options.map((item, index) => {
-                    return {
-                        label: serviceChecklist[index] ? <span className="_success" ><CheckCircleFilled />{item.title}</span> : <Tooltip title="Date and time is required"><span className="_danger"><WarningFilled />{item.title}</span></Tooltip>,
-                        key: item.id,
-                        children: <Row gutter={[30, 30]}>
-                            <Col sm={24} md={12}>
-                                <input className="hidden" {...register(`service.${index}.vendorServiceId`)} value={item.id} />
-                                <input className="hidden" {...register(`service.${index}.date`)} />
-                                <Title level={5}>Select date</Title>
-                                <Calendar fullscreen={false} disabledDate={(e) => { return e.toDate() < (new Date()); }} headerRender={() => <></>} onSelect={r => setServiceOptionDate(index, r.toDate())} />
-                            </Col>
-                            <Col sm={24} md={12}>
-                                <Title level={5}>Choose time slot</Title>
-                                <div>
-                                    <TimePicker hourStep={1} format={timeFormat} onChange={r => setServiceOptionTime(index, r?.hour())} />
-                                    {/* <Rad value={item.value} onChange={r => setServiceOptionTime(index, r.target.checked, item.value)} disabled={item.disabled}>{item.label}</Checkbox> */}
-                                </div>
+            <input type="hidden" {...register(`vendorServiceGroupId`)} value={service.vendorServiceGroupId} />
+            <Row gutter={[30, 30]}>
+                <Col sm={24} md={12}>
+                    {service.options.map((item, key) => <input key={item.id} type="hidden" {...register(`services.${key}.id`)} value={item.id} />)}
+                    <input type="hidden" {...register(`date`)} />
+                    <Title level={5}>Select date</Title>
+                    <Calendar fullscreen={false} disabledDate={(e) => { return e.toDate() < (new Date()); }} headerRender={() => <></>} onSelect={r => setServiceOptionDate(r.toDate())} />
+                </Col>
+                <Col sm={24} md={12}>
+                    <Title level={5}>Choose time slot</Title>
+                    <div>
+                        <TimePicker hourStep={1} format={timeFormat} onChange={r => setServiceOptionTime(0, r?.hour())} />
+                    </div>
 
-                                <Title level={5}>Duration of the service</Title>
-                                <Select
-                                    onChange={(value) => setServiceOptionDuration(index, value)}
-                                    placeholder="Choose"
-                                    options={[
-                                        {
-                                            label: item.duration + ' hours',
-                                            value: item.duration,
-                                        }
-                                    ].concat(
-                                        new Array(24 - item.duration).fill(item.duration + 1).map((x, i) => ({
-                                            label: (x + i) + ' hours',
-                                            value: x + i
-                                        }))
-                                    )} />
-                            </Col>
-                        </Row>,
-                    };
-                })}
-            />
+                    <Title level={5}>Duration of the service</Title>
+                    <Select
+                        onChange={(value) => setServiceOptionDuration(0, value)}
+                        placeholder="Choose"
+                        options={[
+                            {
+                                label: minDuration + ' hours',
+                                value: minDuration,
+                            }
+                        ].concat(
+                            new Array(24).fill(minDuration + 1).map((x, i) => ({
+                                label: (x + i) + ' hours',
+                                value: x + i
+                            }))
+                        )} />
+                </Col>
+            </Row>
             <Divider />
             <Row justify={'end'} align={'middle'} gutter={[20, 20]}>
                 <Col>

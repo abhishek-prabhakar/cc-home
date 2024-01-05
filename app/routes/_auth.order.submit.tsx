@@ -29,15 +29,14 @@ export async function action({
 
 
     const cookie = await userCartCookie.parse(cookieHeader);
-    const data: CartInput = JSON.parse(cookie)
+    const cartData: CartInput = JSON.parse(cookie)
 
-    if (!data?.service?.length) {
+    if (!cartData?.services?.length) {
         return redirect('/cart/checkout');
     }
 
     const orderId = await new Promise<string>(function (resolve) {
-        CartService.summary(data).then(async res => {
-            console.log(res)
+        CartService.summary(cartData).then(async res => {
             if (!res) {
                 return;
             }
@@ -55,6 +54,7 @@ export async function action({
                     id: generateUuid(),
                     userId: loggedInUser.id,
                     orderId: orderId,
+                    vendorServiceGroupId: res.vendorServiceGroupId,
                     status: BookingStatus.PENDING,
                     total: summary.total,
                     tax: summary.tax,
@@ -64,14 +64,14 @@ export async function action({
             });
 
             await db.bookingService.createMany({
-                data: res.services.map(x => ({
+                data: res.services.filter(x => !!x.id).map(x => ({
                     id: generateUuid(),
                     bookingId: data.id,
-                    vendorServiceId: x.id,
+                    serviceId: x.id,
                     status: BookingStatus.PENDING,
-                    date: x.date,
-                    timeHour: x.timeHour,
-                    duration: x.duration,
+                    date: res.date,
+                    timeHour: res.timeHour,
+                    duration: res.duration,
                     location: '',
                     cost: x.cost
                 }))

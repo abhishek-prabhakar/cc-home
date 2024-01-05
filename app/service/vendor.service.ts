@@ -1,5 +1,5 @@
 import { PATH } from "~/path.data";
-import { VendorProfile, VendorService } from "~/types";
+import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
 import { db } from "~/utils/database";
 
 export const VendorQuery = {
@@ -44,74 +44,70 @@ export const VendorQuery = {
     },
     getServices: (username: string) => {
         return new Promise<VendorService[]>(function (resolve) {
-            db.serviceGroup.findMany({
+
+            db.vendorServiceGroup.findMany({
+                where: {
+                    group: {
+                        VendorServiceGroup: {
+                            some: {
+                                vendorService: {
+                                    some: {
+                                        vendor: {
+                                            username
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 select: {
                     id: true,
-                    name: true,
-                    serviceGroupItem: {
+                    group: {
                         select: {
-                            isOptional: true,
+                            name: true,
+                            serviceGroupItem: {
+                                select: {
+                                    serviceId: true,
+                                    isOptional: true
+                                }
+                            }
+                        },
+                    },
+                    vendorService: {
+                        select: {
                             service: {
                                 select: {
                                     id: true,
                                     name: true,
-                                    vendorService: {
-                                        select: {
-                                            id: true,
-                                            cost: true,
-                                            duration: true,
-                                            vendorId: true
-                                        }
-                                    }
                                 }
-                            }
-                        },
-                        where: {
-                            service: {
-                                vendorService: {
-                                    some: {
-                                        vendor: {
-                                            username
-                                        }
-                                    }
-                                }
-                            }
+                            },
+                            cost: true,
+                            duration: true,
                         }
                     }
                 },
-                where: {
-                    serviceGroupItem: {
-                        some: {
-                            service: {
-                                vendorService: {
-                                    some: {
-                                        vendor: {
-                                            username
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                orderBy: {
-                    name: 'asc'
-                }
             }).then(r => {
                 resolve(r.map(x => ({
-                    id: x.id,
-                    title: x.name,
-                    included: x.serviceGroupItem.filter(y => !y.isOptional).map(y => ({
-                        id: y.service.vendorService[0].id,
+                    vendorServiceGroupId: x.id,
+                    title: x.group.name,
+                    included: x.vendorService.reduce<VendorServiceOption[]>((arr, i) => {
+                        const item = x.group.serviceGroupItem.find(y => y.serviceId === i.service.id);
+                        if (item && !item?.isOptional) {
+                            arr.push({
+                                id: i.service.id,
+                                title: i.service.name,
+                                duration: i.duration
+                            })
+                        }
+                        return arr;
+                    }, []),
+                    addons: x.vendorService.filter(y => x.group.serviceGroupItem.find(service => y.service.id === service.serviceId)?.isOptional).map(y => ({
+                        id: y.service.id,
                         title: y.service.name,
-                        duration: y.service.vendorService[0]?.duration
-                    })),
-                    addons: x.serviceGroupItem.filter(y => y.isOptional).map(y => ({
-                        id: y.service.vendorService[0].id,
-                        title: y.service.name,
-                        duration: y.service.vendorService[0]?.duration
+                        duration: y.duration
                     }))
-                })))
+                })));
             });
         });
 
