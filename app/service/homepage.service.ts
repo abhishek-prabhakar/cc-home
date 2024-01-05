@@ -1,5 +1,5 @@
 import { PATH } from "~/path.data";
-import { Jumbotron } from "~/types";
+import { CollectionType, HomeCategoryItem, Jumbotron } from "~/types";
 import { db } from "~/utils/database";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 
@@ -58,20 +58,8 @@ function getJumbotronList() {
 
 }
 
-type Page = {
-    id: string,
-    title: string,
-    path: string,
-    serviceGroup: {
-        id: string;
-        name: string;
-        imageName?: string | null;
-        collection?: string;
-    }[]
-}
-
 function getCategoryCollection() {
-    return new Promise<Page[]>(function (resolve) {
+    return new Promise<HomeCategoryItem[]>(function (resolve) {
 
         db.vendorType.findMany({
             orderBy: {
@@ -88,6 +76,7 @@ function getCategoryCollection() {
                         imageName: true,
                         serviceGroupType: {
                             select: {
+                                keyName: true,
                                 name: true
                             }
                         }
@@ -100,14 +89,41 @@ function getCategoryCollection() {
                 }
             }
         }).then(r => {
-            resolve(r.map<Page>(x => ({
-                path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup.map(y => ({
-                    id: y.id,
-                    imageName: y.imageName,
-                    collection: y.serviceGroupType?.name,
-                    name: y.name
-                })),
-            })))
+            const response: HomeCategoryItem[] = r.map<HomeCategoryItem>((category => {
+                const serviceGroup = category.serviceGroup.reduce<CollectionType[]>((items, item) => {
+                    const collection = item.serviceGroupType?.keyName;
+                    if (!collection) {
+                        items.push({
+                            id: item.id,
+                            isCollection: false,
+                            name: item.name,
+                            imageName: item.imageName,
+                            path: '/services/' + category.keyName + '?category=' + item.id
+                        })
+                        return items;
+                    }
+
+                    if (items[items.length - 1]?.collection !== collection) {
+                        items.push({
+                            id: item.id,
+                            name: item.serviceGroupType?.name || 'Services',
+                            imageName: item.imageName,
+                            isCollection: true,
+                            collection: item.serviceGroupType?.keyName,
+                            path: '/services/' + item.serviceGroupType?.keyName
+                        })
+                    }
+                    return items;
+                }, []);
+
+                return {
+                    title: category.name,
+                    id: category.id,
+                    serviceGroup
+                }
+            }));
+
+            resolve(response)
         })
     });
 }

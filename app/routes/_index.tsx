@@ -12,7 +12,7 @@ import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
-import { BannerItem, Jumbotron } from "~/types";
+import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
 import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
 
 
@@ -89,7 +89,7 @@ export async function loader({ params }: LoaderArgs) {
         }
       }
     }).then(r => {
-      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/collections/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
+      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
     })
   });
 
@@ -113,7 +113,7 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({
-        path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+        path: '/services/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
     })
   });
@@ -436,19 +436,9 @@ const Home = {
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
-    const [modalData, setIsModalOpen] = useState<{
-      id: string,
-      title: string,
-      path: string,
-      serviceGroup: {
-        id: string;
-        name: string;
-        imageName?: string | null;
-        collection?: string;
-      }[]
-    } | null>(null);
+    const [modalData, setIsModalOpen] = useState<HomeCategoryItem | null>(null);
 
-    const showModal = (data: Page) => {
+    const showModal = (data: HomeCategoryItem) => {
       setIsModalOpen(data);
     };
 
@@ -478,13 +468,15 @@ const Home = {
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
             {modalData?.serviceGroup.map((item, index) => <>
-              {index - 1 < 0 || item.collection !== modalData.serviceGroup[index - 1]?.collection ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>{item.collection || 'Other services'}</Title></Col> : ''}
+
+              {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
               <Col xs={12} sm={12} md={8} key={item.id}>
-                <Link to={modalData.path + '?category=' + item.id}>
-                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
+                <Link to={item.path}>
+                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
                   <div>{item.name}</div>
                 </Link>
-              </Col></>)}{!modalData?.serviceGroup.length && 'Sorry, no services found under this category.'}
+              </Col></>)}
+            {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
           </Row>
         </Modal>
       </Col>

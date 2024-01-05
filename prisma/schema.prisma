@@ -151,6 +151,7 @@ model VendorService {
 model ServiceGroupType {
   id           String         @id
   name         String
+  keyName       String?         
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
   ServiceGroup ServiceGroup[]
 }

@@ -106,3 +106,18 @@ export type Jumbotron = {
     url: string
 }
 export type BannerItem = Jumbotron & { bannerLocation: BannerLocation }
+
+
+export type CollectionType = {
+    id: string;
+    name: string;
+    imageName?: string | null;
+    collection?: string | null;
+    isCollection: boolean;
+    path: string,
+}
+export type HomeCategoryItem = {
+    id: string,
+    title: string,
+    serviceGroup: CollectionType[]
+}

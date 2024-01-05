@@ -6,11 +6,11 @@ export function generateJumbotronUrl(data: {
 }) {
     let url: string = '';
     if (data.vendorTypeId) {
-        url = '/collections/:vendorType';
+        url = '/services/:vendorType';
     } else if (data.serviceGroupId) {
-        url = '/collections/:vendorType?category=:serviceGroupId';
+        url = '/services/:vendorType?category=:serviceGroupId';
     } else if (data.serviceId) {
-        url = '/collections/:serviceGroupId?category=:serviceId'
+        url = '/services/:serviceGroupId?category=:serviceId'
     }
 
     return url;

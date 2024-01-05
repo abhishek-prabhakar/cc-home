@@ -147,7 +147,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                                 fileType: true
                             },
                             where: {
-                                serviceId: {
+                                serviceGroupId: {
                                     in: []
                                 }
                             }

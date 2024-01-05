@@ -37,7 +37,7 @@ function getPages(list: { keyName: string, name: string }[]) {
         ]
     },
     {
-        key: 'collections',
+        key: 'services',
         label: 'Collections',
         children: list.map(x => ({
             key: x.keyName,
