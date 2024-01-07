@@ -64,6 +64,11 @@ const CollectionsHighlightPage = {
                                 <Link to={Routes.Services.replace(':id', data?.highlightId || '') + '?category=' + service.id}>
                                     <Typography.Title level={5}>{service.name}</Typography.Title>
                                 </Link>
+                                <ul style={{ paddingLeft: '14px' }}>
+                                    {service.description.map((description, key) => <li key={'d-' + key}>
+                                        <Typography.Text>Includes {description}.</Typography.Text>
+                                    </li>)}
+                                </ul>
                             </Col>)
                             }
                         </Row>

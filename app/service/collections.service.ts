@@ -8,7 +8,8 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
         services: {
             id: string,
             name: string,
-            imageName: string
+            imageName: string,
+            description: string[]
         }[]
     } | null>(function (resovle) {
         db.serviceGroupType.findFirst({
@@ -31,6 +32,19 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                             select: {
                                 name: true
                             }
+                        },
+                        serviceGroupItem: {
+                            select: {
+                                service: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            },
+                            where: {
+                                isOptional: false
+                            },
+                            take: 5
                         }
                     }
                 }
@@ -46,7 +60,8 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                 services: r?.ServiceGroup.map(service => ({
                     name: service.name,
                     id: service.id,
-                    imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG
+                    imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG,
+                    description: service.serviceGroupItem.map(x => x.service.name?.toLocaleLowerCase())
                 })),
                 vendorType: r?.ServiceGroup[0].vendorType.name
             });
