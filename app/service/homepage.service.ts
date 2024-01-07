@@ -110,7 +110,7 @@ function getCategoryCollection() {
                             imageName: item.imageName,
                             isCollection: true,
                             collection: item.serviceGroupType?.keyName,
-                            path: '/collections/' + item.serviceGroupType?.keyName,
+                            path: '/collections/' + item.serviceGroupType?.keyName + '/' + category.keyName,
                             description: item.name
                         })
                     } else {

@@ -110,6 +110,31 @@ export const VendorQuery = {
                 })));
             });
         });
-
+    },
+    topRatedVendorsByType: (vendorType: string) => {
+        return new Promise<{
+            id: string,
+            name: string,
+            image: string
+        }[]>(function (resolve) {
+            db.vendor.findMany({
+                take: 6,
+                where: {
+                    vendorType: {
+                        keyName: vendorType
+                    }
+                },
+                select: {
+                    username: true,
+                    profileImageName: true
+                }
+            }).then(r => {
+                resolve(r.map(x => ({
+                    id: x.username,
+                    name: x.username,
+                    image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
+                })))
+            });
+        })
     }
 }
