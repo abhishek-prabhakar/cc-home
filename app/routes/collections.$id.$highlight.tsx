@@ -54,6 +54,7 @@ const CollectionsHighlightPage = {
                 <Await resolve={data?.data}>
                     {response => <div>
                         <Typography.Title level={2}>Explore everything under {response?.name} </Typography.Title>
+                        <div style={{ paddingBottom: '20px' }}></div>
                         <Typography.Title level={3}>Book {response?.vendorType}</Typography.Title>
                         <div style={{ paddingBottom: '20px' }}></div>
                         <Row gutter={[40, 40]}>
@@ -101,8 +102,8 @@ const CollectionsHighlightPage = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
                     {response => <Row gutter={[40, 40]}>
-                        {response?.map(item => <Col xs={24} md={'auto'} key={item.id}>
-                            <Row gutter={[20, 20]} align={'middle'} justify={'center'}>
+                        {response?.map(item => <Col xs={24} flex={'auto'} key={item.id}>
+                            <Row gutter={[20, 20]} align={'middle'}>
                                 <Col md={24}>
                                     <Link to={Routes.VendorProfile.replace(':id', item.id)}>
                                         <Avatar src={item.image} size={{ xs: 100, sm: 100, md: 100, lg: 120, xl: 120, xxl: 120 }} />
