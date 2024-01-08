@@ -2,12 +2,12 @@ import { DownOutlined, GlobalOutlined, MenuOutlined } from "@ant-design/icons";
 import { Button, Col, Divider, Drawer, Dropdown, Input, Menu, MenuProps, Popover, Row, Space, Typography } from "antd";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 import axios from "axios";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
 import { Await, Form, Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
-import { RootLoaderData } from "~/types";
+import { HeaderNavListItem, RootLoaderData } from "~/types";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -21,39 +21,12 @@ type MenuItem = {
     children?: MenuItem[]
 }
 
-function getPages(list: { keyName: string, name: string }[]) {
-    const menuList: MenuItem[] = [{
-        key: 'photography',
-        label: 'Photography',
-        children: [
-            {
-                key: 'pre-wedding',
-                label: 'Pre Wedding',
-            },
-            {
-                key: 'wedding',
-                label: 'Wedding',
-            },
-        ]
-    },
-    {
-        key: 'services',
-        label: 'Collections',
-        children: list.map(x => ({
-            key: x.keyName,
-            label: x.name
-        }))
-    }];
-
-    return menuList;
-}
-
 
 const AppNavigation = {
     MainMenu: () => {
         const data = useLoaderData<RootLoaderData>();
 
-        function dropdownContent(item: MenuItem) {
+        function dropdownContent(navitem: HeaderNavListItem) {
 
             return <div style={{ margin: '-20px -24px' }}>
                 <Row gutter={[40, 40]}>
@@ -64,7 +37,15 @@ const AppNavigation = {
                         <div style={{ padding: '40px 0' }}>
                             <Space direction="vertical">
                                 <Typography.Text color="primary" strong>Popular</Typography.Text>
-                                {item.children?.map(menuItem => <Link key={item.key + menuItem.key} to={`/${item.key}/${menuItem.key}`}><Typography.Text key={menuItem.key}>{menuItem.label}</Typography.Text></Link>)}
+                                {navitem.children?.map(menuItem => <div key={menuItem.name}>
+                                    <Typography.Title level={5}>{menuItem.name}</Typography.Title>
+                                    {menuItem.list.map(item => <Link key={item.id} to={item.path}>
+                                        <Typography.Text>{item.name}</Typography.Text>
+                                    </Link>
+                                    )}
+
+                                </div>
+                                )}
                             </Space>
                         </div>
                     </Col>
@@ -72,17 +53,18 @@ const AppNavigation = {
             </div>
         }
 
-        return <Await resolve={data.pages}>
-            {pageData => <Row justify={'center'} gutter={[20, 0]}>{getPages(pageData).map(item => <Col key={'menu-' + item.key} >
-                <Popover content={dropdownContent(item)} placement="bottom">
-                    <Space className="header-nav-item-text" size={'small'} direction="horizontal">
-                        <span>{item.label}</span>
-                        <DownOutlined />
-                    </Space>
-                </Popover>
-            </Col>
-            )}</Row>}
-        </Await>;
+        return <Suspense>
+            <Await resolve={data.pages}>
+                {navList => <Row justify={'center'} gutter={[20, 0]}>{navList.map(item => <Col key={'menu-' + item.id} >
+                    <Popover content={dropdownContent(item)} placement="bottom">
+                        <Space className="header-nav-item-text" size={'small'} direction="horizontal">
+                            <span>{item.name}</span>
+                            <DownOutlined style={{ fontSize: '10px' }} />
+                        </Space>
+                    </Popover>
+                </Col>
+                )}</Row>}
+            </Await></Suspense>;
     },
     Drawer: () => {
         const data = useLoaderData<RootLoaderData>();
@@ -121,16 +103,18 @@ const AppNavigation = {
                 title="Browse"
                 onClose={() => toggleDrawer()}
                 open={openDrawer}>
-                <Await resolve={data.pages}>
-                    {pageData => <Menu
-                        style={{ width: 295, margin: '0 -24px 20px' }}
-                        mode="inline"
-                        openKeys={openKeys}
-                        onOpenChange={onOpenChange}
-                        onClick={navigateToPage}
-                        items={getPages(pageData)}
-                    />}
-                </Await>
+                <Suspense>
+                    <Await resolve={data.pages}>
+                        {pageData => <Menu
+                            style={{ width: 295, margin: '0 -24px 20px' }}
+                            mode="inline"
+                            openKeys={openKeys}
+                            onOpenChange={onOpenChange}
+                            onClick={navigateToPage}
+                            items={[]}
+                        />}
+                    </Await>
+                </Suspense>
                 <Divider />
                 <Space direction="vertical" size={"large"}>
                     <UserLogin onSuccess={() => toggleDrawer()} />

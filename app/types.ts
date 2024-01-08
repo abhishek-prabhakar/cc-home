@@ -2,9 +2,21 @@ import { BannerLocation } from "@prisma/client";
 
 export type RootLoaderData = {
     user: User | null,
-    pages: { keyName: string, name: string }[]
+    pages: HeaderNavListItem[]
 }
 
+export type HeaderNavListItem = {
+    id: string,
+    name: string,
+    children: {
+        name: string,
+        list: {
+            path: string,
+            id: string,
+            name: string,
+        }[]
+    }[]
+}
 
 export type VendorProfile = {
     username: string,

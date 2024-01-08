@@ -20,7 +20,7 @@ import { Col, Layout, Row, Skeleton, Spin } from "antd";
 import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
-import { RootLoaderData, User } from "./types";
+import { HeaderNavListItem, RootLoaderData, User } from "./types";
 import { USER_SESSION_KEY, getSession } from "./session.server";
 import { db } from "./utils/database";
 const { Content } = Layout;
@@ -28,6 +28,7 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
+import Routes from "./routes.data";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -74,18 +75,52 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     }
   });
 
-  const pages = new Promise<{ keyName: string, name: string }[]>(async function (resolve) {
+
+
+  const pages = new Promise<HeaderNavListItem[]>(async function (resolve) {
     const list = await db.vendorType.findMany({
       orderBy: {
         name: 'asc'
       },
       select: {
         keyName: true,
-        name: true
+        name: true,
+        serviceGroup: {
+          select: {
+            serviceGroupType: {
+              select: {
+                keyName: true,
+                name: true
+              },
+            }
+          },
+          where: {
+            groupTypeId: {
+              not: null
+            }
+          },
+          distinct: ['vendorTypeId']
+        }
       }
     });
 
-    resolve(list);
+    resolve(list.map(x => ({
+      id: x.keyName,
+      name: x.name,
+      children: [{
+        name: 'Collections',
+        list: x.serviceGroup.reduce<{ path: string, id: string, name: string }[]>((arr, item) => {
+          if (item.serviceGroupType?.keyName) {
+            arr.push({
+              path: Routes.CollectionsByVendor.replace(':vendorType', x.keyName).replace(':id', item.serviceGroupType.keyName),
+              id: item.serviceGroupType.keyName,
+              name: item.serviceGroupType.name
+            });
+          }
+          return arr;
+        }, [])
+      }]
+    })));
   });
 
 
