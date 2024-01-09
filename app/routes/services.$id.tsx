@@ -41,6 +41,7 @@ type Vendor = {
 };
 
 type Filter = {
+    name: string,
     category: { id: string, name: string }[]
 }
 type MetaData = {
@@ -55,7 +56,7 @@ type Result = {
 type loaderData = {
     page: number,
     result: Result,
-    filters: Filter,
+    filters: Filter[],
     meta: MetaData
 };
 
@@ -188,7 +189,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
     });
 
 
-    const filters = new Promise<Filter>(function (resolve) {
+    const filters = new Promise<Filter[]>(function (resolve) {
         of(true).pipe(
             switchMap(_ => db.vendorType.findFirstOrThrow({
                 where: {
@@ -196,23 +197,56 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 }
             })),
             switchMap(res => {
-                return db.serviceGroup.findMany({
-                    orderBy: {
-                        name: 'asc'
-                    },
-                    select: {
-                        id: true,
-                        name: true
-                    },
-                    where: {
-                        vendorTypeId: res.id
-                    }
+                return forkJoin({
+                    sorted: db.serviceGroupType.findMany({
+                        select: {
+                            name: true,
+                            ServiceGroup: {
+                                orderBy: {
+                                    name: 'asc'
+                                },
+                                select: {
+                                    id: true,
+                                    name: true
+                                },
+                                where: {
+                                    vendorTypeId: res.id
+                                }
+                            }
+                        },
+                        where: {
+                            ServiceGroup: {
+                                some: {
+                                    vendorTypeId: res.id
+                                }
+                            }
+                        }
+                    }),
+                    unsorted: db.serviceGroup.findMany({
+                        orderBy: {
+                            name: 'asc'
+                        },
+                        select: {
+                            id: true,
+                            name: true
+                        },
+                        where: {
+                            vendorTypeId: res.id,
+                            groupTypeId: {
+                                in: undefined || null
+                            },
+                        }
+                    })
                 })
             })
         ).subscribe(res => {
-            resolve({
-                category: res
-            });
+            resolve(
+                res.sorted.map(
+                    r => ({
+                        name: r.name,
+                        category: r.ServiceGroup
+                    })
+                ).concat([{ name: 'Other services', category: res.unsorted }]));
         });
     });
 
@@ -334,27 +368,28 @@ const Photography = {
             navigate(`${location.pathname}?${params.toString()}`, { preventScrollReset: true });
         }
 
-        function filterItems(filters: Filter) {
-            const filterOptionsList: CollapseProps['items'] = [
-                {
-                    key: '1',
-                    label: <><Typography.Text strong>Occassion</Typography.Text> <Badge count={getCategory.length || 0} showZero={false} color='#faad14' /></>,
-                    children: <Space direction="vertical">
-                        {filters.category.map(item => <Checkbox value={item.id} checked={getCategory.includes(item.id)} onChange={(e) => toggleCategoryItem(e?.target?.checked, e?.target?.value)}>{item.name}</Checkbox>)}
-                        {!filters.category?.length && <div>Unavailable right now.</div>}
-                    </Space>,
-                },
-                {
-                    key: '2',
-                    label: <Typography.Text strong>Budget</Typography.Text>,
-                    children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
-                },
-                {
-                    key: '3',
-                    label: 'Filter 3',
-                    children: <p>My filters</p>,
-                },
-            ];
+        function filterItems(filters: Filter[]) {
+            const filterOptionsList: CollapseProps['items'] = filters.map((filter, index) =>
+            ({
+                key: index,
+                label: <><Typography.Text strong>{filter.name}</Typography.Text> <Badge count={getCategory.length || 0} showZero={false} color='#faad14' /></>,
+                children: <Space direction="vertical">
+                    {filter.category.map(item => <Checkbox key={item.id} value={item.id} checked={getCategory.includes(item.id)} onChange={(e) => toggleCategoryItem(e?.target?.checked, e?.target?.value)}>{item.name}</Checkbox>)}
+                    {!filter.category?.length && <div>Unavailable right now.</div>}
+                </Space>,
+            }));
+
+            //     {
+            //         key: '2',
+            //         label: <Typography.Text strong>Budget</Typography.Text>,
+            //         children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
+            //     },
+            //     {
+            //         key: '3',
+            //         label: 'Filter 3',
+            //         children: <p>My filters</p>,
+            //     },
+            // ];
 
             return filterOptionsList;
         }
@@ -371,7 +406,7 @@ const Photography = {
                     <div className="section-title">Filter:</div>
                     <Suspense fallback={<Skeleton active />}>
                         <Await resolve={data.filters}>
-                            {filters => <Collapse defaultActiveKey={['1']} ghost items={filterItems(filters)} />}
+                            {filters => <Collapse defaultActiveKey={['x']} ghost items={filterItems(filters)} />}
                         </Await>
                     </Suspense>
                 </div>
@@ -450,7 +485,7 @@ const Photography = {
                                 </Row>
                             </PhotoProvider>
                             <div style={{ padding: '20px 5px' }}>
-                                <Typography.Text strong>Services:</Typography.Text> {item.services.map(x => <Tag>{x}</Tag>)} <Link to={'/profile/' + item.id}>View all</Link>
+                                <Typography.Text strong>Services:</Typography.Text> {item.services.map((x, index) => <Tag key={'tag' + index}>{x}</Tag>)} <Link to={'/profile/' + item.id}>View all</Link>
                             </div>
                         </div>
                     </div >
