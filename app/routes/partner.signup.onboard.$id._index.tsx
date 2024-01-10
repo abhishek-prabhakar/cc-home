@@ -502,12 +502,15 @@ const OnBoardPage = {
                 </Col>
                 <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
             </Row>)}
-            <input type="hidden" name="vendorGroupId" value={item.id} />
-            <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
-        </fetcher.Form>,
-        <fetcher.Form method="post" action="">
-            <input type="hidden" name="vendorGroupId" value={item.id} />
-            <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
+            <Row gutter={[20, 20]}>
+                <Col>
+                    <input type="hidden" name="vendorGroupId" value={item.id} />
+                    <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
+                </Col>
+                <Col>
+                    <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
+                </Col>
+            </Row>
         </fetcher.Form>];
     }
 }
