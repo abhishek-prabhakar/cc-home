@@ -415,15 +415,17 @@ const OnBoardPage = {
     SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceListItem[] }) => {
         const fetcher = useFetcher();
 
-        return <fetcher.Form method="post" action="">
+        return <Form method="post" action="">
             <Card size="small" title="1. Choose your services">
                 <input type="hidden" name="categoryId" value={activeType} />
                 <Space direction="vertical">
-                    <Row>
-                        <Col><select name="serviceGroupId">
-                            {serviceList.map(service => <option key={service.id} value={service.id}>{service.name}</option>)}
-                            {!serviceList.length && <option>Sorry, no services found under this category</option>}
-                        </select>
+                    <Row gutter={[20, 20]}>
+                        <Col>
+                            <div><Typography.Text>Service</Typography.Text></div>
+                            <select name="serviceGroupId">
+                                {serviceList.map(service => <option key={service.id} value={service.id}>{service.name}</option>)}
+                                {!serviceList.length && <option>Sorry, no services found under this category</option>}
+                            </select>
                         </Col>
                         <Col>
                             <div><Typography.Text>Cost</Typography.Text></div>
@@ -434,7 +436,7 @@ const OnBoardPage = {
                     <Button type="primary" htmlType="submit" name="action" value={STEPS.SERVICE}>Add</Button>
                 </Space>
             </Card>
-        </fetcher.Form>
+        </Form>
     },
     CostSection: () => {
         const data = useLoaderData<LoaderData>();
