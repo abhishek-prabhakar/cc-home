@@ -39,11 +39,12 @@ const AppNavigation = {
                                 <Typography.Text color="primary" strong>Popular</Typography.Text>
                                 {navitem.children?.map(menuItem => <div key={menuItem.name}>
                                     <Typography.Title level={5}>{menuItem.name}</Typography.Title>
-                                    {menuItem.list.map(item => <Link key={item.id} to={item.path}>
-                                        <Typography.Text>{item.name}</Typography.Text>
-                                    </Link>
-                                    )}
-
+                                    <Space direction="vertical">
+                                        {menuItem.list.map(item => <Link key={item.id} to={item.path}>
+                                            <Typography.Text>{item.name}</Typography.Text>
+                                        </Link>
+                                        )}
+                                    </Space>
                                 </div>
                                 )}
                             </Space>

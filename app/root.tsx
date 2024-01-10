@@ -99,7 +99,10 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
               not: null
             }
           },
-          distinct: ['vendorTypeId']
+          distinct: ['groupTypeId'],
+          orderBy: {
+            name: 'asc'
+          }
         }
       }
     });

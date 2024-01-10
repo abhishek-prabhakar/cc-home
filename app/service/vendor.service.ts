@@ -120,6 +120,7 @@ export const VendorQuery = {
             db.vendor.findMany({
                 take: 6,
                 where: {
+                    isActive: true,
                     vendorType: {
                         keyName: vendorType
                     }
