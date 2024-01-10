@@ -486,7 +486,7 @@ const OnBoardPage = {
                 </Col>
                 <Col span={8}>
                     <b>{service.service.name}</b>
-                    <div>{service.isOptional ? 'Add-On' + service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : '' : '(inclusive)'}</div>
+                    <div>{service.isOptional ? 'Add-On' + (service.addonGroup?.name ? ' (' + service.addonGroup?.name + ')' : '') : '(inclusive)'}</div>
                 </Col>
                 <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
                     {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged By:</Typography.Text></div>,
