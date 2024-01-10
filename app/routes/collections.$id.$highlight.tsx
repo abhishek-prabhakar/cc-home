@@ -119,6 +119,7 @@ const CollectionsHighlightPage = {
                                 </Col>
                             </Row>
                         </Col>)}
+                        {!response?.length && <Col>Sorry, we couldn't find any vendors under this category.</Col>}
                     </Row>}
                 </Await>
             </Suspense>

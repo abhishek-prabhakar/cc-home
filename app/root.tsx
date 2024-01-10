@@ -92,7 +92,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
                 keyName: true,
                 name: true
               },
-            }
+            },
           },
           where: {
             groupTypeId: {
@@ -101,7 +101,9 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
           },
           distinct: ['groupTypeId'],
           orderBy: {
-            name: 'asc'
+            serviceGroupType: {
+              name: 'asc'
+            }
           }
         }
       }
