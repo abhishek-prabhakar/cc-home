@@ -492,7 +492,7 @@ const OnBoardPage = {
                         value={service.service.id} />}
                 </Col>
                 <Col span={8}>
-                    <b>(service.addonGroup?.name ?  service.addonGroup?.name + ' - ' : ''){service.service.name}</b>
+                    <b>{service.addonGroup?.name ? service.addonGroup?.name + ' - ' : ''}{service.service.name}</b>
                     <div>{service.isOptional ? 'Add-On' : '(inclusive)'}</div>
                 </Col>
                 <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
