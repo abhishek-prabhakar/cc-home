@@ -2,13 +2,31 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
+import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { ServiceQuery } from "~/service/services.service";
 import { db } from "~/utils/database";
 import { FareModeLabel } from "~/utils/statusMarker.map";
 import generateUuid from "~/utils/uuid.generator";
+
+type ServiceGroup = {
+    id: string;
+    name: string;
+    serviceGroupItem: {
+        addonGroup: {
+            name: string;
+        } | null;
+        isOptional: boolean;
+        service: {
+            id: string;
+            name: string;
+            fareMode: FareMode;
+            minHour: number;
+            description?: string | null;
+        };
+    }[];
+};
 
 type VendorServiceGroup = {
     id: string;
@@ -17,22 +35,7 @@ type VendorServiceGroup = {
         duration: number;
         cost: number;
     }[];
-    group: {
-        id: string;
-        name: string;
-        serviceGroupItem: {
-            addonGroup: {
-                name: string;
-            } | null;
-            isOptional: boolean;
-            service: {
-                id: string;
-                name: string;
-                fareMode: FareMode;
-                minHour: number;
-            };
-        }[];
-    };
+    group: ServiceGroup;
 }
 type LoaderData = {
     profile: {
@@ -59,15 +62,7 @@ type LoaderData = {
     categories: {
         id: string;
         name: string;
-        serviceGroups: {
-            id: string;
-            name: string;
-            service: {
-                id: string;
-                name: string;
-                fareMode: FareMode;
-            }[]
-        }[];
+        serviceGroups: ServiceGroup[];
     }[],
     files: {
         id: string;
@@ -263,6 +258,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                                             name: true,
                                             fareMode: true,
                                             minHour: true,
+                                            description: true
                                         }
                                     }
 
@@ -304,7 +300,8 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
     });
 
     if (data) {
-        return { profile: data, categories: vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.map(y => ({ id: y.id, name: y.name, service: y.serviceGroupItem.map(z => z.service) })) })), files }
+        const selectedServiceGroups = data.VendorServiceGroup.map(x => x.group.id);
+        return { profile: data, categories: vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, serviceGroupItem: y.serviceGroupItem })) })), files }
     }
 
     return null;
@@ -318,7 +315,7 @@ const OnBoardPage = {
         const data = useLoaderData<LoaderData>();
         const fetcher = useFetcher();
         const [activeType, setJobType] = useState<string>('');
-        const [serviceList, setServiceList] = useState<ServiceListItem[]>([]);
+        const [serviceList, setServiceList] = useState<ServiceGroup[]>([]);
 
         useEffect(() => {
             if (fetcher.data) {
@@ -412,36 +409,46 @@ const OnBoardPage = {
             </Row>
         </div>;
     },
-    SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceListItem[] }) => {
-        const fetcher = useFetcher();
+    SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceGroup[] }) => {
+        const [getServiceDialogData, setServiceDialogData] = useState<VendorServiceGroup | null | undefined>(null);
 
-        return <Form method="post" action="">
+        function setService(data: string) {
+            const group = serviceList.find(x => x.id === data);
+            if (group) {
+                setServiceDialogData({
+                    id: group.id,
+                    vendorService: [],
+                    group
+                });
+            }
+        }
+
+        return [
             <Card size="small" title="1. Choose your services">
+                <div><Typography.Text>Service</Typography.Text></div>
+                <Select style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
+                    {serviceList.map(service => <Select.Option key={service.id} value={service.id}>{service.name}</Select.Option>)}
+                    {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>}
+                </Select>
+            </Card>,
+            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} onCancel={() => setServiceDialogData(null)} >
                 <input type="hidden" name="categoryId" value={activeType} />
-                <Space direction="vertical">
-                    <Row gutter={[20, 20]}>
-                        <Col>
-                            <div><Typography.Text>Service</Typography.Text></div>
-                            <select name="serviceGroupId">
-                                {serviceList.map(service => <option key={service.id} value={service.id}>{service.name}</option>)}
-                                {!serviceList.length && <option>Sorry, no services found under this category</option>}
-                            </select>
-                        </Col>
-                        <Col>
-                            <div><Typography.Text>Cost</Typography.Text></div>
-                            <Input name="cost" />
-                        </Col>
-                    </Row>
-                    <br />
-                    <Button type="primary" htmlType="submit" name="action" value={STEPS.SERVICE}>Add</Button>
-                </Space>
-            </Card>
-        </Form>
+                <Row gutter={[20, 20]}>
+                    <Col>
+                        <div><Typography.Text>Base Charge</Typography.Text></div>
+                        <Input name="cost" type="number" min="1" />
+                    </Col>
+                    <Col span={24}>
+                        {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost item={getServiceDialogData} />}
+                    </Col>
+                </Row>
+            </Modal>
+        ]
     },
     CostSection: () => {
         const data = useLoaderData<LoaderData>();
 
-        return <Card size="small" title="2. Charges & Cost structure">
+        return <Card size="small" title="2. Verify Cost structure">
             <Collapse accordion>
                 {data.profile.VendorServiceGroup.map((item, index) => <Collapse.Panel key={index} header={item.group.name}>
                     <OnBoardPage.UpdateGroupServiceCost item={item} />
@@ -485,8 +492,8 @@ const OnBoardPage = {
                         value={service.service.id} />}
                 </Col>
                 <Col span={8}>
-                    <b>{service.service.name}</b>
-                    <div>{service.isOptional ? 'Add-On' + (service.addonGroup?.name ? ' (' + service.addonGroup?.name + ')' : '') : '(inclusive)'}</div>
+                    <b>(service.addonGroup?.name ?  service.addonGroup?.name + ' - ' : ''){service.service.name}</b>
+                    <div>{service.isOptional ? 'Add-On' : '(inclusive)'}</div>
                 </Col>
                 <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
                     {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged By:</Typography.Text></div>,
