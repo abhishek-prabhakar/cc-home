@@ -28,10 +28,9 @@ export async function action({
     }
 
 
-    const cookie = await userCartCookie.parse(cookieHeader);
-    const cartData: CartInput = JSON.parse(cookie)
+    const cartData: CartInput[] = await userCartCookie.parse(cookieHeader);
 
-    if (!cartData?.services?.length) {
+    if (!cartData?.length) {
         return redirect('/cart/checkout');
     }
 
@@ -49,35 +48,39 @@ export async function action({
             const date = new Date();
             const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
 
-            const data = await db.booking.create({
-                data: {
-                    id: generateUuid(),
-                    userId: loggedInUser.id,
-                    orderId: orderId,
-                    vendorServiceGroupId: res.vendorServiceGroupId,
-                    status: BookingStatus.PENDING,
-                    total: summary.total,
-                    tax: summary.tax,
-                    discount: 0,
-                    coupon: null
-                }
-            });
 
-            await db.bookingService.createMany({
-                data: res.services.filter(x => !!x.id).map(x => ({
-                    id: generateUuid(),
-                    bookingId: data.id,
-                    serviceId: x.id,
-                    status: BookingStatus.PENDING,
-                    date: res.date,
-                    timeHour: res.timeHour,
-                    duration: res.duration,
-                    location: '',
-                    cost: x.cost
-                }))
-            })
+            for (let i = 0; i < res.length; i++) {
+                const item = res[i];
+                const data = await db.booking.create({
+                    data: {
+                        id: generateUuid(),
+                        userId: loggedInUser.id,
+                        orderId: orderId,
+                        vendorServiceGroupId: item.vendorServiceGroupId,
+                        status: BookingStatus.PENDING,
+                        total: summary.total,
+                        tax: summary.tax,
+                        discount: 0,
+                        coupon: null
+                    }
+                });
 
-            resolve(data.orderId);
+                await db.bookingService.createMany({
+                    data: item.services.filter(x => !!x.id).map(x => ({
+                        id: generateUuid(),
+                        bookingId: data.id,
+                        serviceId: x.id,
+                        status: BookingStatus.PENDING,
+                        date: item.date,
+                        timeHour: item.timeHour,
+                        duration: item.duration,
+                        location: '',
+                        cost: x.cost
+                    }))
+                });
+            }
+
+            resolve('');
         });
 
     });

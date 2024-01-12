@@ -1,5 +1,5 @@
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import { Alert, Button, Calendar, Card, Checkbox, Col, Divider, Radio, Row, Select, Tabs, TimePicker, Tooltip, Typography } from "antd";
 const { Title } = Typography;
 import { createRef, useEffect, useRef, useState } from "react";
@@ -98,12 +98,16 @@ function ConfigureBooking(service: { vendorServiceGroupId: string, options: Vend
                     {serviceChecklist.includes(false) ? <Alert message="Please complete the above step to proceed." type="warning" showIcon /> : ''}
                 </Col>
                 <Col>
-                    <Button disabled={serviceChecklist.includes(false)} type="primary" htmlType="submit">Continue Booking</Button>
+                    <Link to="/cart/checkout"><Button type="default">View Cart</Button></Link>
+                </Col>
+                <Col>
+                    <Button disabled={serviceChecklist.includes(false)} type="primary" htmlType="submit">Add to Cart</Button>
                 </Col>
             </Row>
         </Form>
         <div className="hidden">
             <Form ref={checkoutForm} method="post" action="/cart/add">
+                <input type="hidden" name="redirectUrl" value={window.location.href} />
                 <input name="cart" ref={checkoutFormInput} />
             </Form>
         </div>

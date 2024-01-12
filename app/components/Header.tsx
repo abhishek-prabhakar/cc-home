@@ -36,7 +36,19 @@ export function Header({ user }: { user?: User | null }) {
             <div className="container">
                 <Row justify={'space-between'}>
                     <Col span={0} md={7} lg={5}>
-                        <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
+                        <Row gutter={[10, 0]}>
+                            <Col xs={0} sm={0} md={12}>
+                                <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
+                                    <Space className="cursor-pointer">
+                                        <GlobalOutlined />
+                                        {currentLocation}
+                                    </Space>
+                                </Dropdown>
+                            </Col>
+                            <Col>
+                                <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
+                            </Col>
+                        </Row>
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
                         <AppNavigation.Drawer />
@@ -48,13 +60,10 @@ export function Header({ user }: { user?: User | null }) {
                     </Col>
                     <Col span={4} md={7} lg={5}>
                         <Row gutter={[10, 0]} justify={'end'} align="middle">
-                            <Col xs={0} sm={0} md={12}>
-                                <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
-                                    <Space className="cursor-pointer">
-                                        <GlobalOutlined />
-                                        {currentLocation}
-                                    </Space>
-                                </Dropdown>
+                            <Col>
+                                <Link to="/cart/checkout">
+                                    <Button type="text" shape="circle" icon={<ShoppingCartOutlined />} size="large" />
+                                </Link>
                             </Col>
                             <Col xs={0} sm={0} md={12}>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

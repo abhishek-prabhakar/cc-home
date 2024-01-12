@@ -83,6 +83,11 @@ export enum OrderStatus {
 }
 
 export type CartActiveService = VendorServiceOption & { date: string, time: string };
+export type CartItemService = {
+    id: string,
+    name: string,
+    cost: number
+};
 export type CartItem = {
     name: string,
     coverImg?: string | null,
@@ -94,11 +99,7 @@ export type CartItem = {
     date: Date | string,
     timeHour: number,
     duration: number,
-    services: {
-        id: string,
-        name: string,
-        cost: number
-    }[]
+    services: CartItemService[]
 };
 export type CartInputService = { id: string };
 export type CartInput = {

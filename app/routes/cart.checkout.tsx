@@ -12,17 +12,15 @@ import { ServiceQuery } from "~/service/services.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartActiveService, CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { CartActiveService, CartInput, CartItem, CartItemService, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 import { DateFormatter } from "~/utils/date.transform";
 
-type LoaderData = { data: CartItem };
-export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+export async function loader({ request }: LoaderArgs) {
     const cookieHeader = request.headers.get("Cookie");
     const cookie = await userCartCookie.parse(cookieHeader);
-    const data: CartInput = JSON.parse(cookie)
 
     return defer({
-        data: CartService.summary(data)
+        data: CartService.summary(cookie)
     });
 }
 
@@ -31,7 +29,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 const Cart = {
     Index: () => {
         const user = useSelector(getUser);
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loader>();
 
         return <div className="container">
             <Typography.Title level={3}>Checkout</Typography.Title>
@@ -40,14 +38,14 @@ const Cart = {
                 <Col xs={24} md={8} lg={18}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
-                            {response => <Cart.Preview data={response} />}
+                            {response => <Cart.Preview cart={response} />}
                         </Await>
                     </Suspense>
                 </Col>
                 <Col xs={24} md={8} lg={6}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
-                            {response => response?.services?.length &&
+                            {response => response?.length &&
                                 <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
                                     <Cart.Summary data={response} />
                                     {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
@@ -59,7 +57,7 @@ const Cart = {
             </Row>
         </div>
     },
-    Preview: ({ data }: { data: CartItem }) => {
+    Preview: ({ cart }: { cart: CartItem[] }) => {
         const [editService, setEditService] = useState<{ id: string, services: CartActiveService[] }>();
 
         function openEdtServiceDialog(id: string, services: CartActiveService[]) {
@@ -68,7 +66,7 @@ const Cart = {
 
         return <>
             <Row gutter={[30, 30]}>
-                <Col sm={24} xs={24} md={8}>
+                {cart.map(data => <Col sm={24} xs={24} md={8} key={data.vendorServiceGroupId}>
                     <Badge.Ribbon text={data.vendorType}>
                         <Card
                             cover={
@@ -96,8 +94,8 @@ const Cart = {
                             />
                         </Card>
                     </Badge.Ribbon>
-                </Col>
-                {!data?.services.length && <Col>Sorry, Your cart is empty.</Col>}
+                </Col>)}
+                {!cart?.length && <Col>Sorry, Your cart is empty.</Col>}
             </Row>
             {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
         </>
@@ -107,11 +105,11 @@ const Cart = {
             <ConfigureBooking vendorServiceGroupId={params.serviceId} options={params.services} />
         </Modal>
     },
-    Summary: ({ data }: { data: CartItem }) => {
+    Summary: ({ data }: { data: CartItem[] }) => {
         const [orderSummary, setOrderSummary] = useState<{ total: number, gst: number, tax: number, final: number }>();
         useEffect(() => {
             const gst = 3;
-            const total = data.services.reduce((sum, item) => sum + item.cost, 0);
+            const total = data.reduce<CartItemService[]>((arr, i) => arr.concat(i.services), []).reduce((sum, item) => sum + item.cost, 0);
             const tax = (gst * total) / 100;
 
             setOrderSummary({
@@ -124,11 +122,14 @@ const Cart = {
 
         return <div style={{ border: '1px solid #e1e1e1', padding: '10px' }}>
             <Typography.Title level={4}>Order Summary</Typography.Title>
-            {data.services.map(service => <Row key={service.id} gutter={[20, 20]} justify={'space-between'}>
-                <Col><Typography.Text strong>{service.name}</Typography.Text></Col>
-                <Col><Typography.Text>{service.cost} INR</Typography.Text></Col>
-            </Row>
-            )}
+            {data.map(group => <div key={group.vendorServiceGroupId}>
+                <b>{group.name}</b>
+                {group.services.map(service => <Row key={service.id} gutter={[20, 20]} justify={'space-between'}>
+                    <Col><Typography.Text strong>{service.name}</Typography.Text></Col>
+                    <Col><Typography.Text>{service.cost} INR</Typography.Text></Col>
+                </Row>
+                )}
+            </div>)}
             <Divider />
             <Row gutter={[20, 20]} justify={'space-between'}>
                 <Col><Typography.Text strong>Subtotal</Typography.Text></Col>
