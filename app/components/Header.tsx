@@ -36,8 +36,8 @@ export function Header({ user }: { user?: User | null }) {
             <div className="container">
                 <Row justify={'space-between'}>
                     <Col span={0} md={7} lg={5}>
-                        <Row gutter={[10, 0]}>
-                            <Col xs={0} sm={0} md={12}>
+                        <Row gutter={[20, 0]}>
+                            <Col>
                                 <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
                                     <Space className="cursor-pointer">
                                         <GlobalOutlined />
@@ -45,7 +45,7 @@ export function Header({ user }: { user?: User | null }) {
                                     </Space>
                                 </Dropdown>
                             </Col>
-                            <Col>
+                            <Col md={14}>
                                 <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
                             </Col>
                         </Row>
