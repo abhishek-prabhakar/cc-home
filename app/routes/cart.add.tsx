@@ -10,11 +10,18 @@ export async function action({
     const currentCart: CartInput[] = await userCartCookie.parse(cookieHeader);
     const body = await request.formData();
     const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
-    const redirectUrl = body.get('redirectUrl')?.toString()
+    let redirectUrl;
     if (newItem) {
         currentCart.push(newItem)
     }
-    return redirect(redirectUrl || '/cart/checkout', {
+
+    try {
+        redirectUrl = new URL(body.get('redirectUrl')?.toString() || '');
+        redirectUrl.searchParams.set('cartStatus', 'true');
+    } catch (e) {
+        redirectUrl = null
+    }
+    return redirect(redirectUrl ? redirectUrl.href : '/cart/checkout', {
         headers: {
             "Set-Cookie": await userCartCookie.serialize(currentCart),
         },

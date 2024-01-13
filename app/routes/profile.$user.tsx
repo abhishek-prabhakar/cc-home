@@ -1,7 +1,7 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
-import { Await, Form, Outlet, useLoaderData } from "@remix-run/react";
-import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton, Avatar } from "antd";
+import { Await, Form, Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton, Avatar, Modal } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
@@ -55,6 +55,7 @@ const ProfileLayout = {
                     {services => <ProfileLayout.Contact services={services} />}
                 </Await>
             </Suspense>
+            <ProfileLayout.CartSuggestion />
         </div >
 
     },
@@ -198,6 +199,22 @@ const ProfileLayout = {
                 </Col>
             </Row>
         </div>
+    },
+    CartSuggestion: () => {
+        const location = useLocation();
+        const [showModal, setModal] = useState(false);
+
+        useEffect(() => {
+            const url = new URLSearchParams(location.search);
+            console.log(url)
+            if (url.get('cartStatus')) {
+                setModal(true);
+            }
+        }, [location.pathname]);
+
+        return <Modal title="Your cart has been updated." open={showModal} onCancel={() => setModal(false)} footer={null}>
+            <Typography.Title level={5}>Forgot to add something?</Typography.Title>
+        </Modal>;
     }
 }
 
