@@ -7,15 +7,13 @@ export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    const currentCart: CartInput[] = await userCartCookie.parse(cookieHeader);
+    const currentCart: CartInput[] = await userCartCookie.parse(cookieHeader) || [];
     const body = await request.formData();
-    const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
     let redirectUrl;
-    if (newItem) {
-        currentCart.push(newItem)
-    }
-
     try {
+        const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
+        currentCart.push(newItem)
+
         redirectUrl = new URL(body.get('redirectUrl')?.toString() || '');
         redirectUrl.searchParams.set('cartStatus', 'true');
     } catch (e) {

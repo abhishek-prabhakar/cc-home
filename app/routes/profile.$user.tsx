@@ -206,7 +206,6 @@ const ProfileLayout = {
 
         useEffect(() => {
             const url = new URLSearchParams(location.search);
-            console.log(url)
             if (url.get('cartStatus')) {
                 setModal(true);
             }
