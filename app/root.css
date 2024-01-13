@@ -33,7 +33,7 @@ body {
     display: inline-flex;
     padding: 3px 10px;
     text-transform: uppercase;
-        background: var(--ui-color-primary);
+        background: #9c916e;
             color: #fff;
             font-size: 10px;
             letter-spacing: 1px;
@@ -151,4 +151,21 @@ body {
         transform: translate(-35vw,0) scale(0.6);
     }
 }
+}
+
+
+
+.home-section-card-wrapper{
+    border-radius: 5px;
+    padding: 15px 20px;
+    background: #f8f8f8;;
+}
+
+._bg-pastel{
+    background: url('/assets/bg-pastel-3.jpg') center ;
+    background-size: cover;
+}
+
+.spacer-md{
+    padding: 20px 0
 }

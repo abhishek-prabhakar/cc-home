@@ -14,6 +14,7 @@ import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
 import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
+import Routes from "~/routes.data";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -62,7 +63,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
-      take: 3,
+      take: 4,
       select: {
         id: true,
         name: true,
@@ -125,43 +126,30 @@ export async function loader({ params }: LoaderArgs) {
   const categories = getCategoryCollection();
 
   const collections = new Promise<Collection[]>(function (resolve) {
-    db.service.findMany({
-      take: 5,
+    db.serviceGroup.findMany({
+      take: 8,
       select: {
         id: true,
         name: true,
         imageName: true,
-        serviceGroupItem: {
-          take: 1,
+        description: true,
+        vendorType: {
           select: {
-            group: {
-              select: {
-                vendorType: {
-                  select: {
-                    name: true,
-                    keyName: true
-                  }
-                }
-              }
-            }
+            keyName: true
           }
         }
       },
       where: {
-        serviceGroupItem: {
-          some: {
-            id: {
-              not: undefined
-            }
-          }
+        groupTypeId: {
+          not: undefined
         }
       }
     }).then(r => {
       resolve(r.map(x => ({
         id: x.id,
         title: x.name,
-        path: `/${x.serviceGroupItem[0]?.group.vendorType.keyName}/${x.id}`,
-        label: x.serviceGroupItem[0]?.group.vendorType.name,
+        path: Routes.Services.replace(':id', x.vendorType.keyName) + '?category=' + x.id,
+        label: '',
         image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
         cost: 0
       })))
@@ -270,7 +258,17 @@ const Home = {
               </Suspense>
             </Col>
             <Col span={24}>
-              <Home.Collections />
+              <Row gutter={[60, 60]}>
+                <Col span={24} md={16}>
+                  <Home.Highlight />
+                  <div className="spacer-md" />
+                  <Home.Collections />
+                </Col>
+                <Col span={24} md={8}>
+
+                  <Home.MoreFeatures />
+                </Col>
+              </Row>
             </Col>
             <Col span={24}>
               <Suspense fallback={<Skeleton active />}>
@@ -327,12 +325,12 @@ const Home = {
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
 
-    return <div className="category-list">
+    return <div className="category-list home-section-card-wrapper">
       <Title level={2}>Featured</Title>
       <Suspense fallback={<Skeleton active />}>
         <Await resolve={data.quickLinks}>
           {response => <Row gutter={40} justify={'center'}>
-            {response.map(item => <Col key={item.id} span={12} md={8}>
+            {response.map(item => <Col key={item.id} span={12} md={6}>
               <Space direction="vertical">
                 <div>
                   <div className="category-badge">
@@ -353,7 +351,7 @@ const Home = {
                   </div>
                 </div>
                 <div>
-                  <Link to={item.path}><Title level={4}>{item.title}</Title></Link>
+                  <Link to={item.path}><Title level={5}>{item.title}</Title></Link>
                   {item.cost && <div>Starting from {item.cost}</div>}
                 </div>
               </Space>
@@ -366,77 +364,63 @@ const Home = {
   Collections: () => {
     const data = useLoaderData<HomePage>();
 
-    return <div>
-      <Title level={2}>Collections</Title>
-      <Row gutter={[60, 60]}>
-        <Col span={24} md={6}>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={data.collection}>
-              {resolve => <Space direction="vertical" size={'large'}>
-                {resolve.slice(2).map(item => <div key={item.id} >
-                  <Space direction="vertical" size={'small'}>
-                    <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                    <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                    <Typography.Text strong>{item.title}</Typography.Text>
-                  </Space>
-                </div>)
-                }
-              </Space>}
-            </Await>
-          </Suspense>
-        </Col>
-        <Col span={24} md={10}>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={data.collection}>
-              {resolve => <Space direction="vertical" size={'middle'}>
-                {resolve.slice(0, 2).map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
-                  hoverable
-                  cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
-                >
-                  <Meta title={item.title} description={'Starting from ' + item.cost} />
-                </Card></Link></Badge.Ribbon>)}
+    return <div className="home-section-card-wrapper">
+      <Row justify={'space-between'} align={'middle'}>
+        <Col><Title level={3}>Popular Services</Title></Col>
+        <Col>View all</Col>
+      </Row>
+      <Row gutter={[20, 30]}>
+        <Suspense fallback={<Skeleton active />}>
+          <Await resolve={data.collection}>
+            {resolve => resolve.map(item => <Col key={item.id} span={12} md={6}>
+              <Space direction="vertical">
+                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                </Link>
+                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
+                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
               </Space>
-              }
-            </Await>
-          </Suspense>
-        </Col>
-        <Col span={24} md={8}>
-          <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-            <Title level={3}>More...</Title>
-            <Suspense fallback={<Skeleton active />}>
-              <Await resolve={data.morePages}>
-                {response => <Space direction="vertical" size={'middle'}>
-                  {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
-                    <Row gutter={[24, 0]} align="middle">
-                      <Col>
-                        <Link to={item.path}>
-                          <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
-                        </Link>
-                      </Col>
-                      <Col flex={'auto'}>
-                        <Link to={item.path}>
-                          <Typography.Text strong>{item.title}</Typography.Text>
-                        </Link>
-                      </Col>
-                      <Col style={{ padding: '0 40px' }}>
-                        <RightOutlined />
-                      </Col>
-                    </Row>
-                  </div>)
-                  }
-                </Space>}
-              </Await>
-            </Suspense>
-            <Suspense fallback={<Skeleton active />}>
-              <Await resolve={data.bannerAds}>
-                {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
-              </Await>
-            </Suspense>
-            <Newsletter />
-          </Space>
-        </Col>
+            </Col>)}
+          </Await>
+        </Suspense>
       </Row>
     </div>
+  },
+  MoreFeatures: () => {
+    const data = useLoaderData<HomePage>();
+
+    return <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+      <Title level={3}>More...</Title>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.morePages}>
+          {response => <Space direction="vertical" size={'middle'}>
+            {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
+              <Row gutter={[24, 0]} align="middle">
+                <Col>
+                  <Link to={item.path}>
+                    <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
+                  </Link>
+                </Col>
+                <Col flex={'auto'}>
+                  <Link to={item.path}>
+                    <Typography.Text strong>{item.title}</Typography.Text>
+                  </Link>
+                </Col>
+                <Col style={{ padding: '0 40px' }}>
+                  <RightOutlined />
+                </Col>
+              </Row>
+            </div>)
+            }
+          </Space>}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.bannerAds}>
+          {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
+        </Await>
+      </Suspense>
+      <Newsletter />
+    </Space>
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
@@ -501,6 +485,21 @@ const Home = {
         </Modal>
       </Col>
     </Row>
+  },
+  Highlight: () => {
+
+    return <div className="home-section-card-wrapper _bg-pastel">
+      <Row align={'middle'} gutter={[100, 30]}>
+        <Col sm={4} md={6}>
+          <Image preview={false} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+        </Col>
+        <Col sm={20} md={18}>
+          <Typography.Title level={3}>BEST IN WEDDING</Typography.Title>
+          <Typography.Title level={5}>explore all services.</Typography.Title>
+          <Link to="/collections/wedding"><Button type="primary" shape="round">Explore</Button></Link>
+        </Col>
+      </Row>
+    </div>
   }
 }
 

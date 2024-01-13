@@ -27,6 +27,7 @@ import {
 } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { HeaderNavListItem, RootLoaderData } from "~/types";
+import Routes from "~/routes.data";
 const { Title } = Typography;
 
 const menuArtisantStyle: React.CSSProperties = {
@@ -60,9 +61,12 @@ const AppNavigation = {
             <Col span={16}>
               <div style={{ padding: "40px 0" }}>
                 <Space direction="vertical">
-                  <Typography.Text color="primary" strong>
-                    Popular
-                  </Typography.Text>
+                  <Typography.Title level={5}>
+                    {" "}
+                    <Link to={Routes.Services.replace(":id", navitem.id)}>
+                      Browse all {navitem.name}
+                    </Link>
+                  </Typography.Title>
                   {navitem.children?.map((menuItem) => (
                     <div key={menuItem.name}>
                       <Typography.Title level={5}>
