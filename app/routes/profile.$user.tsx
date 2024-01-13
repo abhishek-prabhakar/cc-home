@@ -1,10 +1,11 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
-import { Await, Form, Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { Await, Form, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton, Avatar, Modal } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
+import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
 const { Title } = Typography;
@@ -202,6 +203,7 @@ const ProfileLayout = {
     },
     CartSuggestion: () => {
         const location = useLocation();
+        const navigate = useNavigate();
         const [showModal, setModal] = useState(false);
 
         useEffect(() => {
@@ -211,7 +213,11 @@ const ProfileLayout = {
             }
         }, [location.pathname]);
 
-        return <Modal title="Your cart has been updated." open={showModal} onCancel={() => setModal(false)} footer={null}>
+        function gotoCart() {
+            navigate(Routes.Cart);
+        }
+
+        return <Modal title="Your cart has been updated." open={showModal} onCancel={() => setModal(false)} onOk={gotoCart} okText="Proceed to Checkout" cancelButtonProps={{ hidden: true }}>
             <Typography.Title level={5}>Forgot to add something?</Typography.Title>
         </Modal>;
     }
