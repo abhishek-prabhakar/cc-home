@@ -101,6 +101,18 @@ const VendorList = [
   },
 ];
 
+function scroll(elmId: string) {
+  setTimeout(function () {
+    let element = document.getElementById(elmId);
+    if (element) {
+      window.scrollTo({
+        top: element.getBoundingClientRect().top - 60,
+        behavior: "smooth",
+      });
+    }
+  }, 1000);
+}
+
 const PartnerSignup = {
   Index: () => {
     return (
@@ -115,30 +127,41 @@ const PartnerSignup = {
       </div>
     );
   },
-  Jumbotron: () => (
-    <div style={jumbotronStyle}>
-      <Row justify={"center"}>
-        <Col>
-          <Space direction="vertical" align="center">
-            <Typography.Title level={1} style={{ color: "white" }}>
-              Earn upto 3 times your current income and change your life.
-            </Typography.Title>
-            <Typography.Title level={3}>
-              Become a part of a community with more than 50,000 service
-              professionals
-            </Typography.Title>
-            <br />
-            <br />
-            <a href="#signup-form">
-              <Button type="primary" size="large" color="white">
+  Jumbotron: () => {
+    function buttonClick(e: any) {
+      console.log(e);
+      scroll("signup-form");
+    }
+
+    return (
+      <div style={jumbotronStyle}>
+        <Row justify={"center"}>
+          <Col>
+            <Space direction="vertical" align="center">
+              <Typography.Title level={1} style={{ color: "white" }}>
+                Earn upto 3 times your current income and change your life.
+              </Typography.Title>
+              <Typography.Title level={3}>
+                Become a part of a community with more than 50,000 service
+                professionals
+              </Typography.Title>
+              <br />
+              <br />
+
+              <Button
+                type="primary"
+                size="large"
+                color="white"
+                onClick={buttonClick}
+              >
                 Join Us
               </Button>
-            </a>
-          </Space>
-        </Col>
-      </Row>
-    </div>
-  ),
+            </Space>
+          </Col>
+        </Row>
+      </div>
+    );
+  },
   Counter: () => {
     return (
       <div style={{ padding: "50px 0" }}>
