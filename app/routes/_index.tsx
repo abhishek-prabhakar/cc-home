@@ -19,7 +19,10 @@ import Routes from "~/routes.data";
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
   'linear-gradient(90deg, rgba(238,174,202,0.4) 0%, rgba(148,187,233,0.4) 100%)',
-]
+];
+
+
+const tilesColors = ["#476A8A", "#A69984", "#A24C34", "#0D4045", "#A67894", "#5547A5"];
 
 type Collection = {
   id: string,
@@ -441,11 +444,10 @@ const Home = {
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={loaderData.categories}>
               {data => <Row gutter={[20, 20]}>
-                {data.map(item => <Col key={item.id} xs={12} sm={12} md={8} lg={8} xl={8}>
-                  <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
+                {data.map((item, index) => <Col key={item.id} flex="auto">
+                  <div style={{ cursor: 'pointer', borderRadius: '5px', background: tilesColors[index], padding: '40px 20px', textAlign: 'center' }} onClick={() => showModal(item)}>
                     <Space direction="vertical" size={'small'}>
-                      <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
-                      <Typography.Text strong>{item.title}</Typography.Text>
+                      <Typography.Text strong style={{ color: 'white' }}>{item.title}</Typography.Text>
                     </Space>
                   </div>
                 </Col>)}
