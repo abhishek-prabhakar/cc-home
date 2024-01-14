@@ -476,36 +476,45 @@ const Photography = {
 
     function filterItems(filters: Filter[]) {
       const filterOptionsList: CollapseProps["items"] = filters.map(
-        (filter, index) => ({
-          key: index,
-          label: (
-            <>
-              <Typography.Text strong>{filter.name}</Typography.Text>{" "}
-              <Badge
-                count={getSelectedCatgoryCount(filter.category) || 0}
-                showZero={false}
-                color="#faad14"
-              />
-            </>
-          ),
-          children: (
-            <Space direction="vertical">
-              {filter.category.map((item) => (
-                <Checkbox
-                  key={item.id}
-                  value={item.id}
-                  checked={getCategory.includes(item.id)}
-                  onChange={(e) =>
-                    toggleCategoryItem(e?.target?.checked, e?.target?.value)
-                  }
-                >
-                  {item.name}
-                </Checkbox>
-              ))}
-              {!filter.category?.length && <div>Unavailable right now.</div>}
-            </Space>
-          ),
-        })
+        (filter, index) => {
+          const selectedCategoryCount = getSelectedCatgoryCount(
+            filter.category
+          );
+          return {
+            key: index,
+            label: (
+              <>
+                <Typography.Text strong>{filter.name}</Typography.Text>{" "}
+                {selectedCategoryCount !== 0 ? (
+                  <Badge
+                    count={selectedCategoryCount}
+                    showZero={false}
+                    color="#faad14"
+                  />
+                ) : null}
+              </>
+            ),
+            children: (
+              <Space direction="vertical">
+                {filter.category.map((item) => (
+                  <Checkbox
+                    key={item.id}
+                    value={item.id}
+                    checked={getCategory.includes(item.id)}
+                    className=""
+                    onChange={(e) =>
+                      toggleCategoryItem(e?.target?.checked, e?.target?.value)
+                    }
+                    //style={{ display: "flex" }}
+                  >
+                    {item.name}
+                  </Checkbox>
+                ))}
+                {!filter.category?.length && <div>Unavailable right now.</div>}
+              </Space>
+            ),
+          };
+        }
       );
 
       //     {
