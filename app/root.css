@@ -184,7 +184,7 @@ body {
     justify-content: center;
     background-color: white;
     box-shadow: 0 0 4px #acacac;
-    border-radius: 4px;
+    border-radius: 20px;
     outline: 0;
     border: 0;
 }
@@ -204,4 +204,5 @@ body {
 .carousel-slider-wrapper .btn[disabled]{
     opacity: 0.7;
     cursor:default ;
+    display: none;
 }

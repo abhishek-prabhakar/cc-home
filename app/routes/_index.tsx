@@ -368,6 +368,8 @@ const Home = {
   Collections: () => {
     const data = useLoaderData<HomePage>();
 
+    const sliderCount = window?.innerWidth < 600 ? 2 : 4;
+
     return <div className="home-section-card-wrapper">
       <Row justify={'space-between'} align={'middle'}>
         <Col><Title level={3}>Popular Services</Title></Col>
@@ -376,11 +378,11 @@ const Home = {
       <Suspense fallback={<Skeleton active />}>
         <Await resolve={data.collection}>
           {resolve => <CarouselProvider
-            naturalSlideWidth={100}
-            naturalSlideHeight={125}
+            naturalSlideWidth={300}
+            naturalSlideHeight={400}
             totalSlides={resolve.length}
-            visibleSlides={4}
-            step={4} dragStep={4}
+            visibleSlides={sliderCount}
+            step={sliderCount} dragStep={sliderCount}
             className="carousel-slider-wrapper"
           >
             <Slider>{resolve.map((item, i) => <Slide className="slider-item" index={i}>
