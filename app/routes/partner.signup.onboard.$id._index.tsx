@@ -534,11 +534,11 @@ const OnBoardPage = {
                         </Col>
                         <Col md={8} sm={12} xs={12}>
                             {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration} name="duration" type="number" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
                             {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" type="number" required />] : <input type="hidden" name="cost" value={0} />}
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />] : <input type="hidden" name="cost" value={0} />}
                         </Col>
                     </Row>
                 </Col>
