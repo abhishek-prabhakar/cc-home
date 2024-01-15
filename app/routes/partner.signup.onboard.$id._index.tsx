@@ -533,7 +533,7 @@ const OnBoardPage = {
                             ]}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                            {enabledIds.includes(service.service.id) && service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
                             <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
