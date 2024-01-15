@@ -30,6 +30,7 @@ type ServiceGroup = {
 
 type VendorServiceGroup = {
     id: string;
+    cost: number;
     vendorService: {
         serviceId: string;
         duration: number;
@@ -102,9 +103,9 @@ export async function action(args: ActionArgs) {
     switch (type) {
         case STEPS.SERVICE:
             const groupId = formData.get('serviceGroupId');
-            const groupCost = formData.get('cost');
+            const groupCost = formData.get('groupCost');
             const categoryId = formData.get('categoryId')?.toString();
-            if (!categoryId) { return; }
+            if (!categoryId) { return false; }
 
             await db.vendorService.deleteMany({
                 where: {
@@ -126,59 +127,85 @@ export async function action(args: ActionArgs) {
                     }
                 }
             });
-
-            await db.vendor.update({
-                where: {
-                    id: vendorId
-                },
-                data: {
-                    categoryId
-                }
-            });
+            try {
+                await db.vendor.update({
+                    where: {
+                        id: vendorId,
+                        categoryId: {
+                            not: categoryId
+                        }
+                    },
+                    data: {
+                        categoryId
+                    }
+                });
+            } catch (e) { }
             if (groupId && groupCost) {
+                const serviceIds = formData.getAll('serviceId');
+                const durations = formData.getAll('duration');
+                const costs = formData.getAll('cost');
+                const fareModes = formData.getAll('fareMode');
+
+                const vendorGroupId = generateUuid();
                 await db.vendorServiceGroup.create({
                     data: {
-                        id: generateUuid(),
+                        id: vendorGroupId,
                         groupId: groupId?.toString(),
                         vendorId,
                         cost: parseInt(groupCost?.toString() || '0')
                     },
                 });
 
+                serviceIds.forEach(async (data, index) => {
+                    await db.vendorService.create({
+                        data: {
+                            id: generateUuid(),
+                            vendorId,
+                            vendorServiceGroupId: vendorGroupId,
+                            serviceId: data.toString(),
+                            cost: parseInt(costs[index]?.toString()),
+                            duration: parseInt(durations[index]?.toString()),
+                            fareMode: fareModes[index]?.toString() as FareMode
+                        }
+                    })
+                });
+
                 return true
             }
             break;
         case STEPS.COST:
-            const serviceIds = formData.getAll('serviceId');
-            const durations = formData.getAll('duration');
-            const costs = formData.getAll('cost');
-            const vendorGroupId = formData.get('vendorGroupId')?.toString();
-            const fareModes = formData.getAll('fareMode');
+            {
+                const vendorGroupId = formData.get('vendorGroupId')?.toString();
+                const serviceIds = formData.getAll('serviceId');
+                const durations = formData.getAll('duration');
+                const costs = formData.getAll('cost');
+                const fareModes = formData.getAll('fareMode');
 
-            if (!vendorGroupId) {
-                return;
-            }
-
-            await db.vendorService.deleteMany({
-                where: {
-                    vendorId,
-                    vendorServiceGroupId: vendorGroupId
+                if (!vendorGroupId) {
+                    return;
                 }
-            });
 
-            serviceIds.forEach(async (data, index) => {
-                await db.vendorService.create({
-                    data: {
-                        id: generateUuid(),
+                await db.vendorService.deleteMany({
+                    where: {
                         vendorId,
-                        vendorServiceGroupId: vendorGroupId,
-                        serviceId: data.toString(),
-                        cost: parseInt(costs[index]?.toString()),
-                        duration: parseInt(durations[index]?.toString()),
-                        fareMode: fareModes[index]?.toString() as FareMode
+                        vendorServiceGroupId: vendorGroupId
                     }
-                })
-            });
+                });
+
+                serviceIds.forEach(async (data, index) => {
+                    await db.vendorService.create({
+                        data: {
+                            id: generateUuid(),
+                            vendorId,
+                            vendorServiceGroupId: vendorGroupId,
+                            serviceId: data.toString(),
+                            cost: parseInt(costs[index]?.toString()),
+                            duration: parseInt(durations[index]?.toString()),
+                            fareMode: fareModes[index]?.toString() as FareMode
+                        }
+                    })
+                });
+            }
             return true;
             break;
         case STEPS.DOCUMENTS:
@@ -213,7 +240,7 @@ export async function action(args: ActionArgs) {
 export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
     const applicationId = args.params.id;
 
-    const data = await db.vendor.findFirst({
+    const data = await db.vendor.findFirstOrThrow({
         where: {
             id: applicationId
         },
@@ -230,6 +257,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
             VendorServiceGroup: {
                 select: {
                     id: true,
+                    cost: true,
                     vendorService: {
                         select: {
                             serviceId: true,
@@ -337,7 +365,7 @@ const OnBoardPage = {
             <Row gutter={[40, 40]}>
                 <Col span={24}>
                     <Typography.Title>Welcome</Typography.Title>
-                    <Typography.Title level={4}>Hello {data.profile.name}, Please fill up the following details.</Typography.Title>
+                    <Typography.Title level={4}>Hello {data?.profile.name}, Please fill up the following details.</Typography.Title>
                 </Col>
                 <Col span={24}>
                     <Divider />
@@ -416,9 +444,10 @@ const OnBoardPage = {
             const group = serviceList.find(x => x.id === data);
             if (group) {
                 setServiceDialogData({
-                    id: group.id,
+                    id: 'NEW',
                     vendorService: [],
-                    group
+                    group,
+                    cost: 0
                 });
             }
         }
@@ -432,16 +461,7 @@ const OnBoardPage = {
                 </Select>
             </Card>,
             <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} onCancel={() => setServiceDialogData(null)} >
-                <input type="hidden" name="categoryId" value={activeType} />
-                <Row gutter={[20, 20]}>
-                    <Col>
-                        <div><Typography.Text>Base Charge</Typography.Text></div>
-                        <Input name="cost" type="number" min="1" />
-                    </Col>
-                    <Col span={24}>
-                        {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost item={getServiceDialogData} />}
-                    </Col>
-                </Row>
+                {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeType={activeType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
             </Modal>
         ]
     },
@@ -456,7 +476,7 @@ const OnBoardPage = {
             </Collapse>
         </Card>
     },
-    UpdateGroupServiceCost: ({ item }: { item: VendorServiceGroup }) => {
+    UpdateGroupServiceCost: ({ item, addService, activeType, onClose }: { item: VendorServiceGroup, addService?: boolean, activeType?: string, onClose?: Function }) => {
         const fetcher = useFetcher();
         const [enabledIds, setIds] = useState<string[]>([]);
 
@@ -467,7 +487,8 @@ const OnBoardPage = {
 
         useEffect(() => {
             if (fetcher.data) {
-                alert('Thank you for updating your profile')
+                alert('Thank you for updating your profile');
+                if (onClose) { onClose(); }
             }
         }, [fetcher.data])
 
@@ -482,8 +503,18 @@ const OnBoardPage = {
 
 
         return [<fetcher.Form method="post" action="">
-            {item.group.serviceGroupItem.map(service => <Row key={service.service.id} gutter={[20, 20]}>
-                <Col>
+            <div>
+                <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
+                <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
+                <input type="hidden" name="categoryId" value={activeType} />
+                <input type="hidden" name="serviceGroupId" value={item.group.id} />
+            </div>
+            <br />
+            {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
+                {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
+                    <Typography.Title level={5}>{service.isOptional ? 'Optional Services' : 'Services included in this category'}</Typography.Title></Col>
+                }
+                <Col span={2}>
                     {service.isOptional ? <Checkbox
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
@@ -491,28 +522,32 @@ const OnBoardPage = {
                     /> : <input type="hidden" name="serviceId"
                         value={service.service.id} />}
                 </Col>
-                <Col span={8}>
+                <Col span={22}>
                     <b>{service.addonGroup?.name ? service.addonGroup?.name + ' - ' : ''}{service.service.name}</b>
-                    <div>{service.isOptional ? 'Add-On' : '(inclusive)'}</div>
-                </Col>
-                <Col span={6}><input type="hidden" value={service.service.fareMode} name="fareMode" />
-                    {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged By:</Typography.Text></div>,
-                    FareModeLabel.get(service.service.fareMode)]}
-                </Col>
-                <Col md={4} sm={12} xs={12}>
-                    {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                    <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration} name="duration" type="number" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
-                </Col>
-                <Col md={4} sm={12} xs={12}>
-                    {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
-                    <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" type="number" required />] : <input type="hidden" name="cost" value={0} />}
+                    <div>
+                        <Typography.Text type="secondary">{service.service.description}</Typography.Text>
+                    </div>
+                    <Row gutter={[10, 10]} align={'middle'}>
+                        <Col span={8}><input type="hidden" value={service.service.fareMode} name="fareMode" />
+                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
+                            ]}
+                        </Col>
+                        <Col md={8} sm={12} xs={12}>
+                            {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                            <Input defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration} name="duration" type="number" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                        </Col>
+                        <Col md={8} sm={12} xs={12}>
+                            {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" type="number" required />] : <input type="hidden" name="cost" value={0} />}
+                        </Col>
+                    </Row>
                 </Col>
                 <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
             </Row>)}
             <Row gutter={[20, 20]}>
                 <Col>
                     <input type="hidden" name="vendorGroupId" value={item.id} />
-                    <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={STEPS.COST}>Save & Continue</Button>
+                    <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
                 </Col>
                 <Col>
                     <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
