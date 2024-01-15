@@ -23,7 +23,7 @@ const collectionBg = [
 ];
 
 
-const tilesColors = ["#476A8A", "#A69984", "#A24C34", "#0D4045", "#A67894", "#5547A5"];
+const tilesColors = ["#F77963", "#F9B85E", "#EA3562", "#0D4045", "#24F0BB", "#6337FF"];
 
 type Collection = {
   id: string,
@@ -382,6 +382,7 @@ const Home = {
             naturalSlideHeight={400}
             totalSlides={resolve.length}
             visibleSlides={sliderCount()}
+            isIntrinsicHeight={true}
             step={sliderCount()} dragStep={sliderCount()}
             className="carousel-slider-wrapper"
           >
@@ -423,8 +424,8 @@ const Home = {
       <Title level={3}>More...</Title>
       <Suspense fallback={<Skeleton active />}>
         <Await resolve={data.morePages}>
-          {response => <Space direction="vertical" size={'middle'}>
-            {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
+          {response => <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+            {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1' }} key={item.id}>
               <Row gutter={[24, 0]} align="middle">
                 <Col>
                   <Link to={item.path}>
@@ -524,8 +525,8 @@ const Home = {
           <Image preview={false} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
         </Col>
         <Col sm={20} md={18}>
-          <Typography.Title level={3}>BEST IN WEDDING</Typography.Title>
-          <Typography.Title level={5}>explore all services.</Typography.Title>
+          <Typography.Title level={3} style={{ color: 'white' }}>BEST IN WEDDING</Typography.Title>
+          <Typography.Title level={5} style={{ color: 'white' }}>explore all services.</Typography.Title>
           <Link to="/collections/wedding"><Button type="primary" shape="round">Explore</Button></Link>
         </Col>
       </Row>
