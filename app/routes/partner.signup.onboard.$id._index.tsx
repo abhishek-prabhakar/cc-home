@@ -468,7 +468,7 @@ const OnBoardPage = {
     CostSection: () => {
         const data = useLoaderData<LoaderData>();
 
-        return <Card size="small" title="2. Verify Cost structure">
+        return <Card size="small" title="2. Preview & Verify Cost structure">
             <Collapse accordion>
                 {data.profile.VendorServiceGroup.map((item, index) => <Collapse.Panel key={index} header={item.group.name}>
                     <OnBoardPage.UpdateGroupServiceCost item={item} />
@@ -549,9 +549,9 @@ const OnBoardPage = {
                     <input type="hidden" name="vendorGroupId" value={item.id} />
                     <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
                 </Col>
-                <Col>
+                {!addService && <Col>
                     <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
-                </Col>
+                </Col>}
             </Row>
         </fetcher.Form>];
     }
