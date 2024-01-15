@@ -1,4 +1,4 @@
-import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowRightOutlined, MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
 import { Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
@@ -15,6 +15,7 @@ import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
 import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
 import Routes from "~/routes.data";
+import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -372,7 +373,32 @@ const Home = {
         <Col><Title level={3}>Popular Services</Title></Col>
         <Col>View all</Col>
       </Row>
-      <Row gutter={[20, 30]}>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.collection}>
+          {resolve => <CarouselProvider
+            naturalSlideWidth={100}
+            naturalSlideHeight={125}
+            totalSlides={resolve.length}
+            visibleSlides={4}
+            step={4} dragStep={4}
+            className="carousel-slider-wrapper"
+          >
+            <Slider>{resolve.map((item, i) => <Slide className="slider-item" index={i}>
+              <Space direction="vertical">
+                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                </Link>
+                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
+                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
+              </Space>
+            </Slide>)}
+            </Slider>
+            <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+            <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+          </CarouselProvider>}
+        </Await>
+      </Suspense>
+      {/* <Row gutter={[20, 30]}>
+        
         <Suspense fallback={<Skeleton active />}>
           <Await resolve={data.collection}>
             {resolve => resolve.map(item => <Col key={item.id} span={12} md={6}>
@@ -385,7 +411,7 @@ const Home = {
             </Col>)}
           </Await>
         </Suspense>
-      </Row>
+      </Row> */}
     </div>
   },
   MoreFeatures: () => {
