@@ -512,7 +512,7 @@ const OnBoardPage = {
             <br />
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
-                    <Typography.Title level={5}>{service.isOptional ? 'Optional Services' : 'Services included in this category'}</Typography.Title></Col>
+                    {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div>(Check all relevant services)</div>] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
                 }
                 <Col span={2}>
                     {service.isOptional ? <Checkbox
