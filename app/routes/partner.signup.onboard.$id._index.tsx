@@ -352,6 +352,11 @@ const OnBoardPage = {
         }, [fetcher.data]);
 
         useEffect(() => {
+            const list = data.categories.find(x => x.id === activeType);
+            setServiceList(list?.serviceGroups || []);
+        }, [data.categories])
+
+        useEffect(() => {
             setActiveGroup(data.profile.vendorType?.id || '')
         }, [])
 
@@ -449,13 +454,15 @@ const OnBoardPage = {
                     group,
                     cost: 0
                 });
+            } else {
+                setServiceDialogData(null);
             }
         }
 
         return [
             <Card size="small" title="1. Choose your services">
                 <div><Typography.Text>Service</Typography.Text></div>
-                <Select style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
+                <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
                     {serviceList.map(service => <Select.Option key={service.id} value={service.id}>{service.name}</Select.Option>)}
                     {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>}
                 </Select>
