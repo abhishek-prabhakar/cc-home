@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
+import { Avatar, Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { Suspense, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -13,7 +13,7 @@ import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
-import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
+import { getCategoryCollection, getJumbotronList, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 
@@ -217,7 +217,9 @@ export async function loader({ params }: LoaderArgs) {
     resolve(finalList);
   });
 
-  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
+  const topVendors = topVendorsByCategory();
+
+  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages, topVendors });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -260,6 +262,9 @@ const Home = {
                   {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
                 </Await>
               </Suspense>
+            </Col>
+            <Col span={24}>
+              <Home.TopVendorsList />
             </Col>
             <Col span={24}>
               <Row gutter={[60, 60]}>
@@ -368,7 +373,8 @@ const Home = {
   Collections: () => {
     const data = useLoaderData<HomePage>();
 
-    function sliderCount() { return window?.innerWidth < 600 ? 2 : 4; }
+    // function sliderCount() { return window?.innerWidth < 600 ? 2 : 4; }
+    function sliderCount() { return 4; }
 
     return <div className="home-section-card-wrapper">
       <Row justify={'space-between'} align={'middle'}>
@@ -386,7 +392,7 @@ const Home = {
             step={sliderCount()} dragStep={sliderCount()}
             className="carousel-slider-wrapper"
           >
-            <Slider>{resolve.map((item, i) => <Slide className="slider-item" index={i}>
+            <Slider>{resolve.map((item, i) => <Slide className="slider-item" key={item.id} index={i}>
               <Space direction="vertical">
                 <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
                 </Link>
@@ -531,6 +537,42 @@ const Home = {
         </Col>
       </Row>
     </div>
+  },
+  TopVendorsList: () => {
+    const data = useLoaderData<typeof loader>();
+    return <Suspense fallback={<Skeleton active />}>
+      <Await resolve={data.topVendors}>
+        {res => <Row gutter={[20, 20]}>
+          <Col span={24}><Typography.Title level={3}>Top service providers</Typography.Title></Col>
+          {res.map((category) => <Col key={category.id} xs={24} sm={24} md={6}>
+            <div className="home-section-card-wrapper">
+              <Space direction="vertical" size={'middle'}>
+                <Typography.Title level={5}>{category.name}</Typography.Title>
+                {category.vendor.map((vendor, i) => <Row key={vendor.username} gutter={[20, 20]} align={'middle'}>
+                  <Col>{i + 1}</Col>
+                  <Col>
+                    <Avatar
+                      size={{
+                        xs: 50,
+                        sm: 50,
+                        md: 50,
+                        lg: 50,
+                        xl: 50,
+                        xxl: 50,
+                      }}
+                      src={vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName
+                        : PATH.AVATAR_PLACEHOLDER}
+                    /></Col>
+                  <Col flex={'auto'}><div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><strong>{vendor.username}</strong></Link></div></Col>
+                </Row>)}
+                {!category.vendor.length && 'Sorry, no data found.'}
+                <Typography.Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Typography.Text>
+              </Space>
+            </div>
+          </Col>)}
+        </Row>}
+      </Await>
+    </Suspense>
   }
 }
 

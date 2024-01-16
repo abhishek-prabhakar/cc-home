@@ -208,3 +208,9 @@ body {
     cursor:default ;
     display: none;
 }
+
+.nowrap{
+    text-overflow: ellipsis;
+     overflow: hidden;
+      white-space: nowrap;
+}
