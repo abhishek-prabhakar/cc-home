@@ -152,6 +152,9 @@ function topVendorsByCategory() {
                 name: true,
                 keyName: true,
                 vendor: {
+                    where: {
+                        isActive: true
+                    },
                     select: {
                         id: true,
                         name: true,
