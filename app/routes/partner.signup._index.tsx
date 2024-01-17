@@ -105,10 +105,7 @@ function scroll(elmId: string) {
   setTimeout(function () {
     let element = document.getElementById(elmId);
     if (element) {
-      window.scrollTo({
-        top: element.getBoundingClientRect().top - 60,
-        behavior: "smooth",
-      });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   }, 1000);
 }
