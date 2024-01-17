@@ -36,25 +36,34 @@ export function Header({ user }: { user?: User | null }) {
             <div className="container">
                 <Row justify={'space-between'}>
                     <Col span={0} md={7} lg={5}>
-                        <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
-                    </Col>
-                    <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
-                        <AppNavigation.Drawer />
-                    </Col>
-                    <Col flex={'auto'}>
-                        <div className="header-brand">
-                            <Link to="/" style={logoStyle}><img src="/assets/brand-logo.png" width={'100px'} /></Link>
-                        </div>
-                    </Col>
-                    <Col span={4} md={7} lg={5}>
-                        <Row gutter={[10, 0]} justify={'end'} align="middle">
-                            <Col xs={0} sm={0} md={12}>
+                        <Row gutter={[20, 0]}>
+                            <Col>
                                 <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
                                     <Space className="cursor-pointer">
                                         <GlobalOutlined />
                                         {currentLocation}
                                     </Space>
                                 </Dropdown>
+                            </Col>
+                            <Col md={14}>
+                                <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
+                        <AppNavigation.Drawer />
+                    </Col>
+                    <Col flex={'auto'}>
+                        <div className="header-brand">
+                            <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'150px'} /></Link>
+                        </div>
+                    </Col>
+                    <Col span={4} md={7} lg={5}>
+                        <Row gutter={[10, 0]} justify={'end'} align="middle">
+                            <Col>
+                                <Link to="/cart/checkout">
+                                    <Button type="text" shape="circle" icon={<ShoppingCartOutlined />} size="large" />
+                                </Link>
                             </Col>
                             <Col xs={0} sm={0} md={12}>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

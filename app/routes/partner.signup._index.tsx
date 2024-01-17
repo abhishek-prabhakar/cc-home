@@ -159,6 +159,7 @@ const PartnerSignup = {
       </div>
     );
   },
+
   Counter: () => {
     return (
       <div style={{ padding: "50px 0" }}>
@@ -179,6 +180,7 @@ const PartnerSignup = {
       </div>
     );
   },
+
   Intro: () => {
     return (
       <Row justify={"center"}>
@@ -204,6 +206,7 @@ const PartnerSignup = {
       </Row>
     );
   },
+
   Features: () => {
     return (
       <div
@@ -246,6 +249,7 @@ const PartnerSignup = {
       </div>
     );
   },
+
   Form: () => {
     const [activeCard, setActiveCard] = useState<string | null>(null);
 
@@ -302,6 +306,7 @@ const PartnerSignup = {
       </Row>
     );
   },
+
   SignupForm: ({
     type,
     onClose,

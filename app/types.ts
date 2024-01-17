@@ -2,9 +2,21 @@ import { BannerLocation } from "@prisma/client";
 
 export type RootLoaderData = {
     user: User | null,
-    pages: { keyName: string, name: string }[]
+    pages: HeaderNavListItem[]
 }
 
+export type HeaderNavListItem = {
+    id: string,
+    name: string,
+    children: {
+        name: string,
+        list: {
+            path: string,
+            id: string,
+            name: string,
+        }[]
+    }[]
+}
 
 export type VendorProfile = {
     username: string,
@@ -71,6 +83,11 @@ export enum OrderStatus {
 }
 
 export type CartActiveService = VendorServiceOption & { date: string, time: string };
+export type CartItemService = {
+    id: string,
+    name: string,
+    cost: number
+};
 export type CartItem = {
     name: string,
     coverImg?: string | null,
@@ -82,11 +99,7 @@ export type CartItem = {
     date: Date | string,
     timeHour: number,
     duration: number,
-    services: {
-        id: string,
-        name: string,
-        cost: number
-    }[]
+    services: CartItemService[]
 };
 export type CartInputService = { id: string };
 export type CartInput = {
@@ -106,3 +119,19 @@ export type Jumbotron = {
     url: string
 }
 export type BannerItem = Jumbotron & { bannerLocation: BannerLocation }
+
+
+export type CollectionType = {
+    id: string;
+    name: string;
+    description?: string;
+    imageName?: string | null;
+    collection?: string | null;
+    isCollection: boolean;
+    path: string,
+}
+export type HomeCategoryItem = {
+    id: string,
+    title: string,
+    serviceGroup: CollectionType[]
+}

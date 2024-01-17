@@ -1,7 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Badge, Button, Card, Col, Divider, Image, Modal, Row, Skeleton, Space, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Divider, Image, Input, Modal, Row, Skeleton, Space, Typography } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
@@ -12,17 +12,15 @@ import { ServiceQuery } from "~/service/services.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartActiveService, CartInput, CartItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { CartActiveService, CartInput, CartItem, CartItemService, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 import { DateFormatter } from "~/utils/date.transform";
 
-type LoaderData = { data: CartItem };
-export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+export async function loader({ request }: LoaderArgs) {
     const cookieHeader = request.headers.get("Cookie");
     const cookie = await userCartCookie.parse(cookieHeader);
-    const data: CartInput = JSON.parse(cookie)
 
     return defer({
-        data: CartService.summary(data)
+        data: CartService.summary(cookie)
     });
 }
 
@@ -31,26 +29,26 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 const Cart = {
     Index: () => {
         const user = useSelector(getUser);
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loader>();
 
         return <div className="container">
             <Typography.Title level={3}>Checkout</Typography.Title>
             <Divider />
-            <Row gutter={[30, 30]}>
-                <Col xs={24} md={8} lg={18}>
+            <Row gutter={[60, 30]}>
+                <Col xs={24} md={8} lg={16}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
-                            {response => <Cart.Preview data={response} />}
+                            {response => <Cart.Preview cart={response} />}
                         </Await>
                     </Suspense>
                 </Col>
-                <Col xs={24} md={8} lg={6}>
+                <Col xs={24} md={8} lg={8}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
-                            {response => response?.services?.length &&
+                            {response => response?.length &&
                                 <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
                                     <Cart.Summary data={response} />
-                                    {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Proceed to Payment</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                    {user ? <Form method="post" action="/order/submit"><Button type="primary" htmlType="submit" block>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                                 </Space>
                             }
                         </Await>
@@ -59,7 +57,7 @@ const Cart = {
             </Row>
         </div>
     },
-    Preview: ({ data }: { data: CartItem }) => {
+    Preview: ({ cart }: { cart: CartItem[] }) => {
         const [editService, setEditService] = useState<{ id: string, services: CartActiveService[] }>();
 
         function openEdtServiceDialog(id: string, services: CartActiveService[]) {
@@ -67,38 +65,49 @@ const Cart = {
         }
 
         return <>
-            <Row gutter={[30, 30]}>
-                <Col sm={24} xs={24} md={8}>
-                    <Badge.Ribbon text={data.vendorType}>
-                        <Card
-                            cover={
-                                <Image
-                                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                                    preview={false}
-                                    src={data.coverImg || ''}
-                                    fallback={PATH.FALLBACK_IMG}
+            {cart.map((data, i) =>
+                [<Row gutter={[60, 20]} key={data.vendorServiceGroupId + i}>
+                    <Col sm={24} xs={24} md={10} >
+                        <Badge.Ribbon text={data.vendorType}>
+                            <Card
+                                cover={
+                                    <Image
+                                        style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                                        preview={false}
+                                        src={data.coverImg || ''}
+                                        fallback={PATH.FALLBACK_IMG}
+                                    />
+                                }
+                                actions={[
+                                    <DeleteOutlined key="remove" />,
+                                    <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
+                                ]}
+                            >
+                                <Card.Meta
+                                    avatar={<Avatar src={data.vendorImg} />}
+                                    title={data.name}
+                                    description={<div>
+                                        <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
+                                        <br />
+                                        <Typography.Text strong>{DateFormatter.short(data.date)}</Typography.Text> -
+                                        <Typography.Text strong>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Typography.Text>
+                                    </div>}
                                 />
-                            }
-                            actions={[
-                                <DeleteOutlined key="remove" />,
-                                <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
-                            ]}
-                        >
-                            <Card.Meta
-                                avatar={<Avatar src={data.vendorImg} />}
-                                title={data.name}
-                                description={<div>
-                                    <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
-                                    <br />
-                                    <Typography.Text strong>{DateFormatter.short(data.date)}</Typography.Text> -
-                                    <Typography.Text strong>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Typography.Text>
-                                </div>}
+                            </Card>
+                        </Badge.Ribbon>
+                    </Col>
+                    <Col sm={24} xs={24} md={14}>
+                        <Space direction="vertical" style={{ width: '100%' }} >
+                            <Typography.Text strong>Personal Note:</Typography.Text>
+                            <Input.TextArea
+                                placeholder="Write down your requirements here..."
+                                autoSize={{ minRows: 4, maxRows: 6 }}
                             />
-                        </Card>
-                    </Badge.Ribbon>
-                </Col>
-                {!data?.services.length && <Col>Sorry, Your cart is empty.</Col>}
-            </Row>
+                        </Space>
+                    </Col>
+                </Row>, <Divider />])}
+            {!cart?.length && <div>Sorry, Your cart is empty.</div>}
+
             {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
         </>
     },
@@ -107,11 +116,11 @@ const Cart = {
             <ConfigureBooking vendorServiceGroupId={params.serviceId} options={params.services} />
         </Modal>
     },
-    Summary: ({ data }: { data: CartItem }) => {
+    Summary: ({ data }: { data: CartItem[] }) => {
         const [orderSummary, setOrderSummary] = useState<{ total: number, gst: number, tax: number, final: number }>();
         useEffect(() => {
             const gst = 3;
-            const total = data.services.reduce((sum, item) => sum + item.cost, 0);
+            const total = data.reduce<CartItemService[]>((arr, i) => arr.concat(i.services), []).reduce((sum, item) => sum + item.cost, 0);
             const tax = (gst * total) / 100;
 
             setOrderSummary({
@@ -124,11 +133,14 @@ const Cart = {
 
         return <div style={{ border: '1px solid #e1e1e1', padding: '10px' }}>
             <Typography.Title level={4}>Order Summary</Typography.Title>
-            {data.services.map(service => <Row key={service.id} gutter={[20, 20]} justify={'space-between'}>
-                <Col><Typography.Text strong>{service.name}</Typography.Text></Col>
-                <Col><Typography.Text>{service.cost} INR</Typography.Text></Col>
-            </Row>
-            )}
+            {data.map(group => <div key={group.vendorServiceGroupId}>
+                <b>{group.name}</b>
+                {group.services.map(service => <Row key={service.id} gutter={[20, 20]} justify={'space-between'}>
+                    <Col><Typography.Text strong>{service.name}</Typography.Text></Col>
+                    <Col><Typography.Text>{service.cost} INR</Typography.Text></Col>
+                </Row>
+                )}
+            </div>)}
             <Divider />
             <Row gutter={[20, 20]} justify={'space-between'}>
                 <Col><Typography.Text strong>Subtotal</Typography.Text></Col>

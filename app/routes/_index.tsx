@@ -1,6 +1,6 @@
-import { MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowRightOutlined, MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
+import { Avatar, Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { Suspense, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
@@ -12,9 +12,18 @@ import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
-import { BannerItem, Jumbotron } from "~/types";
-import { getCategoryCollection, getJumbotronList } from "~/service/homepage.service";
+import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
+import { getCategoryCollection, getJumbotronList, topVendorsByCategory } from "~/service/homepage.service";
+import Routes from "~/routes.data";
+import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 
+const collectionBg = [
+  'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
+  'linear-gradient(90deg, rgba(238,174,202,0.4) 0%, rgba(148,187,233,0.4) 100%)',
+];
+
+
+const tilesColors = ["#F77963", "#F9B85E", "#EA3562", "#0D4045", "#24F0BB", "#6337FF"];
 
 type Collection = {
   id: string,
@@ -58,7 +67,7 @@ export async function loader({ params }: LoaderArgs) {
 
   const quickLinks = new Promise<Collection[]>(function (resolve) {
     db.serviceGroup.findMany({
-      take: 3,
+      take: 4,
       select: {
         id: true,
         name: true,
@@ -89,7 +98,7 @@ export async function loader({ params }: LoaderArgs) {
         }
       }
     }).then(r => {
-      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/collections/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
+      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
     })
   });
 
@@ -113,7 +122,7 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({
-        path: '/collections/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+        path: '/services/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
     })
   });
@@ -121,43 +130,30 @@ export async function loader({ params }: LoaderArgs) {
   const categories = getCategoryCollection();
 
   const collections = new Promise<Collection[]>(function (resolve) {
-    db.service.findMany({
-      take: 5,
+    db.serviceGroup.findMany({
+      take: 8,
       select: {
         id: true,
         name: true,
         imageName: true,
-        serviceGroupItem: {
-          take: 1,
+        description: true,
+        vendorType: {
           select: {
-            group: {
-              select: {
-                vendorType: {
-                  select: {
-                    name: true,
-                    keyName: true
-                  }
-                }
-              }
-            }
+            keyName: true
           }
         }
       },
       where: {
-        serviceGroupItem: {
-          some: {
-            id: {
-              not: undefined
-            }
-          }
+        groupTypeId: {
+          not: undefined
         }
       }
     }).then(r => {
       resolve(r.map(x => ({
         id: x.id,
         title: x.name,
-        path: `/${x.serviceGroupItem[0]?.group.vendorType.keyName}/${x.id}`,
-        label: x.serviceGroupItem[0]?.group.vendorType.name,
+        path: Routes.Services.replace(':id', x.vendorType.keyName) + '?category=' + x.id,
+        label: '',
         image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
         cost: 0
       })))
@@ -221,7 +217,9 @@ export async function loader({ params }: LoaderArgs) {
     resolve(finalList);
   });
 
-  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages });
+  const topVendors = topVendorsByCategory();
+
+  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages, topVendors });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -266,7 +264,20 @@ const Home = {
               </Suspense>
             </Col>
             <Col span={24}>
-              <Home.Collections />
+              <Home.TopVendorsList />
+            </Col>
+            <Col span={24}>
+              <Row gutter={[60, 60]}>
+                <Col span={24} md={16}>
+                  <Home.Highlight />
+                  <div className="spacer-md" />
+                  <Home.Collections />
+                </Col>
+                <Col span={24} md={8}>
+
+                  <Home.MoreFeatures />
+                </Col>
+              </Row>
             </Col>
             <Col span={24}>
               <Suspense fallback={<Skeleton active />}>
@@ -323,12 +334,12 @@ const Home = {
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
 
-    return <div className="category-list">
+    return <div className="category-list home-section-card-wrapper">
       <Title level={2}>Featured</Title>
       <Suspense fallback={<Skeleton active />}>
         <Await resolve={data.quickLinks}>
           {response => <Row gutter={40} justify={'center'}>
-            {response.map(item => <Col key={item.id} span={12} md={8}>
+            {response.map(item => <Col key={item.id} span={12} md={6}>
               <Space direction="vertical">
                 <div>
                   <div className="category-badge">
@@ -349,7 +360,7 @@ const Home = {
                   </div>
                 </div>
                 <div>
-                  <Link to={item.path}><Title level={4}>{item.title}</Title></Link>
+                  <Link to={item.path}><Title level={5}>{item.title}</Title></Link>
                   {item.cost && <div>Starting from {item.cost}</div>}
                 </div>
               </Space>
@@ -362,93 +373,98 @@ const Home = {
   Collections: () => {
     const data = useLoaderData<HomePage>();
 
-    return <div>
-      <Title level={2}>Collections</Title>
-      <Row gutter={[60, 60]}>
-        <Col span={24} md={6}>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={data.collection}>
-              {resolve => <Space direction="vertical" size={'large'}>
-                {resolve.slice(2).map(item => <div key={item.id} >
-                  <Space direction="vertical" size={'small'}>
-                    <Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                    <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                    <Typography.Text strong>{item.title}</Typography.Text>
-                  </Space>
-                </div>)
-                }
-              </Space>}
-            </Await>
-          </Suspense>
-        </Col>
-        <Col span={24} md={10}>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={data.collection}>
-              {resolve => <Space direction="vertical" size={'middle'}>
-                {resolve.slice(0, 2).map(item => <Badge.Ribbon key={item.id} text="Top Rated"><Link to={item.path}><Card
-                  hoverable
-                  cover={<Image preview={false} alt={item.title} fallback={FALLBACK_IMG} src={item.image || ''} />}
-                >
-                  <Meta title={item.title} description={'Starting from ' + item.cost} />
-                </Card></Link></Badge.Ribbon>)}
-              </Space>
-              }
-            </Await>
-          </Suspense>
-        </Col>
-        <Col span={24} md={8}>
-          <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-            <Title level={3}>More...</Title>
-            <Suspense fallback={<Skeleton active />}>
-              <Await resolve={data.morePages}>
-                {response => <Space direction="vertical" size={'middle'}>
-                  {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1', width: '100%' }} key={item.id}>
-                    <Row gutter={[24, 0]} align="middle">
-                      <Col>
-                        <Link to={item.path}>
-                          <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
-                        </Link>
-                      </Col>
-                      <Col flex={'auto'}>
-                        <Link to={item.path}>
-                          <Typography.Text strong>{item.title}</Typography.Text>
-                        </Link>
-                      </Col>
-                      <Col style={{ padding: '0 40px' }}>
-                        <RightOutlined />
-                      </Col>
-                    </Row>
-                  </div>)
-                  }
-                </Space>}
-              </Await>
-            </Suspense>
-            <Suspense fallback={<Skeleton active />}>
-              <Await resolve={data.bannerAds}>
-                {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
-              </Await>
-            </Suspense>
-            <Newsletter />
-          </Space>
-        </Col>
+    // function sliderCount() { return window?.innerWidth < 600 ? 2 : 4; }
+    function sliderCount() { return 4; }
+
+    return <div className="home-section-card-wrapper">
+      <Row justify={'space-between'} align={'middle'}>
+        <Col><Title level={3}>Popular Services</Title></Col>
+        <Col>View all</Col>
       </Row>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.collection}>
+          {resolve => <CarouselProvider
+            naturalSlideWidth={300}
+            naturalSlideHeight={400}
+            totalSlides={resolve.length}
+            visibleSlides={sliderCount()}
+            isIntrinsicHeight={true}
+            step={sliderCount()} dragStep={sliderCount()}
+            className="carousel-slider-wrapper"
+          >
+            <Slider>{resolve.map((item, i) => <Slide className="slider-item" key={item.id} index={i}>
+              <Space direction="vertical">
+                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                </Link>
+                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
+                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
+              </Space>
+            </Slide>)}
+            </Slider>
+            <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+            <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+          </CarouselProvider>}
+        </Await>
+      </Suspense>
+      {/* <Row gutter={[20, 30]}>
+        
+        <Suspense fallback={<Skeleton active />}>
+          <Await resolve={data.collection}>
+            {resolve => resolve.map(item => <Col key={item.id} span={12} md={6}>
+              <Space direction="vertical">
+                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                </Link>
+                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
+                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
+              </Space>
+            </Col>)}
+          </Await>
+        </Suspense>
+      </Row> */}
     </div>
+  },
+  MoreFeatures: () => {
+    const data = useLoaderData<HomePage>();
+
+    return <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+      <Title level={3}>More...</Title>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.morePages}>
+          {response => <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+            {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1' }} key={item.id}>
+              <Row gutter={[24, 0]} align="middle">
+                <Col>
+                  <Link to={item.path}>
+                    <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
+                  </Link>
+                </Col>
+                <Col flex={'auto'}>
+                  <Link to={item.path}>
+                    <Typography.Text strong>{item.title}</Typography.Text>
+                  </Link>
+                </Col>
+                <Col style={{ padding: '0 40px' }}>
+                  <RightOutlined />
+                </Col>
+              </Row>
+            </div>)
+            }
+          </Space>}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={data.bannerAds}>
+          {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
+        </Await>
+      </Suspense>
+      <Newsletter />
+    </Space>
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
-    const [modalData, setIsModalOpen] = useState<{
-      id: string,
-      title: string,
-      path: string,
-      serviceGroup: {
-        id: string;
-        name: string;
-        imageName?: string | null;
-        collection?: string;
-      }[]
-    } | null>(null);
+    const [modalData, setIsModalOpen] = useState<HomeCategoryItem | null>(null);
 
-    const showModal = (data: Page) => {
+    const showModal = (data: HomeCategoryItem) => {
       setIsModalOpen(data);
     };
 
@@ -463,11 +479,10 @@ const Home = {
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={loaderData.categories}>
               {data => <Row gutter={[20, 20]}>
-                {data.map(item => <Col key={item.id} xs={12} sm={12} md={8} lg={8} xl={8}>
-                  <div style={{ cursor: 'pointer' }} onClick={() => showModal(item)}>
+                {data.map((item, index) => <Col key={item.id} flex="auto">
+                  <div style={{ cursor: 'pointer', borderRadius: '5px', background: tilesColors[index], padding: '40px 20px', textAlign: 'center' }} onClick={() => showModal(item)}>
                     <Space direction="vertical" size={'small'}>
-                      <Image width={'100%'} preview={false} src={FALLBACK_IMG} />
-                      <Typography.Text strong>{item.title}</Typography.Text>
+                      <Typography.Text strong style={{ color: 'white' }}>{item.title}</Typography.Text>
                     </Space>
                   </div>
                 </Col>)}
@@ -478,17 +493,86 @@ const Home = {
         <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
           <Row gutter={[20, 20]}>
             {modalData?.serviceGroup.map((item, index) => <>
-              {index - 1 < 0 || item.collection !== modalData.serviceGroup[index - 1]?.collection ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>{item.collection || 'Other services'}</Title></Col> : ''}
-              <Col xs={12} sm={12} md={8} key={item.id}>
-                <Link to={modalData.path + '?category=' + item.id}>
-                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} />
-                  <div>{item.name}</div>
+
+              {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
+              {item.isCollection ? <Col xs={24} key={item.id}>
+                <Link to={item.path}>
+                  <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
+                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
+                      <Title level={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
+                      <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
+                    </div>
+                  </div>
                 </Link>
-              </Col></>)}{!modalData?.serviceGroup.length && 'Sorry, no services found under this category.'}
+              </Col> : <Col xs={12} sm={12} md={8} key={item.id}>
+                <Link to={item.path}>
+                  <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
+                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
+                    <div style={{
+                      background: 'linear-gradient(0deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
+                    }}>
+                      <Title level={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
+                    </div>
+                  </div>
+                </Link>
+              </Col>}</>)}
+            {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
           </Row>
         </Modal>
       </Col>
     </Row>
+  },
+  Highlight: () => {
+
+    return <div className="home-section-card-wrapper _bg-pastel">
+      <Row align={'middle'} gutter={[100, 30]}>
+        <Col sm={4} md={6}>
+          <Image preview={false} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+        </Col>
+        <Col sm={20} md={18}>
+          <Typography.Title level={3} style={{ color: 'white' }}>BEST IN WEDDING</Typography.Title>
+          <Typography.Title level={5} style={{ color: 'white' }}>explore all services.</Typography.Title>
+          <Link to="/collections/wedding"><Button type="primary" shape="round">Explore</Button></Link>
+        </Col>
+      </Row>
+    </div>
+  },
+  TopVendorsList: () => {
+    const data = useLoaderData<typeof loader>();
+    return <Suspense fallback={<Skeleton active />}>
+      <Await resolve={data.topVendors}>
+        {res => <Row gutter={[20, 20]}>
+          <Col span={24}><Typography.Title level={3}>Top service providers</Typography.Title></Col>
+          {res.map((category) => <Col key={category.id} xs={24} sm={24} md={6}>
+            <div className="home-section-card-wrapper">
+              <Space direction="vertical" size={'middle'}>
+                <Typography.Title level={5}>{category.name}</Typography.Title>
+                {category.vendor.map((vendor, i) => <Row key={vendor.username} gutter={[20, 20]} align={'middle'}>
+                  <Col>{i + 1}</Col>
+                  <Col>
+                    <Avatar
+                      size={{
+                        xs: 50,
+                        sm: 50,
+                        md: 50,
+                        lg: 50,
+                        xl: 50,
+                        xxl: 50,
+                      }}
+                      src={vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName
+                        : PATH.AVATAR_PLACEHOLDER}
+                    /></Col>
+                  <Col flex={'auto'}><div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><strong>{vendor.username}</strong></Link></div></Col>
+                </Row>)}
+                {!category.vendor.length && 'Sorry, no data found.'}
+                <Typography.Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Typography.Text>
+              </Space>
+            </div>
+          </Col>)}
+        </Row>}
+      </Await>
+    </Suspense>
   }
 }
 

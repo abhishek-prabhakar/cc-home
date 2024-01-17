@@ -1,4 +1,4 @@
-import { CartInput, CartItem } from "~/types";
+import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
 
@@ -6,9 +6,9 @@ const GST_PERCENTAGE = 3;
 
 export const CartService = {
     getGst: GST_PERCENTAGE,
-    calculate: function (cart: CartItem) {
+    calculate: function (cart: CartItem[]) {
         const gst = GST_PERCENTAGE;
-        const total = cart.services.reduce((sum, item) => sum + item.cost, 0);
+        const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
         const tax = (gst * total) / 100;
 
         return {
@@ -18,18 +18,18 @@ export const CartService = {
             final: total + tax
         };
     },
-    summary: function (cart: CartInput) {
-        return new Promise<CartItem | null>(function (resolve) {
-            if (!cart?.services?.length) {
-                resolve(null);
+    summary: function (cart: CartInput[]) {
+        return new Promise<CartItem[]>(async function (resolve) {
+            if (!cart?.length) {
+                resolve([]);
                 return;
             }
-
-            ServiceQuery.getVendorServices(cart.vendorServiceGroupId, cart.services.map(x => x.id).filter(x => !!x)).then(res => {
-                if (!res) {
-                    resolve(null);
-                } else {
-                    resolve({
+            let results: CartItem[] = [];
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const res = await ServiceQuery.getVendorServices(item.vendorServiceGroupId, item.services.map(x => x.id).filter(x => !!x));
+                if (res) {
+                    results.push({
                         name: res.group.name,
                         coverImg: res.group.imageName ? PATH.RESOURCE_URL + res.group.imageName : '',
                         vendorServiceGroupId: res.id,
@@ -37,17 +37,20 @@ export const CartService = {
                         vendorName: res.vendor.username,
                         vendorImg: res.vendor.profileImageName ? PATH.RESOURCE_URL + res.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
                         vendorId: res.vendor.username,
-                        date: cart.date,
-                        timeHour: cart.timeHour,
-                        duration: cart.duration,
+                        date: item.date,
+                        timeHour: item.timeHour,
+                        duration: item.duration,
                         services: [{ name: 'Base charge', cost: res.cost, id: '' }].concat(res.vendorService.map(x => ({
                             name: x.service.name,
                             cost: x.cost,
                             id: x.service.id
                         })))
-                    })
+                    });
                 }
-            });
+            };
+
+            resolve(results);
+
         });
     }
 }

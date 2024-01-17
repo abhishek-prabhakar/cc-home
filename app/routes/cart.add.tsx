@@ -1,18 +1,27 @@
 import { ActionArgs, json, redirect } from "@remix-run/node";
 import { useForm } from "react-hook-form";
 import { userCartCookie } from "~/session.server";
+import { CartInput } from "~/types";
 
 export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    let cookie = await userCartCookie.parse(cookieHeader);
+    const currentCart: CartInput[] = await userCartCookie.parse(cookieHeader) || [];
     const body = await request.formData();
-    cookie = body.get('cart');
-    console.log(cookie)
-    return redirect('/cart/checkout', {
+    let redirectUrl;
+    try {
+        const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
+        currentCart.push(newItem)
+
+        redirectUrl = new URL(body.get('redirectUrl')?.toString() || '');
+        redirectUrl.searchParams.set('cartStatus', 'true');
+    } catch (e) {
+        redirectUrl = null
+    }
+    return redirect(redirectUrl ? redirectUrl.href : '/cart/checkout', {
         headers: {
-            "Set-Cookie": await userCartCookie.serialize(cookie),
+            "Set-Cookie": await userCartCookie.serialize(currentCart),
         },
     });
 }

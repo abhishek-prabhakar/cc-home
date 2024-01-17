@@ -77,10 +77,10 @@ model VendorServiceGroup {
 model VendorPortfolio {
   id             String       @id
   vendorId       String
-  serviceGroupId String
   fileType       String
   fileName       String
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  serviceGroupId String
   serviceGroup   ServiceGroup @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
   vendor         Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
@@ -102,7 +102,6 @@ model Booking {
   id                   String             @id
   orderId              String
   userId               String
-  vendorServiceGroupId String
   status               BookingStatus
   total                Int
   tax                  Int
@@ -110,6 +109,8 @@ model Booking {
   coupon               String?
   created_at           DateTime           @default(now()) @db.Timestamp(6)
   updated_at           DateTime?          @default(now()) @db.Timestamp(6)
+  vendorServiceGroupId String
+  userNote             String?
   user                 User               @relation(fields: [userId], references: [id])
   bookingService       BookingService[]
   vendorServiceGroup   VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id])
@@ -118,7 +119,6 @@ model Booking {
 model BookingService {
   id         String        @id
   bookingId  String
-  serviceId  String
   status     BookingStatus
   date       DateTime
   timeHour   Int
@@ -127,6 +127,7 @@ model BookingService {
   cost       Int
   created_at DateTime      @default(now()) @db.Timestamp(6)
   updated_at DateTime?     @default(now()) @db.Timestamp(6)
+  serviceId  String
   booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   service    Service?      @relation(fields: [serviceId], references: [id])
 }
@@ -134,13 +135,13 @@ model BookingService {
 model VendorService {
   id                   String             @id
   vendorId             String
-  vendorServiceGroupId String
   serviceId            String
   fareMode             FareMode
   duration             Int
   cost                 Int
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt            DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  vendorServiceGroupId String
   service              Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceGroup         VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id], onDelete: Cascade)
   vendor               Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -152,18 +153,41 @@ model ServiceGroupType {
   id           String         @id
   name         String
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  keyName      String         @unique
+  description  String?
   ServiceGroup ServiceGroup[]
+}
+
+model Package {
+  id            String        @id
+  name          String
+  keyName       String        @unique
+  description   String?
+  discountType  DiscountType
+  discountValue Int
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  PackageItem   PackageItem[]
+}
+
+model PackageItem {
+  id             String       @id
+  packageId      String
+  serviceGroupId String
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  Package        Package      @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  ServiceGroup   ServiceGroup @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
 }
 
 model ServiceGroup {
   id                     String                   @id
   name                   String
-  groupTypeId            String?
   vendorTypeId           String
   imageName              String?
   description            String
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  groupTypeId            String?
+  isEstimated            Boolean                  @default(false)
   vendorType             VendorType               @relation(fields: [vendorTypeId], references: [id])
   serviceGroupType       ServiceGroupType?        @relation(fields: [groupTypeId], references: [id])
   serviceGroupItem       ServiceGroupItem[]
@@ -171,6 +195,7 @@ model ServiceGroup {
   ServiceGroupAddonGroup ServiceGroupAddonGroup[]
   VendorServiceGroup     VendorServiceGroup[]
   VendorPortfolio        VendorPortfolio[]
+  PackageItem            PackageItem[]
 
   @@map("serviceGroup")
 }
@@ -196,8 +221,8 @@ model ServiceGroupItem {
   groupId      String
   serviceId    String
   isOptional   Boolean                 @default(false)
-  addonGroupId String?
   createdAt    DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
+  addonGroupId String?
   group        ServiceGroup            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   addonGroup   ServiceGroupAddonGroup? @relation(fields: [addonGroupId], references: [id])
   service      Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
@@ -276,8 +301,8 @@ model JumbotronData {
 model WebsiteSlider {
   id          String        @id
   jumbotronId String
-  jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
   createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
 
   @@map("websiteSlider")
 }
@@ -286,8 +311,8 @@ model WebsiteBanner {
   id          String         @id
   jumbotronId String
   targetPage  BannerLocation
-  jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
 
   @@map("websiteBanner")
 }
@@ -314,6 +339,11 @@ enum BookingStatus {
 enum FareMode {
   FLAT
   HOURLY
+}
+
+enum DiscountType {
+  FLAT
+  PERCENTAGE
 }
 
 enum BannerLocation {
