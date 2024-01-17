@@ -420,21 +420,22 @@ const OnBoardPage = {
                     <Divider />
                 </Col>
                 <Col xs={24} sm={24} md={12}>
-                    <Typography.Title level={5}>Update Profile</Typography.Title>
-                    {data?.profile?.vendorType && data.profile?.username ?
-                        <Row>
-                            <Col xs={24} sm={24} md={12}>
-                                <Typography.Text strong>Profile Type: </Typography.Text>
-                                <Space>
-                                    <Typography.Text strong>{data.profile?.vendorType?.name}</Typography.Text>
-                                    <Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
-                            </Col>
-                            <Col xs={24} sm={24} md={12}>
-                                <Typography.Text strong>Public name:</Typography.Text>
-                                <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
-                                <Space><Typography.Text strong>{data.profile?.username}</Typography.Text><Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
-                            </Col>
-                        </Row> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
+                    <Card size="small" title="Confirm your identity">
+                        {data?.profile?.vendorType && data.profile?.username ?
+                            <Row>
+                                <Col xs={24} sm={24} md={12}>
+                                    <div><Typography.Text strong>Profile Type: </Typography.Text></div>
+                                    <Space>
+                                        <Typography.Text strong>{data.profile?.vendorType?.name}</Typography.Text>
+                                        <Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
+                                </Col>
+                                <Col xs={24} sm={24} md={12}>
+                                    <Typography.Text strong>Public name:</Typography.Text>
+                                    <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
+                                    <Space><Typography.Text strong>{data.profile?.username}</Typography.Text><Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
+                                </Col>
+                            </Row> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
+                    </Card>
                 </Col>
                 <Col xs={24}></Col>
                 <Col xs={24} sm={24} md={12}>
