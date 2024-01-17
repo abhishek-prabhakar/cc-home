@@ -420,7 +420,7 @@ const OnBoardPage = {
                     <Divider />
                 </Col>
                 <Col xs={24} sm={24} md={12}>
-                    <Card size="small" title="Confirm your identity">
+                    <Card size="small" title="Update Profile">
                         {data?.profile?.vendorType && data.profile?.username ?
                             <Row>
                                 <Col xs={24} sm={24} md={12}>
