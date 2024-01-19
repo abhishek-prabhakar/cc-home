@@ -10,6 +10,7 @@ import {
   MenuProps,
   Popover,
   Row,
+  Skeleton,
   Space,
   Typography,
 } from "antd";
@@ -90,7 +91,7 @@ const AppNavigation = {
     }
 
     return (
-      <Suspense>
+      <Suspense fallback={<Skeleton active />}>
         <Await resolve={data.pages}>
           {(navList) => (
             <Row justify={"center"} gutter={[20, 0]}>
@@ -154,7 +155,7 @@ const AppNavigation = {
           onClose={() => toggleDrawer()}
           open={openDrawer}
         >
-          <Suspense>
+          <Suspense fallback={<Skeleton active />}>
             <Await resolve={data.pages}>
               {(pageData) => (
                 <Menu
