@@ -81,8 +81,8 @@ const Onboard = {
                                 <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
                             </Col>
                             <Col span={24}>
-                                <Typography.Title level={5}>Portfolio</Typography.Title>
-                                <FileUploader id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
+                                <Typography.Title level={5}>Portfolio*</Typography.Title>
+                                <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
                                 <br />
                                 <Space style={{ marginTop: '10px' }}>
                                     {

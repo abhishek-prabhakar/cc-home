@@ -4,7 +4,7 @@ import { Button } from "antd";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { PATH } from "~/path.data";
 
-type DefaultProps = { id?: string, label?: string, onUpload?: (file: string) => void };
+type DefaultProps = { id?: string, label?: string, buttonType?: 'primary' | 'default', onUpload?: (file: string) => void };
 
 
 const Uploader = (props: DefaultProps) => {
@@ -34,7 +34,7 @@ const Uploader = (props: DefaultProps) => {
     })
 
     return <>
-        <Button loading={isBusy} type="primary" disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
+        <Button loading={isBusy} type={props.buttonType} disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
     </>;
 }
 
@@ -55,6 +55,6 @@ export default (props: DefaultProps & { path?: string }) => {
         accept="image/*"
 
     >
-        <Uploader id={props.id} label={props.label} onUpload={props.onUpload} />
+        <Uploader id={props.id} buttonType={props.buttonType} label={props.label} onUpload={props.onUpload} />
     </Uploady> : '...'
 }
