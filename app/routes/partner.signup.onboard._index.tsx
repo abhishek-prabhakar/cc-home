@@ -83,7 +83,7 @@ const Onboard = {
                             <Col span={24}>
                                 <Typography.Title level={5}>Portfolio</Typography.Title>
                                 <FileUploader id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
-
+                                <br />
                                 <Space style={{ marginTop: '10px' }}>
                                     {
                                         files.map(img => <div key={img}>
