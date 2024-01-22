@@ -1,6 +1,6 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FareMode } from "@prisma/client";
-import { ActionArgs, FormData, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -495,15 +495,16 @@ const OnBoardPage = {
     },
     Documents: ({ data }: { data: LoaderData }) => {
         const fetcher = useFetcher();
-        const [fileType, setFileType] = useState<string>();
+        const [fileType, setFileType] = useState<string | null>();
 
         function uploadDocs(file: string) {
             const form = new FormData();
             form.set('action', STEPS.DOCUMENTS);
-            form.set('fileId', fileType || '');
+            form.set('fileType', fileType || '');
             form.set('fileName', file);
 
-            fetcher.submit(form, { method: "POST" })
+            fetcher.submit(form, { method: "POST" });
+            setFileType(null);
         }
 
         return <>
@@ -511,12 +512,12 @@ const OnBoardPage = {
                 <Card size="small" title="Confirm your identity">
                     <Row gutter={[40, 40]}>
                         <Col span={5}>
-                            <Select onChange={v => setFileType(v)}>
+                            <Select style={{ width: '100%' }} onChange={v => setFileType(v)}>
                                 {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
                             </Select>
                         </Col>
                         <Col>
-                            <FileUploader id={fileType} label="Choose file" onUpload={v => uploadDocs(v)} />
+                            <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
                         </Col>
                         <Col>
                             {fetcher.state === 'submitting' && <Spin />}

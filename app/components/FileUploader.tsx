@@ -1,5 +1,5 @@
 import { Form } from "@remix-run/react";
-import Uploady, { useUploady, useItemFinishListener, useItemProgressListener, FILE_STATES } from "@rpldy/uploady";
+import Uploady, { useUploady, useItemFinishListener, useItemProgressListener, useItemErrorListener, FILE_STATES } from "@rpldy/uploady";
 import { Button } from "antd";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { PATH } from "~/path.data";
@@ -27,6 +27,10 @@ const Uploader = (props: DefaultProps) => {
 
     useItemProgressListener(item => {
         setBusy(item.state === FILE_STATES.UPLOADING);
+    });
+
+    useItemErrorListener(item => {
+        setBusy(false);
     })
 
     return <>
