@@ -16,7 +16,7 @@ export async function action(args: ActionArgs) {
     const actionType = form.get('actionType')?.toString();
     const portfolio = form.getAll('portfolio');
     const socialUrl = form.get('socialUrl')?.toString();
-    console.log(actionType)
+
     try {
         switch (actionType) {
             case 'signup':
@@ -34,7 +34,7 @@ export async function action(args: ActionArgs) {
                         }
                     });
 
-                    db.vendorPortfolio.createMany({
+                    await db.vendorPortfolio.createMany({
                         data: portfolio?.map(x => ({
                             id: generateUuid(),
                             vendorId: data.id,
