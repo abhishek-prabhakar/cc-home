@@ -50,6 +50,7 @@ model Vendor {
   primaryColor       String               @default("#4caf50")
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt          DateTime?            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  socialUrl          String?
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])
@@ -75,14 +76,14 @@ model VendorServiceGroup {
 }
 
 model VendorPortfolio {
-  id             String       @id
+  id             String        @id
   vendorId       String
   fileType       String
   fileName       String
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
-  serviceGroupId String
-  serviceGroup   ServiceGroup @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
-  vendor         Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  serviceGroupId String?
+  serviceGroup   ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  vendor         Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@map("vendorPortfolio")
 }

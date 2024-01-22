@@ -1,6 +1,6 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FareMode } from "@prisma/client";
-import { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, FormData, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -242,7 +242,7 @@ export async function action(args: ActionArgs) {
             return true;
             break;
         case STEPS.DOCUMENTS:
-            const fileName = formData.get('fileId')?.toString();
+            const fileName = formData.get('fileName')?.toString();
             const fileType = formData.get('fileType')?.toString();
             if (fileName && fileType) {
                 await db.vendorFiles.create({
@@ -442,54 +442,7 @@ const OnBoardPage = {
                     <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} />
                 </Col>
                 <Col xs={24} sm={24} md={12}>
-                    <fetcher.Form method="post" action="">
-                        <Card size="small" title="Confirm your identity">
-                            <Row gutter={[40, 40]}>
-                                <Col>
-                                    <select name="fileType">
-                                        {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
-                                    </select>
-                                </Col>
-                                <Col>
-                                    <FileUploader id={data.profile.id} label="Choose file" />
-                                </Col>
-                                <Col>
-                                    {fetcher.state === 'submitting' && <Spin />}
-                                </Col>
-                            </Row>
-                        </Card>
-                    </fetcher.Form>
-
-                    <Table dataSource={data.files}
-                        columns={[
-                            {
-                                title: 'File Type',
-                                dataIndex: 'fileType',
-                                key: 'fileType',
-                            },
-                            {
-                                title: 'File Name',
-                                dataIndex: 'fileName',
-                                key: 'fileName',
-                            },
-                        ]} />
-
-                    {/* <Table dataSource={data.files}
-                    columns={[
-                        {
-                            title: 'FIle Type',
-                            key: 'fileType',
-                        },
-                        {
-                            title: 'FIle Type',
-                            key: 'fileName',
-                        },
-                    ]}>
-                    {data.files.map(col => <Table.ColumnGroup>
-                        <Table.Column><div>{col.fileType}</div></Table.Column>
-                        <Table.Column>{col.fileName}</Table.Column>
-                        </Table.ColumnGroup>)}
-                        </Table> */}
+                    <OnBoardPage.Documents data={data} />
                 </Col>
             </Row>
             <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} >
@@ -539,6 +492,70 @@ const OnBoardPage = {
                 <OnBoardPage.UpdateGroupServiceCost item={item} />
             </Collapse.Panel>)}
         </Collapse> : 'Please add services from above list to get started.'
+    },
+    Documents: ({ data }: { data: LoaderData }) => {
+        const fetcher = useFetcher();
+        const [fileType, setFileType] = useState<string>();
+
+        function uploadDocs(file: string) {
+            const form = new FormData();
+            form.set('action', STEPS.DOCUMENTS);
+            form.set('fileId', fileType || '');
+            form.set('fileName', file);
+
+            fetcher.submit(form, { method: "POST" })
+        }
+
+        return <>
+            <fetcher.Form method="post" action="">
+                <Card size="small" title="Confirm your identity">
+                    <Row gutter={[40, 40]}>
+                        <Col span={5}>
+                            <Select onChange={v => setFileType(v)}>
+                                {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
+                            </Select>
+                        </Col>
+                        <Col>
+                            <FileUploader id={fileType} label="Choose file" onUpload={v => uploadDocs(v)} />
+                        </Col>
+                        <Col>
+                            {fetcher.state === 'submitting' && <Spin />}
+                        </Col>
+                    </Row>
+                </Card>
+            </fetcher.Form>
+
+            <Table dataSource={data.files}
+                columns={[
+                    {
+                        title: 'File Type',
+                        dataIndex: 'fileType',
+                        key: 'fileType',
+                    },
+                    {
+                        title: 'File Name',
+                        dataIndex: 'fileName',
+                        key: 'fileName',
+                    },
+                ]} />
+
+            {/* <Table dataSource={data.files}
+                    columns={[
+                        {
+                            title: 'FIle Type',
+                            key: 'fileType',
+                        },
+                        {
+                            title: 'FIle Type',
+                            key: 'fileName',
+                        },
+                    ]}>
+                    {data.files.map(col => <Table.ColumnGroup>
+                        <Table.Column><div>{col.fileType}</div></Table.Column>
+                        <Table.Column>{col.fileName}</Table.Column>
+                        </Table.ColumnGroup>)}
+                        </Table> */}
+        </>;
     },
     UpdateGroupServiceCost: ({ item, addService, activeType, onClose }: { item: VendorServiceGroup, addService?: boolean, activeType?: string, onClose?: Function }) => {
         const fetcher = useFetcher();

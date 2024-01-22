@@ -1,7 +1,10 @@
 import { UserSource } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
 import { Form, useLocation } from "@remix-run/react";
-import { Button, Col, Input, Row, Typography } from "antd";
+import { Button, Col, Image, Input, Row, Space, Typography } from "antd";
+import { useState } from "react";
+import FileUploader from "~/components/FileUploader";
+import { PATH } from "~/path.data";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
@@ -10,23 +13,39 @@ export async function action(args: ActionArgs) {
     const fullName = form.get('fullName')?.toString();
     const email = form.get('email')?.toString();
     const mobileNumber = form.get('phone')?.toString();
-
-
+    const actionType = form.get('actionType')?.toString();
+    const portfolio = form.getAll('portfolio');
+    const socialUrl = form.get('socialUrl')?.toString();
+    console.log(actionType)
     try {
-        if (fullName && email && mobileNumber) {
-            const data = await db.vendor.create({
-                data: {
-                    id: generateUuid(),
-                    name: fullName,
-                    mobileNumber,
-                    email,
-                    username: 'profile' + Date.now(),
-                    source: UserSource.MANUAL,
-                    isActive: false
-                }
-            });
+        switch (actionType) {
+            case 'signup':
+                if (fullName && email && mobileNumber) {
+                    const data = await db.vendor.create({
+                        data: {
+                            id: generateUuid(),
+                            name: fullName,
+                            mobileNumber,
+                            email,
+                            username: 'profile' + Date.now(),
+                            source: UserSource.MANUAL,
+                            isActive: false,
+                            socialUrl
+                        }
+                    });
 
-            return redirect('/partner/signup/onboard/' + data.id)
+                    db.vendorPortfolio.createMany({
+                        data: portfolio?.map(x => ({
+                            id: generateUuid(),
+                            vendorId: data.id,
+                            fileName: x.toString(),
+                            fileType: 'img',
+                        }))
+                    })
+
+                    return redirect('/partner/signup/onboard/' + data.id)
+                }
+                break;
         }
     } catch (e) { }
 
@@ -37,6 +56,11 @@ export async function action(args: ActionArgs) {
 const Onboard = {
     Index: () => {
         const location = useLocation();
+        const [files, setFiles] = useState<string[]>([]);
+
+        function previewFile(file: string) {
+            setFiles(files.concat(file));
+        }
 
         return <div className="container">
             <Form method="post">
@@ -57,7 +81,24 @@ const Onboard = {
                                 <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
                             </Col>
                             <Col span={24}>
-                                <Button type="primary" loading={location.state === 'submitting'} htmlType="submit">Sign up as vendor</Button>
+                                <Typography.Title level={5}>Portfolio</Typography.Title>
+                                <FileUploader id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
+
+                                <Space style={{ marginTop: '10px' }}>
+                                    {
+                                        files.map(img => <div key={img}>
+                                            <Image src={PATH.RESOURCE_URL + img} width={100} />
+                                            <input type="hidden" name="portfolio" value={img} />
+                                        </div>)
+                                    }
+                                </Space>
+                            </Col>
+                            <Col span={24}>
+                                <Typography.Title level={5}>Social media url</Typography.Title>
+                                <Input name="socialUrl" type="url" required />
+                            </Col>
+                            <Col span={24}>
+                                <Button type="primary" loading={location.state === 'submitting'} htmlType="submit" name="actionType" value="signup">Sign up as vendor</Button>
                             </Col>
                         </Row>
                     </Col>
