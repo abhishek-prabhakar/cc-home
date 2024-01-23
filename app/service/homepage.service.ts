@@ -132,7 +132,49 @@ function getCategoryCollection() {
 }
 
 
+function topVendorsByCategory() {
+    return new Promise<{
+        id: string;
+        name: string;
+        keyName: string;
+        vendor: {
+            id: string;
+            name: string;
+            username: string;
+            profileImageName: string | null;
+            primaryColor: string;
+        }[];
+    }[]>(async function (resolve) {
+        const r = await db.vendorType.findMany({
+            take: 4,
+            select: {
+                id: true,
+                name: true,
+                keyName: true,
+                vendor: {
+                    where: {
+                        isActive: true
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        profileImageName: true,
+                        primaryColor: true,
+                        username: true
+                    },
+                    take: 4
+                }
+            }
+        });
+
+        resolve(r)
+    });
+
+}
+
+
 export {
     getJumbotronList,
-    getCategoryCollection
+    getCategoryCollection,
+    topVendorsByCategory
 }

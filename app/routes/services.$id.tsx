@@ -213,7 +213,7 @@ export async function loader({
                 },
                 where: {
                   serviceGroupId: {
-                    in: [],
+                    in: serviceGrpIds,
                   },
                 },
               },

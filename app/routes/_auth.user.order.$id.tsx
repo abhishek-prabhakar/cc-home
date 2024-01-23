@@ -2,8 +2,8 @@ import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Modal, Row, Space, Tag, Timeline, Tooltip, Typography } from "antd";
-import { useState } from "react";
+import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Modal, Row, Skeleton, Space, Tag, Timeline, Tooltip, Typography } from "antd";
+import { Suspense, useState } from "react";
 import { PATH } from "~/path.data";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -259,90 +259,92 @@ const UserOrderHome = {
 
         return <Row>
             <Col span={24}>
-                <Await resolve={data.data}>
-                    {orderData => <Card>
-                        <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
-                            <Col>
-                                <Space size={'middle'}>
-                                    <div>
-                                        <Title level={5}>Order ID: {orderData.orderId}</Title>
-                                        {orderData.serviceGroup.name}
-                                    </div>
-                                    <Tag color={StatusMarker.get(orderData.status)}>{orderData.status}</Tag>
-                                </Space>
-                            </Col>
-                            <Col>
-                                {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED && <Dropdown menu={{ items: bookingOptionsList, onClick: onOptionMenuClick }} placement="bottomRight">
-                                    <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
-                                        Manage
-                                    </Button>
-                                </Dropdown>
-                                }
-                            </Col>
-                        </Row>
-                        <Divider />
-                        <div>
-                            <Timeline
-                                pending={orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED ? 'Waiting for updates...' : null}
-                                items={[
-                                    {
-                                        children: <div>
-                                            Order Placed
-                                            <br />
-                                            <Text type="secondary">{DateFormatter.short(orderData.date)}</Text>
-                                        </div>,
-                                    },
-                                    ...orderStatusCheckList.filter(x => x.filter?.includes(orderData.status))
-                                ]}
-                            />
-                        </div>
-                        <Divider />
-                        <List>
-                            <List.Item actions={[<Tooltip title={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
-                                <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
-                                    Call
-                                </Button>
-                            </Tooltip>]}>
-                                <List.Item.Meta
-                                    avatar={<Link to={'/profile/' + orderData.vendor.username}><Avatar src={orderData.vendor.profileImg} /></Link>}
-                                    title={<Link to={'/profile/' + orderData.vendor.username}>{orderData.vendor.name}</Link>}
-                                    description={
-                                        <Space direction="vertical" size={'small'}>
-                                            <div>{orderData.vendor.jobType}</div>
-                                        </Space>
-                                    }
-                                />
-                            </List.Item>
-                        </List>
-                        <Divider />
-                        <Typography.Text strong underline>Services</Typography.Text>
-                        <List
-                            dataSource={orderData.services}
-                            renderItem={(item) => (
-                                <List.Item key={item.id}>
-                                    <div>
-                                        <Typography.Title level={5}>{item.name}</Typography.Title>
+                <Suspense fallback={<Skeleton active />}>
+                    <Await resolve={data.data}>
+                        {orderData => <Card>
+                            <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
+                                <Col>
+                                    <Space size={'middle'}>
                                         <div>
-                                            Scheduled on {DateFormatter.short(item.date)}
-                                            <br /> Time: {item.timeHour} ({item.duration} hours)
+                                            <Title level={5}>Order ID: {orderData.orderId}</Title>
+                                            {orderData.serviceGroup.name}
                                         </div>
-                                        <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
-                                    </div>
+                                        <Tag color={StatusMarker.get(orderData.status)}>{orderData.status}</Tag>
+                                    </Space>
+                                </Col>
+                                <Col>
+                                    {orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED && <Dropdown menu={{ items: bookingOptionsList, onClick: onOptionMenuClick }} placement="bottomRight">
+                                        <Button type="default" shape="round" icon={<EditOutlined />} size={'middle'}>
+                                            Manage
+                                        </Button>
+                                    </Dropdown>
+                                    }
+                                </Col>
+                            </Row>
+                            <Divider />
+                            <div>
+                                <Timeline
+                                    pending={orderData.status !== BookingStatus.CANCELLED && orderData.status !== BookingStatus.REJECTED ? 'Waiting for updates...' : null}
+                                    items={[
+                                        {
+                                            children: <div>
+                                                Order Placed
+                                                <br />
+                                                <Text type="secondary">{DateFormatter.short(orderData.date)}</Text>
+                                            </div>,
+                                        },
+                                        ...orderStatusCheckList.filter(x => x.filter?.includes(orderData.status))
+                                    ]}
+                                />
+                            </div>
+                            <Divider />
+                            <List>
+                                <List.Item actions={[<Tooltip title={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
+                                    <Button type="primary" shape="round" icon={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
+                                        Call
+                                    </Button>
+                                </Tooltip>]}>
+                                    <List.Item.Meta
+                                        avatar={<Link to={'/profile/' + orderData.vendor.username}><Avatar src={orderData.vendor.profileImg} /></Link>}
+                                        title={<Link to={'/profile/' + orderData.vendor.username}>{orderData.vendor.name}</Link>}
+                                        description={
+                                            <Space direction="vertical" size={'small'}>
+                                                <div>{orderData.vendor.jobType}</div>
+                                            </Space>
+                                        }
+                                    />
                                 </List.Item>
-                            )}
-                        />
-                        <Modal open={showModal} onCancel={() => setModal(false)} title="Confirm cancellation" footer={null}>
-                            <Form method="post" action="#">
-                                <Typography.Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Typography.Text>
-                                <input type="hidden" value={orderData.id} name="id" />
-                                <Row justify={'end'} style={{ marginTop: '40px' }}>
-                                    <Col><Button htmlType="submit" danger name="action" value={'cancel'} onClick={() => setModal(false)}>Confirm</Button></Col>
-                                </Row>
-                            </Form>
-                        </Modal>
-                    </Card>
-                    }
-                </Await>
+                            </List>
+                            <Divider />
+                            <Typography.Text strong underline>Services</Typography.Text>
+                            <List
+                                dataSource={orderData.services}
+                                renderItem={(item) => (
+                                    <List.Item key={item.id}>
+                                        <div>
+                                            <Typography.Title level={5}>{item.name}</Typography.Title>
+                                            <div>
+                                                Scheduled on {DateFormatter.short(item.date)}
+                                                <br /> Time: {item.timeHour} ({item.duration} hours)
+                                            </div>
+                                            <Tag color={StatusMarker.get(item.status)}>{item.status}</Tag>
+                                        </div>
+                                    </List.Item>
+                                )}
+                            />
+                            <Modal open={showModal} onCancel={() => setModal(false)} title="Confirm cancellation" footer={null}>
+                                <Form method="post" action="#">
+                                    <Typography.Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Typography.Text>
+                                    <input type="hidden" value={orderData.id} name="id" />
+                                    <Row justify={'end'} style={{ marginTop: '40px' }}>
+                                        <Col><Button htmlType="submit" danger name="action" value={'cancel'} onClick={() => setModal(false)}>Confirm</Button></Col>
+                                    </Row>
+                                </Form>
+                            </Modal>
+                        </Card>
+                        }
+                    </Await>
+                </Suspense>
             </Col>
         </Row>
     }

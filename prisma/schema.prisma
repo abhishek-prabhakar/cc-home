@@ -50,6 +50,7 @@ model Vendor {
   primaryColor       String               @default("#4caf50")
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt          DateTime?            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  socialUrl          String?
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])
@@ -75,14 +76,14 @@ model VendorServiceGroup {
 }
 
 model VendorPortfolio {
-  id             String       @id
+  id             String        @id
   vendorId       String
   fileType       String
   fileName       String
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
-  serviceGroupId String
-  serviceGroup   ServiceGroup @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
-  vendor         Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  serviceGroupId String?
+  serviceGroup   ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  vendor         Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@map("vendorPortfolio")
 }
@@ -110,6 +111,7 @@ model Booking {
   created_at           DateTime           @default(now()) @db.Timestamp(6)
   updated_at           DateTime?          @default(now()) @db.Timestamp(6)
   vendorServiceGroupId String
+  userNote             String?
   user                 User               @relation(fields: [userId], references: [id])
   bookingService       BookingService[]
   vendorServiceGroup   VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id])
@@ -153,7 +155,28 @@ model ServiceGroupType {
   name         String
   createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
   keyName      String         @unique
+  description  String?
   ServiceGroup ServiceGroup[]
+}
+
+model Package {
+  id            String        @id
+  name          String
+  keyName       String        @unique
+  description   String?
+  discountType  DiscountType
+  discountValue Int
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  PackageItem   PackageItem[]
+}
+
+model PackageItem {
+  id             String       @id
+  packageId      String
+  serviceGroupId String
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  Package        Package      @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  ServiceGroup   ServiceGroup @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
 }
 
 model ServiceGroup {
@@ -165,6 +188,7 @@ model ServiceGroup {
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   groupTypeId            String?
+  isEstimated            Boolean                  @default(false)
   vendorType             VendorType               @relation(fields: [vendorTypeId], references: [id])
   serviceGroupType       ServiceGroupType?        @relation(fields: [groupTypeId], references: [id])
   serviceGroupItem       ServiceGroupItem[]
@@ -172,6 +196,7 @@ model ServiceGroup {
   ServiceGroupAddonGroup ServiceGroupAddonGroup[]
   VendorServiceGroup     VendorServiceGroup[]
   VendorPortfolio        VendorPortfolio[]
+  PackageItem            PackageItem[]
 
   @@map("serviceGroup")
 }
@@ -315,6 +340,11 @@ enum BookingStatus {
 enum FareMode {
   FLAT
   HOURLY
+}
+
+enum DiscountType {
+  FLAT
+  PERCENTAGE
 }
 
 enum BannerLocation {

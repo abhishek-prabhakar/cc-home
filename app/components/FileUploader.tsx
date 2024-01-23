@@ -1,12 +1,15 @@
 import { Form } from "@remix-run/react";
-import Uploady, { useUploady, useItemFinishListener } from "@rpldy/uploady";
+import Uploady, { useUploady, useItemFinishListener, useItemProgressListener, useItemErrorListener, FILE_STATES } from "@rpldy/uploady";
 import { Button } from "antd";
 import { useRef, useCallback, useEffect, useState } from "react";
+import { PATH } from "~/path.data";
 
-const Uploader = (props: { id?: string, label?: string }) => {
-    const { showFileUpload } = useUploady();
-    const formButton = useRef<any>(null);
-    const formInput = useRef<any>(null);
+type DefaultProps = { id?: string, label?: string, buttonType?: 'primary' | 'default', onUpload?: (file: string) => void };
+
+
+const Uploader = (props: DefaultProps) => {
+    const { showFileUpload, } = useUploady();
+    const [isBusy, setBusy] = useState(false);
 
     const onClick = useCallback(() => {
         showFileUpload();
@@ -15,22 +18,28 @@ const Uploader = (props: { id?: string, label?: string }) => {
     useItemFinishListener((item, options) => {
         const data = item.uploadResponse.data;
         if (data) {
-            formInput.current.value = data.fileName;
-            formButton.current.click();
+            if (props?.onUpload) {
+                props.onUpload(data.fileName);
+            }
         }
+        setBusy(false);
     });
 
+    useItemProgressListener(item => {
+        setBusy(item.state === FILE_STATES.UPLOADING);
+    });
+
+    useItemErrorListener(item => {
+        setBusy(false);
+    })
+
     return <>
-        <Button type="primary" htmlType="submit" disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
-        <div style={{ display: 'none' }}>
-            <input type="hidden" name="fileId" ref={formInput} />
-            <button type="submit" name="action" value="DOCUMENTS" ref={formButton}>save</button>
-        </div>
+        <Button loading={isBusy} type={props.buttonType} disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
     </>;
 }
 
 
-export default (props: { id?: string, label?: string }) => {
+export default (props: DefaultProps & { path?: string }) => {
     const [pageReady, setReady] = useState(false);
     useEffect(() => {
         setReady(true);
@@ -38,14 +47,14 @@ export default (props: { id?: string, label?: string }) => {
     return pageReady ? <Uploady
         inputFieldName="image"
         destination={{
-            url: "https://celebria.makewithabhishek.com/upload/",
-            // url: "http://localhost:3003/upload/",
+            url: props.path || PATH.FILE_UPLOAD,
             headers: {
                 'Access-Control-Allow-Origin': '*'
             },
         }}
         accept="image/*"
+
     >
-        <Uploader id={props.id} label={props.label} />
+        <Uploader id={props.id} buttonType={props.buttonType} label={props.label} onUpload={props.onUpload} />
     </Uploady> : '...'
 }

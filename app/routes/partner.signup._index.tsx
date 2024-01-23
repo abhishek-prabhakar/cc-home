@@ -97,7 +97,7 @@ const PartnerSignup = {
                 <Space direction="vertical" align="center">
                     <Typography.Title level={1} style={{ color: 'white' }}>Earn upto 3 times your current income and change your life.</Typography.Title>
                     <Typography.Title level={3}>
-                        Become a part of a community with more than 50,000 service professionals
+                        Become a part of our fast growing community
                     </Typography.Title>
                     <br /><br />
                     <a href="#signup-form">
@@ -133,8 +133,7 @@ const PartnerSignup = {
                 <div style={{ padding: '50px 0' }}>
                     <Typography.Title level={2}> Lorem ipsum dolor sit amet</Typography.Title>
                     <Typography.Text type="secondary">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        Celebria Collective is more than just a platform; it's a launchpad for photographers, makeup artists, videographers, and fashion designers looking to scale their business and amplify their artistic influence. Ready to elevate your craft and take your business to the next level?
                     </Typography.Text>
                 </div>
             </Col>

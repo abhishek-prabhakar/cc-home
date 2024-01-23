@@ -29,12 +29,14 @@ import store from './store/store';
 import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
 import Routes from "./routes.data";
+import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles }, { rel: "stylesheet", href: cssTransitions }, { rel: "stylesheet", href: antdStyles },
   { rel: "stylesheet", href: "https://cdnjs.cloudflare.com/ajax/libs/antd/4.4.3/antd.css" },
-  { rel: 'stylesheet', href: carouselStyles }
+  { rel: 'stylesheet', href: carouselStyles },
+  { rel: 'stylesheet', href: CarouselSliderStyles }
 ];
 
 

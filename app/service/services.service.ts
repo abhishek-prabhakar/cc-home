@@ -56,6 +56,9 @@ export const ServiceQuery = {
                 id: true,
                 name: true,
                 serviceGroup: {
+                    orderBy: {
+                        name: 'asc'
+                    },
                     select: {
                         id: true,
                         name: true,
