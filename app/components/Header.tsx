@@ -102,7 +102,7 @@ export function Header({ user }: { user?: User | null }) {
                 </Row>
             </div>
         </div>
-        <Row>
+        {/* <Row>
             <Col span={0} md={24} style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '0px 40px' }} >
                 <Row justify={'center'}>
                     <Col>
@@ -110,6 +110,6 @@ export function Header({ user }: { user?: User | null }) {
                     </Col>
                 </Row>
             </Col>
-        </Row>
+        </Row> */}
     </>
 }
