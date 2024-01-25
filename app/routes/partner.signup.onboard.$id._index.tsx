@@ -223,7 +223,6 @@ export async function action(args: ActionArgs) {
                         vendorServiceGroupId: vendorGroupId
                     }
                 });
-
                 serviceIds.forEach(async (data, index) => {
                     await db.vendorService.create({
                         data: {
@@ -604,8 +603,8 @@ const OnBoardPage = {
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
                         onChange={v => setEnabledList(service.service.id, v.target.checked)}
-                    /> : <input type="hidden" name="serviceId"
-                        value={service.service.id} />}
+                    /> : [<input type="hidden" name="serviceId"
+                        value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
                 </Col>
                 <Col span={22}>
                     <b>{service.addonGroup?.name ? service.addonGroup?.name + ' - ' : ''}{service.service.name}</b>
@@ -613,17 +612,17 @@ const OnBoardPage = {
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
                     <Row gutter={[10, 10]} align={'middle'}>
-                        <Col span={8}><input type="hidden" value={service.service.fareMode} name="fareMode" />
+                        <Col span={8}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
                             {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
                             ]}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) && service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                            {enabledIds.includes(service.service.id) ? service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} /> : ''}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />] : <input type="hidden" name="cost" value={0} />}
+                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Cost</Typography.Text></div>,
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />]}
                         </Col>
                     </Row>
                 </Col>
