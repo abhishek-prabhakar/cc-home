@@ -674,14 +674,14 @@ const OnBoardPage = {
             <Col>
                 <Space direction="vertical" style={{ width: '100%' }}>
                     <Typography.Text strong>Public name:</Typography.Text>
-                    <Select style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
+                    <Select disabled={!data?.profile.usernameSuggestion} style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
                         {data?.profile.usernameSuggestion?.split(',').map((item) => <Select.Option key={item} value={item}>{item}</Select.Option>)}
                     </Select>
                     <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
                 </Space>
             </Col>
             <Col span={24}>
-                <Button type="primary" onClick={saveForm}>Save Changes</Button>
+                <Button type="primary" onClick={saveForm}>Save and Continue</Button>
             </Col>
         </Row>
     }

@@ -6,6 +6,7 @@ import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
 import { db } from "~/utils/database";
+import usernameTransformer from "~/utils/username.transformer";
 import generateUuid from "~/utils/uuid.generator";
 
 export async function action(args: ActionArgs) {
@@ -21,13 +22,33 @@ export async function action(args: ActionArgs) {
         switch (actionType) {
             case 'signup':
                 if (fullName && email && mobileNumber) {
+                    let usernameAccepted = true;
+                    const username = usernameTransformer(fullName);
+                    let newUsername = username;
+                    let usernameSeq = 0;
+                    do {
+                        const count = await db.vendor.count({
+                            where: {
+                                username: newUsername
+                            }
+                        });
+                        if (count > 0) {
+                            usernameAccepted = false;
+                            usernameSeq++;
+                            newUsername = username + usernameSeq;
+                        } else {
+                            usernameAccepted = true;
+                        }
+                    }
+                    while (!usernameAccepted);
+
                     const data = await db.vendor.create({
                         data: {
                             id: generateUuid(),
                             name: fullName,
                             mobileNumber,
                             email,
-                            username: 'profile' + Date.now(),
+                            username: newUsername,
                             source: UserSource.MANUAL,
                             isActive: false,
                             socialUrl
