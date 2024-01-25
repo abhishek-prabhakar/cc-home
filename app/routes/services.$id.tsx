@@ -167,7 +167,6 @@ export async function loader({
       })
       .then((res) => {
         const serviceGrpIds = res.serviceGroup.map((x) => x.id);
-
         forkJoin({
           count: db.vendor.count({
             where: {
@@ -213,9 +212,10 @@ export async function loader({
                 },
                 where: {
                   serviceGroupId: {
-                    in: serviceGrpIds,
+                    in: categoryIds ? serviceGrpIds : undefined,
                   },
                 },
+                take: 4
               },
             },
             where: {
