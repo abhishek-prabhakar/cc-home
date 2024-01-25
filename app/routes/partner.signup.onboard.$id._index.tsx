@@ -439,10 +439,10 @@ const OnBoardPage = {
                 </Col>
                 <Col xs={24}></Col>
                 <Col xs={24} sm={24} md={12}>
-                    <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} />
+                    {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} /> : ''}
                 </Col>
                 <Col xs={24} sm={24} md={12}>
-                    <OnBoardPage.Documents data={data} />
+                    {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
                 </Col>
             </Row>
             <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} >
@@ -539,6 +539,10 @@ const OnBoardPage = {
                         key: 'fileName',
                     },
                 ]} />
+            <Divider />
+            <Row justify={'end'}>
+                <Col><Link to="success"><Button type="primary" disabled={!data.files.length}>Contiue</Button></Link></Col>
+            </Row>
 
             {/* <Table dataSource={data.files}
                     columns={[
