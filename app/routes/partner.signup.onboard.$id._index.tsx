@@ -172,7 +172,6 @@ export async function action(args: ActionArgs) {
                     }
                 }
             });
-
             if (groupId && groupCost) {
                 const serviceIds = formData.getAll('serviceId');
                 const durations = formData.getAll('duration');
@@ -479,7 +478,7 @@ const OnBoardPage = {
                     <OnBoardPage.CostSection />
                 </Space>
             </Card>,
-            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} onCancel={() => setServiceDialogData(null)} >
+            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} destroyOnClose={true} onCancel={() => setServiceDialogData(null)} >
                 {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeType={activeType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
             </Modal>
         ]
