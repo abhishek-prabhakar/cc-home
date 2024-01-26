@@ -1,6 +1,6 @@
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Col, Divider, Image, Row, Skeleton, Typography } from "antd";
+import { Col, Divider, Image, Row, Skeleton, Tabs, Typography } from "antd";
 import { Suspense } from "react";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
@@ -32,26 +32,30 @@ const CollectionsPage = {
         return <div>
             <Suspense fallback={<Skeleton active />}>
                 <Await resolve={data.results}>
-                    {result => result.map(item => <Row key={item.keyName} gutter={[40, 40]}>
-                        <Col span={24}>
-                            <Typography.Title level={3}>{item.name}</Typography.Title>
-                        </Col>
-                        {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                            <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} fallback={PATH.FALLBACK_IMG} /></Link>
-                            <div style={{ paddingBottom: '20px' }}></div>
-                            <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}>
-                                <Typography.Title level={5}>{service.name}</Typography.Title>
-                            </Link>
-                            <ul style={{ paddingLeft: '14px' }}>
-                                {service.serviceGroupItem.map((description, key) => <li key={'d-' + key}>
-                                    <Typography.Text>Includes {description.service.name}.</Typography.Text>
-                                </li>)}
-                            </ul>
-                        </Col>)}
-                        <Col span={24}>
-                            <Divider />
-                        </Col>
-                    </Row>)
+                    {result => <Tabs
+                        defaultActiveKey="1"
+                        items={result.map(item => ({
+                            key: item.keyName,
+                            label: <Typography.Title level={3}>{item.name}</Typography.Title>,
+                            children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
+                                {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
+                                    <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} fallback={PATH.FALLBACK_IMG} /></Link>
+                                    <div style={{ paddingBottom: '20px' }}></div>
+                                    <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}>
+                                        <Typography.Title level={5}>{service.name}</Typography.Title>
+                                    </Link>
+                                    <ul style={{ paddingLeft: '14px' }}>
+                                        {service.serviceGroupItem.map((description, key) => <li key={'d-' + key}>
+                                            <Typography.Text>Includes {description.service.name}.</Typography.Text>
+                                        </li>)}
+                                    </ul>
+                                </Col>)}
+                                <Col span={24}>
+                                    <Divider />
+                                </Col>
+                            </Row>
+                        })
+                        )} />
                     }</Await>
             </Suspense>
         </div>

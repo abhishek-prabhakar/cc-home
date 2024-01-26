@@ -45,9 +45,6 @@ export function Header({ user }: { user?: User | null }) {
                                     </Space>
                                 </Dropdown>
                             </Col>
-                            <Col md={14}>
-                                <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
-                            </Col>
                         </Row>
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
@@ -55,8 +52,7 @@ export function Header({ user }: { user?: User | null }) {
                     </Col>
                     <Col flex={'auto'}>
                         <div className="header-brand">
-                            {/* <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'150px'} /></Link> */}
-                            <img src="/assets/brand-logo-1.png" width={'150px'} />
+                            <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'150px'} /></Link>
                         </div>
                     </Col>
                     <Col span={4} md={7} lg={5}>
@@ -102,7 +98,7 @@ export function Header({ user }: { user?: User | null }) {
                 </Row>
             </div>
         </div>
-        {/* <Row>
+        <Row>
             <Col span={0} md={24} style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '0px 40px' }} >
                 <Row justify={'center'}>
                     <Col>
@@ -110,6 +106,6 @@ export function Header({ user }: { user?: User | null }) {
                     </Col>
                 </Row>
             </Col>
-        </Row> */}
+        </Row>
     </>
 }
