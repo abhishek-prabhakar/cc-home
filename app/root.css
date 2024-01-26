@@ -260,6 +260,15 @@ body {
           .item-wrapper  .item-spacer{
             padding: 30px 0;height: 100%;
           }
+
+                   @media screen and (max-width: 600px) {
+                    .item{
+                        padding: 30px 0px 30px 40px;
+                    }
+                       .item-description {
+                           display: none;
+                       }
+                   }
 }
 
 .slider-spacer{
