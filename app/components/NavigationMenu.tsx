@@ -109,23 +109,15 @@ const AppNavigation = {
     const data = useLoaderData<RootLoaderData>();
     const navigate = useNavigate();
     const [openDrawer, setDrawerState] = useState(false);
-    const [openKeys, setOpenKeys] = useState(["sub1"]);
-    // const rootSubmenuKeys = menuList.reduce((acc, item) => {
-    //     acc.push(item.key);
-    //     return acc;
-    // }, [] as string[]);
-    const rootSubmenuKeys: string[] = [];
+    const [openKeys, setOpenKeys] = useState<string[]>([]);
 
     const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
       const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-      if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
-        setOpenKeys(keys);
-      } else {
-        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-      }
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
     };
 
     function navigateToPage(event: any) {
+      console.log(event)
       const path = event?.keyPath.reverse().join("/");
       navigate(`/${path}`);
       toggleDrawer();
@@ -147,14 +139,26 @@ const AppNavigation = {
         >
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={data.pages}>
-              {(pageData) => (
+              {(navList) => (
                 <Menu
                   style={{ width: 295, margin: "0 -24px 20px" }}
                   mode="inline"
                   openKeys={openKeys}
                   onOpenChange={onOpenChange}
                   onClick={navigateToPage}
-                  items={[]}
+                  items={navList.map(item => ({
+                    key: item.id,
+                    label: item.name,
+                    children: item.children.map((child, i) => ({
+                      key: 'child' + i,
+                      label: child.name,
+                      type: 'group',
+                      children: [{
+                        key: 'def-ch' + i,
+                        label: 'Browse all ',
+                      }].concat(child.list.map(x => ({ key: x.id, label: x.name, })))
+                    })),
+                  }))}
                 />
               )}
             </Await>
