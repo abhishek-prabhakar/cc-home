@@ -338,7 +338,7 @@ const Home = {
 
     function sliderCount() { return isMobile ? 1 : 4; }
 
-    return <Row justify={'space-between'} align={'middle'} gutter={[40, 0]}>
+    return <Row justify={'space-between'} align={'middle'}>
       <Col sm={24} xs={24} md={5}>
         <div className="home-section-card-wrapper">
           <Title level={4}>Popular Services</Title>
