@@ -279,7 +279,10 @@ body {
     &:hover{
         box-shadow: 0 10px 20px #d5d5d5;
     }
-
+    .title-wrapper{
+        height: 64px;
+        overflow: hidden;
+    }
     .thumbnail{
         border-radius: 5px;
         width: 100%;

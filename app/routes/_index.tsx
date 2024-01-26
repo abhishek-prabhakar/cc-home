@@ -360,8 +360,9 @@ const Home = {
                   <Link to={item.path}>
                     <Space direction="vertical">
                       <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                      <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                      <Typography.Text strong>{item.title}</Typography.Text>
+                      <div className="title-wrapper">
+                        <Typography.Text strong>{item.title}</Typography.Text>
+                      </div>
                     </Space>
                     <RightOutlined className="btn-wrapper" />
                   </Link></Slide>)}
