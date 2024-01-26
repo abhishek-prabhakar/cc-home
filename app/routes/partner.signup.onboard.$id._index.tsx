@@ -517,7 +517,7 @@ const OnBoardPage = {
                         </Col>
                         <Col span={14}>
                             <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
-                            {!fileType &&  <Typography.Text type="secondary">Please select a document type</Typography.Text>}
+                            {!fileType && <Typography.Text type="secondary">Please select a document type</Typography.Text>}
                         </Col>
                         <Col>
                             {fetcher.state === 'submitting' && <Spin />}
@@ -567,8 +567,9 @@ const OnBoardPage = {
         const [enabledIds, setIds] = useState<string[]>([]);
 
         useEffect(() => {
+            const includedIds = item.group.serviceGroupItem.filter(x => !x.isOptional).map(x => x.service.id)
             const addonIds = item.group.serviceGroupItem.filter(x => x.isOptional).map(x => x.service.id)
-            setIds(item.vendorService.filter(x => addonIds.includes(x.serviceId)).map(x => x.serviceId));
+            setIds(item.vendorService.filter(x => addonIds.includes(x.serviceId)).map(x => x.serviceId).concat(includedIds));
         }, [])
 
         useEffect(() => {
@@ -623,7 +624,7 @@ const OnBoardPage = {
                             <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} /> : ''}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Cost</Typography.Text></div>,
+                            {enabledIds.includes(service.service.id) && service.isOptional && [<div><Typography.Text>Cost</Typography.Text></div>,
                             <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />]}
                         </Col>
                     </Row>
