@@ -36,7 +36,7 @@ const CollectionsPage = {
                         defaultActiveKey="1"
                         items={result.map(item => ({
                             key: item.keyName,
-                            label: <Typography.Title level={3}>{item.name}</Typography.Title>,
+                            label: <Typography.Title level={4}>{item.name}</Typography.Title>,
                             children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
                                 {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
                                     <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} fallback={PATH.FALLBACK_IMG} /></Link>
