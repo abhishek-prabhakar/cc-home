@@ -290,6 +290,11 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                 }
             },
             VendorServiceGroup: {
+                orderBy: {
+                    group: {
+                        name: 'asc'
+                    }
+                },
                 select: {
                     id: true,
                     cost: true,
@@ -306,7 +311,9 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                             name: true,
                             serviceGroupItem: {
                                 orderBy: {
-                                    isOptional: 'asc'
+                                    service: {
+                                        name: 'asc'
+                                    }
                                 },
                                 select: {
                                     addonGroup: {
@@ -469,7 +476,7 @@ const OnBoardPage = {
         return [
             <Card size="small" title="Choose your services">
                 <Space direction="vertical" style={{ width: '100%' }}>
-                    <div><Typography.Text strong>Add new service</Typography.Text></div>
+                    <div><Typography.Text strong>Add one or more services from below</Typography.Text></div>
                     <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
                         {serviceList.map(service => <Select.Option key={service.id} value={service.id}>{service.name}</Select.Option>)}
                         {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>}
@@ -610,7 +617,7 @@ const OnBoardPage = {
                         value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
                 </Col>
                 <Col span={22}>
-                    <b>{service.addonGroup?.name ? service.addonGroup?.name + ' - ' : ''}{service.service.name}</b>
+                    <b>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</b>
                     <div>
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
