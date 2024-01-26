@@ -383,7 +383,7 @@ const Home = {
       setMobile(window?.innerWidth < 600);
     }, []);
 
-    function sliderCount() { return isMobile ? 2 : 4; }
+    function sliderCount() { return isMobile ? 1 : 4; }
 
     return <Row justify={'center'}>
       <Col span={24}>
@@ -406,7 +406,9 @@ const Home = {
               <Slider className="slider-spacer">{response.map((item, i) => <Slide className="card-style-2" index={i} key={item.id}>
                 <div className="card-wrapper">
                   <div>
-                    <Typography.Title level={5}>{item.title}</Typography.Title>
+                    <div className="title-wrapper">
+                      <Typography.Title level={5}>{item.title}</Typography.Title>
+                    </div>
                     <div className="label-wrapper">
                       <Typography.Text>{item.label}</Typography.Text>
                     </div>
@@ -452,7 +454,7 @@ const Home = {
       setIsModalOpen(null);
     };
 
-    function sliderCount() { return isMobile ? 2 : 6; }
+    function sliderCount() { return isMobile ? 1 : 6; }
 
     return [
       <Suspense fallback={<Skeleton active />}>

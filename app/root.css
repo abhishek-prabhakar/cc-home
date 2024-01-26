@@ -320,6 +320,10 @@ body {
     border-radius: 5px;
     }
 
+    .{
+    height: 50px;
+    overflow: hidden;
+
     .label-wrapper{
         margin-bottom: 20px;
         height: 90px;
