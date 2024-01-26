@@ -16,6 +16,7 @@ import { BannerItem, Collection, HomeCategoryItem, Jumbotron } from "~/types";
 import { getCategoryCollection, getCollections, getJumbotronList, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
+import { Typewriter } from "react-simple-typewriter";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -230,6 +231,9 @@ const Home = {
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
+
+    const typewriterWords = ['work done', 'Photographers', 'Videographer', 'Makeup Artists', 'Stylist'];
+
     return <div className=" homepage-hero-section">
       <Row align={'stretch'}>
         <Col sm={24} xs={24} md={12} style={{ display: 'flex', justifyContent: 'end' }}>
@@ -237,7 +241,7 @@ const Home = {
             <div className="homepage-hero-search-container">
               <Row gutter={[20, 20]}>
                 <Col span={24}>
-                  <Typography.Title level={1}>Now it's easy<br />to get work done.</Typography.Title>
+                  <Typography.Title level={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" />.</Typography.Title>
                 </Col>
                 <Col xs={24} sm={24} md={18}>
                   <Typography.Title level={5}>Get Started</Typography.Title>
