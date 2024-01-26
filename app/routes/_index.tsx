@@ -231,7 +231,7 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
     return <div className=" homepage-hero-section">
-      <Row align={'stretch'}>
+      <Row align={'middle'}>
         <Col sm={24} xs={24} md={12}>
           <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
             <div style={{ width: '100%', maxWidth: '560px', borderRadius: '5px', padding: '80px 20px' }}>
