@@ -370,7 +370,7 @@ body {
 .homepage-hero-search-wrapper{
     display: flex;
     justify-content: end;
-    background: #f1f1f1;
+    background:  #f1f1f1;
      align-items: center;
       padding: 5px;
        height: 100%;
@@ -399,7 +399,7 @@ body {
     max-height: 500px;
         object-fit: contain;
         background: #190E50;
-        object-position: left;
+        object-position: center;
         border-radius: 5px;
 }
 
