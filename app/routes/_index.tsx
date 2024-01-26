@@ -231,9 +231,9 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
     return <div className=" homepage-hero-section">
-      <Row align={'middle'}>
-        <Col sm={24} xs={24} md={12}>
-          <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', padding: '5px' }}>
+      <Row align={'stretch'}>
+        <Col sm={24} xs={24} md={12} style={{ display: 'flex', justifyContent: 'end' }}>
+          <div className="homepage-hero-search-wrapper">
             <div className="homepage-hero-search-container">
               <Row gutter={[20, 20]}>
                 <Col span={24}>
@@ -248,7 +248,7 @@ const Home = {
           </div>
         </Col>
         <Col sm={24} xs={24} md={12} style={{ padding: '5px' }}>
-          <img className="homepage-hero-img" src="/assets/homepage-hero.jpg" width={'100%'} />
+          <img className="homepage-hero-img" src="/assets/homepage-hero.jpg" width={'100%'} style={{ maxWidth: '665px' }} />
         </Col>
       </Row>
     </div>;
@@ -336,7 +336,7 @@ const Home = {
       setMobile(window?.innerWidth < 600);
     }, []);
 
-    function sliderCount() { return isMobile ? 1 : 4; }
+    function sliderCount() { return isMobile ? 2 : 4; }
 
     return <Row justify={'space-between'} align={'middle'}>
       <Col sm={24} xs={24} md={5}>

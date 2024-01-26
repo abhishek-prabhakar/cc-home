@@ -367,15 +367,27 @@ body {
     }
 }
 
+.homepage-hero-search-wrapper{
+    display: flex;
+    justify-content: end;
+    background: #fbfbfb;
+     align-items: center;
+      padding: 5px;
+       height: 100%;
+        max-width: 670px;
+        width: 100%;
+        margin: 5px 0 5px 5px;
+        border-radius: 5px;
+}
 .homepage-hero-search-container{
                 width: 100%;
-                 max-width: 560px;
-                 border-radius: 5px;
+                border-radius: 5px;
+                max-width: 560px;
                   padding: 50px 20px;
 
     @media screen and (max-width: 800px) {
-        background-color: #f1f1f1;
-        border-radius: 5px;
+        /* background-color: #f1f1f1;
+        border-radius: 5px; */
     }
 }
 .homepage-hero-section{

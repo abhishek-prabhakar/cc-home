@@ -117,9 +117,7 @@ const AppNavigation = {
     };
 
     function navigateToPage(event: any) {
-      console.log(event)
-      const path = event?.keyPath.reverse().join("/");
-      navigate(`/${path}`);
+      navigate(event?.key);
       toggleDrawer();
     }
 
@@ -154,9 +152,9 @@ const AppNavigation = {
                       label: child.name,
                       type: 'group',
                       children: [{
-                        key: 'def-ch' + i,
+                        key: Routes.Services.replace(":id", item.id),
                         label: 'Browse all ',
-                      }].concat(child.list.map(x => ({ key: x.id, label: x.name, })))
+                      }].concat(child.list.map(x => ({ key: x.path, label: x.name, })))
                     })),
                   }))}
                 />
