@@ -215,8 +215,8 @@ const Home = {
       <div className="container no-spacer">
         <Home.Services />
       </div>,
-      <div className="container">
-        <Row gutter={[20, 20]}>
+      <div className="container no-spacer">
+        <Row>
           <Col span={24}>
             <Home.PopularServices />
           </Col>
@@ -231,10 +231,10 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
     return <div className=" homepage-hero-section">
-      <Row align={'middle'}>
+      <Row align={'stretch'}>
         <Col sm={24} xs={24} md={12}>
-          <div style={{ display: 'flex', justifyContent: 'end' }}>
-            <div style={{ width: '100%', maxWidth: '560px', padding: '100px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '560px', borderRadius: '5px', padding: '80px 20px' }}>
               <Row gutter={[20, 20]}>
                 <Col span={24}>
                   <Typography.Title level={1}>Now it's easy<br />to get work done.</Typography.Title>
@@ -336,7 +336,7 @@ const Home = {
       setMobile(window?.innerWidth < 600);
     }, []);
 
-    function sliderCount() { return isMobile ? 2 : 4; }
+    function sliderCount() { return isMobile ? 1 : 4; }
 
     return <div className="home-section-card-wrapper">
       <Row justify={'space-between'} align={'middle'} gutter={[40, 0]}>
