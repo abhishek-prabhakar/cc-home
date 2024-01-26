@@ -404,7 +404,7 @@ const Photography = {
                 style={{ width: "100%" }}
               >
                 <Content>
-                  <Title>{data.meta.name} in Banglore</Title>
+                  <Title level={3}>{data.meta.name} in Banglore</Title>
                   <p>{data.meta.description}</p>
                 </Content>
                 <SortResultsPanel />

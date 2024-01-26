@@ -37,7 +37,7 @@ const CollectionsPage = {
                             <Typography.Title level={3}>{item.name}</Typography.Title>
                         </Col>
                         {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                            <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
+                            <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} fallback={PATH.FALLBACK_IMG} /></Link>
                             <div style={{ paddingBottom: '20px' }}></div>
                             <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}>
                                 <Typography.Title level={5}>{service.name}</Typography.Title>
