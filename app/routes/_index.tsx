@@ -241,7 +241,7 @@ const Home = {
             <div className="homepage-hero-search-container">
               <Row gutter={[20, 20]}>
                 <Col span={24}>
-                  <Typography.Title level={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Typography.Title>
+                  <Typography.Title className="title-wrapper" level={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Typography.Title>
                 </Col>
                 <Col xs={24} sm={24} md={18}>
                   <Typography.Title level={5}>Get Started</Typography.Title>
