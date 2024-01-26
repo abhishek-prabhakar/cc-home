@@ -233,8 +233,8 @@ const Home = {
     return <div className=" homepage-hero-section">
       <Row align={'middle'}>
         <Col sm={24} xs={24} md={12}>
-          <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '560px', borderRadius: '5px', padding: '80px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', padding: '5px' }}>
+            <div className="homepage-hero-search-container">
               <Row gutter={[20, 20]}>
                 <Col span={24}>
                   <Typography.Title level={1}>Now it's easy<br />to get work done.</Typography.Title>
