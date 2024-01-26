@@ -241,7 +241,7 @@ const Home = {
                 </Col>
                 <Col xs={24} sm={24} md={18}>
                   <Typography.Title level={5}>Get Started</Typography.Title>
-                  <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
+                  <Input placeholder="Search" prefix={<SearchOutlined />} />
                 </Col>
               </Row>
             </div>
