@@ -29,11 +29,8 @@ export function Footer() {
             <Space wrap size={[0, 8]}>{categoryList.map((item, key) => <Tag key={'fc' + key}>{item}</Tag>)}</Space>
         </Col>
         <Col span={24} md={8}>
-            <Typography.Title level={5}>Search</Typography.Title>
-            <Typography.Text color="var(--ui-color-secondary)">A breakdown or a flat tire can happen</Typography.Text>
-            <div style={{ paddingTop: '20px' }}>
-                <Input.Search placeholder="Search" enterButton />
-            </div>
+            <Typography.Title level={5}>Support</Typography.Title>
+            <Typography.Text>support@celebriacollective.com</Typography.Text>
         </Col>
     </Row>
         <Row justify={'space-between'}>
