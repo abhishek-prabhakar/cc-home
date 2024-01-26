@@ -317,12 +317,13 @@ body {
         padding: 20px;
         text-align: center;
         padding-bottom: 150px;
-    border-radius: 5px;
+        border-radius: 5px;
     }
 
-    .{
+    .title-wrapper{
     height: 50px;
     overflow: hidden;
+    }
 
     .label-wrapper{
         margin-bottom: 20px;
