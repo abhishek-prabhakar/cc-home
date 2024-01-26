@@ -455,7 +455,7 @@ const Home = {
       setIsModalOpen(null);
     };
 
-    function sliderCount() { return isMobile ? 1 : 6; }
+    function sliderCount() { return isMobile ? 2 : 6; }
 
     return [
       <Suspense fallback={<Skeleton active />}>

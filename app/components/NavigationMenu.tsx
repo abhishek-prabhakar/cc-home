@@ -51,41 +51,31 @@ const AppNavigation = {
     function dropdownContent(navitem: HeaderNavListItem) {
       return (
         <div style={{ margin: "-20px -24px" }}>
-          <Row gutter={[40, 40]}>
-            <Col span={8}>
-              <img
-                src="http://1.bp.blogspot.com/-xWlHs4y6IVk/U3lLsj5LXQI/AAAAAAAADS8/8Fx0eclSadg/s1600/c96f3c66ab2f483ca073adfb47dc8b44.jpg"
-                style={{ borderRadius: "4px" }}
-                width={"100%"}
-              />
-            </Col>
-            <Col span={16}>
-              <div style={{ padding: "40px 0" }}>
-                <Space direction="vertical">
+          <div style={{ padding: "40px" }}>
+            <Space direction="vertical">
+              <Typography.Title level={5}>
+                {" "}
+                <Link to={Routes.Services.replace(":id", navitem.id)}>
+                  Browse all {navitem.name}
+                </Link>
+              </Typography.Title>
+              {navitem.children?.map((menuItem) => (
+                <div key={menuItem.name}>
                   <Typography.Title level={5}>
-                    {" "}
-                    <Link to={Routes.Services.replace(":id", navitem.id)}>
-                      Browse all {navitem.name}
-                    </Link>
+                    {menuItem.name}
                   </Typography.Title>
-                  {navitem.children?.map((menuItem) => (
-                    <div key={menuItem.name}>
-                      <Typography.Title level={5}>
-                        {menuItem.name}
-                      </Typography.Title>
-                      <Space direction="vertical">
-                        {menuItem.list.map((item) => (
-                          <Link key={item.id} to={item.path}>
-                            <Typography.Text>{item.name}</Typography.Text>
-                          </Link>
-                        ))}
-                      </Space>
-                    </div>
-                  ))}
-                </Space>
-              </div>
-            </Col>
-          </Row>
+                  <Space direction="vertical">
+                    {menuItem.list.map((item) => (
+                      <Link key={item.id} to={item.path}>
+                        <Typography.Text>{item.name}</Typography.Text>
+                      </Link>
+                    ))}
+                    {!menuItem.list.length && <Typography.Text type="secondary">Sorry, no results found.</Typography.Text>}
+                  </Space>
+                </div>
+              ))}
+            </Space>
+          </div>
         </div>
       );
     }
