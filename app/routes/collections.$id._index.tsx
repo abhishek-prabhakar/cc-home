@@ -34,7 +34,7 @@ const CollectionsPage = {
                 <Await resolve={data.results}>
                     {result => result.map(item => <Row key={item.keyName} gutter={[40, 40]}>
                         <Col span={24}>
-                            <Typography.Title level={4}>{item.name}</Typography.Title>
+                            <Typography.Title level={3}>{item.name}</Typography.Title>
                         </Col>
                         {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
                             <Link to={Routes.Services.replace(':id', item.keyName || '') + '?category=' + service.id}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
@@ -48,7 +48,7 @@ const CollectionsPage = {
                                 </li>)}
                             </ul>
                         </Col>)}
-                        <Col>
+                        <Col span={24}>
                             <Divider />
                         </Col>
                     </Row>)

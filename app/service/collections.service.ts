@@ -145,6 +145,9 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                 name: true,
                 keyName: true,
                 serviceGroup: {
+                    orderBy: {
+                        name: 'asc'
+                    },
                     where: {
                         serviceGroupType: {
                             keyName
