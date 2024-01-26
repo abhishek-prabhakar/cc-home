@@ -338,43 +338,43 @@ const Home = {
 
     function sliderCount() { return isMobile ? 1 : 4; }
 
-    return <div className="home-section-card-wrapper">
-      <Row justify={'space-between'} align={'middle'} gutter={[40, 0]}>
-        <Col sm={24} xs={24} md={5}>
+    return <Row justify={'space-between'} align={'middle'} gutter={[40, 0]}>
+      <Col sm={24} xs={24} md={5}>
+        <div className="home-section-card-wrapper">
           <Title level={4}>Popular Services</Title>
           <Typography.Text type="secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Typography.Text>
-        </Col>
-        <Col sm={24} xs={24} md={19}>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={data.popularServices}>
-              {resolve => <CarouselProvider
-                naturalSlideWidth={300}
-                naturalSlideHeight={400}
-                totalSlides={resolve.length}
-                visibleSlides={sliderCount()}
-                isIntrinsicHeight={true}
-                step={sliderCount()} dragStep={sliderCount()}
-                className="carousel-slider-wrapper"
-              >
-                <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={item.id} index={i}>
-                  <Link to={item.path}>
-                    <Space direction="vertical">
-                      <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                      <div className="title-wrapper">
-                        <Typography.Text strong>{item.title}</Typography.Text>
-                      </div>
-                    </Space>
-                    <RightOutlined className="btn-wrapper" />
-                  </Link></Slide>)}
-                </Slider>
-                <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
-                <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
-              </CarouselProvider>}
-            </Await>
-          </Suspense>
-        </Col>
-      </Row>
-    </div>
+        </div>
+      </Col>
+      <Col sm={24} xs={24} md={19}>
+        <Suspense fallback={<Skeleton active />}>
+          <Await resolve={data.popularServices}>
+            {resolve => <CarouselProvider
+              naturalSlideWidth={300}
+              naturalSlideHeight={400}
+              totalSlides={resolve.length}
+              visibleSlides={sliderCount()}
+              isIntrinsicHeight={true}
+              step={sliderCount()} dragStep={sliderCount()}
+              className="carousel-slider-wrapper"
+            >
+              <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={item.id} index={i}>
+                <Link to={item.path}>
+                  <Space direction="vertical">
+                    <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                    <div className="title-wrapper">
+                      <Typography.Text strong>{item.title}</Typography.Text>
+                    </div>
+                  </Space>
+                  <RightOutlined className="btn-wrapper" />
+                </Link></Slide>)}
+              </Slider>
+              <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+              <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+            </CarouselProvider>}
+          </Await>
+        </Suspense>
+      </Col>
+    </Row>
   },
   Collections: () => {
     const data = useLoaderData<HomePage>();
@@ -388,8 +388,10 @@ const Home = {
 
     return <Row justify={'center'}>
       <Col span={24}>
-        <div style={{ paddingTop: '50px' }}>
-          <Title level={3} className="_text-center">Hire the best professionals for any job</Title>
+        <div style={{ paddingTop: '45px' }}>
+          <div className="home-section-card-wrapper">
+            <Title level={3} className="_text-center">Hire the best professionals for any job</Title>
+          </div>
         </div>
       </Col>
       <Col>

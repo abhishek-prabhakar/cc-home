@@ -159,7 +159,6 @@ body {
 
 
 .home-section-card-wrapper{
-    border-radius: 15px;
     padding: 15px 20px;
 }
 
@@ -262,7 +261,7 @@ body {
           }
 
                    @media screen and (max-width: 600px) {
-                    .item{
+                    .item:not(:last-child){
                         padding: 30px 0px 30px 40px;
                     }
                        .item-description {
