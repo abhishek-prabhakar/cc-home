@@ -120,9 +120,72 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
     });
 }
 
+
+function getServicesGroupsByCollection(keyName?: string | null) {
+    return new Promise<{
+        name: string;
+        keyName: string;
+        serviceGroup: {
+            id: string;
+            name: string;
+            imageName: string | null;
+            serviceGroupItem: {
+                service: {
+                    name: string;
+                };
+            }[];
+        }[];
+    }[]>(function (resolve) {
+        if (!keyName) {
+            resolve([]);
+            return;
+        }
+        db.vendorType.findMany({
+            select: {
+                name: true,
+                keyName: true,
+                serviceGroup: {
+                    where: {
+                        serviceGroupType: {
+                            keyName
+                        }
+                    },
+                    select: {
+                        name: true,
+                        id: true,
+                        imageName: true,
+                        serviceGroupItem: {
+                            take: 4,
+                            select: {
+                                service: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            where: {
+                serviceGroup: {
+                    some: {
+                        serviceGroupType: {
+                            keyName
+                        }
+                    }
+                }
+            }
+        }).then(r => {
+            resolve(r)
+        })
+    });
+}
+
 const CollectionService = {
     getCollectionByType,
-    getRelatedCollectionByType
+    getRelatedCollectionByType,
+    getServicesGroupsByCollection
 }
 
 export default CollectionService;
