@@ -273,6 +273,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     const data = await db.vendor.findFirstOrThrow({
         where: {
+            isActive: false,
             id: applicationId
         },
         select: {
@@ -509,13 +510,14 @@ const OnBoardPage = {
             <fetcher.Form method="post" action="">
                 <Card size="small" title="Confirm your identity">
                     <Row gutter={[40, 40]}>
-                        <Col span={5}>
-                            <Select style={{ width: '100%' }} onChange={v => setFileType(v)}>
+                        <Col span={10}>
+                            <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)}>
                                 {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
                             </Select>
                         </Col>
-                        <Col>
+                        <Col span={14}>
                             <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
+                            {!fileType &&  <Typography.Text type="secondary">Please select a document type</Typography.Text>}
                         </Col>
                         <Col>
                             {fetcher.state === 'submitting' && <Spin />}
@@ -527,7 +529,7 @@ const OnBoardPage = {
             <Table dataSource={data.files}
                 columns={[
                     {
-                        title: 'File Type',
+                        title: 'Document Type',
                         dataIndex: 'fileType',
                         key: 'fileType',
                     },

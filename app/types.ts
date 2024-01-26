@@ -133,5 +133,16 @@ export type CollectionType = {
 export type HomeCategoryItem = {
     id: string,
     title: string,
+    description?: string;
     serviceGroup: CollectionType[]
+}
+
+
+export type Collection = {
+    id: string,
+    title: string,
+    label: string,
+    image: string | null,
+    path: string,
+    cost: number,
 }

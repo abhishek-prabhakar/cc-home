@@ -1,5 +1,6 @@
 import { PATH } from "~/path.data";
-import { CollectionType, HomeCategoryItem, Jumbotron } from "~/types";
+import Routes from "~/routes.data";
+import { Collection, CollectionType, HomeCategoryItem, Jumbotron } from "~/types";
 import { db } from "~/utils/database";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 
@@ -68,6 +69,7 @@ function getCategoryCollection() {
             select: {
                 id: true,
                 name: true,
+                description: true,
                 keyName: true,
                 serviceGroup: {
                     select: {
@@ -173,8 +175,75 @@ function topVendorsByCategory() {
 }
 
 
+function getPopularServices() {
+    return new Promise<Collection[]>(function (resolve) {
+        db.serviceGroup.findMany({
+            take: 8,
+            select: {
+                id: true,
+                name: true,
+                imageName: true,
+                description: true,
+                vendorType: {
+                    select: {
+                        keyName: true
+                    }
+                }
+            },
+            where: {
+                groupTypeId: {
+                    not: undefined
+                }
+            }
+        }).then(r => {
+            resolve(r.map(x => ({
+                id: x.id,
+                title: x.name,
+                path: Routes.Services.replace(':id', x.vendorType.keyName) + '?category=' + x.id,
+                label: '',
+                image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+                cost: 0
+            })))
+        })
+    });
+
+}
+
+
+function getCollections() {
+    return new Promise<Collection[]>(function (resolve) {
+        db.serviceGroupType.findMany({
+            take: 4,
+            select: {
+                keyName: true,
+                name: true,
+                ServiceGroup: {
+                    take: 10,
+                    select: {
+                        name: true,
+                        imageName: true
+                    }
+                }
+            }
+        }).then(r => {
+
+            resolve(r.map(x => ({
+                id: x.keyName,
+                image: PATH.RESOURCE_URL + x.ServiceGroup.find(i => i.imageName)?.imageName,
+                title: x.name,
+                label: x.ServiceGroup.map(g => g.name).join(', '),
+                path: Routes.Collections.replace(':id', x.keyName),
+                cost: 0
+            })))
+        })
+
+    });
+}
+
 export {
     getJumbotronList,
     getCategoryCollection,
-    topVendorsByCategory
+    topVendorsByCategory,
+    getPopularServices,
+    getCollections
 }
