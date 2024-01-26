@@ -232,7 +232,7 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const [active, setActive] = useState(1);
 
-    const typewriterWords = ['work done', 'Photographers', 'Videographer', 'Makeup Artists', 'Stylist'];
+    const typewriterWords = ['work done', 'photographers', 'videographer', 'makeup artists', 'stylist'];
 
     return <div className=" homepage-hero-section">
       <Row align={'stretch'}>
