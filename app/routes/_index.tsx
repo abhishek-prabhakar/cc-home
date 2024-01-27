@@ -7,7 +7,7 @@ import { Banner, BannerVertical } from "~/components/Banner";
 import { Newsletter } from "~/components/Newsletter";
 const { Title } = Typography;
 const { Meta } = Card;
-import { Await, Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Await, Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
@@ -207,6 +207,21 @@ const contentStyle: React.CSSProperties = {
   height: '400px',
 };
 
+type searchResult = {
+  id: string,
+  name: string,
+  vendorType: {
+    keyName: string,
+    name: string
+  },
+  serviceGroupType: { name: string } | null,
+  serviceGroupItem: {
+    service: {
+      name: string;
+    };
+  }[];
+}
+
 const Home = {
   Index: () => {
     const data = useLoaderData<HomePage>();
@@ -230,9 +245,24 @@ const Home = {
   },
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
-    const [active, setActive] = useState(1);
+    const fetcher = useFetcher();
+    const navigate = useNavigate();
 
     const typewriterWords = ['work done', 'photographers', 'videographer', 'makeup artists', 'stylist'];
+
+    function search(event: any) {
+      const q = event.target.value || '';
+      fetcher.submit({
+        q
+      }, {
+        method: 'get',
+        action: '/search'
+      })
+    }
+
+    function gotoSearchItemPage(type: string, id: string) {
+      navigate(Routes.Services.replace(':id', type) + '?category=' + id)
+    }
 
     return <div className=" homepage-hero-section">
       <Row align={'stretch'}>
@@ -245,7 +275,16 @@ const Home = {
                 </Col>
                 <Col xs={24} sm={24} md={18}>
                   <Typography.Title level={5}>Get Started</Typography.Title>
-                  <Input placeholder="Search" prefix={<SearchOutlined />} />
+                  <Input placeholder="Search" prefix={<SearchOutlined />} onChange={search} />
+                  <div className="hero-search-results-panel-wrapper">
+                    <Suspense fallback={<Skeleton active />}>
+                      <Await resolve={fetcher.data}>
+                        {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
+                          {item.name} in {item.vendorType.name}
+                        </div>)}</div>}
+                      </Await>
+                    </Suspense>
+                  </div>
                 </Col>
               </Row>
             </div>

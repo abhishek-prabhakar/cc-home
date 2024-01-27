@@ -409,3 +409,27 @@ body {
 ._text-center{
     text-align: center;
 }
+
+.hero-search-results-panel-wrapper{
+    position: relative;
+
+    .hero-search-results-panel{
+        position: absolute;
+        top: 0;
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 0;
+        box-shadow: 0 0 3px #c0c0c0;
+        border-radius:  0 0 5px 5px;
+        z-index: 1;
+            background: white;
+    }
+
+    .result-row{
+        padding: 5px 20px;
+    }
+    .result-row:hover {
+        background-color: whitesmoke;
+        cursor: pointer;
+    }
+}

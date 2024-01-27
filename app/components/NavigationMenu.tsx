@@ -134,6 +134,7 @@ const AppNavigation = {
           title="Browse"
           onClose={() => toggleDrawer()}
           open={openDrawer}
+          destroyOnClose={true}
         >
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={data.pages}>
