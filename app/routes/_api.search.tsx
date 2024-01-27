@@ -17,7 +17,8 @@ export function loader(args: LoaderArgs) {
                         name: {
                             contains: query,
                         }
-                    }, {
+                    },
+                    {
                         serviceGroupItem: {
                             some: {
                                 service: {
@@ -25,6 +26,13 @@ export function loader(args: LoaderArgs) {
                                         contains: query
                                     }
                                 }
+                            }
+                        }
+                    },
+                    {
+                        serviceGroupType: {
+                            name: {
+                                contains: query
                             }
                         }
                     }
