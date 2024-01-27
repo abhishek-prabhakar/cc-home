@@ -242,7 +242,7 @@ const PartnerSignup = {
             </fetcher.Form> : <></>;
         }
 
-        return <Modal open={!!type} onCancel={onClose} title="Register as a professional" footer={null}>
+        return <Modal open={!!type} destroyOnClose={true} onCancel={onClose} title="Register as a professional" footer={null}>
             {fetcher?.data ? <SuccessMessage /> : <RequestForm />}
         </Modal>;
     }
