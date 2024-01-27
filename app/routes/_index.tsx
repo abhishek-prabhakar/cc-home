@@ -280,8 +280,8 @@ const Home = {
                     <Suspense fallback={<Skeleton active />}>
                       <Await resolve={fetcher.data}>
                         {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
-                          {item.name} in {item.vendorType.name}
-                        </div>)}</div>}
+                          {item.name} <Typography.Text type="secondary" italic>in {item.vendorType.name}</Typography.Text>
+                        </div>)}{!response?.results?.length && <div className="result-row" > <Typography.Text type="secondary" italic>Sorry, we couldn't find any results on that. Kindly narrow the search term.</Typography.Text></div>}</div>}
                       </Await>
                     </Suspense>
                   </div>

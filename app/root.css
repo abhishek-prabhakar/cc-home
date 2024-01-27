@@ -423,6 +423,8 @@ body {
         border-radius:  0 0 5px 5px;
         z-index: 1;
             background: white;
+            max-height: 400px;
+            overflow: auto;
     }
 
     .result-row{
