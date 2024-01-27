@@ -527,7 +527,7 @@ const Home = {
                   <Space direction="vertical">
                     <FireOutlined style={{ fontSize: '2em' }} />
                     <Typography.Title level={5} style={{ color: 'white' }}>{item.title}</Typography.Title>
-                    <Typography.Text className="item-description" type="secondary" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description} Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Typography.Text>
+                    <Typography.Text className="item-description" type="secondary" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description}</Typography.Text>
                   </Space>
                 </div>
               </div>

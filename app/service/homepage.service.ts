@@ -124,6 +124,7 @@ function getCategoryCollection() {
                 return {
                     title: category.name,
                     id: category.id,
+                    description: category.description,
                     serviceGroup
                 }
             }));
