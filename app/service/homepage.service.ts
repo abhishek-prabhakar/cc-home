@@ -100,7 +100,7 @@ function getCategoryCollection() {
                             isCollection: false,
                             name: item.name,
                             imageName: item.imageName,
-                            path: '/services/' + category.keyName + '?category=' + item.id
+                            path: Routes.ServiceGroup.replace(':id', category.keyName).replace(':subId', item.id)
                         })
                         return items;
                     }

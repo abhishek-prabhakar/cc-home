@@ -117,7 +117,7 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({
-        path: '/services/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+        path: Routes.Services.replace(':id', x.keyName), title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
     })
   });
