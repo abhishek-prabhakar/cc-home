@@ -268,7 +268,7 @@ const Home = {
     }
 
     function gotoSearchItemPage(type: string, id: string) {
-      navigate(Routes.Services.replace(':id', type) + '?category=' + id)
+      navigate(Routes.ServiceGroup.replace(':id', type).replace(':subId', id))
     }
 
     return <div className=" homepage-hero-section">

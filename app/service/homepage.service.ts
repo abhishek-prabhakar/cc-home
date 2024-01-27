@@ -200,7 +200,7 @@ function getPopularServices() {
             resolve(r.map(x => ({
                 id: x.id,
                 title: x.name,
-                path: Routes.Services.replace(':id', x.vendorType.keyName) + '?category=' + x.id,
+                path: Routes.ServiceGroup.replace(':id', x.vendorType.keyName).replace(':subId', x.id),
                 label: '',
                 image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
                 cost: 0

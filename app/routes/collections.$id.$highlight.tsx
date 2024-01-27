@@ -59,9 +59,9 @@ const CollectionsHighlightPage = {
                         <div style={{ paddingBottom: '20px' }}></div>
                         <Row gutter={[40, 40]}>
                             {response?.services.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                                <Link to={Routes.Services.replace(':id', data?.highlightId || '') + '?category=' + service.id}><Image preview={false} src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
+                                <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
                                 <div style={{ paddingBottom: '20px' }}></div>
-                                <Link to={Routes.Services.replace(':id', data?.highlightId || '') + '?category=' + service.id}>
+                                <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
                                     <Typography.Title level={5}>{service.name}</Typography.Title>
                                 </Link>
                                 <ul style={{ paddingLeft: '14px' }}>
@@ -86,9 +86,9 @@ const CollectionsHighlightPage = {
                 <Await resolve={data?.related}>
                     {response => <Row gutter={[40, 40]}>
                         {response?.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                            <Link to={Routes.Services.replace(':id', data?.highlightId || '') + '?category=' + service.id}><Image preview={false} src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
+                            <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
                             <div style={{ paddingBottom: '20px' }}></div>
-                            <Link to={Routes.Services.replace(':id', data?.highlightId || '') + '?category=' + service.id}>
+                            <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
                                 <Typography.Title level={5}>{service.name}</Typography.Title>
                             </Link>
                         </Col>)
