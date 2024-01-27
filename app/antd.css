@@ -155,7 +155,9 @@
   width: auto !important;
   height: auto !important;
 }
-
+.ant-checkbox-wrapper {
+  display: flex !important;
+}
 /* 
 .ant-popover .ant-popover-arrow:before {
     background: var(--antd-arrow-background-color);
