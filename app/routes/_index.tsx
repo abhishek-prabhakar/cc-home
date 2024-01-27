@@ -1,4 +1,4 @@
-import { ArrowLeftOutlined, ArrowRightOutlined, FireOutlined, MenuOutlined, RightCircleOutlined, RightOutlined, SearchOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowRightOutlined, FireOutlined, LoadingOutlined, MenuOutlined, RightCircleOutlined, RightOutlined, SearchOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
 import { Avatar, Badge, Button, Card, Carousel, Col, Divider, Image, Input, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
@@ -247,11 +247,18 @@ const Home = {
     const data = useLoaderData<HomePage>();
     const fetcher = useFetcher();
     const navigate = useNavigate();
+    const [searchBusy, setSearchBusy] = useState(false);
 
     const typewriterWords = ['work done', 'photographers', 'videographer', 'makeup artists', 'stylist'];
 
+    useEffect(() => {
+      setSearchBusy(fetcher.state === 'loading');
+    }, [fetcher.state]);
+
+
     function search(event: any) {
       const q = event.target.value || '';
+      setSearchBusy(true);
       fetcher.submit({
         q
       }, {
@@ -275,7 +282,7 @@ const Home = {
                 </Col>
                 <Col xs={24} sm={24} md={18}>
                   <Typography.Title level={5}>Get Started</Typography.Title>
-                  <Input placeholder="Search" prefix={<SearchOutlined />} onChange={search} />
+                  <Input placeholder="Search" prefix={searchBusy ? <LoadingOutlined /> : <SearchOutlined />} onChange={search} />
                   <div className="hero-search-results-panel-wrapper">
                     <Suspense fallback={<Skeleton active />}>
                       <Await resolve={fetcher.data}>
