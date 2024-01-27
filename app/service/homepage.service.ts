@@ -112,7 +112,7 @@ function getCategoryCollection() {
                             imageName: item.imageName,
                             isCollection: true,
                             collection: item.serviceGroupType?.keyName,
-                            path: '/collections/' + item.serviceGroupType?.keyName + '/' + category.keyName,
+                            path: Routes.CollectionsByVendor.replace(':id', item.serviceGroupType?.keyName || 'unknown').replace(':vendorType', category.keyName),
                             description: item.name
                         })
                     } else {

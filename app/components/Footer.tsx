@@ -26,7 +26,7 @@ export function Footer() {
         </Col>
     </Row>
         <Row justify={'space-between'}>
-            <Col><Typography.Text type="secondary">© Celebria 2023. All Rights Reserved.</Typography.Text></Col>
+            <Col><Typography.Text type="secondary">© Celebria Collective {new Date().getFullYear()}. All Rights Reserved.</Typography.Text></Col>
             <Col><Typography.Text type="secondary">Privacy Policy | Terms And Conditions</Typography.Text></Col>
         </Row>
     </Space></div>;

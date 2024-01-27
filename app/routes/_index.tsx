@@ -534,21 +534,6 @@ const Home = {
         </Row>
       </Modal>]
   },
-  Highlight: () => {
-
-    return <div className="home-section-card-wrapper _bg-pastel">
-      <Row align={'middle'} gutter={[100, 30]}>
-        <Col sm={4} md={6}>
-          <Image preview={false} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
-        </Col>
-        <Col sm={20} md={18}>
-          <Typography.Title level={3} style={{ color: 'white' }}>BEST IN WEDDING</Typography.Title>
-          <Typography.Title level={5} style={{ color: 'white' }}>explore all services.</Typography.Title>
-          <Link to="/collections/wedding"><Button type="primary" shape="round">Explore</Button></Link>
-        </Col>
-      </Row>
-    </div>
-  },
   TopVendorsList: () => {
     const data = useLoaderData<typeof loader>();
     return <Suspense fallback={<Skeleton active />}>
