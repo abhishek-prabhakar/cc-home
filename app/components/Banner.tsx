@@ -31,7 +31,7 @@ export function Banner({ data }: { data?: BannerItem }) {
                 </Tooltip>
             </Col>
         </Row>
-    </div> : <div></div>;
+    </div> : <></>;
 }
 
 export function BannerVertical({ data }: { data?: BannerItem }) {
@@ -52,5 +52,5 @@ export function BannerVertical({ data }: { data?: BannerItem }) {
                 </Tooltip>
             </Col>
         </Row>
-    </div> : <div></div>
+    </div> : <></>;
 }
