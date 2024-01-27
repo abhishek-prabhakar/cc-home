@@ -4,7 +4,7 @@ import { db } from "~/utils/database";
 export function loader(args: LoaderArgs) {
     const url = new URL(args.request.url);
     const query = url.searchParams.get('q')?.toLowerCase()?.trim();
-    if (!query?.length || query?.length < 2) {
+    if (!query?.length) {
         return defer({ results: [] });
     }
 
