@@ -294,12 +294,11 @@ const Photography = {
         return (
             <div className="container">
                 <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-                    <Banner />
                     <Row gutter={[40, 40]}>
                         <Col sm={24} xs={24} md={16} lg={18}>
                             <Suspense>
                                 <Await resolve={data.data}>
-                                    {response => [<Title level={2}>{response?.name}</Title>, <Divider />]}
+                                    {response => [<Title level={3}>{response?.name}</Title>, <Divider />]}
                                 </Await>
                             </Suspense>
                             <Space
@@ -308,9 +307,10 @@ const Photography = {
                                 style={{ width: "100%" }}
                             >
                                 <Content>
-                                    <Title level={3}>{data.meta.name} in Banglore</Title>
+                                    <Title level={5}>{data.meta.name} in Banglore</Title>
                                     <p>{data.meta.description}</p>
                                 </Content>
+                                <Banner />
                                 <SortResultsPanel />
                                 <Suspense
                                     fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}
