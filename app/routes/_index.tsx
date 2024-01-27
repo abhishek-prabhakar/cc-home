@@ -302,41 +302,6 @@ const Home = {
         </Col>
       </Row>
     </div>;
-    // return <div className="home-slider-jumbotron">
-    //   <Suspense fallback={<div className="container"><Skeleton active /></div>}>
-    //     <Await resolve={data.jumbotron}>
-    //       {jumbotron => <Carousel autoplay>
-    //         {jumbotron.map((item, key) => <div key={'slider-' + key}>
-    //           <div style={{ padding: '0 20px' }}>
-    //             <Row justify={'center'}>
-    //               <Col xs={24} sm={24} md={20} lg={18}>
-    //                 <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0`, backgroundSize: 'cover', minHeight: '400px' }}>
-    //                   <Row gutter={[40, 40]} style={{ height: '100%' }} align={'bottom'}>
-    //                     <Col xs={24} sm={24} md={14} >
-    //                       <Title style={{ color: 'white' }} level={1}>
-    //                         {item.title}
-    //                       </Title>
-    //                     </Col>
-    //                     <Col xs={24} sm={24} md={14} >
-    //                       <Card bordered={false}>
-    //                         <Space direction="vertical" size={'middle'}>
-    //                           <Title level={3}>{item.description}</Title>
-    //                           <Link to={item.url}>
-    //                             <Button size="large" type="primary">Visit</Button>
-    //                           </Link>
-    //                         </Space>
-    //                       </Card>
-    //                     </Col>
-    //                   </Row>
-    //                 </div>
-    //               </Col>
-    //             </Row>
-    //           </div>
-    //         </div>)}
-    //       </Carousel>}
-    //     </Await>
-    //   </Suspense>
-    // </div>;
   },
   QuickPick: () => {
     const data = useLoaderData<HomePage>();

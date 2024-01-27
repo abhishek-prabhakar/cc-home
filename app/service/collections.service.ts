@@ -75,7 +75,9 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
         id: string,
         name: string,
         imageName: string,
-        vendorType: string,
+        vendorType: {
+            keyName: string, name: string
+        },
     }[]>(function (resovle) {
         db.serviceGroupType.findFirst({
             where: {
@@ -97,6 +99,7 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
                         imageName: true,
                         vendorType: {
                             select: {
+                                keyName: true,
                                 name: true
                             }
                         }
@@ -113,7 +116,7 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
                 name: service.name,
                 id: service.id,
                 imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG,
-                vendorType: service.vendorType.name
+                vendorType: service.vendorType
             })));
         })
 

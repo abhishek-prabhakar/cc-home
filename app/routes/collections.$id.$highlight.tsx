@@ -86,9 +86,10 @@ const CollectionsHighlightPage = {
                 <Await resolve={data?.related}>
                     {response => <Row gutter={[40, 40]}>
                         {response?.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                            <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
-                            <div style={{ paddingBottom: '20px' }}></div>
-                            <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                            <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
+                            <div style={{ paddingBottom: '14px' }}></div>
+                            <Typography.Text type="secondary">{service.vendorType.name}</Typography.Text>
+                            <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}>
                                 <Typography.Title level={5}>{service.name}</Typography.Title>
                             </Link>
                         </Col>)

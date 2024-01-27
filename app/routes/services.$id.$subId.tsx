@@ -296,18 +296,18 @@ const Photography = {
                 <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
                     <Row gutter={[40, 40]}>
                         <Col sm={24} xs={24} md={16} lg={18}>
-                            <Suspense>
-                                <Await resolve={data.data}>
-                                    {response => [<Title level={3}>{response?.name}</Title>, <Divider />]}
-                                </Await>
-                            </Suspense>
                             <Space
                                 direction="vertical"
                                 size={"large"}
                                 style={{ width: "100%" }}
                             >
                                 <Content>
-                                    <Title level={5}>{data.meta.name} in Banglore</Title>
+                                    <Typography.Text type="secondary"><Tag color="magenta">{data.meta.name}</Tag> in Banglore</Typography.Text>
+                                    <Suspense>
+                                        <Await resolve={data.data}>
+                                            {response => <Title style={{ marginTop: '12px' }} level={3}>{response?.name}</Title>}
+                                        </Await>
+                                    </Suspense>
                                     <p>{data.meta.description}</p>
                                 </Content>
                                 <Banner />
