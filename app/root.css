@@ -239,7 +239,6 @@ body {
         transition: all 0.3s ease;
         height: 100%;
         cursor: pointer;
-        min-width: 220px;
             display: flex;
             justify-content: center;
     }
