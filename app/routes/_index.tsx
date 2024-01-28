@@ -224,25 +224,27 @@ type searchResult = {
 
 const Home = {
   Index: () => {
+    const data = useLoaderData<HomePage>();
 
     return [
-      // <Home.Jumbotron />,
+      <Home.Jumbotron />,
       <div className="container no-spacer">
-        {/* <Home.Services /> */}
+        <Home.Services />
       </div>,
       <div className="container no-spacer">
         <Row>
           <Col span={24}>
-            {/* <Home.PopularServices /> */}
+            <Home.PopularServices />
           </Col>
           <Col span={24}>
-            {/* <Home.Collections /> */}
+            <Home.Collections />
           </Col>
         </Row>
       </div>
     ]
   },
   Jumbotron: () => {
+    const data = useLoaderData<HomePage>();
     const fetcher = useFetcher();
     const navigate = useNavigate();
     const [searchBusy, setSearchBusy] = useState(false);
