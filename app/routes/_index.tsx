@@ -224,10 +224,9 @@ type searchResult = {
 
 const Home = {
   Index: () => {
-    const data = useLoaderData<HomePage>();
 
     return [
-      <Home.Jumbotron />,
+      // <Home.Jumbotron />,
       <div className="container no-spacer">
         {/* <Home.Services /> */}
       </div>,
