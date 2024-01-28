@@ -229,7 +229,7 @@ const Home = {
     return [
       <Home.Jumbotron />,
       <div className="container no-spacer">
-        <Home.Services />
+        {/* <Home.Services /> */}
       </div>,
       <div className="container no-spacer">
         <Row>
@@ -244,7 +244,6 @@ const Home = {
     ]
   },
   Jumbotron: () => {
-    const data = useLoaderData<HomePage>();
     const fetcher = useFetcher();
     const navigate = useNavigate();
     const [searchBusy, setSearchBusy] = useState(false);
