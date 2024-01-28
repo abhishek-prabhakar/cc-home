@@ -234,10 +234,10 @@ const Home = {
       <div className="container no-spacer">
         <Row>
           <Col span={24}>
-            <Home.PopularServices />
+            {/* <Home.PopularServices /> */}
           </Col>
           <Col span={24}>
-            <Home.Collections />
+            {/* <Home.Collections /> */}
           </Col>
         </Row>
       </div>
