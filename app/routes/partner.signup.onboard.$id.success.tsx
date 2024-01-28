@@ -2,10 +2,19 @@ import { CheckCircleOutlined, FrownOutlined, MehOutlined, SmileOutlined } from "
 import { LoaderArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Button, Card, Col, Rate, Row, Space, Typography } from "antd";
+import { vendorSignupCookie } from "~/session.server";
 
-export async function loader({
-    params, request
-}: LoaderArgs) {
+export async function loader(args: LoaderArgs) {
+    const cookieHeader = args.request.headers.get("Cookie");
+    const currentVendor: string = await vendorSignupCookie.parse(cookieHeader);
+
+    if (currentVendor) {
+        return redirect('/partner/signup/onboard/' + currentVendor + '/success', {
+            headers: {
+                "Set-Cookie": await vendorSignupCookie.serialize(null),
+            },
+        });
+    }
 
     return null;
 }
