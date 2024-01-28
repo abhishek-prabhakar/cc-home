@@ -372,7 +372,7 @@ const Home = {
               step={sliderCount()} dragStep={sliderCount()}
               className="carousel-slider-wrapper"
             >
-              <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={item.id} index={i}>
+              <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={'s' + item.id} index={i}>
                 <Link to={item.path}>
                   <Space direction="vertical">
                     <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
@@ -472,7 +472,7 @@ const Home = {
       setIsModalOpen(null);
     };
 
-    function sliderCount() { return isMobile ? 2 : 6; }
+    function sliderCount() { return isMobile ? 2 : 5; }
 
     return [
       <Suspense fallback={<Skeleton active />}>
@@ -486,7 +486,7 @@ const Home = {
             step={sliderCount()} dragStep={sliderCount()}
             className="carousel-slider-wrapper slider-homepage-focused slider-uplift"
           >
-            <Slider className="carousel-slider">{data.map((item, i) => <Slide className="item-wrapper" key={item.id} index={i} onClick={() => showModal(item)}>
+            <Slider className="carousel-slider">{data.map((item, i) => <Slide className="item-wrapper" key={'s' + item.id} index={i} onClick={() => showModal(item)}>
               <div className="item-spacer">
                 <div className="item">
                   <Space direction="vertical">
@@ -540,7 +540,7 @@ const Home = {
       <Await resolve={data.topVendors}>
         {res => <Row gutter={[20, 20]}>
           <Col span={24}><Typography.Title level={3}>Top service providers</Typography.Title></Col>
-          {res.map((category) => <Col key={category.id} xs={24} sm={24} md={6}>
+          {res.map((category) => <Col key={'ce' + category.id} xs={24} sm={24} md={6}>
             <div className="home-section-card-wrapper">
               <Space direction="vertical" size={'middle'}>
                 <Typography.Title level={5}>{category.name}</Typography.Title>
