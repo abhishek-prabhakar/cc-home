@@ -14,6 +14,7 @@ import generateUuid from "~/utils/uuid.generator";
 type ServiceGroup = {
     id: string;
     name: string;
+    minHour?: number;
     serviceGroupItem: {
         addonGroup: {
             name: string;
@@ -32,6 +33,7 @@ type ServiceGroup = {
 type VendorServiceGroup = {
     id: string;
     cost: number;
+    costExtraHour: number;
     vendorService: {
         serviceId: string;
         duration: number;
@@ -149,6 +151,7 @@ export async function action(args: ActionArgs) {
         case STEPS.SERVICE:
             const groupId = formData.get('serviceGroupId');
             const groupCost = formData.get('groupCost');
+            const grpExtraHourCost = formData.get('extraHourCost')?.toString();
             const categoryId = formData.get('categoryId')?.toString();
             if (!categoryId) { return false; }
 
@@ -184,7 +187,8 @@ export async function action(args: ActionArgs) {
                         id: vendorGroupId,
                         groupId: groupId?.toString(),
                         vendorId,
-                        cost: parseInt(groupCost?.toString() || '0')
+                        cost: parseInt(groupCost?.toString() || '0'),
+                        costExtraHour: parseInt(grpExtraHourCost || '0')
                     },
                 });
 
@@ -211,11 +215,22 @@ export async function action(args: ActionArgs) {
                 const serviceIds = formData.getAll('serviceId');
                 const durations = formData.getAll('duration');
                 const costs = formData.getAll('cost');
+                const groupCost = formData.get('groupCost')?.toString();
+                const grpExtraHourCost = formData.get('extraHourCost')?.toString();
                 const fareModes = formData.getAll('fareMode');
 
                 if (!vendorGroupId) {
                     return;
                 }
+                await db.vendorServiceGroup.update({
+                    data: {
+                        cost: parseInt(groupCost || '0'),
+                        costExtraHour: parseInt(grpExtraHourCost || '0')
+                    },
+                    where: {
+                        id: vendorGroupId
+                    }
+                });
 
                 await db.vendorService.deleteMany({
                     where: {
@@ -298,6 +313,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                 select: {
                     id: true,
                     cost: true,
+                    costExtraHour: true,
                     vendorService: {
                         select: {
                             serviceId: true,
@@ -309,12 +325,17 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                         select: {
                             id: true,
                             name: true,
+                            minHour: true,
                             serviceGroupItem: {
-                                orderBy: {
+                                orderBy: [{
+                                    isOptional: 'asc'
+                                }, {
                                     service: {
-                                        name: 'asc'
+                                        name: 'asc',
                                     }
-                                },
+                                }, {
+                                    addonGroupId: 'asc'
+                                }],
                                 select: {
                                     addonGroup: {
                                         select: {
@@ -371,7 +392,9 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     if (data) {
         const selectedServiceGroups = data.VendorServiceGroup.map(x => x.group.id);
-        return { profile: data, categories: vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, serviceGroupItem: y.serviceGroupItem })) })), files }
+        const categories = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, serviceGroupItem: y.serviceGroupItem })) }));
+
+        return { profile: data, categories, files }
     }
 
     return null;
@@ -466,7 +489,8 @@ const OnBoardPage = {
                     id: 'NEW',
                     vendorService: [],
                     group,
-                    cost: 0
+                    cost: 0,
+                    costExtraHour: 0
                 });
             } else {
                 setServiceDialogData(null);
@@ -597,12 +621,20 @@ const OnBoardPage = {
 
 
         return [<fetcher.Form method="post" action="">
-            <div>
-                <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
-                <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
-                <input type="hidden" name="categoryId" value={activeType} />
-                <input type="hidden" name="serviceGroupId" value={item.group.id} />
-            </div>
+
+            <Row gutter={[20, 20]}>
+                <Col span={12}>
+                    <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
+                    <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
+                    <input type="hidden" name="categoryId" value={activeType} />
+                    <input type="hidden" name="serviceGroupId" value={item.group.id} />
+                </Col>
+                <Col span={12}>
+                    <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
+                    <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="0" defaultValue={item.costExtraHour} />
+                    <br /> Approximate hour required for this job is {item.group.minHour} hours.
+                </Col>
+            </Row>
             <br />
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
