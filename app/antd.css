@@ -183,3 +183,8 @@
     z-index: 0;
     background: 0 0;
 } */
+
+
+.ant-typography{
+  word-break: keep-all;
+}
