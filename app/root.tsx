@@ -154,11 +154,11 @@ export default function App() {
           <Layout>
             <Ticker />
             <Layout.Header style={headerStyle}>
-              {/* <Suspense fallback={<Skeleton />}>
+              <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.user}>
                   {response => <Header user={response} />}
                 </Await>
-              </Suspense> */}
+              </Suspense>
             </Layout.Header>
             <Content style={{ paddingTop: '40px' }}>
               {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <div className="container"><Row gutter={[80, 80]}>
@@ -173,7 +173,7 @@ export default function App() {
               </Row></div>}
             </Content>
             <Layout.Footer style={{ background: 'none', padding: '24px 20px' }}>
-              <Footer />
+              {/* <Footer /> */}
             </Layout.Footer>
           </Layout>
         </Provider>
