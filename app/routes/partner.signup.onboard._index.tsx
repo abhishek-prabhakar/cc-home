@@ -1,10 +1,11 @@
 import { UserSource } from "@prisma/client";
-import { ActionArgs, redirect } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLocation } from "@remix-run/react";
 import { Button, Col, Image, Input, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
+import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
 import usernameTransformer from "~/utils/username.transformer";
 import generateUuid from "~/utils/uuid.generator";
@@ -62,15 +63,29 @@ export async function action(args: ActionArgs) {
                             fileName: x.toString(),
                             fileType: 'img',
                         }))
-                    })
+                    });
 
-                    return redirect('/partner/signup/onboard/' + data.id)
+                    const currentVendor: string = data.id;
+                    return redirect('/partner/signup/onboard/' + data.id, {
+                        headers: {
+                            "Set-Cookie": await vendorSignupCookie.serialize(currentVendor),
+                        },
+                    });
                 }
                 break;
         }
     } catch (e) { }
 
     return false
+}
+
+export async function loader(args: LoaderArgs) {
+    const cookieHeader = args.request.headers.get("Cookie");
+    const currentVendor: string = await vendorSignupCookie.parse(cookieHeader);
+    if (currentVendor) {
+        return redirect('/partner/signup/onboard/' + currentVendor);
+    }
+    return null;
 }
 
 

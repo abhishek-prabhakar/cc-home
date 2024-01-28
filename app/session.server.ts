@@ -2,6 +2,7 @@ import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/n
 // import invariant from "tiny-invariant";
 // invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 export const userCartCookie = createCookie("cart");
+export const vendorSignupCookie = createCookie("vendor-signup");
 
 export const SessionStorage = createCookieSessionStorage({
     cookie: {

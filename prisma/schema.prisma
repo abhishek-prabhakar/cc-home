@@ -67,7 +67,6 @@ model VendorServiceGroup {
   groupId       String
   cost          Int
   costExtraHour Int             @default(0)
-  isApproximate Boolean         @default(false)
   isActive      Boolean         @default(true)
   group         ServiceGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   vendor        Vendor          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -187,6 +186,7 @@ model ServiceGroup {
   vendorTypeId           String
   imageName              String?
   description            String
+  minHour          Int                @default(1)
   isEstimated            Boolean                  @default(false)
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
