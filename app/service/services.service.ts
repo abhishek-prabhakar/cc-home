@@ -66,9 +66,16 @@ export const ServiceQuery = {
                         name: true,
                         minHour: true,
                         serviceGroupItem: {
-                            orderBy: {
+                            orderBy: [{
                                 isOptional: 'asc'
                             },
+                            {
+                                service: {
+                                    name: 'asc',
+                                }
+                            }, {
+                                addonGroupId: 'asc'
+                            }],
                             select: {
                                 addonGroup: {
                                     select: {
