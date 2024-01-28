@@ -1,4 +1,4 @@
-import { BannerLocation } from "@prisma/client";
+import { BannerLocation, FareMode } from "@prisma/client";
 
 export type RootLoaderData = {
     user: User | null,
@@ -86,7 +86,8 @@ export type CartActiveService = VendorServiceOption & { date: string, time: stri
 export type CartItemService = {
     id: string,
     name: string,
-    cost: number
+    cost: number,
+    fareMode: FareMode
 };
 export type CartItem = {
     name: string,

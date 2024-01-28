@@ -35,9 +35,11 @@ export const ServiceQuery = {
                         }
                     },
                     select: {
+                        fareMode: true,
                         cost: true,
                         service: {
                             select: {
+                                fareMode: true,
                                 id: true,
                                 name: true
                             }
