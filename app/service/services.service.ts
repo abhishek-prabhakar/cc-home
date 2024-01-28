@@ -64,6 +64,7 @@ export const ServiceQuery = {
                     select: {
                         id: true,
                         name: true,
+                        minHour: true,
                         serviceGroupItem: {
                             orderBy: {
                                 isOptional: 'asc'

@@ -14,7 +14,7 @@ import generateUuid from "~/utils/uuid.generator";
 type ServiceGroup = {
     id: string;
     name: string;
-    minHour?: number;
+    minHour: number;
     serviceGroupItem: {
         addonGroup: {
             name: string;
@@ -392,7 +392,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     if (data) {
         const selectedServiceGroups = data.VendorServiceGroup.map(x => x.group.id);
-        const categories = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, serviceGroupItem: y.serviceGroupItem })) }));
+        const categories = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
 
         return { profile: data, categories, files }
     }
@@ -484,6 +484,7 @@ const OnBoardPage = {
 
         function setService(data: string) {
             const group = serviceList.find(x => x.id === data);
+            console.log(group)
             if (group) {
                 setServiceDialogData({
                     id: 'NEW',
@@ -625,13 +626,13 @@ const OnBoardPage = {
             <Row gutter={[20, 20]}>
                 <Col span={12}>
                     <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
-                    <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
+                    <Input width={'100%'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
                     <input type="hidden" name="categoryId" value={activeType} />
                     <input type="hidden" name="serviceGroupId" value={item.group.id} />
                 </Col>
                 <Col span={12}>
                     <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
-                    <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="0" defaultValue={item.costExtraHour} />
+                    <Input width={'100%'} addonBefore="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
                     <br /> Approximate hour required for this job is {item.group.minHour} hours.
                 </Col>
             </Row>
