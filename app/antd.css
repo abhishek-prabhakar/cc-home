@@ -155,7 +155,9 @@
   width: auto !important;
   height: auto !important;
 }
-
+.ant-checkbox-wrapper {
+  display: flex !important;
+}
 /* 
 .ant-popover .ant-popover-arrow:before {
     background: var(--antd-arrow-background-color);
@@ -181,3 +183,8 @@
     z-index: 0;
     background: 0 0;
 } */
+
+
+.ant-typography{
+  word-break: keep-all;
+}

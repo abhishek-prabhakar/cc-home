@@ -72,7 +72,7 @@ const UserLogin = {
             onClose();
         }
 
-        return <Modal confirmLoading={isBusy} title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
+        return <Modal destroyOnClose={true} confirmLoading={isBusy} title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
             <Row justify={'end'} gutter={[10, 10]}>
                 <Col span={24}>
                     <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />

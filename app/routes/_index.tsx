@@ -1,21 +1,22 @@
-import { ArrowLeftOutlined, ArrowRightOutlined, MenuOutlined, RightCircleOutlined, RightOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ArrowRightOutlined, FireOutlined, LoadingOutlined, MenuOutlined, RightCircleOutlined, RightOutlined, SearchOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Avatar, Badge, Button, Card, Carousel, Col, Image, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
+import { Avatar, Badge, Button, Card, Carousel, Col, Divider, Image, Input, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Banner, BannerVertical } from "~/components/Banner";
 import { Newsletter } from "~/components/Newsletter";
 const { Title } = Typography;
 const { Meta } = Card;
-import { Await, Link, useLoaderData } from "@remix-run/react";
+import { Await, Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
-import { BannerItem, HomeCategoryItem, Jumbotron } from "~/types";
-import { getCategoryCollection, getJumbotronList, topVendorsByCategory } from "~/service/homepage.service";
+import { BannerItem, Collection, HomeCategoryItem, Jumbotron } from "~/types";
+import { getCategoryCollection, getCollections, getJumbotronList, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
+import { Typewriter } from "react-simple-typewriter";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -25,18 +26,12 @@ const collectionBg = [
 
 const tilesColors = ["#F77963", "#F9B85E", "#EA3562", "#0D4045", "#24F0BB", "#6337FF"];
 
-type Collection = {
-  id: string,
-  title: string,
-  label: string,
-  image: string | null,
-  path: string,
-  cost: number,
-}
+
 
 type Page = {
   id: string,
   title: string,
+  description?: string,
   path: string,
   serviceGroup: {
     id: string;
@@ -49,8 +44,8 @@ type Page = {
 type HomePage = {
   bannerAds: BannerItem[];
   jumbotron: Jumbotron[];
-  collection: Collection[];
-  quickLinks: Collection[];
+  popularServices: Collection[];
+  collections: Collection[];
   morePages: Page[];
   categories: Page[];
 };
@@ -122,43 +117,11 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({
-        path: '/services/' + x.keyName, title: x.name, id: x.id, serviceGroup: x.serviceGroup
+        path: Routes.Services.replace(':id', x.keyName), title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
     })
   });
 
-  const categories = getCategoryCollection();
-
-  const collections = new Promise<Collection[]>(function (resolve) {
-    db.serviceGroup.findMany({
-      take: 8,
-      select: {
-        id: true,
-        name: true,
-        imageName: true,
-        description: true,
-        vendorType: {
-          select: {
-            keyName: true
-          }
-        }
-      },
-      where: {
-        groupTypeId: {
-          not: undefined
-        }
-      }
-    }).then(r => {
-      resolve(r.map(x => ({
-        id: x.id,
-        title: x.name,
-        path: Routes.Services.replace(':id', x.vendorType.keyName) + '?category=' + x.id,
-        label: '',
-        image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
-        cost: 0
-      })))
-    })
-  });
 
   const bannerAds = new Promise(async function (resolve) {
     const bannerlist = await db.websiteBanner.findMany({
@@ -217,9 +180,12 @@ export async function loader({ params }: LoaderArgs) {
     resolve(finalList);
   });
 
+  const categories = getCategoryCollection();
+  const popularServices = getPopularServices();
   const topVendors = topVendorsByCategory();
+  const collections = getCollections();
 
-  return defer({ categories, bannerAds, jumbotron: jumbotronList, quickLinks, collection: collections, morePages, topVendors });
+  return defer({ categories, quickLinks, popularServices: popularServices, collections, topVendors });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -241,228 +207,262 @@ const contentStyle: React.CSSProperties = {
   height: '400px',
 };
 
+type searchResult = {
+  id: string,
+  name: string,
+  vendorType: {
+    keyName: string,
+    name: string
+  },
+  serviceGroupType: { name: string } | null,
+  serviceGroupItem: {
+    service: {
+      name: string;
+    };
+  }[];
+}
+
 const Home = {
   Index: () => {
     const data = useLoaderData<HomePage>();
 
-    return (
-      <div >
-        <Home.Jumbotron />
-        <div className="container">
-          <Row gutter={[0, 50]}>
-            <Col span={24}>
-              <Home.Services />
-            </Col>
-            <Col span={24}>
-              <Home.QuickPick />
-            </Col>
-            <Col span={24}>
-              <Suspense fallback={<Skeleton active />}>
-                <Await resolve={data.bannerAds}>
-                  {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_1)} />}
-                </Await>
-              </Suspense>
-            </Col>
-            <Col span={24}>
-              <Home.TopVendorsList />
-            </Col>
-            <Col span={24}>
-              <Row gutter={[60, 60]}>
-                <Col span={24} md={16}>
-                  <Home.Highlight />
-                  <div className="spacer-md" />
-                  <Home.Collections />
-                </Col>
-                <Col span={24} md={8}>
-
-                  <Home.MoreFeatures />
-                </Col>
-              </Row>
-            </Col>
-            <Col span={24}>
-              <Suspense fallback={<Skeleton active />}>
-                <Await resolve={data.bannerAds}>
-                  {bannerData => <Banner data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_3)} />}
-                </Await>
-              </Suspense>
-            </Col>
-          </Row>
-        </div>
+    return [
+      <Home.Jumbotron />,
+      <div className="container no-spacer">
+        <Home.Services />
+      </div>,
+      <div className="container no-spacer">
+        <Row>
+          <Col span={24}>
+            <Home.PopularServices />
+          </Col>
+          <Col span={24}>
+            <Home.Collections />
+          </Col>
+        </Row>
       </div>
-    );
+    ]
   },
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
-    const [active, setActive] = useState(1);
+    const fetcher = useFetcher();
+    const navigate = useNavigate();
+    const [searchBusy, setSearchBusy] = useState(false);
 
-    return <div className="home-slider-jumbotron">
-      <Suspense fallback={<div className="container"><Skeleton active /></div>}>
-        <Await resolve={data.jumbotron}>
-          {jumbotron => <Carousel autoplay>
-            {jumbotron.map((item, key) => <div key={'slider-' + key}>
-              <div style={{ padding: '0 20px' }}>
-                <Row justify={'center'}>
-                  <Col xs={24} sm={24} md={20} lg={18}>
-                    <div style={{ ...jumbotronItemStyle, background: `url(${item.img}) center no-repeat #c0c0c0`, backgroundSize: 'cover', minHeight: '400px' }}>
-                      <Row gutter={[40, 40]} style={{ height: '100%' }} align={'bottom'}>
-                        <Col xs={24} sm={24} md={14} >
-                          <Title style={{ color: 'white' }} level={1}>
-                            {item.title}
-                          </Title>
-                        </Col>
-                        <Col xs={24} sm={24} md={14} >
-                          <Card bordered={false}>
-                            <Space direction="vertical" size={'middle'}>
-                              <Title level={3}>{item.description}</Title>
-                              <Link to={item.url}>
-                                <Button size="large" type="primary">Visit</Button>
-                              </Link>
-                            </Space>
-                          </Card>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            </div>)}
-          </Carousel>}
-        </Await>
-      </Suspense>
+    const typewriterWords = ['work done', 'photographers', 'videographer', 'makeup artists', 'stylist'];
+
+    useEffect(() => {
+      setSearchBusy(fetcher.state === 'loading');
+    }, [fetcher.state]);
+
+
+    function search(event: any) {
+      const q = event.target.value || '';
+      setSearchBusy(true);
+      fetcher.submit({
+        q
+      }, {
+        method: 'get',
+        action: '/search'
+      })
+    }
+
+    function gotoSearchItemPage(type: string, id: string) {
+      navigate(Routes.ServiceGroup.replace(':id', type).replace(':subId', id))
+    }
+
+    return <div className=" homepage-hero-section">
+      <Row align={'stretch'}>
+        <Col sm={24} xs={24} md={12} style={{ display: 'flex', justifyContent: 'end' }}>
+          <div className="homepage-hero-search-wrapper">
+            <div className="homepage-hero-search-container">
+              <Row gutter={[20, 20]}>
+                <Col span={24}>
+                  <Typography.Title className="title-wrapper" level={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Typography.Title>
+                </Col>
+                <Col xs={24} sm={24} md={18}>
+                  <Typography.Title level={5}>Get Started</Typography.Title>
+                  <Input placeholder="Search" prefix={searchBusy ? <LoadingOutlined /> : <SearchOutlined />} onChange={search} />
+                  <div className="hero-search-results-panel-wrapper">
+                    <Suspense fallback={<Skeleton active />}>
+                      <Await resolve={fetcher.data}>
+                        {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
+                          {item.name} <Typography.Text type="secondary" italic>in {item.vendorType.name}</Typography.Text>
+                        </div>)}{!response?.results?.length && <div className="result-row" > <Typography.Text type="secondary" italic>Sorry, we couldn't find any results on that. Kindly narrow the search term.</Typography.Text></div>}</div>}
+                      </Await>
+                    </Suspense>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </div>
+        </Col>
+        <Col sm={24} xs={24} md={12} style={{ padding: '5px' }}>
+          <img className="homepage-hero-img" src="/assets/homepage-hero.jpg" width={'100%'} style={{ maxWidth: '665px' }} />
+        </Col>
+      </Row>
     </div>;
   },
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
 
-    return <div className="category-list home-section-card-wrapper">
-      <Title level={2}>Featured</Title>
-      <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.quickLinks}>
-          {response => <Row gutter={40} justify={'center'}>
-            {response.map(item => <Col key={item.id} span={12} md={6}>
-              <Space direction="vertical">
-                <div>
-                  <div className="category-badge">
-                    {item.label}
-                  </div>
-                  <div className="category-thumb">
-                    <div className="cover">
-                      <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+    // return <div className="category-list home-section-card-wrapper">
+    //   <Title level={2}>Featured</Title>
+    //   <Suspense fallback={<Skeleton active />}>
+    //     <Await resolve={data.quickLinks}>
+    //       {response => <Row gutter={40} justify={'center'}>
+    //         {response.map(item => <Col key={item.id} span={12} md={6}>
+    //           <Space direction="vertical">
+    //             <div>
+    //               <div className="category-badge">
+    //                 {item.label}
+    //               </div>
+    //               <div className="category-thumb">
+    //                 <div className="cover">
+    //                   <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+    //                 </div>
+    //                 <div className="hover">
+    //                   <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+    //                 </div>
+    //                 <div className="link">
+    //                   <Link to={item.path}>
+    //                     <RightCircleOutlined />
+    //                   </Link>
+    //                 </div>
+    //               </div>
+    //             </div>
+    //             <div>
+    //               <Link to={item.path}><Title level={5}>{item.title}</Title></Link>
+    //               {item.cost && <div>Starting from {item.cost}</div>}
+    //             </div>
+    //           </Space>
+    //         </Col>)}
+    //       </Row>}
+    //     </Await>
+    //   </Suspense>
+    // </div>;
+  },
+  PopularServices: () => {
+    const data = useLoaderData<HomePage>();
+    const [isMobile, setMobile] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      setMobile(window?.innerWidth < 600);
+    }, []);
+
+    function sliderCount() { return isMobile ? 2 : 4; }
+
+    return <Row justify={'space-between'} align={'middle'}>
+      <Col sm={24} xs={24} md={5}>
+        <div className="home-section-card-wrapper">
+          <Title level={4}>Popular Services</Title>
+          <Typography.Text type="secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Typography.Text>
+        </div>
+      </Col>
+      <Col sm={24} xs={24} md={19}>
+        <Suspense fallback={<Skeleton active />}>
+          <Await resolve={data.popularServices}>
+            {resolve => <CarouselProvider
+              naturalSlideWidth={300}
+              naturalSlideHeight={400}
+              totalSlides={resolve.length}
+              visibleSlides={sliderCount()}
+              isIntrinsicHeight={true}
+              step={sliderCount()} dragStep={sliderCount()}
+              className="carousel-slider-wrapper"
+            >
+              <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={'s' + item.id} index={i}>
+                <Link to={item.path}>
+                  <Space direction="vertical">
+                    <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                    <div className="title-wrapper">
+                      <Typography.Text strong>{item.title}</Typography.Text>
                     </div>
-                    <div className="hover">
-                      <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                  </Space>
+                  <RightOutlined className="btn-wrapper" />
+                </Link></Slide>)}
+              </Slider>
+              <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+              <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+            </CarouselProvider>}
+          </Await>
+        </Suspense>
+      </Col>
+    </Row>
+  },
+  Collections: () => {
+    const data = useLoaderData<HomePage>();
+    const [isMobile, setMobile] = useState(false);
+
+    useEffect(() => {
+      setMobile(window?.innerWidth < 600);
+    }, []);
+
+    function sliderCount() { return isMobile ? 1 : 4; }
+
+    return <Row justify={'center'}>
+      <Col span={24}>
+        <div style={{ paddingTop: '45px' }}>
+          <div className="home-section-card-wrapper">
+            <Title level={3} className="_text-center">Hire the best professionals for any job</Title>
+          </div>
+        </div>
+      </Col>
+      <Col>
+        <Suspense fallback={<Skeleton active />}>
+          <Await resolve={data.collections}>
+            {response => <CarouselProvider
+              naturalSlideWidth={300}
+              naturalSlideHeight={400}
+              totalSlides={response.length}
+              visibleSlides={sliderCount()}
+              isIntrinsicHeight={true}
+              step={sliderCount()} dragStep={sliderCount()}
+              className="carousel-slider-wrapper"
+            >
+              <Slider className="slider-spacer">{response.map((item, i) => <Slide className="card-style-2" index={i} key={item.id}>
+                <div className="card-wrapper">
+                  <div>
+                    <div className="title-wrapper">
+                      <Typography.Title level={5}>{item.title}</Typography.Title>
                     </div>
-                    <div className="link">
+                    <div className="label-wrapper">
+                      <Typography.Text>{item.label}</Typography.Text>
+                    </div>
+                    <div className="btn-wrapper">
                       <Link to={item.path}>
-                        <RightCircleOutlined />
+                        <Button shape="round">
+                          Explore
+                        </Button>
                       </Link>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <Link to={item.path}><Title level={5}>{item.title}</Title></Link>
-                  {item.cost && <div>Starting from {item.cost}</div>}
+                <div className="card-thumb-wrapper">
+                  <div className="card-thumb-cover">
+                    <Image src={item.image || ''} preview={false} height={'100%'} width={'100%'} fallback={FALLBACK_IMG} className="thumb" />
+                  </div>
                 </div>
-              </Space>
-            </Col>)}
-          </Row>}
-        </Await>
-      </Suspense>
-    </div>;
-  },
-  Collections: () => {
-    const data = useLoaderData<HomePage>();
-
-    // function sliderCount() { return window?.innerWidth < 600 ? 2 : 4; }
-    function sliderCount() { return 4; }
-
-    return <div className="home-section-card-wrapper">
-      <Row justify={'space-between'} align={'middle'}>
-        <Col><Title level={3}>Popular Services</Title></Col>
-        <Col>View all</Col>
-      </Row>
-      <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.collection}>
-          {resolve => <CarouselProvider
-            naturalSlideWidth={300}
-            naturalSlideHeight={400}
-            totalSlides={resolve.length}
-            visibleSlides={sliderCount()}
-            isIntrinsicHeight={true}
-            step={sliderCount()} dragStep={sliderCount()}
-            className="carousel-slider-wrapper"
-          >
-            <Slider>{resolve.map((item, i) => <Slide className="slider-item" key={item.id} index={i}>
-              <Space direction="vertical">
-                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                </Link>
-                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
-              </Space>
-            </Slide>)}
-            </Slider>
-            <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
-            <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
-          </CarouselProvider>}
-        </Await>
-      </Suspense>
-      {/* <Row gutter={[20, 30]}>
-        
-        <Suspense fallback={<Skeleton active />}>
-          <Await resolve={data.collection}>
-            {resolve => resolve.map(item => <Col key={item.id} span={12} md={6}>
-              <Space direction="vertical">
-                <Link to={item.path}><Image style={{ borderRadius: '10px', width: '100%' }} preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
-                </Link>
-                <div>{item.label && <Tag color="success">{item.label}</Tag>}</div>
-                <Link to={item.path}><Typography.Text strong>{item.title}</Typography.Text></Link>
-              </Space>
-            </Col>)}
+              </Slide>)
+              }</Slider>
+              <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+              <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+            </CarouselProvider>
+            }
           </Await>
         </Suspense>
-      </Row> */}
-    </div>
-  },
-  MoreFeatures: () => {
-    const data = useLoaderData<HomePage>();
-
-    return <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-      <Title level={3}>More...</Title>
-      <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.morePages}>
-          {response => <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-            {response.map(item => <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e1e1e1' }} key={item.id}>
-              <Row gutter={[24, 0]} align="middle">
-                <Col>
-                  <Link to={item.path}>
-                    <Image src="" preview={false} width={100} height={100} fallback={FALLBACK_IMG} />
-                  </Link>
-                </Col>
-                <Col flex={'auto'}>
-                  <Link to={item.path}>
-                    <Typography.Text strong>{item.title}</Typography.Text>
-                  </Link>
-                </Col>
-                <Col style={{ padding: '0 40px' }}>
-                  <RightOutlined />
-                </Col>
-              </Row>
-            </div>)
-            }
-          </Space>}
-        </Await>
-      </Suspense>
-      <Suspense fallback={<Skeleton active />}>
-        <Await resolve={data.bannerAds}>
-          {bannerData => <BannerVertical data={bannerData.find(x => x.bannerLocation === BannerLocation.HOME_2)} />}
-        </Await>
-      </Suspense>
-      <Newsletter />
-    </Space>
+      </Col>
+    </Row>
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
     const [modalData, setIsModalOpen] = useState<HomeCategoryItem | null>(null);
+    const [isMobile, setMobile] = useState(false);
+
+    useEffect(() => {
+      setMobile(window?.innerWidth < 600);
+    }, [])
 
     const showModal = (data: HomeCategoryItem) => {
       setIsModalOpen(data);
@@ -472,71 +472,67 @@ const Home = {
       setIsModalOpen(null);
     };
 
-    return <Row>
-      <Col sm={24} xs={24} md={12} lg={10}>
-        <Card>
-          <Typography.Title level={3}>What are you looking for?</Typography.Title>
-          <Suspense fallback={<Skeleton active />}>
-            <Await resolve={loaderData.categories}>
-              {data => <Row gutter={[20, 20]}>
-                {data.map((item, index) => <Col key={item.id} flex="auto">
-                  <div style={{ cursor: 'pointer', borderRadius: '5px', background: tilesColors[index], padding: '40px 20px', textAlign: 'center' }} onClick={() => showModal(item)}>
-                    <Space direction="vertical" size={'small'}>
-                      <Typography.Text strong style={{ color: 'white' }}>{item.title}</Typography.Text>
-                    </Space>
-                  </div>
-                </Col>)}
-              </Row>}
-            </Await>
-          </Suspense>
-        </Card>
-        <Modal title={modalData?.title} open={!!modalData} footer="" onCancel={handleCancel}>
-          <Row gutter={[20, 20]}>
-            {modalData?.serviceGroup.map((item, index) => <>
+    function sliderCount() { return isMobile ? 2 : 5; }
 
-              {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
-              {item.isCollection ? <Col xs={24} key={item.id}>
-                <Link to={item.path}>
-                  <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
-                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
-                      <Title level={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
-                      <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
-                    </div>
-                  </div>
-                </Link>
-              </Col> : <Col xs={12} sm={12} md={8} key={item.id}>
-                <Link to={item.path}>
-                  <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-                    <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
-                    <div style={{
-                      background: 'linear-gradient(0deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
-                    }}>
-                      <Title level={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
-                    </div>
-                  </div>
-                </Link>
-              </Col>}</>)}
-            {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
-          </Row>
-        </Modal>
-      </Col>
-    </Row>
-  },
-  Highlight: () => {
+    return [
+      <Suspense fallback={<Skeleton active />}>
+        <Await resolve={loaderData.categories}>
+          {data => <CarouselProvider
+            naturalSlideWidth={300}
+            naturalSlideHeight={400}
+            totalSlides={data.length}
+            visibleSlides={sliderCount()}
+            isIntrinsicHeight={true}
+            step={sliderCount()} dragStep={sliderCount()}
+            className="carousel-slider-wrapper slider-homepage-focused slider-uplift"
+          >
+            <Slider className="carousel-slider">{data.map((item, i) => <Slide className="item-wrapper" key={'s' + item.id} index={i} onClick={() => showModal(item)}>
+              <div className="item-spacer">
+                <div className="item">
+                  <Space direction="vertical">
+                    <FireOutlined style={{ fontSize: '2em' }} />
+                    <Typography.Title level={5} style={{ color: 'white' }}>{item.title}</Typography.Title>
+                    <Typography.Text className="item-description" type="secondary" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description}</Typography.Text>
+                  </Space>
+                </div>
+              </div>
+            </Slide>)}
+            </Slider>
+            <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
+            <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+          </CarouselProvider>}
+        </Await>
+      </Suspense>,
+      <Modal title={modalData?.title} destroyOnClose={true} open={!!modalData} footer="" onCancel={handleCancel}>
+        <Row gutter={[20, 20]}>
+          {modalData?.serviceGroup.map((item, index) => <>
 
-    return <div className="home-section-card-wrapper _bg-pastel">
-      <Row align={'middle'} gutter={[100, 30]}>
-        <Col sm={4} md={6}>
-          <Image preview={false} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
-        </Col>
-        <Col sm={20} md={18}>
-          <Typography.Title level={3} style={{ color: 'white' }}>BEST IN WEDDING</Typography.Title>
-          <Typography.Title level={5} style={{ color: 'white' }}>explore all services.</Typography.Title>
-          <Link to="/collections/wedding"><Button type="primary" shape="round">Explore</Button></Link>
-        </Col>
-      </Row>
-    </div>
+            {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
+            {item.isCollection ? <Col xs={24} key={item.id}>
+              <Link to={item.path}>
+                <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
+                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
+                    <Title level={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
+                    <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
+                  </div>
+                </div>
+              </Link>
+            </Col> : <Col xs={12} sm={12} md={8} key={item.id}>
+              <Link to={item.path}>
+                <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
+                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
+                  <div style={{
+                    background: 'linear-gradient(0deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
+                  }}>
+                    <Title level={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
+                  </div>
+                </div>
+              </Link>
+            </Col>}</>)}
+          {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
+        </Row>
+      </Modal>]
   },
   TopVendorsList: () => {
     const data = useLoaderData<typeof loader>();
@@ -544,7 +540,7 @@ const Home = {
       <Await resolve={data.topVendors}>
         {res => <Row gutter={[20, 20]}>
           <Col span={24}><Typography.Title level={3}>Top service providers</Typography.Title></Col>
-          {res.map((category) => <Col key={category.id} xs={24} sm={24} md={6}>
+          {res.map((category) => <Col key={'ce' + category.id} xs={24} sm={24} md={6}>
             <div className="home-section-card-wrapper">
               <Space direction="vertical" size={'middle'}>
                 <Typography.Title level={5}>{category.name}</Typography.Title>

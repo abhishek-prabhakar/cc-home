@@ -45,9 +45,6 @@ export function Header({ user }: { user?: User | null }) {
                                     </Space>
                                 </Dropdown>
                             </Col>
-                            <Col md={14}>
-                                <Input placeholder="Search" bordered={false} prefix={<SearchOutlined />} />
-                            </Col>
                         </Row>
                     </Col>
                     <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >

@@ -129,7 +129,6 @@ const PartnerSignup = {
       console.log(e);
       scroll("signup-form");
     }
-
     return (
       <div style={jumbotronStyle}>
         <Row justify={"center"}>
@@ -195,11 +194,11 @@ const PartnerSignup = {
               Lorem ipsum dolor sit amet
             </Typography.Title>
             <Typography.Text type="secondary">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit
-              amet, consectetur adipiscing elit,
+              Celebria Collective is more than just a platform; it's a launchpad
+              for photographers, makeup artists, videographers, and fashion
+              designers looking to scale their business and amplify their
+              artistic influence. Ready to elevate your craft and take your
+              business to the next level?
             </Typography.Text>
           </div>
         </Col>

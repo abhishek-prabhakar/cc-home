@@ -1,4 +1,4 @@
-import { BannerLocation } from "@prisma/client";
+import { BannerLocation, FareMode } from "@prisma/client";
 
 export type RootLoaderData = {
     user: User | null,
@@ -40,11 +40,14 @@ export type VendorServiceOption = {
     duration: number
 }
 
+export type AddonGroupItem = { id: string, title: string, services: VendorServiceOption[] }
+
 export type VendorService = {
     vendorServiceGroupId: string,
     title: string,
     included: VendorServiceOption[],
-    addons: VendorServiceOption[]
+    addons: VendorServiceOption[],
+    selectableList?: AddonGroupItem[]
 }
 
 export type Vendor = VendorProfile & VendorPortfolio & { services: VendorService[] };
@@ -86,7 +89,8 @@ export type CartActiveService = VendorServiceOption & { date: string, time: stri
 export type CartItemService = {
     id: string,
     name: string,
-    cost: number
+    cost: number,
+    fareMode: FareMode
 };
 export type CartItem = {
     name: string,
@@ -133,5 +137,16 @@ export type CollectionType = {
 export type HomeCategoryItem = {
     id: string,
     title: string,
+    description?: string;
     serviceGroup: CollectionType[]
+}
+
+
+export type Collection = {
+    id: string,
+    title: string,
+    label: string,
+    image: string | null,
+    path: string,
+    cost: number,
 }

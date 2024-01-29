@@ -1,5 +1,5 @@
 import { PATH } from "~/path.data";
-import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 import { db } from "~/utils/database";
 
 export const VendorQuery = {
@@ -46,17 +46,16 @@ export const VendorQuery = {
         return new Promise<VendorService[]>(function (resolve) {
 
             db.vendorServiceGroup.findMany({
-                where: {
+                orderBy: {
                     group: {
-                        VendorServiceGroup: {
-                            some: {
-                                vendorService: {
-                                    some: {
-                                        vendor: {
-                                            username
-                                        }
-                                    }
-                                }
+                        name: 'asc'
+                    }
+                },
+                where: {
+                    vendorService: {
+                        some: {
+                            vendor: {
+                                username
                             }
                         }
                     }
@@ -67,9 +66,32 @@ export const VendorQuery = {
                         select: {
                             name: true,
                             serviceGroupItem: {
+                                where: {
+                                    service: {
+                                        vendorService: {
+                                            some: {
+                                                vendor: {
+                                                    username
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
                                 select: {
                                     serviceId: true,
-                                    isOptional: true
+                                    isOptional: true,
+                                    addonGroup: {
+                                        select: {
+                                            name: true,
+                                            id: true
+                                        }
+                                    },
+                                    service: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -88,26 +110,54 @@ export const VendorQuery = {
                     }
                 },
             }).then(r => {
-                resolve(r.map(x => ({
-                    vendorServiceGroupId: x.id,
-                    title: x.group.name,
-                    included: x.vendorService.reduce<VendorServiceOption[]>((arr, i) => {
-                        const item = x.group.serviceGroupItem.find(y => y.serviceId === i.service.id);
-                        if (item && !item?.isOptional) {
-                            arr.push({
-                                id: i.service.id,
-                                title: i.service.name,
-                                duration: i.duration
-                            })
+
+                resolve(r.map(x => {
+                    const includedIds = x.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
+                    const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
+                    let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
+
+                    const selectableList = x.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
+                        if (!item.addonGroup) {
+                            return acc;
                         }
-                        return arr;
-                    }, []),
-                    addons: x.vendorService.filter(y => x.group.serviceGroupItem.find(service => y.service.id === service.serviceId)?.isOptional).map(y => ({
-                        id: y.service.id,
-                        title: y.service.name,
-                        duration: y.duration
-                    }))
-                })));
+                        const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
+                        if (!addongGrp) {
+                            acc.push({
+                                id: item.addonGroup?.id,
+                                title: item.addonGroup?.name,
+                                services: [{
+                                    id: item.service.id,
+                                    title: item.service.name,
+                                    duration: 0
+                                }]
+                            });
+                        } else {
+                            addongGrp.services.push({
+                                id: item.service.id,
+                                title: item.service.name,
+                                duration: 0
+                            });
+                        }
+                        optional = optional.filter(x => x.service.id !== item.serviceId);
+                        return acc;
+                    }, []);
+
+                    return {
+                        vendorServiceGroupId: x.id,
+                        title: x.group.name,
+                        included: included.map(i => ({
+                            id: i.service.id,
+                            title: i.service.name,
+                            duration: i.duration
+                        })),
+                        addons: optional.map(i => ({
+                            id: i.service.id,
+                            title: i.service.name,
+                            duration: i.duration
+                        })),
+                        selectableList
+                    }
+                }));
             });
         });
     },
