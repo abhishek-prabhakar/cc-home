@@ -126,7 +126,7 @@ const ProfileHome = {
                     <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
                         <Await resolve={data.portfolio}>
                             {portfolio => <>
-                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
+                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 0: 2, 350: 3, 750: 3, 900: 3 }}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
                                     <img src={image} className="cursor-pointer" />
                                 </PhotoView>)}
                                 </Masonry>

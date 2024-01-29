@@ -14,6 +14,7 @@ import generateUuid from "~/utils/uuid.generator";
 type ServiceGroup = {
     id: string;
     name: string;
+    minHour: number;
     serviceGroupItem: {
         addonGroup: {
             name: string;
@@ -32,6 +33,7 @@ type ServiceGroup = {
 type VendorServiceGroup = {
     id: string;
     cost: number;
+    costExtraHour: number;
     vendorService: {
         serviceId: string;
         duration: number;
@@ -149,6 +151,7 @@ export async function action(args: ActionArgs) {
         case STEPS.SERVICE:
             const groupId = formData.get('serviceGroupId');
             const groupCost = formData.get('groupCost');
+            const grpExtraHourCost = formData.get('extraHourCost')?.toString();
             const categoryId = formData.get('categoryId')?.toString();
             if (!categoryId) { return false; }
 
@@ -172,7 +175,6 @@ export async function action(args: ActionArgs) {
                     }
                 }
             });
-
             if (groupId && groupCost) {
                 const serviceIds = formData.getAll('serviceId');
                 const durations = formData.getAll('duration');
@@ -185,7 +187,8 @@ export async function action(args: ActionArgs) {
                         id: vendorGroupId,
                         groupId: groupId?.toString(),
                         vendorId,
-                        cost: parseInt(groupCost?.toString() || '0')
+                        cost: parseInt(groupCost?.toString() || '0'),
+                        costExtraHour: parseInt(grpExtraHourCost || '0')
                     },
                 });
 
@@ -212,11 +215,22 @@ export async function action(args: ActionArgs) {
                 const serviceIds = formData.getAll('serviceId');
                 const durations = formData.getAll('duration');
                 const costs = formData.getAll('cost');
+                const groupCost = formData.get('groupCost')?.toString();
+                const grpExtraHourCost = formData.get('extraHourCost')?.toString();
                 const fareModes = formData.getAll('fareMode');
 
                 if (!vendorGroupId) {
                     return;
                 }
+                await db.vendorServiceGroup.update({
+                    data: {
+                        cost: parseInt(groupCost || '0'),
+                        costExtraHour: parseInt(grpExtraHourCost || '0')
+                    },
+                    where: {
+                        id: vendorGroupId
+                    }
+                });
 
                 await db.vendorService.deleteMany({
                     where: {
@@ -224,7 +238,6 @@ export async function action(args: ActionArgs) {
                         vendorServiceGroupId: vendorGroupId
                     }
                 });
-
                 serviceIds.forEach(async (data, index) => {
                     await db.vendorService.create({
                         data: {
@@ -275,6 +288,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     const data = await db.vendor.findFirstOrThrow({
         where: {
+            isActive: false,
             id: applicationId
         },
         select: {
@@ -291,9 +305,15 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                 }
             },
             VendorServiceGroup: {
+                orderBy: {
+                    group: {
+                        name: 'asc'
+                    }
+                },
                 select: {
                     id: true,
                     cost: true,
+                    costExtraHour: true,
                     vendorService: {
                         select: {
                             serviceId: true,
@@ -305,10 +325,17 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                         select: {
                             id: true,
                             name: true,
+                            minHour: true,
                             serviceGroupItem: {
-                                orderBy: {
+                                orderBy: [{
                                     isOptional: 'asc'
-                                },
+                                }, {
+                                    service: {
+                                        name: 'asc',
+                                    }
+                                }, {
+                                    addonGroupId: 'asc'
+                                }],
                                 select: {
                                     addonGroup: {
                                         select: {
@@ -365,7 +392,9 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     if (data) {
         const selectedServiceGroups = data.VendorServiceGroup.map(x => x.group.id);
-        return { profile: data, categories: vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, serviceGroupItem: y.serviceGroupItem })) })), files }
+        const categories = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
+
+        return { profile: data, categories, files }
     }
 
     return null;
@@ -439,10 +468,10 @@ const OnBoardPage = {
                 </Col>
                 <Col xs={24}></Col>
                 <Col xs={24} sm={24} md={12}>
-                    <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} />
+                    {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} /> : ''}
                 </Col>
                 <Col xs={24} sm={24} md={12}>
-                    <OnBoardPage.Documents data={data} />
+                    {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
                 </Col>
             </Row>
             <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} >
@@ -455,12 +484,14 @@ const OnBoardPage = {
 
         function setService(data: string) {
             const group = serviceList.find(x => x.id === data);
+            console.log(group)
             if (group) {
                 setServiceDialogData({
                     id: 'NEW',
                     vendorService: [],
                     group,
-                    cost: 0
+                    cost: 0,
+                    costExtraHour: 0
                 });
             } else {
                 setServiceDialogData(null);
@@ -470,7 +501,7 @@ const OnBoardPage = {
         return [
             <Card size="small" title="Choose your services">
                 <Space direction="vertical" style={{ width: '100%' }}>
-                    <div><Typography.Text strong>Add new service</Typography.Text></div>
+                    <div><Typography.Text strong>Add one or more services from below</Typography.Text></div>
                     <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
                         {serviceList.map(service => <Select.Option key={service.id} value={service.id}>{service.name}</Select.Option>)}
                         {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>}
@@ -479,7 +510,7 @@ const OnBoardPage = {
                     <OnBoardPage.CostSection />
                 </Space>
             </Card>,
-            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} onCancel={() => setServiceDialogData(null)} >
+            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} destroyOnClose={true} onCancel={() => setServiceDialogData(null)} >
                 {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeType={activeType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
             </Modal>
         ]
@@ -511,13 +542,14 @@ const OnBoardPage = {
             <fetcher.Form method="post" action="">
                 <Card size="small" title="Confirm your identity">
                     <Row gutter={[40, 40]}>
-                        <Col span={5}>
-                            <Select style={{ width: '100%' }} onChange={v => setFileType(v)}>
+                        <Col span={10}>
+                            <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)}>
                                 {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
                             </Select>
                         </Col>
-                        <Col>
+                        <Col span={14}>
                             <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
+                            {!fileType && <Typography.Text type="secondary">Please select a document type</Typography.Text>}
                         </Col>
                         <Col>
                             {fetcher.state === 'submitting' && <Spin />}
@@ -529,7 +561,7 @@ const OnBoardPage = {
             <Table dataSource={data.files}
                 columns={[
                     {
-                        title: 'File Type',
+                        title: 'Document Type',
                         dataIndex: 'fileType',
                         key: 'fileType',
                     },
@@ -539,6 +571,10 @@ const OnBoardPage = {
                         key: 'fileName',
                     },
                 ]} />
+            <Divider />
+            <Row justify={'end'}>
+                <Col><Link to="success"><Button type="primary" disabled={!data.files.length}>Contiue</Button></Link></Col>
+            </Row>
 
             {/* <Table dataSource={data.files}
                     columns={[
@@ -563,8 +599,9 @@ const OnBoardPage = {
         const [enabledIds, setIds] = useState<string[]>([]);
 
         useEffect(() => {
+            const includedIds = item.group.serviceGroupItem.filter(x => !x.isOptional).map(x => x.service.id)
             const addonIds = item.group.serviceGroupItem.filter(x => x.isOptional).map(x => x.service.id)
-            setIds(item.vendorService.filter(x => addonIds.includes(x.serviceId)).map(x => x.serviceId));
+            setIds(item.vendorService.filter(x => addonIds.includes(x.serviceId)).map(x => x.serviceId).concat(includedIds));
         }, [])
 
         useEffect(() => {
@@ -585,12 +622,20 @@ const OnBoardPage = {
 
 
         return [<fetcher.Form method="post" action="">
-            <div>
-                <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
-                <Input width={'100px'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
-                <input type="hidden" name="categoryId" value={activeType} />
-                <input type="hidden" name="serviceGroupId" value={item.group.id} />
-            </div>
+
+            <Row gutter={[20, 20]}>
+                <Col span={12}>
+                    <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
+                    <Input width={'100%'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
+                    <input type="hidden" name="categoryId" value={activeType} />
+                    <input type="hidden" name="serviceGroupId" value={item.group.id} />
+                </Col>
+                <Col span={12}>
+                    <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
+                    <Input width={'100%'} addonBefore="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
+                    <br /> Approximate hour required for this job is {item.group.minHour} hours.
+                </Col>
+            </Row>
             <br />
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
@@ -601,26 +646,26 @@ const OnBoardPage = {
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
                         onChange={v => setEnabledList(service.service.id, v.target.checked)}
-                    /> : <input type="hidden" name="serviceId"
-                        value={service.service.id} />}
+                    /> : [<input type="hidden" name="serviceId"
+                        value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
                 </Col>
                 <Col span={22}>
-                    <b>{service.addonGroup?.name ? service.addonGroup?.name + ' - ' : ''}{service.service.name}</b>
+                    <b>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</b>
                     <div>
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
                     <Row gutter={[10, 10]} align={'middle'}>
-                        <Col span={8}><input type="hidden" value={service.service.fareMode} name="fareMode" />
+                        <Col span={8}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
                             {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
                             ]}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) && service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                            {enabledIds.includes(service.service.id) ? service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} /> : ''}
                         </Col>
                         <Col md={8} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) ? [<div><Typography.Text>Cost</Typography.Text></div>,
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />] : <input type="hidden" name="cost" value={0} />}
+                            {enabledIds.includes(service.service.id) && service.isOptional && [<div><Typography.Text>Cost</Typography.Text></div>,
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />]}
                         </Col>
                     </Row>
                 </Col>
@@ -674,14 +719,14 @@ const OnBoardPage = {
             <Col>
                 <Space direction="vertical" style={{ width: '100%' }}>
                     <Typography.Text strong>Public name:</Typography.Text>
-                    <Select style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
+                    <Select disabled={!data?.profile.usernameSuggestion} style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
                         {data?.profile.usernameSuggestion?.split(',').map((item) => <Select.Option key={item} value={item}>{item}</Select.Option>)}
                     </Select>
                     <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
                 </Space>
             </Col>
             <Col span={24}>
-                <Button type="primary" onClick={saveForm}>Save Changes</Button>
+                <Button type="primary" onClick={saveForm}>Save and Continue</Button>
             </Col>
         </Row>
     }

@@ -130,11 +130,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         date: true,
                         timeHour: true,
                         status: true,
-                        service: {
-                            select: {
-                                name: true,
-                            }
-                        }
+                        serviceName: true
                     }
                 }
             }
@@ -168,7 +164,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         status: x.status,
                         timeHour: x.timeHour,
                         duration: x.duration,
-                        name: x.service?.name || 'Deleted Service'
+                        name: x.serviceName
                     }))
                 })
             }

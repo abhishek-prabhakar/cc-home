@@ -51,41 +51,31 @@ const AppNavigation = {
     function dropdownContent(navitem: HeaderNavListItem) {
       return (
         <div style={{ margin: "-20px -24px" }}>
-          <Row gutter={[40, 40]}>
-            <Col span={8}>
-              <img
-                src="http://1.bp.blogspot.com/-xWlHs4y6IVk/U3lLsj5LXQI/AAAAAAAADS8/8Fx0eclSadg/s1600/c96f3c66ab2f483ca073adfb47dc8b44.jpg"
-                style={{ borderRadius: "4px" }}
-                width={"100%"}
-              />
-            </Col>
-            <Col span={16}>
-              <div style={{ padding: "40px 0" }}>
-                <Space direction="vertical">
+          <div style={{ padding: "40px" }}>
+            <Space direction="vertical">
+              <Typography.Title level={5}>
+                {" "}
+                <Link to={Routes.Services.replace(":id", navitem.id)}>
+                  Browse all {navitem.name}
+                </Link>
+              </Typography.Title>
+              {navitem.children?.map((menuItem) => (
+                <div key={menuItem.name}>
                   <Typography.Title level={5}>
-                    {" "}
-                    <Link to={Routes.Services.replace(":id", navitem.id)}>
-                      Browse all {navitem.name}
-                    </Link>
+                    {menuItem.name}
                   </Typography.Title>
-                  {navitem.children?.map((menuItem) => (
-                    <div key={menuItem.name}>
-                      <Typography.Title level={5}>
-                        {menuItem.name}
-                      </Typography.Title>
-                      <Space direction="vertical">
-                        {menuItem.list.map((item) => (
-                          <Link key={item.id} to={item.path}>
-                            <Typography.Text>{item.name}</Typography.Text>
-                          </Link>
-                        ))}
-                      </Space>
-                    </div>
-                  ))}
-                </Space>
-              </div>
-            </Col>
-          </Row>
+                  <Space direction="vertical">
+                    {menuItem.list.map((item) => (
+                      <Link key={item.id} to={item.path}>
+                        <Typography.Text>{item.name}</Typography.Text>
+                      </Link>
+                    ))}
+                    {!menuItem.list.length && <Typography.Text type="secondary">Sorry, no results found.</Typography.Text>}
+                  </Space>
+                </div>
+              ))}
+            </Space>
+          </div>
         </div>
       );
     }
@@ -119,25 +109,15 @@ const AppNavigation = {
     const data = useLoaderData<RootLoaderData>();
     const navigate = useNavigate();
     const [openDrawer, setDrawerState] = useState(false);
-    const [openKeys, setOpenKeys] = useState(["sub1"]);
-    // const rootSubmenuKeys = menuList.reduce((acc, item) => {
-    //     acc.push(item.key);
-    //     return acc;
-    // }, [] as string[]);
-    const rootSubmenuKeys: string[] = [];
+    const [openKeys, setOpenKeys] = useState<string[]>([]);
 
     const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
       const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-      if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
-        setOpenKeys(keys);
-      } else {
-        setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-      }
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
     };
 
     function navigateToPage(event: any) {
-      const path = event?.keyPath.reverse().join("/");
-      navigate(`/${path}`);
+      navigate(event?.key);
       toggleDrawer();
     }
 
@@ -154,17 +134,30 @@ const AppNavigation = {
           title="Browse"
           onClose={() => toggleDrawer()}
           open={openDrawer}
+          destroyOnClose={true}
         >
           <Suspense fallback={<Skeleton active />}>
             <Await resolve={data.pages}>
-              {(pageData) => (
+              {(navList) => (
                 <Menu
                   style={{ width: 295, margin: "0 -24px 20px" }}
                   mode="inline"
                   openKeys={openKeys}
                   onOpenChange={onOpenChange}
                   onClick={navigateToPage}
-                  items={[]}
+                  items={navList.map(item => ({
+                    key: item.id,
+                    label: item.name,
+                    children: item.children.map((child, i) => ({
+                      key: 'child' + i,
+                      label: child.name,
+                      type: 'group',
+                      children: [{
+                        key: Routes.Services.replace(":id", item.id),
+                        label: 'Browse all ',
+                      }].concat(child.list.map(x => ({ key: x.path, label: x.name, })))
+                    })),
+                  }))}
                 />
               )}
             </Await>

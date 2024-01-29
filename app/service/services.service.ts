@@ -35,9 +35,11 @@ export const ServiceQuery = {
                         }
                     },
                     select: {
+                        fareMode: true,
                         cost: true,
                         service: {
                             select: {
+                                fareMode: true,
                                 id: true,
                                 name: true
                             }
@@ -62,10 +64,18 @@ export const ServiceQuery = {
                     select: {
                         id: true,
                         name: true,
+                        minHour: true,
                         serviceGroupItem: {
-                            orderBy: {
+                            orderBy: [{
                                 isOptional: 'asc'
                             },
+                            {
+                                service: {
+                                    name: 'asc',
+                                }
+                            }, {
+                                addonGroupId: 'asc'
+                            }],
                             select: {
                                 addonGroup: {
                                     select: {

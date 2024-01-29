@@ -70,6 +70,8 @@ export async function action({
                         id: generateUuid(),
                         bookingId: data.id,
                         serviceId: x.id,
+                        serviceName: x.name,
+                        fareMode: x.fareMode,
                         status: BookingStatus.PENDING,
                         date: item.date,
                         timeHour: item.timeHour,

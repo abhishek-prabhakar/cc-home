@@ -43,6 +43,7 @@ model Vendor {
   profileImageName   String?
   coverImageName     String?
   location           String?
+  socialUrl              String?
   source             UserSource
   isActive           Boolean
   accountStatusMsg   String?
@@ -50,7 +51,6 @@ model Vendor {
   primaryColor       String               @default("#4caf50")
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt          DateTime?            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  socialUrl          String?
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])
@@ -67,23 +67,22 @@ model VendorServiceGroup {
   groupId       String
   cost          Int
   costExtraHour Int             @default(0)
-  isApproximate Boolean         @default(false)
   isActive      Boolean         @default(true)
   group         ServiceGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  vendor        Vendor          @relation(fields: [vendorId], references: [id])
+  vendor        Vendor          @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorService VendorService[]
   Booking       Booking[]
 }
 
 model VendorPortfolio {
-  id             String        @id
+  id             String       @id
   vendorId       String
+  serviceGroupId String?
   fileType       String
   fileName       String
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
-  serviceGroupId String?
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
   serviceGroup   ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
-  vendor         Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendor         Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@map("vendorPortfolio")
 }
@@ -103,6 +102,8 @@ model Booking {
   id                   String             @id
   orderId              String
   userId               String
+  vendorServiceGroupId String
+  userNote            String?
   status               BookingStatus
   total                Int
   tax                  Int
@@ -110,8 +111,6 @@ model Booking {
   coupon               String?
   created_at           DateTime           @default(now()) @db.Timestamp(6)
   updated_at           DateTime?          @default(now()) @db.Timestamp(6)
-  vendorServiceGroupId String
-  userNote             String?
   user                 User               @relation(fields: [userId], references: [id])
   bookingService       BookingService[]
   vendorServiceGroup   VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id])
@@ -120,29 +119,30 @@ model Booking {
 model BookingService {
   id         String        @id
   bookingId  String
+  serviceId  String
+  serviceName String
   status     BookingStatus
   date       DateTime
   timeHour   Int
   duration   Int
   location   String
   cost       Int
+  fareMode   FareMode   
   created_at DateTime      @default(now()) @db.Timestamp(6)
   updated_at DateTime?     @default(now()) @db.Timestamp(6)
-  serviceId  String
   booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  service    Service?      @relation(fields: [serviceId], references: [id])
 }
 
 model VendorService {
   id                   String             @id
   vendorId             String
+  vendorServiceGroupId String
   serviceId            String
   fareMode             FareMode
   duration             Int
   cost                 Int
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt            DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  vendorServiceGroupId String
   service              Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceGroup         VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id], onDelete: Cascade)
   vendor               Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -153,9 +153,9 @@ model VendorService {
 model ServiceGroupType {
   id           String         @id
   name         String
-  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
   keyName      String         @unique
   description  String?
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
   ServiceGroup ServiceGroup[]
 }
 
@@ -182,14 +182,15 @@ model PackageItem {
 model ServiceGroup {
   id                     String                   @id
   name                   String
+  groupTypeId            String?
   vendorTypeId           String
   imageName              String?
   description            String
+  minHour          Int                @default(1)
+  isEstimated            Boolean                  @default(false)
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt              DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  groupTypeId            String?
-  isEstimated            Boolean                  @default(false)
-  vendorType             VendorType               @relation(fields: [vendorTypeId], references: [id])
+  vendorType             VendorType               @relation(fields: [vendorTypeId], references: [id], onDelete: Cascade)
   serviceGroupType       ServiceGroupType?        @relation(fields: [groupTypeId], references: [id])
   serviceGroupItem       ServiceGroupItem[]
   JumbotronData          JumbotronData[]
@@ -212,7 +213,6 @@ model Service {
   serviceGroupItem ServiceGroupItem[]
   vendorService    VendorService[]
   JumbotronData    JumbotronData[]
-  BookingService   BookingService[]
 
   @@map("service")
 }
@@ -222,8 +222,8 @@ model ServiceGroupItem {
   groupId      String
   serviceId    String
   isOptional   Boolean                 @default(false)
-  createdAt    DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
   addonGroupId String?
+  createdAt    DateTime                @default(now()) @map("created_at") @db.Timestamp(6)
   group        ServiceGroup            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   addonGroup   ServiceGroupAddonGroup? @relation(fields: [addonGroupId], references: [id])
   service      Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
@@ -289,7 +289,7 @@ model JumbotronData {
   serviceId      String?
   vendorId       String?
   createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
-  vendorType     VendorType?     @relation(fields: [vendorTypeId], references: [id])
+  vendorType     VendorType?     @relation(fields: [vendorTypeId], references: [id], onDelete: Cascade)
   group          ServiceGroup?   @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
   vendor         Vendor?         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   service        Service?        @relation(fields: [serviceId], references: [id], onDelete: Cascade)
@@ -302,8 +302,8 @@ model JumbotronData {
 model WebsiteSlider {
   id          String        @id
   jumbotronId String
-  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
   jumbotron   JumbotronData @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
 
   @@map("websiteSlider")
 }
@@ -312,8 +312,8 @@ model WebsiteBanner {
   id          String         @id
   jumbotronId String
   targetPage  BannerLocation
-  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
   jumbotron   JumbotronData  @relation(fields: [jumbotronId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
 
   @@map("websiteBanner")
 }

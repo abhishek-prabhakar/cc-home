@@ -1,6 +1,7 @@
 import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
+import { FareMode } from "@prisma/client";
 
 const GST_PERCENTAGE = 3;
 
@@ -40,11 +41,12 @@ export const CartService = {
                         date: item.date,
                         timeHour: item.timeHour,
                         duration: item.duration,
-                        services: [{ name: 'Base charge', cost: res.cost, id: '' }].concat(res.vendorService.map(x => ({
+                        services: [{ name: 'Base charge', cost: res.cost, id: '', fareMode: 'FLAT' }, ...res.vendorService.map(x => ({
                             name: x.service.name,
                             cost: x.cost,
-                            id: x.service.id
-                        })))
+                            id: x.service.id,
+                            fareMode: x.fareMode
+                        }))]
                     });
                 }
             };

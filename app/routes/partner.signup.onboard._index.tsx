@@ -1,11 +1,13 @@
 import { UserSource } from "@prisma/client";
-import { ActionArgs, redirect } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLocation } from "@remix-run/react";
 import { Button, Col, Image, Input, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
+import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
+import usernameTransformer from "~/utils/username.transformer";
 import generateUuid from "~/utils/uuid.generator";
 
 export async function action(args: ActionArgs) {
@@ -21,13 +23,33 @@ export async function action(args: ActionArgs) {
         switch (actionType) {
             case 'signup':
                 if (fullName && email && mobileNumber) {
+                    let usernameAccepted = true;
+                    const username = usernameTransformer(fullName);
+                    let newUsername = username;
+                    let usernameSeq = 0;
+                    do {
+                        const count = await db.vendor.count({
+                            where: {
+                                username: newUsername
+                            }
+                        });
+                        if (count > 0) {
+                            usernameAccepted = false;
+                            usernameSeq++;
+                            newUsername = username + usernameSeq;
+                        } else {
+                            usernameAccepted = true;
+                        }
+                    }
+                    while (!usernameAccepted);
+
                     const data = await db.vendor.create({
                         data: {
                             id: generateUuid(),
                             name: fullName,
                             mobileNumber,
                             email,
-                            username: 'profile' + Date.now(),
+                            username: newUsername,
                             source: UserSource.MANUAL,
                             isActive: false,
                             socialUrl
@@ -41,15 +63,29 @@ export async function action(args: ActionArgs) {
                             fileName: x.toString(),
                             fileType: 'img',
                         }))
-                    })
+                    });
 
-                    return redirect('/partner/signup/onboard/' + data.id)
+                    const currentVendor: string = data.id;
+                    return redirect('/partner/signup/onboard/' + data.id, {
+                        headers: {
+                            "Set-Cookie": await vendorSignupCookie.serialize(currentVendor),
+                        },
+                    });
                 }
                 break;
         }
     } catch (e) { }
 
     return false
+}
+
+export async function loader(args: LoaderArgs) {
+    const cookieHeader = args.request.headers.get("Cookie");
+    const currentVendor: string = await vendorSignupCookie.parse(cookieHeader);
+    if (currentVendor) {
+        return redirect('/partner/signup/onboard/' + currentVendor);
+    }
+    return null;
 }
 
 
