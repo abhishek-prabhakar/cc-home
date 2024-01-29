@@ -973,7 +973,7 @@ const Photography = {
                   </Typography.Text>
                 </Col>
               </Row>
-              {item.services?.length && (
+              {item.services?.length !== 0 && (
                 <div style={{ padding: "1px 5px" }}>
                   <Typography.Text strong>Services:</Typography.Text>{" "}
                   {item.services.map((x, index) => (
