@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
-import { VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
 
@@ -96,6 +96,7 @@ const ProfileLayout = {
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
         const [serviceId, setServiceId] = useState<string>();
         const [showConfigPanel, setShowConfigPanel] = useState(false);
+        const [selectableList, setSelectList] = useState<AddonGroupItem[]>([]);
         const [addonsList, setAddonsList] = useState<VendorAddonOption[]>([]);
         const [serviceList, setServiceList] = useState<VendorServiceOption[]>([]);
         const [selectedAddons, setSelectedAddons] = useState<VendorAddonOption[]>([]);
@@ -111,9 +112,11 @@ const ProfileLayout = {
             if (selected) {
                 setServiceList(selected.included);
                 setAddonsList(selected.addons);
+                setSelectList(selected.selectableList || []);
             } else {
                 setServiceList([]);
                 setAddonsList([]);
+                setSelectList([]);
             }
 
             setShowConfigPanel(false);
@@ -155,7 +158,7 @@ const ProfileLayout = {
                         {serviceList?.length ? [<Alert
                             message="Services Included"
                             description={
-                                <div>
+                                <Space wrap={true}>
                                     {
                                         serviceList.map((item) => <Tag
                                             key={item.id} color="#108ee9"
@@ -169,11 +172,21 @@ const ProfileLayout = {
                                             onClose={() => removeAddon(item.id)}
                                         >{item.title}</Tag>)
                                     }
-                                </div>
+                                </Space >
                             }
                             showIcon
                             type="success"
                         />,
+                        <div>
+                            {
+                                selectableList.map(item => <div>
+                                    <Title level={5}>{item.title}</Title>
+                                    <select>
+                                        {item.services.map(service => <option value={service.id}>{service.title}</option>)}
+                                    </select>
+                                </div>)
+                            }
+                        </div>,
                         <div>
                             <Title level={5}>Available addons</Title>
                             {

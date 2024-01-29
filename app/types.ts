@@ -40,11 +40,14 @@ export type VendorServiceOption = {
     duration: number
 }
 
+export type AddonGroupItem = { id: string, title: string, services: VendorServiceOption[] }
+
 export type VendorService = {
     vendorServiceGroupId: string,
     title: string,
     included: VendorServiceOption[],
-    addons: VendorServiceOption[]
+    addons: VendorServiceOption[],
+    selectableList?: AddonGroupItem[]
 }
 
 export type Vendor = VendorProfile & VendorPortfolio & { services: VendorService[] };
