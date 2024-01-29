@@ -1,50 +1,39 @@
 import {
-  defer,
   TypedDeferredData,
+  defer,
   type LoaderArgs,
   type V2_MetaFunction,
 } from "@remix-run/node";
 import {
   Await,
   Link,
-  Outlet,
   useLoaderData,
   useLocation,
   useNavigate,
 } from "@remix-run/react";
 import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import {
   Avatar,
   Badge,
-  Button,
   Checkbox,
   Col,
   Collapse,
   CollapseProps,
   Layout,
-  Menu,
   Rate,
   Row,
   Select,
   Skeleton,
-  Slider,
   Space,
   Tag,
   Typography,
-  theme,
 } from "antd";
-import { Banner, BannerVertical } from "~/components/Banner";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import { Suspense, useEffect, useState } from "react";
-import { db } from "~/utils/database";
+import React, { Suspense, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ServiceGroup } from "@prisma/client";
-import { concat, forkJoin, of, switchMap } from "rxjs";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import { forkJoin, of, switchMap } from "rxjs";
+import { Banner } from "~/components/Banner";
 import { PATH } from "~/path.data";
+import { db } from "~/utils/database";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -60,22 +49,21 @@ const itemThumbStyles: React.CSSProperties = {
   marginBottom: "-50px",
 };
 const itemDataStyles: React.CSSProperties = { padding: "15px" };
-const itemDataItemStyles: React.CSSProperties = { padding: "5px" };
+const itemDataItemStyles: React.CSSProperties = {
+  height: "200px",
+  overflow: "hidden",
+};
+
+const itemDataItemStyles1: React.CSSProperties = {
+  height: "200px",
+  overflow: "hidden",
+};
 const itemDataThumbSetStyles: React.CSSProperties = {
   width: "100%",
-  height: "150px",
+  height: "100%",
   objectFit: "cover",
   cursor: "pointer",
   borderRadius: "4px",
-};
-const itemDataWapperStyles: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  height: "100%",
-  background: "#f3f3f3",
-  borderRadius: "10px",
-  padding: "20px",
 };
 
 export const meta: V2_MetaFunction = () => {
@@ -387,6 +375,272 @@ const SortResultsPanel = () => {
   );
 };
 
+const TwoImageView = ({
+  list,
+  profileId,
+}: {
+  list: string[];
+  profileId: string;
+}) => {
+  return (
+    <>
+      <Col
+        style={{ height: "inherit", overflow: "hidden" }}
+        span={12}
+        key={"thumb" + 1}
+      >
+        <PhotoView src={list[0]}>
+          <img style={itemDataThumbSetStyles} src={list[0]} alt={list[0]} />
+        </PhotoView>
+      </Col>
+      <Col style={{ height: "inherit" }} span={6} key={"thumb" + 2}>
+        <Row
+          style={{
+            gap: "5px",
+            flexDirection: "column",
+            height: "inherit",
+          }}
+        >
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <PhotoView src={list[1]}>
+              <img style={itemDataThumbSetStyles} src={list[1]} alt={list[1]} />
+            </PhotoView>
+          </Col>
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                background: "#80808080",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/profile/" + profileId)}
+            >
+              View Profile
+            </div>
+            {list.length > 2 && (
+              <PhotoView src={list[2]}>
+                <img
+                  style={itemDataThumbSetStyles}
+                  src={list[2]}
+                  alt={list[2]}
+                />
+              </PhotoView>
+            )}
+          </Col>
+        </Row>
+      </Col>
+    </>
+  );
+};
+
+const ThreeImageView = ({
+  list,
+  profileId,
+}: {
+  list: string[];
+  profileId: string;
+}) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Col
+        span={9}
+        style={{ height: "inherit", overflow: "hidden" }}
+        key={"thumb" + 1}
+      >
+        <PhotoView src={list[0]}>
+          <img style={itemDataThumbSetStyles} src={list[0]} alt={list[0]} />
+        </PhotoView>
+      </Col>
+      <Col
+        span={9}
+        style={{ height: "inherit", overflow: "hidden" }}
+        key={"thumb" + 2}
+      >
+        <PhotoView src={list[1]}>
+          <img style={itemDataThumbSetStyles} src={list[1]} alt={list[1]} />
+        </PhotoView>
+      </Col>
+      <Col style={{ height: "inherit" }} span={6} key={"thumb" + 3}>
+        <Row
+          style={{
+            gap: "5px",
+            flexDirection: "column",
+            height: "inherit",
+          }}
+        >
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <PhotoView src={list[2]}>
+              <img style={itemDataThumbSetStyles} src={list[2]} alt={list[2]} />
+            </PhotoView>
+          </Col>
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                background: "#80808080",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/profile/" + profileId)}
+            >
+              View Profile
+            </div>
+            {/* Removed photo */}
+            {list.length > 3 && (
+              <PhotoView src={list[3]}>
+                <img
+                  style={itemDataThumbSetStyles}
+                  src={list[3]}
+                  alt={list[3]}
+                />
+              </PhotoView>
+            )}
+          </Col>
+        </Row>
+      </Col>
+    </>
+  );
+};
+
+const FourImageView = ({
+  list,
+  profileId,
+}: {
+  list: string[];
+  profileId: string;
+}) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Col
+        span={12}
+        style={{ height: "inherit", overflow: "hidden" }}
+        key={"thumb" + 1}
+      >
+        <PhotoView src={list[0]}>
+          <img style={itemDataThumbSetStyles} src={list[0]} alt={list[0]} />
+        </PhotoView>
+      </Col>
+      <Col style={{ height: "inherit" }} span={6} key={"thumb" + 2}>
+        <Row
+          style={{
+            gap: "5px",
+            flexDirection: "column",
+            height: "inherit",
+          }}
+        >
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <PhotoView src={list[1]}>
+              <img style={itemDataThumbSetStyles} src={list[1]} alt={list[1]} />
+            </PhotoView>
+          </Col>
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <PhotoView src={list[2]}>
+              <img style={itemDataThumbSetStyles} src={list[2]} alt={list[2]} />
+            </PhotoView>
+          </Col>
+        </Row>
+      </Col>
+      <Col style={{ height: "inherit" }} span={6} key={"thumb" + 3}>
+        <Row
+          style={{
+            gap: "5px",
+            flexDirection: "column",
+            height: "inherit",
+          }}
+        >
+          <Col
+            style={{
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <PhotoView src={list[3]}>
+              <img style={itemDataThumbSetStyles} src={list[3]} alt={list[3]} />
+            </PhotoView>
+          </Col>
+          <Col
+            style={{
+              overflow: "hidden",
+              position: "relative",
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                background: "#80808080",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/profile/" + profileId)}
+            >
+              View Profile
+            </div>
+            {/* Removed photo */}
+            {list.length > 4 && (
+              <PhotoView src={list[4]}>
+                <img
+                  style={itemDataThumbSetStyles}
+                  src={list[4]}
+                  alt={list[4]}
+                />
+              </PhotoView>
+            )}
+          </Col>
+        </Row>
+      </Col>
+    </>
+  );
+};
+
 const Photography = {
   Index: () => {
     const data = useLoaderData<loaderData>();
@@ -586,6 +840,92 @@ const Photography = {
       });
     }
 
+    function getImageView(list: string[], profileId: string, rowIndex: number) {
+      let count = list.length;
+      if (count === 1) {
+        return (
+          <>
+            <Col style={{ height: "inherit" }} span={12} key={"thumb" + 1}>
+              <PhotoView src={list[0]}>
+                <img
+                  style={itemDataThumbSetStyles}
+                  src={list[0]}
+                  alt={list[0]}
+                />
+              </PhotoView>
+            </Col>
+            <Col style={{ height: "inherit" }} span={6} key={"thumb" + 2}>
+              <div
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  background: "#80808080",
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate("/profile/" + profileId)}
+              >
+                View Profile
+              </div>
+              {/* Removed photo */}
+            </Col>
+          </>
+        );
+      }
+      if (count === 2) {
+        return <TwoImageView list={list} profileId={profileId} />;
+      }
+
+      if (count === 3) {
+        return <ThreeImageView list={list} profileId={profileId} />;
+      }
+      if (count === 4) {
+        return <FourImageView list={list} profileId={profileId} />;
+      }
+
+      if (count >= 5) {
+        // use remainder to decide the view to be shown
+        const remainder = rowIndex % 3;
+        if (remainder === 0) {
+          return <TwoImageView list={list} profileId={profileId} />;
+        }
+        if (remainder === 1) {
+          return <ThreeImageView list={list} profileId={profileId} />;
+        }
+        if (remainder === 2) {
+          return <FourImageView list={list} profileId={profileId} />;
+        }
+      }
+      return (
+        <Col
+          style={{
+            height: "inherit",
+          }}
+          key={"no-image"}
+        >
+          <div
+            style={{
+              width: "100px",
+              height: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              background: "#80808080",
+              cursor: "pointer",
+            }}
+            onClick={() => navigate("/profile/" + profileId)}
+          >
+            View Profile
+          </div>
+        </Col>
+      );
+    }
+
     return (
       <InfiniteScroll
         dataLength={result.length}
@@ -602,82 +942,56 @@ const Photography = {
           </div>
         }
       >
-        {" "}
-        <Row gutter={[0, 40]}>
-          {result?.map((item) => (
-            <Col span={24} key={"profile" + item.id}>
-              <div style={itemStyles}>
-                <div style={itemThumbStyles}>
-                  <Row justify={"end"}>
-                    <Col xs={6} sm={6} md={3} lg={3}>
-                      <Avatar
-                        size={{
-                          xs: 100,
-                          sm: 100,
-                          md: 100,
-                          lg: 120,
-                          xl: 120,
-                          xxl: 120,
-                        }}
-                        src={item.profileImg}
-                      />
-                    </Col>
-                  </Row>
+        {result?.map((item, index) => (
+          <Row style={{ marginBottom: "30px" }} key={"profile" + item.id}>
+            <Col span={12}>
+              <Row>
+                <Avatar
+                  size={{
+                    xs: 40,
+                    sm: 40,
+                    md: 40,
+                    lg: 60,
+                    xl: 60,
+                    xxl: 60,
+                  }}
+                  src={item.profileImg}
+                  onClick={() => navigate("/profile/" + item.id)}
+                  style={{ cursor: "pointer" }}
+                />
+              </Row>
+              <Space size={"middle"}>
+                <Title level={4}>{item.name}</Title>
+                {item.tag && <Tag color="green">{item.tag}</Tag>}
+              </Space>
+              <Row justify={"space-between"} gutter={[20, 20]}>
+                <Col>
+                  <Rate allowHalf disabled defaultValue={item.rating} />{" "}
+                  {item.rating}{" "}
+                  <Typography.Text type="secondary">
+                    (23 Reviews)
+                  </Typography.Text>
+                </Col>
+              </Row>
+              {item.services?.length && (
+                <div style={{ padding: "1px 5px" }}>
+                  <Typography.Text strong>Services:</Typography.Text>{" "}
+                  {item.services.map((x, index) => (
+                    <Tag key={"tag" + index}>{x}</Tag>
+                  ))}{" "}
+                  <Link to={"/profile/" + item.id}>View Profile</Link>
                 </div>
-                <div style={itemDataWapperStyles}>
-                  <div style={itemDataStyles}>
-                    <Space size={"middle"}>
-                      <Title level={3}>@{item.name}</Title>
-                      {item.tag && <Tag color="green">{item.tag}</Tag>}
-                    </Space>
-                    <Row justify={"space-between"} gutter={[20, 20]}>
-                      <Col>
-                        <Rate allowHalf disabled defaultValue={item.rating} />{" "}
-                        {item.rating}{" "}
-                        <Typography.Text type="secondary">
-                          (23 Reviews)
-                        </Typography.Text>
-                      </Col>
-                      <Col>
-                        <Button
-                          type="primary"
-                          shape="round"
-                          onClick={() => navigate("/profile/" + item.id)}
-                        >
-                          View Profile
-                        </Button>
-                      </Col>
-                    </Row>
-                  </div>
-                  <PhotoProvider>
-                    <Row>
-                      {item.portfolio.map((imgThumb, kj) => (
-                        <Col span={6} key={"thumb" + kj}>
-                          <PhotoView src={imgThumb}>
-                            <div style={itemDataItemStyles}>
-                              <img
-                                style={itemDataThumbSetStyles}
-                                src={imgThumb}
-                                alt={imgThumb}
-                              />
-                            </div>
-                          </PhotoView>
-                        </Col>
-                      ))}
-                    </Row>
-                  </PhotoProvider>
-                  <div style={{ padding: "20px 5px" }}>
-                    <Typography.Text strong>Services:</Typography.Text>{" "}
-                    {item.services.map((x, index) => (
-                      <Tag key={"tag" + index}>{x}</Tag>
-                    ))}{" "}
-                    <Link to={"/profile/" + item.id}>View all</Link>
-                  </div>
-                </div>
-              </div>
+              )}
             </Col>
-          ))}
-        </Row>
+            <Col span={12}>
+              <PhotoProvider>
+                <Row gutter={5} style={{ height: "160px" }} justify={"end"}>
+                  {getImageView(item.portfolio, item.id, index)}
+                </Row>
+              </PhotoProvider>
+            </Col>
+          </Row>
+        ))}
       </InfiniteScroll>
     );
   },
