@@ -158,7 +158,7 @@ const ProfileLayout = {
                         {serviceList?.length ? [<Alert
                             message="Services Included"
                             description={
-                                <Space wrap={true}>
+                                <Space wrap={true} size={'small'}>
                                     {
                                         serviceList.map((item) => <Tag
                                             key={item.id} color="#108ee9"

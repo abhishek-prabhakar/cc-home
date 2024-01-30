@@ -74,7 +74,7 @@ export const ServiceQuery = {
                                     name: 'asc',
                                 }
                             }, {
-                                addonGroupId: 'asc'
+                                addonGroup: { name: 'asc' }
                             }],
                             select: {
                                 addonGroup: {

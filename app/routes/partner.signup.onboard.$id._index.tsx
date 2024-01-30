@@ -2,7 +2,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
+import { Alert, Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileUploader from "~/components/FileUploader";
@@ -334,7 +334,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                                         name: 'asc',
                                     }
                                 }, {
-                                    addonGroupId: 'asc'
+                                    addonGroup: { name: 'asc' }
                                 }],
                                 select: {
                                     addonGroup: {
@@ -484,7 +484,6 @@ const OnBoardPage = {
 
         function setService(data: string) {
             const group = serviceList.find(x => x.id === data);
-            console.log(group)
             if (group) {
                 setServiceDialogData({
                     id: 'NEW',
@@ -622,7 +621,7 @@ const OnBoardPage = {
 
 
         return [<fetcher.Form method="post" action="">
-
+            <Alert message="Kindly read all the inclusive services and set your base charge accordingly." type="info" showIcon /><br />
             <Row gutter={[20, 20]}>
                 <Col span={12}>
                     <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
@@ -633,10 +632,10 @@ const OnBoardPage = {
                 <Col span={12}>
                     <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
                     <Input width={'100%'} addonBefore="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
-                    <br /> Approximate hour required for this job is {item.group.minHour} hours.
                 </Col>
             </Row>
-            <br />
+            <div style={{ padding: '10px 0 20px' }}>Approximate hour required for this job is {item.group.minHour} hours.</div>
+
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
                     {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div>(Check all relevant services)</div>] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
@@ -655,17 +654,17 @@ const OnBoardPage = {
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
                     <Row gutter={[10, 10]} align={'middle'}>
-                        <Col span={8}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
-                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
+                        <Col span={6}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
+                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text><br />{FareModeLabel.get(service.service.fareMode)}</div>
                             ]}
                         </Col>
-                        <Col md={8} sm={12} xs={12}>
+                        <Col md={4} sm={12} xs={12}>
                             {enabledIds.includes(service.service.id) ? service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
                             <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} /> : ''}
                         </Col>
-                        <Col md={8} sm={12} xs={12}>
+                        <Col md={14} sm={12} xs={12}>
                             {enabledIds.includes(service.service.id) && service.isOptional && [<div><Typography.Text>Cost</Typography.Text></div>,
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost} name="cost" required />]}
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />, <Typography.Text type="secondary">Enter zero, if you don't charge additional for these services.</Typography.Text>]}
                         </Col>
                     </Row>
                 </Col>
