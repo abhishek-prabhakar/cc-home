@@ -240,9 +240,9 @@ const Home = {
           </Col>
           <Col span={24}>
             <div className="card-style-3">
-              <Row gutter={[40, 12]} justify={'center'}>
+              <Row gutter={[40, 40]} align={'middle'} justify={'center'}>
                 <Col xs={24} sm={24} md={14}>
-                  <Typography.Title level={3}>We are here to help you build your brand</Typography.Title>
+                  <Typography.Title level={3}>We are here to help<br />you build your brand</Typography.Title>
                   Visit  <Link to="/collections/commercial"><Button shape="round">Commercial Services</Button></Link>
                 </Col>
                 <Col>
