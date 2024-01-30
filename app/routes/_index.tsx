@@ -243,7 +243,9 @@ const Home = {
               <Row gutter={[40, 40]} align={'middle'} justify={'center'}>
                 <Col xs={24} sm={24} md={14}>
                   <Typography.Title level={3}>We are here to help<br />you build your brand</Typography.Title>
-                  Visit  <Link to="/collections/commercial"><Button shape="round">Commercial Services</Button></Link>
+                  <Space align={'center'}>
+                    Visit<Link to="/collections/commercial"><Button shape="round">Commercial Services</Button></Link>
+                  </Space>
                 </Col>
                 <Col>
                   <div className="card-style-item">
