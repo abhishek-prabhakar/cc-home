@@ -21,6 +21,7 @@ import {
     Avatar,
     Badge,
     Button,
+    Card,
     Checkbox,
     Col,
     Collapse,
@@ -325,6 +326,13 @@ const Photography = {
                                     </Await>
                                 </Suspense>
                             </Space>
+                        </Col>
+                        <Col sm={24} xs={24} md={8} lg={6}>
+                            <Card style={{ borderColor: '#c6c3c3', borderRadius: '20px' }}>
+                                <Typography.Title className="_underline" level={3}>Hiring<br />Without the<br />Headache</Typography.Title>
+
+                                <img style={{ maxWidth: '100%' }} src="/assets/web-thumb1.jpg" />
+                            </Card>
                         </Col>
                     </Row>
                 </Space>

@@ -414,6 +414,9 @@ body {
 ._text-center{
     text-align: center;
 }
+._underline{
+    text-decoration: underline;
+}
 
 .hero-search-results-panel-wrapper{
     position: relative;
