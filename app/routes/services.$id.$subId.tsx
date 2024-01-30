@@ -39,7 +39,7 @@ import {
     Typography,
     theme,
 } from "antd";
-import { Banner, BannerVertical } from "~/components/Banner";
+import Banner from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
@@ -311,7 +311,6 @@ const Photography = {
                                     </Suspense>
                                     <p>{data.meta.description}</p>
                                 </Content>
-                                <Banner />
                                 <SortResultsPanel />
                                 <Suspense
                                     fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}

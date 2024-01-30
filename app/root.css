@@ -443,3 +443,19 @@ body {
         cursor: pointer;
     }
 }
+
+.card-style-3{
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+
+    /* &::after */
+    .card-style-item{
+        border-radius: 20px;
+        background-color: white;
+        padding: 24px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        box-shadow: -30px 110px 80px #c0c0c0;
+    }
+}

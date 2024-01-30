@@ -3,7 +3,6 @@ import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from 
 import { Avatar, Badge, Button, Card, Carousel, Col, Divider, Image, Input, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
 import { Typography } from 'antd';
 import { Suspense, useEffect, useState } from "react";
-import { Banner, BannerVertical } from "~/components/Banner";
 import { Newsletter } from "~/components/Newsletter";
 const { Title } = Typography;
 const { Meta } = Card;
@@ -238,6 +237,32 @@ const Home = {
           </Col>
           <Col span={24}>
             <Home.Collections />
+          </Col>
+          <Col span={24}>
+            <div className="card-style-3">
+              <Row gutter={[40, 12]} justify={'center'}>
+                <Col xs={24} sm={24} md={14}>
+                  <Typography.Title level={3}>We are here to help you build your brand</Typography.Title>
+                  Visit  <Link to="/collections/commercial"><Button shape="round">Commercial Services</Button></Link>
+                </Col>
+                <Col>
+                  <div className="card-style-item">
+                    <Space align="center"><Typography.Title style={{ margin: 0, padding: 0 }} level={5}>50+</Typography.Title><Typography.Text type="secondary">professionals</Typography.Text></Space>
+                    <br /><br />
+                    <Avatar.Group>
+                      <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                      <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
+                      <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
+                      <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
+                      <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                      <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
+                      <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
+                      <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
+                    </Avatar.Group>
+                  </div>
+                </Col>
+              </Row>
+            </div>
           </Col>
         </Row>
       </div>
