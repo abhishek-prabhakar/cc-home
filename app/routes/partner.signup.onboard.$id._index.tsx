@@ -638,7 +638,7 @@ const OnBoardPage = {
 
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
-                    {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div>(Choose only applicable services)</div>, <Alert message="Customer will be charged by base charge with optional services they choosed." type="info" showIcon />] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
+                    {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Customer will be charged by base charge with optional services they choosed." type="info" showIcon />] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
                 }
                 <Col span={2}>
                     {service.isOptional ? <Checkbox
@@ -653,7 +653,7 @@ const OnBoardPage = {
                     <div>
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
-                    <Row gutter={[20, 10]} align={'middle'}>
+                    <Row gutter={[20, 10]} style={{ paddingTop: '10px' }}>
                         <Col span={10}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
                             {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
                             ]}
