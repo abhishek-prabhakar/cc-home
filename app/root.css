@@ -9,6 +9,10 @@ body {
     margin: 0;
 }
 
+._color-primary{
+    color: var(--ui-color-primary);
+}
+
 .header-nav-item-text{
     color: var(--ui-color-black);
     /* text-transform: uppercase; */
@@ -457,5 +461,15 @@ body {
         overflow: hidden;
         border: 1px solid #eee;
         box-shadow: -30px 110px 80px #e4f2ff;
+    }
+}
+
+.section-bg-pattern {
+    padding-left: 20px;
+
+    &._pattern-1 {
+        background: url('/assets/pattern/bg-pattern-1.png') no-repeat;
+        background-size: cover;
+        background-position-x: -120px;
     }
 }

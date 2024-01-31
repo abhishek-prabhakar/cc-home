@@ -1,6 +1,6 @@
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Col, Divider, Image, Row, Skeleton, Tabs, Typography } from "antd";
+import { Button, Col, Divider, Image, Row, Skeleton, Space, Tabs, Typography } from "antd";
 import { Suspense } from "react";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
@@ -12,24 +12,58 @@ export function loader(args: LoaderArgs) {
     const id = args.params.id;
 
     // db.serviceGroupType
+    if (!id) {
+        throw ('error');
+    }
 
     const results = CollectionService.getServicesGroupsByCollection(id);
 
     return defer({
+        data: CollectionService.getCollectionInfo(id),
         results
     });
 }
 
 const CollectionsPage = {
     Index: () => {
-        return <div className="container">
+
+        return [
+            <CollectionsPage.Header />,
             <CollectionsPage.Section />
+        ]
+    },
+    Header: () => {
+        const data = useLoaderData<typeof loader>();
+
+        return <div className="container no-spacer">
+            <div className="section-bg-pattern _pattern-1">
+                <Row align={"middle"} justify={'center'}>
+                    <Col span={19}>
+                        <Suspense fallback={<Skeleton active />}>
+                            <Await resolve={data.data}>
+                                {result => [
+                                    <Typography.Title level={5}>The easiest way to find</Typography.Title>,
+                                    <Typography.Title level={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Typography.Title>,
+                                    <Typography.Text>By bringing together ambitious and talented professionals with AI, we are making your work easier.</Typography.Text>, <br />,
+                                    <Space align={'center'} style={{ paddingTop: '30px' }}>
+                                        <Typography.Text strong type="secondary">See how it works</Typography.Text>
+                                        <Button shape='round' type="default">Watch Video</Button>
+                                    </Space>
+                                ]}
+                            </Await>
+                        </Suspense>
+                    </Col>
+                    <Col span={5} style={{ overflow: 'hidden' }}>
+                        <img src="/assets/art-1.jpg" />
+                    </Col>
+                </Row>
+            </div>
         </div>
     },
     Section: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <div>
+        return <div className="container">
             <Suspense fallback={<Skeleton active />}>
                 <Await resolve={data.results}>
                     {result => <Tabs

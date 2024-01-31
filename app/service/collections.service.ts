@@ -188,10 +188,30 @@ function getServicesGroupsByCollection(keyName?: string | null) {
     });
 }
 
+function getCollectionInfo(keyName: string) {
+    return new Promise<{
+        name: string,
+        description: string | null
+    }>(function (resolve) {
+        db.serviceGroupType.findFirstOrThrow({
+            where: {
+                keyName
+            },
+            select: {
+                name: true,
+                description: true
+            }
+        }).then(r => {
+            resolve(r)
+        });
+    })
+}
+
 const CollectionService = {
     getCollectionByType,
     getRelatedCollectionByType,
-    getServicesGroupsByCollection
+    getServicesGroupsByCollection,
+    getCollectionInfo
 }
 
 export default CollectionService;
