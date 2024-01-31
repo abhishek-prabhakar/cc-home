@@ -468,8 +468,8 @@ body {
     padding-left: 20px;
 
     &._pattern-1 {
-        background: url('/assets/pattern/bg-pattern-1.png') no-repeat;
+        /* background: url('/assets/pattern/bg-pattern-1.png') no-repeat;
         background-size: cover;
-        background-position-x: -120px;
+        background-position-x: -120px; */
     }
 }
