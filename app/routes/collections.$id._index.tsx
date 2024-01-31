@@ -72,9 +72,9 @@ const CollectionsPage = {
                             key: item.keyName,
                             label: <Typography.Title level={4}>{item.name}</Typography.Title>,
                             children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
-                                {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
+                                {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
-                                        <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} fallback={PATH.FALLBACK_IMG} /></Link>
+                                        <Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} fallback={PATH.FALLBACK_IMG} />
                                         <div style={{ paddingBottom: '20px' }}></div>
                                         <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
                                             <Typography.Title level={5}>{service.name}</Typography.Title>
@@ -86,6 +86,7 @@ const CollectionsPage = {
                                             </div>)}
                                         </div>
                                     </div>
+                                </Link>
                                 </Col>)}
                                 <Col span={24}>
                                     <Divider />
