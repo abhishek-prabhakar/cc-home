@@ -658,7 +658,7 @@ const OnBoardPage = {
                             <input type="hidden" value={service.service.fareMode} name="fareMode" />
                             <div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
                             {service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
                         </Col>
                         <Col md={14} sm={12} xs={12}>
                             <div><Typography.Text>Cost</Typography.Text></div>
