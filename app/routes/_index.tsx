@@ -242,9 +242,12 @@ const Home = {
             <div className="card-style-3">
               <Row gutter={[40, 40]} align={'middle'} justify={'center'}>
                 <Col xs={24} sm={24} md={14}>
-                  <Typography.Title level={3}>We are here to help<br />you build your brand</Typography.Title>
-                  <Space align={'center'}>
-                    Visit<Link to="/collections/commercial"><Button shape="round">Commercial Services</Button></Link>
+                  <Space direction="vertical" align="center" style={{ width: '100%' }}>
+                    <Typography.Title className="_text-center" level={3}>We are here to help<br />you build your brand</Typography.Title>
+                    <Space align={'center'}>
+                      <Typography.Text strong>Check out</Typography.Text>
+                      <Link to="/collections/commercial"><Button type="primary" ghost shape="round">Commercial Services</Button></Link>
+                    </Space>
                   </Space>
                 </Col>
                 <Col>
