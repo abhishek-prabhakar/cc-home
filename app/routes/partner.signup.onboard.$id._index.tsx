@@ -638,7 +638,7 @@ const OnBoardPage = {
 
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
-                    {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Customer will be charged by base charge with the optional services they choose." type="info" showIcon />] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
+                    {service.isOptional ? [<Typography.Title level={5}>Optional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Do not add base charge to optional service." type="info" showIcon />] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
                 }
                 <Col span={2}>
                     {service.isOptional ? <Checkbox
@@ -653,18 +653,19 @@ const OnBoardPage = {
                     <div>
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
-                    <Row gutter={[20, 10]} style={{ paddingTop: '10px' }}>
-                        <Col span={10}>{enabledIds.includes(service.service.id) && <input type="hidden" value={service.service.fareMode} name="fareMode" />}
-                            {enabledIds.includes(service.service.id) && [<div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
-                            ]}
-                            {enabledIds.includes(service.service.id) ? service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || service.service.minHour} name="duration" required min={service.service.minHour} />] : <input type="hidden" name="duration" value={1} /> : ''}
+                    {enabledIds.includes(service.service.id) && service.isOptional && <Row gutter={[20, 10]} style={{ paddingTop: '10px' }}>
+                        <Col span={10}>
+                            <input type="hidden" value={service.service.fareMode} name="fareMode" />
+                            <div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
+                            {service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
+                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
                         </Col>
                         <Col md={14} sm={12} xs={12}>
-                            {enabledIds.includes(service.service.id) && service.isOptional && [<div><Typography.Text>Cost</Typography.Text></div>,
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />, <Typography.Text type="secondary">Enter zero, if you don't charge additional for these services.</Typography.Text>]}
+                            <div><Typography.Text>Cost</Typography.Text></div>
+                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />
+                            <Typography.Text type="secondary">Enter zero, if you don't charge additional for these services.</Typography.Text>
                         </Col>
-                    </Row>
+                    </Row>}
                 </Col>
                 <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
             </Row>)}

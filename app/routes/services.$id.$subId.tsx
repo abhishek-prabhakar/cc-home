@@ -264,7 +264,7 @@ export async function loader({
         data,
         result,
         page,
-        meta: metaInfo,
+        meta: { ...metaInfo, categoryId },
     });
 }
 
@@ -318,6 +318,7 @@ const Photography = {
                                     <Await resolve={data?.result}>
                                         {(response) => (
                                             <Photography.Results
+                                                categoryId={data.meta.categoryId}
                                                 vendors={response.data}
                                                 loadMore={response.loadMore}
                                             />
@@ -341,7 +342,9 @@ const Photography = {
     Results: ({
         vendors,
         loadMore,
+        categoryId
     }: {
+        categoryId?: string;
         vendors: Vendor[];
         loadMore: boolean;
     }) => {
@@ -451,7 +454,7 @@ const Photography = {
                                         {item.services.map((x, index) => (
                                             <Tag key={"tag" + index}>{x}</Tag>
                                         ))}{" "}
-                                        <Link to={"/profile/" + item.id}>View all</Link>
+                                        <Link to={"/profile/" + item.id + '?service=' + categoryId}>View all</Link>
                                     </div>
                                 </div>
                             </div>

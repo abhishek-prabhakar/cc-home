@@ -118,6 +118,7 @@ const Onboard = {
                             </Col>
                             <Col span={24}>
                                 <Typography.Title level={5}>Portfolio*</Typography.Title>
+                                <Typography.Text type="secondary">Add atleast ten of your best works.</Typography.Text>
                                 <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
                                 <br />
                                 <Space style={{ marginTop: '10px' }}>
