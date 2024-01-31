@@ -465,6 +465,8 @@ body {
 }
 
 .section-bg-pattern {
+    background-color: #F5F5F7;
+    border-radius: 20px;
     padding-left: 20px;
 
     &._pattern-1 {

@@ -54,7 +54,7 @@ const CollectionsPage = {
                         </Suspense>
                     </Col>
                     <Col span={5} style={{ overflow: 'hidden' }}>
-                        <img src="/assets/art-1.jpg" />
+                        <img src="/assets/art-1.png" />
                     </Col>
                 </Row>
             </div>
