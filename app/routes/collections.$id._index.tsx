@@ -35,7 +35,7 @@ const CollectionsPage = {
     Header: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <div className="container no-spacer">
+        return <div className="container no-spacer" style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
                 <Row align={"middle"} justify={'center'}>
                     <Col span={19}>
@@ -53,7 +53,7 @@ const CollectionsPage = {
                             </Await>
                         </Suspense>
                     </Col>
-                    <Col span={5} style={{ overflow: 'hidden' }}>
+                    <Col span={5} style={{ overflow: 'hidden', marginBottom: '-40px' }}>
                         <img src="/assets/art-1.png" />
                     </Col>
                 </Row>
@@ -73,16 +73,19 @@ const CollectionsPage = {
                             label: <Typography.Title level={4}>{item.name}</Typography.Title>,
                             children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
                                 {item.serviceGroup.map(service => <Col key={service.id} sm={12} xs={12} md={6}>
-                                    <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} fallback={PATH.FALLBACK_IMG} /></Link>
-                                    <div style={{ paddingBottom: '20px' }}></div>
-                                    <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
-                                        <Typography.Title level={5}>{service.name}</Typography.Title>
-                                    </Link>
-                                    <ul style={{ paddingLeft: '14px' }}>
-                                        {service.serviceGroupItem.map((description, key) => <li key={'d-' + key}>
-                                            <Typography.Text>Includes {description.service.name}.</Typography.Text>
-                                        </li>)}
-                                    </ul>
+                                    <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
+                                        <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}><Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} fallback={PATH.FALLBACK_IMG} /></Link>
+                                        <div style={{ paddingBottom: '20px' }}></div>
+                                        <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
+                                            <Typography.Title level={5}>{service.name}</Typography.Title>
+                                        </Link>
+                                        <Typography.Text strong type="secondary">Includes</Typography.Text>
+                                        <div>
+                                            {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
+                                                <Typography.Text type="secondary">{description.service.name}.</Typography.Text>
+                                            </div>)}
+                                        </div>
+                                    </div>
                                 </Col>)}
                                 <Col span={24}>
                                     <Divider />

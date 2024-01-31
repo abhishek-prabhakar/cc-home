@@ -49,11 +49,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 },
                 bookingService: {
                     select: {
-                        service: {
-                            select: {
-                                name: true
-                            }
-                        }
+                        serviceName: true
                     }
                 }
             }
@@ -63,7 +59,7 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
                 name: x.vendorServiceGroup.group.name,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.service?.name || 'Deleted service')
+                services: x.bookingService.map(i => i.serviceName || 'Deleted service')
             }));
 
             resolve(p);
