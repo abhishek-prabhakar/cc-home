@@ -1,6 +1,6 @@
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Button, Col, Divider, Image, Row, Skeleton, Space, Tabs, Typography } from "antd";
+import { Badge, Button, Col, Divider, Image, Row, Skeleton, Space, Tabs, Typography } from "antd";
 import { Suspense } from "react";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
@@ -84,6 +84,10 @@ const CollectionsPage = {
                                             {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
                                                 <Typography.Text type="secondary">{description.service.name}.</Typography.Text>
                                             </div>)}
+                                        </div>
+                                        <div style={{ marginTop: '10px', height: '28px', borderTop: '1px solid #ddd', paddingTop: '4px' }}>
+                                            {service.VendorServiceGroup.length ? <Badge text={'Starts from ₹' + service.VendorServiceGroup[0].cost} status="success" />
+                                                : ''}
                                         </div>
                                     </div>
                                 </Link>

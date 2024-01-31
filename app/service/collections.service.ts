@@ -137,6 +137,9 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                     name: string;
                 };
             }[];
+            VendorServiceGroup: {
+                cost: number;
+            }[];
         }[];
     }[]>(function (resolve) {
         if (!keyName) {
@@ -168,6 +171,15 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                                         name: true
                                     }
                                 }
+                            }
+                        },
+                        VendorServiceGroup: {
+                            take: 1,
+                            orderBy: {
+                                cost: 'asc'
+                            },
+                            select: {
+                                cost: true
                             }
                         }
                     }
