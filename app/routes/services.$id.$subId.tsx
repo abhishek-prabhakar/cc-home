@@ -47,6 +47,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ServiceGroup } from "@prisma/client";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
+import Routes from "~/routes.data";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -425,7 +426,7 @@ const Photography = {
                                                 <Button
                                                     type="primary"
                                                     shape="round"
-                                                    onClick={() => navigate("/profile/" + item.id)}
+                                                    onClick={() => navigate(Routes.VendorProfileWithService.replace(':id', item.id).replace(':sId', categoryId || ''))}
                                                 >
                                                     View Profile
                                                 </Button>
@@ -454,7 +455,7 @@ const Photography = {
                                         {item.services.map((x, index) => (
                                             <Tag key={"tag" + index}>{x}</Tag>
                                         ))}{" "}
-                                        <Link to={"/profile/" + item.id + '?service=' + categoryId}>View all</Link>
+                                        <Link to={Routes.VendorProfileWithService.replace(':id', item.id).replace(':sId', categoryId || '')}>View all</Link>
                                     </div>
                                 </div>
                             </div>
