@@ -38,7 +38,7 @@ const CollectionsPage = {
         return <div className="container no-spacer" style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
                 <Row align={"middle"} justify={'center'}>
-                    <Col span={19}>
+                    <Col span={19} style={{ padding: '20px 0' }}>
                         <Suspense fallback={<Skeleton active />}>
                             <Await resolve={data.data}>
                                 {result => [
@@ -72,7 +72,7 @@ const CollectionsPage = {
                             key: item.keyName,
                             label: <Typography.Title level={4}>{item.name}</Typography.Title>,
                             children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
-                                {item.serviceGroup.map(service => <Col key={service.id} sm={24} xs={24} md={6} style={{ padding: '20px 0' }}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
+                                {item.serviceGroup.map(service => <Col key={service.id} sm={24} xs={24} md={6}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
                                         <Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} fallback={PATH.FALLBACK_IMG} />
                                         <div style={{ paddingBottom: '20px' }}></div>
