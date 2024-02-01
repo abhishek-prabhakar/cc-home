@@ -721,13 +721,6 @@ const OnBoardPage = {
                     <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value })} placeholder="Select a category" style={{ width: '100%' }}>
                         {data?.categories.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
                     </Select>
-                    {showWarnMsg && <Alert type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
-                        <Space direction="vertical" style={{ width: '100%' }}>
-                            <Button size="small" danger type="primary" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
-                                Decline
-                            </Button>
-                        </Space>
-                    } />}
                 </Space>
             </Col>
             <Col sm={24} xs={24} md={12}>
@@ -740,6 +733,13 @@ const OnBoardPage = {
                 </Space>
             </Col>
             <Col span={24}>
+                {showWarnMsg && <Alert type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                        <Button size="small" danger type="primary" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
+                            Decline
+                        </Button>
+                    </Space>
+                } />}
                 <Button type="primary" onClick={saveForm}>Save and Continue</Button>
             </Col>
         </Row>
