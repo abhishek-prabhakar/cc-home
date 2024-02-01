@@ -1,7 +1,7 @@
 import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
 // import invariant from "tiny-invariant";
 // invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
-const cookieAge = 60 * 60 * 24 * 7;
+const cookieAge = 60 * 60 * 24 * 7 * 364;
 export const userCartCookie = createCookie("cart", {
     maxAge: cookieAge
 });

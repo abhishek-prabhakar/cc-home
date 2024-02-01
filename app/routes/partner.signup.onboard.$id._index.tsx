@@ -541,12 +541,13 @@ const OnBoardPage = {
             <fetcher.Form method="post" action="">
                 <Card size="small" title="Confirm your identity">
                     <Row gutter={[40, 40]}>
-                        <Col span={10}>
+                        <Col sm={24} xs={24} md={10}>
                             <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)}>
                                 {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
                             </Select>
+                            <Typography.Text type="secondary">Upload any valid document to prove your identity.</Typography.Text>
                         </Col>
-                        <Col span={14}>
+                        <Col sm={24} xs={24} md={14}>
                             <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
                             {!fileType && <Typography.Text type="secondary">Please select a document type</Typography.Text>}
                         </Col>
@@ -623,13 +624,13 @@ const OnBoardPage = {
         return [<fetcher.Form method="post" action="">
             <Alert message="Kindly read all the inclusive services and set your base charge accordingly." type="info" showIcon /><br />
             <Row gutter={[20, 20]}>
-                <Col span={12}>
+                <Col sm={24} xs={24} md={12}>
                     <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
                     <Input width={'100%'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
                     <input type="hidden" name="categoryId" value={activeType} />
                     <input type="hidden" name="serviceGroupId" value={item.group.id} />
                 </Col>
-                <Col span={12}>
+                <Col sm={24} xs={24} md={12}>
                     <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
                     <Input width={'100%'} addonBefore="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
                 </Col>
@@ -654,13 +655,13 @@ const OnBoardPage = {
                         <Typography.Text type="secondary">{service.service.description}</Typography.Text>
                     </div>
                     {enabledIds.includes(service.service.id) && service.isOptional && <Row gutter={[20, 10]} style={{ paddingTop: '10px' }}>
-                        <Col span={10}>
+                        <Col sm={24} xs={24} md={10}>
                             <input type="hidden" value={service.service.fareMode} name="fareMode" />
                             <div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
                             {service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
                             <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
                         </Col>
-                        <Col md={14} sm={12} xs={12}>
+                        <Col sm={24} xs={24} md={14}>
                             <div><Typography.Text>Cost</Typography.Text></div>
                             <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />
                             <Typography.Text type="secondary">Enter zero, if you don't charge additional for these services.</Typography.Text>
@@ -684,10 +685,18 @@ const OnBoardPage = {
         const data = useLoaderData<typeof loader>();
         const submit = useSubmit();
         const [profileData, setData] = useState<{ jobType?: string, username?: string }>({ jobType: data?.profile.vendorType?.id, username: data?.profile.username });
+        const [showWarnMsg, setWarnMsg] = useState(false);
 
         function updateData(newData: { [key in ('jobType' | 'username')]?: string }) {
+            const currentType = data?.profile?.vendorType?.id;
             if (newData) {
                 setData({ ...profileData, ...newData });
+            }
+
+            if (currentType && newData.jobType && currentType !== newData.jobType) {
+                setWarnMsg(true)
+            } else {
+                setWarnMsg(false)
             }
         }
 
@@ -707,14 +716,21 @@ const OnBoardPage = {
         }
 
         return <Row gutter={[20, 20]}>
-            <Col>
-                <Space direction="vertical" style={{ width: '100%' }}><Typography.Text strong>Category:</Typography.Text>
-                    <Select defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value })} placeholder="Select a category">
+            <Col sm={24} xs={24} md={12}>
+                <Space direction="vertical" style={{ width: '100%' }}><Typography.Text strong>Profile Category:</Typography.Text>
+                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value })} placeholder="Select a category" style={{ width: '100%' }}>
                         {data?.categories.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
                     </Select>
+                    {showWarnMsg && <Alert type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
+                        <Space direction="vertical" style={{ width: '100%' }}>
+                            <Button size="small" danger type="primary" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
+                                Decline
+                            </Button>
+                        </Space>
+                    } />}
                 </Space>
             </Col>
-            <Col>
+            <Col sm={24} xs={24} md={12}>
                 <Space direction="vertical" style={{ width: '100%' }}>
                     <Typography.Text strong>Public name:</Typography.Text>
                     <Select disabled={!data?.profile.usernameSuggestion} style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
