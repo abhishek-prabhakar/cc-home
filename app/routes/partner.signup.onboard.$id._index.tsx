@@ -733,14 +733,17 @@ const OnBoardPage = {
                 </Space>
             </Col>
             <Col span={24}>
-                {showWarnMsg && <Alert type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
+                {showWarnMsg && <Alert style={{ marginBottom: '20px' }} type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
                     <Space direction="vertical" style={{ width: '100%' }}>
                         <Button size="small" danger type="primary" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
                             Decline
                         </Button>
+                        <Button size="small" danger ghost onClick={() => setWarnMsg(false)}>
+                            Procced
+                        </Button>
                     </Space>
                 } />}
-                <Button type="primary" onClick={saveForm}>Save and Continue</Button>
+                {!showWarnMsg && <Button type="primary" onClick={saveForm}>Save and Continue</Button>}
             </Col>
         </Row>
     }
