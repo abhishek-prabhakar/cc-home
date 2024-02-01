@@ -1,8 +1,13 @@
 import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
 // import invariant from "tiny-invariant";
 // invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
-export const userCartCookie = createCookie("cart");
-export const vendorSignupCookie = createCookie("vendor-signup");
+const cookieAge = 60 * 60 * 24 * 7;
+export const userCartCookie = createCookie("cart", {
+    maxAge: cookieAge
+});
+export const vendorSignupCookie = createCookie("vendor-signup", {
+    maxAge: cookieAge
+});
 
 export const SessionStorage = createCookieSessionStorage({
     cookie: {
@@ -33,7 +38,7 @@ const { getSession, commitSession, destroySession } =
                 name: "__session",
                 // expires: new Date(Date.now() + 60_000),
                 httpOnly: true,
-                maxAge: 60 * 60 * 24 * 7,
+                maxAge: cookieAge,
                 path: "/",
                 sameSite: "lax",
                 secrets: ["s3cret1"],
@@ -44,6 +49,7 @@ const { getSession, commitSession, destroySession } =
 
 const logout = async (request: Request) => {
     const session = await getSession(request.headers.get('Cookie'));
+
     return redirect("/", {
         headers: {
             "Set-Cookie": await SessionStorage.destroySession(session),
