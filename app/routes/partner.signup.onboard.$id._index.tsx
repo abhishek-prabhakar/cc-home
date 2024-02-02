@@ -639,7 +639,7 @@ const OnBoardPage = {
 
             {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
-                    {service.isOptional ? [<Typography.Title level={5}>Additional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Do not add base charge to additional service." type="info" showIcon />] : <Typography.Title level={5}>Services included in this category</Typography.Title>}</Col>
+                    {service.isOptional ? [<Typography.Title style={{ color: '#1890ff' }} level={5}>Additional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Do not add base charge to additional service." type="info" showIcon />] : <Typography.Title style={{ color: '#1890ff' }} level={5}>Services included in this category</Typography.Title>}</Col>
                 }
                 <Col span={2}>
                     {service.isOptional ? <Checkbox
