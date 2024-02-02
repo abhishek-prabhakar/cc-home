@@ -451,7 +451,7 @@ const OnBoardPage = {
                 <Col xs={24} sm={24} md={12}>
                     <Card size="small" title="Update Profile">
                         {data?.profile?.vendorType && data.profile?.username ?
-                            <Row>
+                            <Row gutter={[20, 20]}>
                                 <Col xs={24} sm={24} md={12}>
                                     <div><Typography.Text strong>Profile Type: </Typography.Text></div>
                                     <Space>
@@ -474,7 +474,7 @@ const OnBoardPage = {
                     {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
                 </Col>
             </Row>
-            <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} >
+            <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} destroyOnClose={true}>
                 <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />
             </Modal>
         </div>;
