@@ -8,7 +8,7 @@ import { VendorServiceOption } from "~/types";
 
 const timeFormat = 'hh a';
 
-function ConfigureBooking(service: { vendorServiceGroupId: string, options: VendorServiceOption[] }) {
+function ConfigureBooking(service: { minHour: number, vendorServiceGroupId: string, options: VendorServiceOption[] }) {
     const { control, getValues, handleSubmit, setValue, register } = useForm();
     const [serviceChecklist, setServiceChecklist] = useState<boolean[]>([false, false, false]);
     const checkoutForm = useRef<any>(null);
@@ -16,8 +16,8 @@ function ConfigureBooking(service: { vendorServiceGroupId: string, options: Vend
     const [minDuration, setMinDuration] = useState(1);
 
     useEffect(() => {
-        const minDur = Math.max.apply(0, service.options.map(x => x.duration));
-        setMinDuration(minDur);
+        // const minDur = Math.max.apply(0, service.options.map(x => x.duration));
+        setMinDuration(service.minHour);
         setServiceOptionDuration(0);
         setServiceChecklist([false, false, false]);
     }, [service]);

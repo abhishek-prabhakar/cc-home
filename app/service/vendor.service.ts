@@ -65,6 +65,7 @@ export const VendorQuery = {
                     group: {
                         select: {
                             name: true,
+                            minHour: true,
                             serviceGroupItem: {
                                 where: {
                                     service: {
@@ -145,6 +146,7 @@ export const VendorQuery = {
                     return {
                         vendorServiceGroupId: x.id,
                         title: x.group.name,
+                        minHour: x.group.minHour,
                         included: included.map(i => ({
                             id: i.service.id,
                             title: i.service.name,

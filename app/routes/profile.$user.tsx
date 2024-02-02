@@ -94,7 +94,7 @@ const ProfileLayout = {
     },
     Contact: ({ services }: { services: VendorService[] }) => {
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
-        const [serviceId, setServiceId] = useState<string>();
+        const [service, setService] = useState<{ id: string, minHour: number } | null>();
         const [showConfigPanel, setShowConfigPanel] = useState(false);
         const [selectableList, setSelectList] = useState<AddonGroupItem[]>([]);
         const [addonsList, setAddonsList] = useState<VendorAddonOption[]>([]);
@@ -108,8 +108,8 @@ const ProfileLayout = {
 
         function setServiceOptions(id: string) {
             const selected = services?.find(x => x.vendorServiceGroupId === id);
-            setServiceId(id);
             if (selected) {
+                setService({ id, minHour: selected?.minHour });
                 setServiceList(selected.included);
                 setAddonsList(selected.addons);
                 setSelectList(selected.selectableList || []);
@@ -117,6 +117,7 @@ const ProfileLayout = {
                 setServiceList([]);
                 setAddonsList([]);
                 setSelectList([]);
+                setService(null);
             }
 
             setShowConfigPanel(false);
@@ -203,13 +204,13 @@ const ProfileLayout = {
                             : ''}
                         <Row justify={'end'}>
                             <Col>
-                                {!showConfigPanel && serviceId && <Button onClick={() => setShowConfigPanel(true)} type="primary">Continue</Button>}
+                                {!showConfigPanel && service?.id && <Button onClick={() => setShowConfigPanel(true)} type="primary">Continue</Button>}
                             </Col>
                         </Row>
                     </Space>
                 </Col>
                 <Col span={24} md={12} lg={12} xl={16}>
-                    {showConfigPanel && serviceId && <ConfigureBooking vendorServiceGroupId={serviceId} options={serviceList.concat(selectedAddons)} />}
+                    {showConfigPanel && service?.id && <ConfigureBooking vendorServiceGroupId={service?.id} minHour={service?.minHour || 1} options={serviceList.concat(selectedAddons)} />}
                 </Col>
             </Row>
         </div>

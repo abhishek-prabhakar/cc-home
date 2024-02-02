@@ -45,6 +45,7 @@ export type AddonGroupItem = { id: string, title: string, services: VendorServic
 export type VendorService = {
     vendorServiceGroupId: string,
     title: string,
+    minHour: number,
     included: VendorServiceOption[],
     addons: VendorServiceOption[],
     selectableList?: AddonGroupItem[]
