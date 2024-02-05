@@ -13,7 +13,7 @@ const bannerStyle: React.CSSProperties = {
     backgroundSize: "cover"
 };
 
-export function Banner({ data }: { data?: BannerItem }) {
+function DefaultBanner({ data }: { data?: BannerItem }) {
     return data?.title ? <div style={{ ...bannerStyle, backgroundImage: 'url(' + data.img + ')' }} >
         <Row gutter={40} align="middle" justify={'center'}>
             <Col md={8} span={24}>
@@ -34,7 +34,7 @@ export function Banner({ data }: { data?: BannerItem }) {
     </div> : <></>;
 }
 
-export function BannerVertical({ data }: { data?: BannerItem }) {
+function BannerVertical({ data }: { data?: BannerItem }) {
     return data?.title ? <div style={{ ...bannerStyle, backgroundImage: 'url(' + data.img + ')' }}>
         <Row >
             <Col span={24}>
@@ -54,3 +54,18 @@ export function BannerVertical({ data }: { data?: BannerItem }) {
         </Row>
     </div> : <></>;
 }
+
+function BrandInfo() {
+    return <div>
+        <Typography.Title level={3}>We are here to help you build your brand</Typography.Title>
+
+    </div>
+}
+
+const Banner = {
+    Default: DefaultBanner,
+    Vertical: BannerVertical
+}
+
+
+export default Banner;

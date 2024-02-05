@@ -37,7 +37,6 @@ import {
   Typography,
   theme,
 } from "antd";
-import { Banner, BannerVertical } from "~/components/Banner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
@@ -45,6 +44,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ServiceGroup } from "@prisma/client";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
+import Banner from "~/components/Banner";
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -394,7 +394,7 @@ const Photography = {
     return (
       <div className="container">
         <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-          <Banner />
+          <Banner.Default />
           <Row gutter={[40, 40]}>
             <Photography.Filters />
             <Col sm={24} xs={24} md={16} lg={18}>
@@ -505,7 +505,7 @@ const Photography = {
                     onChange={(e) =>
                       toggleCategoryItem(e?.target?.checked, e?.target?.value)
                     }
-                    //style={{ display: "flex" }}
+                  //style={{ display: "flex" }}
                   >
                     {item.name}
                   </Checkbox>

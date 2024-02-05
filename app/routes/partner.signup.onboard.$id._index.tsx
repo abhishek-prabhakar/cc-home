@@ -330,9 +330,7 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
                                 orderBy: [{
                                     isOptional: 'asc'
                                 }, {
-                                    service: {
-                                        name: 'asc',
-                                    }
+                                    position: 'asc'
                                 }, {
                                     addonGroup: { name: 'asc' }
                                 }],
