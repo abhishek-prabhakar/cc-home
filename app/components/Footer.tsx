@@ -7,7 +7,7 @@ import { RootLoaderData } from "~/types";
 export function Footer() {
     const data = useLoaderData<RootLoaderData>();
 
-    return <Container>
+    return <Container pt={'lg'}>
         <Stack gap="lg">
             <Grid gutter={40} style={{ background: '#EEF5FE', borderRadius: '10px', padding: '40px' }}>
                 <Grid.Col span={{ base: 12, md: 4 }}>

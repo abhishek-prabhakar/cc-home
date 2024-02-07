@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table } from "@mantine/core";
+import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box } from "@mantine/core";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
@@ -438,13 +438,13 @@ const OnBoardPage = {
             setProfileDialog(false)
         }
 
-        return <div className="container">
+        return <Container>
             <Grid gutter={40}>
-                <Grid.Col span={24}>
+                <Grid.Col span={12}>
                     <Title>Welcome</Title>
                     <Title order={5}>Hello {data?.profile.name}, Please fill up the following details.</Title>
                 </Grid.Col >
-                <Grid.Col span={24}>
+                <Grid.Col span={12}>
                     <Divider />
                 </Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
@@ -476,7 +476,7 @@ const OnBoardPage = {
             <Modal title='Modify Profile' opened={showProfileDialog} onClose={() => setProfileDialog(false)} >
                 <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />
             </Modal>
-        </div>;
+        </Container>;
     },
     SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceGroup[] }) => {
         const [getServiceDialogData, setServiceDialogData] = useState<VendorServiceGroup | null | undefined>(null);
@@ -621,7 +621,7 @@ const OnBoardPage = {
             <div style={{ padding: '10px 0 20px' }}>Approximate hour required for this job is {item.group.minHour} hours.</div>
 
             {item.group.serviceGroupItem.map((service, i) => <Grid key={service.service.id} gutter={20}>
-                {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Grid.Col span={24}>
+                {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Grid.Col span={12}>
                     {service.isOptional ? [<Title style={{ color: '#1890ff' }} order={5}>Additional Services</Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert variant="light" color="blue" title="Do not add base charge to additional service." icon={<IconInfoCircle />} />] : <Title style={{ color: '#1890ff' }} order={5}>Services included in this category</Title>}</Grid.Col >
                 }
                 <Grid.Col span={2}>
@@ -632,8 +632,8 @@ const OnBoardPage = {
                     /> : [<input type="hidden" name="serviceId"
                         value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
                 </Grid.Col >
-                <Grid.Col span={22}>
-                    <b>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</b>
+                <Grid.Col span={10}>
+                    <Text fw={500}>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</Text>
                     <div>
                         <Text c="dimmed">{service.service.description}</Text>
                     </div>
@@ -651,17 +651,17 @@ const OnBoardPage = {
                         </Grid.Col >
                     </Grid>}
                 </Grid.Col >
-                <Grid.Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Grid.Col >
+                <Grid.Col span={12}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Grid.Col >
             </Grid>)}
-            <Grid gutter={20}>
-                <Grid.Col >
+            <Flex gap={20}>
+                <Box>
                     <input type="hidden" name="vendorGroupId" value={item.id} />
                     <Button loading={fetcher.state === 'submitting'} variant="filled" radius="xl" type="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
-                </Grid.Col >
-                {!addService && <Grid.Col >
+                </Box>
+                {!addService && <Box>
                     <Button variant="filled" color="red" radius="xl" type="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
-                </Grid.Col >}
-            </Grid>
+                </Box>}
+            </Flex>
         </fetcher.Form>;
     },
     EditProfileForm: ({ onSuccess }: { onSuccess: Function }) => {
@@ -712,14 +712,14 @@ const OnBoardPage = {
                     <div><Text c="dimmed">User will see this instead of your real name</Text></div>
                 </Stack>
             </Grid.Col >
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
                 {showWarnMsg && <Alert variant="light" color="red" mb={'md'} title="Are you sure?" icon={<IconInfoCircle />}>
                     Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one.
-                    <Flex>
+                    <Flex gap={'sm'}>
                         <Button color="red" size="xs" variant="filled" radius="xl" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
                             Decline
                         </Button>
-                        <Button color="red" size="xs" variant="outline" onClick={() => setWarnMsg(false)}>
+                        <Button color="red" size="xs" variant="outline" radius="xl" onClick={() => setWarnMsg(false)}>
                             Proceed
                         </Button>
                     </Flex>
