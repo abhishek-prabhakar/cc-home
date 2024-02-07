@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { Button, Divider, Flex, Grid, Menu, Stack, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Divider, Flex, Grid, Menu, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
@@ -55,48 +55,46 @@ export function Header({ user }: { user?: User | null }) {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={{ base: 2, md: 4, lg: 3 }}>
-                        <Grid gutter={10} justify={'end'} align="center">
-                            <Grid.Col>
-                                <Link to="/cart/checkout">
-                                    <Button variant="default" radius="xl" leftSection={<IconShoppingCart />} size="large" />
-                                </Link>
-                            </Grid.Col>
-                            <Grid.Col span={{ base: 0, md: 6 }} visibleFrom="md">
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <Menu trigger="click-hover">
-                                        <Menu.Target>
-                                            <Button>My Account</Button>
-                                        </Menu.Target>
-                                        <Menu.Dropdown>
-                                            <Menu.Item>
-                                                <div style={userMenuStyle}>
-                                                    <div style={{ padding: '12px' }}>
-                                                        {user?.id ?
-                                                            <Grid justify={'space-between'}>
-                                                                <Grid.Col>
-                                                                    <Title order={5}>Hej!</Title>
-                                                                    <Link to={'/user/home'}>My Bookings</Link>
-                                                                </Grid.Col>
-                                                                <Grid.Col>
-                                                                    <Link to="/logout"><Button size="small" >Logout</Button></Link>
-                                                                </Grid.Col>
-                                                            </Grid>
-                                                            : <UserLogin />}
-                                                    </div>
-                                                    <Menu.Divider />
-                                                    <div style={menuArtisantStyle}>
-                                                        <Stack style={{ padding: 8 }} >
-                                                            <Title order={3}>Artisan?</Title>
-                                                            <Link to="/partner/signup"><Button radius="xl" variant="filled" >Signup</Button></Link>
-                                                        </Stack>
-                                                    </div>
+                        <Flex gap={10} justify={'end'} align="center">
+                            <Link to="/cart/checkout">
+                                <ActionIcon variant="subtle" size="xl" radius="xl" >
+                                    <IconShoppingCart />
+                                </ActionIcon>
+                            </Link>
+                            <Box visibleFrom="md" >
+                                <Menu trigger="click-hover">
+                                    <Menu.Target>
+                                        <Button>My Account</Button>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Item>
+                                            <div style={userMenuStyle}>
+                                                <div style={{ padding: '12px' }}>
+                                                    {user?.id ?
+                                                        <Grid justify={'space-between'}>
+                                                            <Grid.Col>
+                                                                <Title order={5}>Hej!</Title>
+                                                                <Link to={'/user/home'}>My Bookings</Link>
+                                                            </Grid.Col>
+                                                            <Grid.Col>
+                                                                <Link to="/logout"><Button size="small" >Logout</Button></Link>
+                                                            </Grid.Col>
+                                                        </Grid>
+                                                        : <UserLogin />}
                                                 </div>
-                                            </Menu.Item>
-                                        </Menu.Dropdown>
-                                    </Menu>
-                                </div>
-                            </Grid.Col>
-                        </Grid>
+                                                <Menu.Divider />
+                                                <div style={menuArtisantStyle}>
+                                                    <Stack style={{ padding: 8 }} >
+                                                        <Title order={3}>Artisan?</Title>
+                                                        <Link to="/partner/signup"><Button radius="xl" variant="filled" >Signup</Button></Link>
+                                                    </Stack>
+                                                </div>
+                                            </div>
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                            </Box>
+                        </Flex>
                     </Grid.Col>
                 </Grid>
             </div>
