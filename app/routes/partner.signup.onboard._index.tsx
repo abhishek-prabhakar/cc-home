@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Grid, Image, Input, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Container, Flex, Grid, Image, Input, Stack, Text, Title } from "@mantine/core";
 import { UserSource } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLocation } from "@remix-run/react";
@@ -98,26 +98,23 @@ const Onboard = {
             setFiles(files.concat(file));
         }
 
-        return <div className="container">
+        return <Container>
             <Form method="post">
-                <Title order={3}>Sign up as vendor</Title>
                 <Grid gutter={0}>
                     <Grid.Col span={{ base: 12, md: 6 }} >
                         <Stack>
-                            <Box>
-                                <Title order={5}>Full Name*</Title>
+                            <Title order={3}>Sign up as vendor</Title>
+                            <Input.Wrapper label="Full Name*">
                                 <Input name="fullName" placeholder="Enter your full name." required />
-                            </Box>
-                            <Box>
-                                <Title order={5}>Email*</Title>
+                            </Input.Wrapper>
+                            <Input.Wrapper label="Email*">
                                 <Input name="email" placeholder="Enter your email for communication purpose." required type="email" />
-                            </Box>
-                            <Box>
-                                <Title order={5}>Phone*</Title>
+                            </Input.Wrapper>
+                            <Input.Wrapper label="Phone*">
                                 <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
-                            </Box>
+                            </Input.Wrapper>
                             <Box>
-                                <Title order={5}>Portfolio*</Title>
+                                <Text fw={500}>Portfolio*</Text>
                                 <Text c="dimmed">Add atleast ten of your best works.</Text>
                                 <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
                                 <br />
@@ -131,7 +128,7 @@ const Onboard = {
                                 </Flex>
                             </Box>
                             <Box>
-                                <Title order={5}>Social media url</Title>
+                                <Text fw={500}>Social media url</Text>
                                 <Input name="socialUrl" type="url" required />
                             </Box>
                             <Box>
@@ -141,7 +138,7 @@ const Onboard = {
                     </Grid.Col>
                 </Grid>
             </Form>
-        </div>
+        </Container>
     }
 }
 

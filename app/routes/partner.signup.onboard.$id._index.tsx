@@ -442,25 +442,25 @@ const OnBoardPage = {
             <Grid gutter={40}>
                 <Grid.Col span={24}>
                     <Title>Welcome</Title>
-                    <Title order={4}>Hello {data?.profile.name}, Please fill up the following details.</Title>
+                    <Title order={5}>Hello {data?.profile.name}, Please fill up the following details.</Title>
                 </Grid.Col >
                 <Grid.Col span={24}>
                     <Divider />
                 </Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    <Card title="Update Profile">
+                    <Card withBorder shadow="xs" title="Update Profile">
                         {data?.profile?.vendorType && data.profile?.username ?
                             <Grid gutter={20}>
                                 <Grid.Col span={{ base: 12, md: 6 }}>
-                                    <div><Text fw={700}>Profile Type: </Text></div>
-                                    <Flex>
-                                        <Text fw={700}>{data.profile?.vendorType?.name}</Text>
-                                        <Text fw={700} onClick={showEditProfileDialog}><a>Update</a></Text></Flex>
+                                    <div><Text fw={500}>Profile Type: </Text></div>
+                                    <Flex gap={'md'}>
+                                        <Text fw={500}>{data.profile?.vendorType?.name}</Text>
+                                        <Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text></Flex>
                                 </Grid.Col >
                                 <Grid.Col span={{ base: 12, md: 6 }}>
-                                    <Text fw={700}>Public name:</Text>
+                                    <Text fw={500}>Public name:</Text>
                                     <div><Text c="dimmed">User will see this instead of your real name</Text></div>
-                                    <Flex><Text fw={700}>{data.profile?.username}</Text><Text fw={700} onClick={showEditProfileDialog}><a>Update</a></Text></Flex>
+                                    <Flex gap={'md'}><Text fw={500}>{data.profile?.username}</Text><Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text></Flex>
                                 </Grid.Col >
                             </Grid> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
                     </Card>
@@ -497,12 +497,12 @@ const OnBoardPage = {
         }
 
         return <>
-            <Card title="Choose your services">
+            <Card withBorder shadow="xs" title="Choose your services">
                 <Stack>
-                    <div><Text fw={700}>Add one or more services from below</Text></div>
+                    <div><Text fw={500}>Add one or more services from below</Text></div>
                     <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} />
                     {/* {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>} */}
-                    <div><Text fw={700}>Selected Services</Text></div>
+                    <div><Text fw={500}>Selected Services</Text></div>
                     <OnBoardPage.CostSection />
                 </Stack>
             </Card>
@@ -537,23 +537,22 @@ const OnBoardPage = {
             setFileType(null);
         }
 
-        return <>
+        return <Card withBorder shadow="xs" title="Confirm your identity">
             <fetcher.Form method="post" action="">
-                <Card shadow="sm" title="Confirm your identity">
-                    <Grid gutter={40}>
-                        <Grid.Col span={{ base: 12, md: 5 }}>
-                            <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)} data={fileTypes.map(x => ({ label: x.name, value: x.name }))} />
-                            <Text c="dimmed">Upload any valid document to prove your identity.</Text>
-                        </Grid.Col >
-                        <Grid.Col span={{ base: 12, md: 7 }}>
-                            <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
-                            {!fileType && <Text c="dimmed">Please select a document type</Text>}
-                        </Grid.Col >
-                        <Grid.Col >
-                            {fetcher.state === 'submitting' && <Loader />}
-                        </Grid.Col >
-                    </Grid>
-                </Card>
+
+                <Grid gutter={40}>
+                    <Grid.Col span={{ base: 12, md: 5 }}>
+                        <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)} data={fileTypes.map(x => ({ label: x.name, value: x.name }))} />
+                        <Text c="dimmed">Upload any valid document to prove your identity.</Text>
+                    </Grid.Col >
+                    <Grid.Col span={{ base: 12, md: 7 }}>
+                        <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
+                        {!fileType && <Text c="dimmed">Please select a document type</Text>}
+                    </Grid.Col >
+                    <Grid.Col >
+                        {fetcher.state === 'submitting' && <Loader />}
+                    </Grid.Col >
+                </Grid>
             </fetcher.Form>
 
             <Table>
@@ -576,24 +575,7 @@ const OnBoardPage = {
             <Flex justify={'end'}>
                 <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Contiue</Button></Link>
             </Flex>
-
-            {/* <Table dataSource={data.files}
-                    columns={[
-                        {
-                            title: 'FIle Type',
-                            key: 'fileType',
-                        },
-                        {
-                            title: 'FIle Type',
-                            key: 'fileName',
-                        },
-                    ]}>
-                    {data.files.map(col => <Table.ColumnGroup>
-                        <Table.Column><div>{col.fileType}</div></Table.Column>
-                        <Table.Column>{col.fileName}</Table.Column>
-                        </Table.ColumnGroup>)}
-                        </Table> */}
-        </>;
+        </Card>
     },
     UpdateGroupServiceCost: ({ item, addService, activeType, onClose }: { item: VendorServiceGroup, addService?: boolean, activeType?: string, onClose?: Function }) => {
         const fetcher = useFetcher();
@@ -719,13 +701,13 @@ const OnBoardPage = {
         return <Grid gutter={20}>
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack style={{ width: '100%' }}>
-                    <Text fw={700}>Profile Category:</Text>
+                    <Text fw={500}>Profile Category:</Text>
                     <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
                 </Stack>
             </Grid.Col >
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
-                    <Text fw={700}>Public name:</Text>
+                    <Text fw={500}>Public name:</Text>
                     <Select disabled={!data?.profile.usernameSuggestion} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || []} />
                     <div><Text c="dimmed">User will see this instead of your real name</Text></div>
                 </Stack>
