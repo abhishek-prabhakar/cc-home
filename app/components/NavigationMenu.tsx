@@ -1,21 +1,3 @@
-import { DownOutlined, GlobalOutlined, MenuOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Col,
-  Divider,
-  Drawer,
-  Dropdown,
-  Input,
-  Menu,
-  MenuProps,
-  Popover,
-  Row,
-  Skeleton,
-  Space,
-  Typography,
-} from "antd";
-import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
-import axios from "axios";
 import { Suspense, useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
@@ -29,7 +11,8 @@ import {
 import { redirect } from "@remix-run/node";
 import { HeaderNavListItem, RootLoaderData } from "~/types";
 import Routes from "~/routes.data";
-const { Title } = Typography;
+import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
 
 const menuArtisantStyle: React.CSSProperties = {
   borderRadius: "3px",
@@ -49,57 +32,56 @@ const AppNavigation = {
     const data = useLoaderData<RootLoaderData>();
 
     function dropdownContent(navitem: HeaderNavListItem) {
-      return (
-        <div style={{ margin: "-20px -24px" }}>
-          <div style={{ padding: "40px" }}>
-            <Space direction="vertical">
-              <Typography.Title level={5}>
-                {" "}
-                <Link to={Routes.Services.replace(":id", navitem.id)}>
-                  Browse all {navitem.name}
+      return <Stack p={'sm'}>
+        <Title order={5}>
+          {" "}
+          <Link to={Routes.Services.replace(":id", navitem.id)}>
+            Browse all {navitem.name}
+          </Link>
+        </Title>
+        {navitem.children?.map((menuItem) => (
+          <div key={menuItem.name}>
+            <Title order={5}>
+              {menuItem.name}
+            </Title>
+            <Stack>
+              {menuItem.list.map((item) => (
+                <Link key={item.id} to={item.path}>
+                  <Text>{item.name}</Text>
                 </Link>
-              </Typography.Title>
-              {navitem.children?.map((menuItem) => (
-                <div key={menuItem.name}>
-                  <Typography.Title level={5}>
-                    {menuItem.name}
-                  </Typography.Title>
-                  <Space direction="vertical">
-                    {menuItem.list.map((item) => (
-                      <Link key={item.id} to={item.path}>
-                        <Typography.Text>{item.name}</Typography.Text>
-                      </Link>
-                    ))}
-                    {!menuItem.list.length && <Typography.Text type="secondary">Sorry, no results found.</Typography.Text>}
-                  </Space>
-                </div>
               ))}
-            </Space>
+              {!menuItem.list.length && <Text c="dimmed">Sorry, no results found.</Text>}
+            </Stack>
           </div>
-        </div>
-      );
+        ))}
+      </Stack>;
     }
 
     return (
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<Skeleton />}>
         <Await resolve={data.pages}>
           {(navList) => (
-            <Row justify={"center"} gutter={[20, 0]}>
+            <Flex justify={"center"} gap={20} py={'md'}>
               {navList.map((item) => (
-                <Col key={"menu-" + item.id} style={{ cursor: "pointer" }}>
-                  <Popover content={dropdownContent(item)} placement="bottom">
-                    <Space
-                      className="header-nav-item-text"
-                      size={"small"}
-                      direction="horizontal"
-                    >
-                      <span>{item.name}</span>
-                      <DownOutlined style={{ fontSize: "10px" }} />
-                    </Space>
-                  </Popover>
-                </Col>
+                <Box key={"menu-" + item.id} style={{ cursor: "pointer" }}>
+                  <Menu trigger="click-hover">
+                    <Menu.Target>
+                      <Flex
+                        align={'center'}
+                        className="header-nav-item-text"
+                        gap={'sm'}
+                      >
+                        <span>{item.name}</span>
+                        <IconChevronDown style={{ fontSize: "10px" }} />
+                      </Flex>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      {dropdownContent(item)}
+                    </Menu.Dropdown>
+                  </Menu>
+                </Box>
               ))}
-            </Row>
+            </Flex>
           )}
         </Await>
       </Suspense>
@@ -109,12 +91,7 @@ const AppNavigation = {
     const data = useLoaderData<RootLoaderData>();
     const navigate = useNavigate();
     const [openDrawer, setDrawerState] = useState(false);
-    const [openKeys, setOpenKeys] = useState<string[]>([]);
 
-    const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
-      const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-    };
 
     function navigateToPage(event: any) {
       navigate(event?.key);
@@ -127,69 +104,62 @@ const AppNavigation = {
 
     return (
       <>
-        <MenuOutlined onClick={() => toggleDrawer()} />
+        <IconMenu onClick={() => toggleDrawer()} />
         <Drawer
-          placement="left"
-          width={300}
+          position="left"
+          w={300}
           title="Browse"
           onClose={() => toggleDrawer()}
-          open={openDrawer}
-          destroyOnClose={true}
+          opened={openDrawer}
         >
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<Skeleton />}>
             <Await resolve={data.pages}>
               {(navList) => (
-                <Menu
-                  style={{ width: 295, margin: "0 -24px 20px" }}
-                  mode="inline"
-                  openKeys={openKeys}
-                  onOpenChange={onOpenChange}
-                  onClick={navigateToPage}
-                  items={navList.map(item => ({
-                    key: item.id,
-                    label: item.name,
-                    children: item.children.map((child, i) => ({
-                      key: 'child' + i,
-                      label: child.name,
-                      type: 'group',
-                      children: [{
+                <Accordion>
+
+                  {navList.map(item => <Accordion.Item key={item.id} value={item.id}>
+                    <Accordion.Control>{item.name}</Accordion.Control>
+                    {item.children.map((child, i) => <Stack key={'child' + i}>
+                      <Title order={5}>{child.name}</Title>
+                      {[{
                         key: Routes.Services.replace(":id", item.id),
                         label: 'Browse all ',
-                      }].concat(child.list.map(x => ({ key: x.path, label: x.name, })))
-                    })),
-                  }))}
-                />
+                      }].concat(
+                        child.list.map(x => ({ key: x.path, label: x.name, })))
+                        .map(menuItem => <Text key={menuItem.key}>{menuItem.label}</Text>)
+                      }
+                    </Stack>)
+                    }
+                  </Accordion.Item>)}
+                </Accordion>
               )}
             </Await>
           </Suspense>
           <Divider />
-          <Space direction="vertical" size={"large"}>
+          <Stack gap={'lg'}>
             <UserLogin onSuccess={() => toggleDrawer()} />
             <div style={menuArtisantStyle}>
-              <Space
+              <Stack
                 style={{ padding: 8 }}
-                direction="vertical"
-                size={"middle"}
+                gap={'md'}
               >
-                <Title level={3}>Artisan?</Title>
+                <Title order={3}>Artisan?</Title>
                 <Link to="/partner/signup" onClick={() => toggleDrawer()}>
                   <Button>Signup</Button>
                 </Link>
-              </Space>
+              </Stack>
             </div>
-            <Menu
-              style={{ width: 295, margin: "0 -24px" }}
-              mode="inline"
-              items={[
-                {
-                  key: "location",
-                  icon: <GlobalOutlined />,
-                  label: "Bangalore",
-                  children: locationList,
-                },
-              ]}
-            />
-          </Space>
+            <Accordion>
+              <Accordion.Item key={'location'} value="location">
+                <Accordion.Control icon={<IconWorld />}>Location</Accordion.Control>
+                <Accordion.Panel>
+                  <Stack>
+                    {locationList.map(item => <Text key={item.key}>{item.label}</Text>)}
+                  </Stack>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          </Stack>
         </Drawer>
       </>
     );

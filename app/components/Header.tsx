@@ -1,6 +1,3 @@
-import { GlobalOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, SmileOutlined } from "@ant-design/icons";
-import { Badge, Button, Col, Divider, Dropdown, Input, MenuProps, Row, Space, Typography } from "antd";
-
 import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import AppNavigation from "./NavigationMenu";
@@ -9,7 +6,8 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-const { Title } = Typography;
+import { Button, Divider, Flex, Grid, Menu, Stack, Title } from "@mantine/core";
+import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
 const userMenuStyle: React.CSSProperties = { width: '300px', background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
@@ -34,78 +32,79 @@ export function Header({ user }: { user?: User | null }) {
     return <>
         <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
             <div className="container">
-                <Row justify={'space-between'}>
-                    <Col span={0} md={7} lg={5}>
-                        <Row gutter={[20, 0]}>
-                            <Col>
-                                <Dropdown menu={{ items: locationList, onClick: handleLocationMenuClick, }} trigger={['click']}>
-                                    <Space className="cursor-pointer">
-                                        <GlobalOutlined />
-                                        {currentLocation}
-                                    </Space>
-                                </Dropdown>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col sm={4} xs={4} md={0} lg={0} xl={0} xxl={0} span={0} >
+                <Grid justify={'space-between'} align="center" gutter={0}>
+                    <Grid.Col span={{ base: 0, md: 3, lg: 2 }} visibleFrom="md">
+                        <Menu>
+                            <Menu.Target>
+                                <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
+                                    <IconWorld />
+                                    {currentLocation}
+                                </Flex>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
+                            </Menu.Dropdown>
+                        </Menu >
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 2, md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
                         <AppNavigation.Drawer />
-                    </Col>
-                    <Col flex={'auto'}>
+                    </Grid.Col>
+                    <Grid.Col flex={'auto'}>
                         <div className="header-brand">
                             <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'150px'} /></Link>
                         </div>
-                    </Col>
-                    <Col span={4} md={7} lg={5}>
-                        <Row gutter={[10, 0]} justify={'end'} align="middle">
-                            <Col>
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 2, md: 4, lg: 3 }}>
+                        <Grid gutter={10} justify={'end'} align="center">
+                            <Grid.Col>
                                 <Link to="/cart/checkout">
-                                    <Button type="text" shape="circle" icon={<ShoppingCartOutlined />} size="large" />
+                                    <Button variant="default" radius="xl" leftSection={<IconShoppingCart />} size="large" />
                                 </Link>
-                            </Col>
-                            <Col xs={0} sm={0} md={12}>
+                            </Grid.Col>
+                            <Grid.Col span={{ base: 0, md: 6 }} visibleFrom="md">
                                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                    <Dropdown dropdownRender={() => (
-                                        <div style={userMenuStyle}>
-                                            <div style={{ padding: '12px' }}>
-                                                {user?.id ?
-                                                    <Row justify={'space-between'}>
-                                                        <Col>
-                                                            <Title level={5}>Hej!</Title>
-                                                            <Link to={'/user/home'}>My Bookings</Link>
-                                                        </Col>
-                                                        <Col>
-                                                            <Button size="small" href="/logout" >Logout</Button>
-                                                        </Col>
-                                                    </Row>
-                                                    : <UserLogin />}
-                                            </div>
-                                            <Divider style={{ margin: 0 }} />
-                                            <div style={menuArtisantStyle}>
-                                                <Space style={{ padding: 8 }} direction="vertical" size={'middle'}>
-                                                    <Title level={3}>Artisan?</Title>
-                                                    <Link to="/partner/signup"><Button shape="round" type="primary" >Signup</Button></Link>
-                                                </Space>
-                                            </div>
-                                        </div>
-                                    )}
-                                    >
-                                        <Button>My Account</Button>
-                                    </Dropdown>
+                                    <Menu trigger="click-hover">
+                                        <Menu.Target>
+                                            <Button>My Account</Button>
+                                        </Menu.Target>
+                                        <Menu.Dropdown>
+                                            <Menu.Item>
+                                                <div style={userMenuStyle}>
+                                                    <div style={{ padding: '12px' }}>
+                                                        {user?.id ?
+                                                            <Grid justify={'space-between'}>
+                                                                <Grid.Col>
+                                                                    <Title order={5}>Hej!</Title>
+                                                                    <Link to={'/user/home'}>My Bookings</Link>
+                                                                </Grid.Col>
+                                                                <Grid.Col>
+                                                                    <Link to="/logout"><Button size="small" >Logout</Button></Link>
+                                                                </Grid.Col>
+                                                            </Grid>
+                                                            : <UserLogin />}
+                                                    </div>
+                                                    <Menu.Divider />
+                                                    <div style={menuArtisantStyle}>
+                                                        <Stack style={{ padding: 8 }} >
+                                                            <Title order={3}>Artisan?</Title>
+                                                            <Link to="/partner/signup"><Button radius="xl" variant="filled" >Signup</Button></Link>
+                                                        </Stack>
+                                                    </div>
+                                                </div>
+                                            </Menu.Item>
+                                        </Menu.Dropdown>
+                                    </Menu>
                                 </div>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
+                            </Grid.Col>
+                        </Grid>
+                    </Grid.Col>
+                </Grid>
             </div>
         </div>
-        <Row>
-            <Col span={0} md={24} style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '0px 40px' }} >
-                <Row justify={'center'}>
-                    <Col>
-                        <AppNavigation.MainMenu />
-                    </Col>
-                </Row>
-            </Col>
-        </Row>
+        <Grid gutter={0}>
+            <Grid.Col span={{ base: 0, md: 12 }} visibleFrom="md" style={{ borderBottom: '1px solid var(--ui-color-black)' }} >
+                <AppNavigation.MainMenu />
+            </Grid.Col>
+        </Grid>
     </>
 }

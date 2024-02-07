@@ -1,11 +1,6 @@
-import { ArrowLeftOutlined, ArrowRightOutlined, FireOutlined, LoadingOutlined, MenuOutlined, RightCircleOutlined, RightOutlined, SearchOutlined } from "@ant-design/icons";
 import { defer, TypedDeferredData, type LoaderArgs, type V2_MetaFunction } from "@remix-run/node";
-import { Avatar, Badge, Button, Card, Carousel, Col, Divider, Image, Input, Layout, Modal, Row, Skeleton, Space, Tag } from "antd";
-import { Typography } from 'antd';
 import { Suspense, useEffect, useState } from "react";
 import { Newsletter } from "~/components/Newsletter";
-const { Title } = Typography;
-const { Meta } = Card;
 import { Await, Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
@@ -16,6 +11,8 @@ import { getCategoryCollection, getCollections, getJumbotronList, getPopularServ
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
+import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconChevronRight, IconFlame, IconSearch } from "@tabler/icons-react";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -51,7 +48,7 @@ type HomePage = {
 
 // : Promise<TypedDeferredData<{
 //   jumbotron: Promise<Jumbotron[]>;
-//   collection: Promise<Collection[]>;
+//   collection: Promise<Grid.Collection[]>;
 //   morePages: Promise<Page[]>;
 //   categories: Promise<Page[]>
 // }>>
@@ -230,30 +227,30 @@ const Home = {
       <div className="container no-spacer">
         <Home.Services />
       </div>,
-      <div className="container no-spacer">
-        <Row>
-          <Col span={24}>
+      <Container>
+        <Grid>
+          <Grid.Col span={12}>
             <Home.PopularServices />
-          </Col>
-          <Col span={24}>
+          </Grid.Col>
+          <Grid.Col span={12}>
             <Home.Collections />
-          </Col>
-          <Col span={24}>
+          </Grid.Col>
+          <Grid.Col span={12}>
             <div className="card-style-3">
-              <Row gutter={[40, 40]} align={'middle'} justify={'center'}>
-                <Col xs={24} sm={24} md={14}>
-                  <Space direction="vertical" align="center" style={{ width: '100%' }}>
-                    <Typography.Title className="_text-center" level={3}>We are here to help<br />you build your brand</Typography.Title>
-                    <Space align={'center'}>
-                      <Typography.Text strong>Check out</Typography.Text>
-                      <Link to="/collections/commercial"><Button type="primary" ghost shape="round">Commercial Services</Button></Link>
-                    </Space>
-                  </Space>
-                </Col>
-                <Col>
+              <Grid gutter={40} align={'middle'} justify={'center'}>
+                <Grid.Col span={{ base: 12, md: 7 }}>
+                  <Stack align="center">
+                    <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>
+                    <Flex align={'center'} gap={'md'}>
+                      <Text fw={700}>Check out</Text>
+                      <Link to="/collections/commercial"><Button variant="outline" radius="xl">Commercial Services</Button></Link>
+                    </Flex>
+                  </Stack>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                   <div className="card-style-item">
-                    <Space align="center"><Typography.Title style={{ margin: 0, padding: 0 }} level={5}>50+</Typography.Title><Typography.Text type="secondary">professionals</Typography.Text></Space>
-                    <br /><br />
+                    <Flex align="center" gap={'sm'}><Title order={5}>50+</Title><Text c="dimmed">professionals</Text></Flex>
+
                     <Avatar.Group>
                       <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
                       <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
@@ -265,12 +262,12 @@ const Home = {
                       <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
                     </Avatar.Group>
                   </div>
-                </Col>
-              </Row>
+                </Grid.Col>
+              </Grid>
             </div>
-          </Col>
-        </Row>
-      </div>
+          </Grid.Col>
+        </Grid>
+      </Container>
     ]
   },
   Jumbotron: () => {
@@ -302,57 +299,60 @@ const Home = {
     }
 
     return <div className=" homepage-hero-section">
-      <Row align={'stretch'}>
-        <Col sm={24} xs={24} md={12} style={{ display: 'flex', justifyContent: 'end' }}>
-          <div className="homepage-hero-search-wrapper">
-            <div className="homepage-hero-search-container">
-              <Row gutter={[20, 20]}>
-                <Col span={24}>
-                  <Typography.Title className="title-wrapper" level={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Typography.Title>
-                </Col>
-                <Col xs={24} sm={24} md={18}>
-                  <Typography.Title level={5}>Get Started</Typography.Title>
-                  <Input placeholder="Search" prefix={searchBusy ? <LoadingOutlined /> : <SearchOutlined />} onChange={search} />
-                  <div className="hero-search-results-panel-wrapper">
-                    <Suspense fallback={<Skeleton active />}>
-                      <Await resolve={fetcher.data}>
-                        {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
-                          {item.name} <Typography.Text type="secondary" italic>in {item.vendorType.name}</Typography.Text>
-                        </div>)}{!response?.results?.length && <div className="result-row" > <Typography.Text type="secondary" italic>Sorry, we couldn't find any results on that. Kindly narrow the search term.</Typography.Text></div>}</div>}
-                      </Await>
-                    </Suspense>
-                  </div>
-                </Col>
-              </Row>
+      <Grid align={'stretch'} gutter={0}>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Box style={{ display: 'flex', justifyContent: 'end' }}>
+            <div className="homepage-hero-search-wrapper">
+              <div className="homepage-hero-search-container">
+                <Grid gutter={20}>
+                  <Grid.Col span={12}>
+                    <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, md: 9 }}>
+                    <Title order={5}>Get Started</Title>
+                    <Input placeholder="Search" leftSection={searchBusy ? <Loader /> : <IconSearch />} onChange={search} />
+                    <div className="hero-search-results-panel-wrapper">
+                      <Suspense fallback={<Skeleton />}>
+                        <Await resolve={fetcher.data}>
+                          {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
+                            {item.name} <Text c="dimmed" fs="italic">in {item.vendorType.name}</Text>
+                          </div>)}{!response?.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
+                        </Await>
+                      </Suspense>
+                    </div>
+                  </Grid.Col>
+                </Grid>
+              </div>
             </div>
-          </div>
-        </Col>
-        <Col sm={24} xs={24} md={12} style={{ padding: '5px' }}>
+          </Box>
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          {/* style={{ padding: '5px' }} */}
           <img className="homepage-hero-img" src="/assets/homepage-hero.jpg" width={'100%'} style={{ maxWidth: '665px' }} />
-        </Col>
-      </Row>
+        </Grid.Col>
+      </Grid>
     </div>;
   },
   QuickPick: () => {
     const data = useLoaderData<HomePage>();
 
     // return <div className="category-list home-section-card-wrapper">
-    //   <Title level={2}>Featured</Title>
+    //   <Title order={2}>Featured</Title>
     //   <Suspense fallback={<Skeleton active />}>
     //     <Await resolve={data.quickLinks}>
-    //       {response => <Row gutter={40} justify={'center'}>
-    //         {response.map(item => <Col key={item.id} span={12} md={6}>
-    //           <Space direction="vertical">
+    //       {response => <Grid gutter={40} justify={'center'}>
+    //         {response.map(item => <Grid.Col key={item.id} span={12} md={6}>
+    //           <Stack>
     //             <div>
     //               <div className="category-badge">
     //                 {item.label}
     //               </div>
     //               <div className="category-thumb">
     //                 <div className="cover">
-    //                   <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+    //                   <Image  src={item.image || ''} fallback={FALLBACK_IMG} />
     //                 </div>
     //                 <div className="hover">
-    //                   <Image preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+    //                   <Image  src={item.image || ''} fallback={FALLBACK_IMG} />
     //                 </div>
     //                 <div className="link">
     //                   <Link to={item.path}>
@@ -362,12 +362,12 @@ const Home = {
     //               </div>
     //             </div>
     //             <div>
-    //               <Link to={item.path}><Title level={5}>{item.title}</Title></Link>
+    //               <Link to={item.path}><Title order={5}>{item.title}</Title></Link>
     //               {item.cost && <div>Starting from {item.cost}</div>}
     //             </div>
     //           </Space>
-    //         </Col>)}
-    //       </Row>}
+    //         </Grid.Col>)}
+    //       </Grid>}
     //     </Await>
     //   </Suspense>
     // </div>;
@@ -383,15 +383,15 @@ const Home = {
 
     function sliderCount() { return isMobile ? 2 : 4; }
 
-    return <Row justify={'space-between'} align={'middle'}>
-      <Col sm={24} xs={24} md={5}>
+    return <Grid justify={'space-between'} align={'middle'}>
+      <Grid.Col span={{ base: 12, md: 2 }}>
         <div className="home-section-card-wrapper">
-          <Title level={4}>Popular Services</Title>
-          <Typography.Text type="secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Typography.Text>
+          <Title order={4}>Popular Services</Title>
+          <Text c="dimmed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Text>
         </div>
-      </Col>
-      <Col sm={24} xs={24} md={19}>
-        <Suspense fallback={<Skeleton active />}>
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 10 }}>
+        <Suspense fallback={<Skeleton />}>
           <Await resolve={data.popularServices}>
             {resolve => <CarouselProvider
               naturalSlideWidth={300}
@@ -404,22 +404,22 @@ const Home = {
             >
               <Slider className="slider-spacer">{resolve.map((item, i) => <Slide className="card-style-1" key={'s' + item.id} index={i}>
                 <Link to={item.path}>
-                  <Space direction="vertical">
-                    <Image className="thumbnail" preview={false} src={item.image || ''} fallback={FALLBACK_IMG} />
+                  <Stack>
+                    <Image className="thumbnail" src={item.image || ''} />
                     <div className="title-wrapper">
-                      <Typography.Text strong>{item.title}</Typography.Text>
+                      <Text fw={700}>{item.title}</Text>
                     </div>
-                  </Space>
-                  <RightOutlined className="btn-wrapper" />
+                  </Stack>
+                  <IconChevronRight className="btn-wrapper" />
                 </Link></Slide>)}
               </Slider>
-              <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
-              <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+              <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+              <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
             </CarouselProvider>}
           </Await>
         </Suspense>
-      </Col>
-    </Row>
+      </Grid.Col>
+    </Grid>
   },
   Collections: () => {
     const data = useLoaderData<HomePage>();
@@ -431,16 +431,16 @@ const Home = {
 
     function sliderCount() { return isMobile ? 1 : 4; }
 
-    return <Row justify={'center'}>
-      <Col span={24}>
+    return <Grid justify={'center'}>
+      <Grid.Col span={12}>
         <div style={{ paddingTop: '45px' }}>
           <div className="home-section-card-wrapper">
-            <Title level={3} className="_text-center">Hire the best professionals for any job</Title>
+            <Title order={3} className="_text-center">Hire the best professionals for any job</Title>
           </div>
         </div>
-      </Col>
-      <Col>
-        <Suspense fallback={<Skeleton active />}>
+      </Grid.Col>
+      <Grid.Col>
+        <Suspense fallback={<Skeleton />}>
           <Await resolve={data.collections}>
             {response => <CarouselProvider
               naturalSlideWidth={300}
@@ -455,14 +455,14 @@ const Home = {
                 <div className="card-wrapper">
                   <div>
                     <div className="title-wrapper">
-                      <Typography.Title level={5}>{item.title}</Typography.Title>
+                      <Title order={5}>{item.title}</Title>
                     </div>
                     <div className="label-wrapper">
-                      <Typography.Text>{item.label}</Typography.Text>
+                      <Text>{item.label}</Text>
                     </div>
                     <div className="btn-wrapper">
                       <Link to={item.path}>
-                        <Button shape="round">
+                        <Button radius="xl">
                           Explore
                         </Button>
                       </Link>
@@ -471,19 +471,19 @@ const Home = {
                 </div>
                 <div className="card-thumb-wrapper">
                   <div className="card-thumb-cover">
-                    <Image src={item.image || ''} preview={false} height={'100%'} width={'100%'} fallback={FALLBACK_IMG} className="thumb" />
+                    <Image src={item.image || ''} height={'100%'} width={'100%'} className="thumb" />
                   </div>
                 </div>
               </Slide>)
               }</Slider>
-              <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
-              <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+              <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+              <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
             </CarouselProvider>
             }
           </Await>
         </Suspense>
-      </Col>
-    </Row>
+      </Grid.Col>
+    </Grid>
   },
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
@@ -505,7 +505,7 @@ const Home = {
     function sliderCount() { return isMobile ? 2 : 5; }
 
     return [
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<Skeleton />}>
         <Await resolve={loaderData.categories}>
           {data => <CarouselProvider
             naturalSlideWidth={300}
@@ -519,84 +519,78 @@ const Home = {
             <Slider className="carousel-slider">{data.map((item, i) => <Slide className="item-wrapper" key={'s' + item.id} index={i} onClick={() => showModal(item)}>
               <div className="item-spacer">
                 <div className="item">
-                  <Space direction="vertical">
-                    <FireOutlined style={{ fontSize: '2em' }} />
-                    <Typography.Title level={5} style={{ color: 'white' }}>{item.title}</Typography.Title>
-                    <Typography.Text className="item-description" type="secondary" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description}</Typography.Text>
-                  </Space>
+                  <Stack>
+                    <IconFlame style={{ fontSize: '2em' }} />
+                    <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
+                    <Text className="item-description" c="dimmed" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description}</Text>
+                  </Stack>
                 </div>
               </div>
             </Slide>)}
             </Slider>
-            <ButtonBack className="btn _prev"><ArrowLeftOutlined /></ButtonBack>
-            <ButtonNext className="btn _next"><ArrowRightOutlined /></ButtonNext>
+            <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+            <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
           </CarouselProvider>}
         </Await>
       </Suspense>,
-      <Modal title={modalData?.title} destroyOnClose={true} open={!!modalData} footer="" onCancel={handleCancel}>
-        <Row gutter={[20, 20]}>
+      <Modal title={modalData?.title} opened={!!modalData} onClose={handleCancel}>
+        <Grid gutter={20}>
           {modalData?.serviceGroup.map((item, index) => <>
 
-            {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Col xs={24} sm={24} key={item.id + 'col-' + index}><Title level={5}>Other services</Title></Col> : ''}
-            {item.isCollection ? <Col xs={24} key={item.id}>
+            {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Grid.Col span={{ base: 12 }} key={item.id + 'col-' + index}><Title order={5}>Other services</Title></Grid.Col> : ''}
+            {item.isCollection ? <Grid.Col span={12} key={item.id}>
               <Link to={item.path}>
                 <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
-                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+                  <Image src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
-                    <Title level={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
+                    <Title order={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
                     <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
                   </div>
                 </div>
               </Link>
-            </Col> : <Col xs={12} sm={12} md={8} key={item.id}>
+            </Grid.Col> : <Grid.Col span={{ base: 6, md: 4 }} key={item.id}>
               <Link to={item.path}>
                 <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-                  <Image preview={false} src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
+                  <Image src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
                   <div style={{
                     background: 'linear-gradient(0deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
                   }}>
-                    <Title level={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
+                    <Title order={5} style={{ color: 'white', wordBreak: 'normal' }}>{item.name}</Title>
                   </div>
                 </div>
               </Link>
-            </Col>}</>)}
-          {!modalData?.serviceGroup.length && <Col span={24}>Sorry, no services found under this category.</Col>}
-        </Row>
+            </Grid.Col>}</>)}
+          {!modalData?.serviceGroup.length && <Grid.Col span={12}>Sorry, no services found under this category.</Grid.Col>}
+        </Grid>
       </Modal>]
   },
   TopVendorsList: () => {
     const data = useLoaderData<typeof loader>();
-    return <Suspense fallback={<Skeleton active />}>
+    return <Suspense fallback={<Skeleton />}>
       <Await resolve={data.topVendors}>
-        {res => <Row gutter={[20, 20]}>
-          <Col span={24}><Typography.Title level={3}>Top service providers</Typography.Title></Col>
-          {res.map((category) => <Col key={'ce' + category.id} xs={24} sm={24} md={6}>
+        {res => <Grid gutter={20}>
+          <Grid.Col span={12}>
+            <Title order={3}>Top service providers</Title></Grid.Col>
+          {res.map((category) => <Grid.Col key={'ce' + category.id} span={{ base: 12, md: 3 }}>
             <div className="home-section-card-wrapper">
-              <Space direction="vertical" size={'middle'}>
-                <Typography.Title level={5}>{category.name}</Typography.Title>
-                {category.vendor.map((vendor, i) => <Row key={vendor.username} gutter={[20, 20]} align={'middle'}>
-                  <Col>{i + 1}</Col>
-                  <Col>
+              <Stack>
+                <Title order={5}>{category.name}</Title>
+                {category.vendor.map((vendor, i) => <Grid key={vendor.username} gutter={20} align={'middle'}>
+                  <Grid.Col>{i + 1}</Grid.Col>
+                  <Grid.Col>
                     <Avatar
-                      size={{
-                        xs: 50,
-                        sm: 50,
-                        md: 50,
-                        lg: 50,
-                        xl: 50,
-                        xxl: 50,
-                      }}
                       src={vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName
                         : PATH.AVATAR_PLACEHOLDER}
-                    /></Col>
-                  <Col flex={'auto'}><div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><strong>{vendor.username}</strong></Link></div></Col>
-                </Row>)}
+                    /></Grid.Col>
+                  <Grid.Col flex={'auto'}>
+                    <div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><Text fw={700}>{vendor.username}</Text></Link></div></Grid.Col>
+                </Grid>)}
                 {!category.vendor.length && 'Sorry, no data found.'}
-                <Typography.Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Typography.Text>
-              </Space>
+                <Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Text>
+              </Stack>
             </div>
-          </Col>)}
-        </Row>}
+          </Grid.Col>)}
+        </Grid>}
       </Await>
     </Suspense>
   }
