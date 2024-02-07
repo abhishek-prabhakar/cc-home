@@ -1,0 +1,4 @@
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
