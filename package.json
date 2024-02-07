@@ -12,7 +12,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^1.17.0",
     "@ant-design/icons": "^5.2.6",
     "@mantine/core": "^7.5.1",
     "@mantine/dates": "^7.5.1",
@@ -33,11 +32,9 @@
     "antd": "^5.8.6",
     "axios": "^1.5.0",
     "bcryptjs": "^2.4.3",
-    "candymail": "^1.0.22",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
     "isbot": "^3.6.8",
-    "nodemailer": "^6.9.7",
     "prisma": "^5.3.1",
     "prop-types": "^15.8.1",
     "pure-react-carousel": "^1.30.1",
