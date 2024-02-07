@@ -381,11 +381,10 @@ body {
     justify-content: end;
     background:  #f1f1f1;
      align-items: center;
-      padding: 5px;
+      margin: 5px;
        height: 100%;
         max-width: 670px;
         width: 100%;
-        margin: 5px 0 5px 5px;
         border-radius: 5px;
 }
 .homepage-hero-search-container{

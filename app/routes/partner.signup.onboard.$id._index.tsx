@@ -1,8 +1,9 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table } from "@mantine/core";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { Alert, Button, Card, Checkbox, Col, Collapse, Divider, Input, Modal, Row, Select, Space, Spin, Switch, Table, Typography } from "antd";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileUploader from "~/components/FileUploader";
@@ -438,41 +439,41 @@ const OnBoardPage = {
         }
 
         return <div className="container">
-            <Row gutter={[40, 40]}>
-                <Col span={24}>
-                    <Typography.Title>Welcome</Typography.Title>
-                    <Typography.Title level={4}>Hello {data?.profile.name}, Please fill up the following details.</Typography.Title>
-                </Col>
-                <Col span={24}>
+            <Grid gutter={40}>
+                <Grid.Col span={24}>
+                    <Title>Welcome</Title>
+                    <Title order={4}>Hello {data?.profile.name}, Please fill up the following details.</Title>
+                </Grid.Col >
+                <Grid.Col span={24}>
                     <Divider />
-                </Col>
-                <Col xs={24} sm={24} md={12}>
-                    <Card size="small" title="Update Profile">
+                </Grid.Col >
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <Card title="Update Profile">
                         {data?.profile?.vendorType && data.profile?.username ?
-                            <Row gutter={[20, 20]}>
-                                <Col xs={24} sm={24} md={12}>
-                                    <div><Typography.Text strong>Profile Type: </Typography.Text></div>
-                                    <Space>
-                                        <Typography.Text strong>{data.profile?.vendorType?.name}</Typography.Text>
-                                        <Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
-                                </Col>
-                                <Col xs={24} sm={24} md={12}>
-                                    <Typography.Text strong>Public name:</Typography.Text>
-                                    <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
-                                    <Space><Typography.Text strong>{data.profile?.username}</Typography.Text><Typography.Text strong onClick={showEditProfileDialog}><a>Update</a></Typography.Text></Space>
-                                </Col>
-                            </Row> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
+                            <Grid gutter={20}>
+                                <Grid.Col span={{ base: 12, md: 6 }}>
+                                    <div><Text fw={700}>Profile Type: </Text></div>
+                                    <Flex>
+                                        <Text fw={700}>{data.profile?.vendorType?.name}</Text>
+                                        <Text fw={700} onClick={showEditProfileDialog}><a>Update</a></Text></Flex>
+                                </Grid.Col >
+                                <Grid.Col span={{ base: 12, md: 6 }}>
+                                    <Text fw={700}>Public name:</Text>
+                                    <div><Text c="dimmed">User will see this instead of your real name</Text></div>
+                                    <Flex><Text fw={700}>{data.profile?.username}</Text><Text fw={700} onClick={showEditProfileDialog}><a>Update</a></Text></Flex>
+                                </Grid.Col >
+                            </Grid> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
                     </Card>
-                </Col>
-                <Col xs={24}></Col>
-                <Col xs={24} sm={24} md={12}>
+                </Grid.Col >
+                <Grid.Col span={12}></Grid.Col >
+                <Grid.Col span={{ base: 12, md: 6 }}>
                     {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} /> : ''}
-                </Col>
-                <Col xs={24} sm={24} md={12}>
+                </Grid.Col >
+                <Grid.Col span={{ base: 12, md: 6 }}>
                     {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
-                </Col>
-            </Row>
-            <Modal title='Modify Profile' open={showProfileDialog} footer={null} onCancel={() => setProfileDialog(false)} destroyOnClose={true}>
+                </Grid.Col >
+            </Grid>
+            <Modal title='Modify Profile' opened={showProfileDialog} onClose={() => setProfileDialog(false)} >
                 <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />
             </Modal>
         </div>;
@@ -495,31 +496,32 @@ const OnBoardPage = {
             }
         }
 
-        return [
-            <Card size="small" title="Choose your services">
-                <Space direction="vertical" style={{ width: '100%' }}>
-                    <div><Typography.Text strong>Add one or more services from below</Typography.Text></div>
-                    <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v)} >
-                        {serviceList.map(service => <Select.Option key={service.id} value={service.id}>{service.name}</Select.Option>)}
-                        {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>}
-                    </Select>
-                    <div><Typography.Text strong>Selected Services</Typography.Text></div>
+        return <>
+            <Card title="Choose your services">
+                <Stack>
+                    <div><Text fw={700}>Add one or more services from below</Text></div>
+                    <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} />
+                    {/* {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>} */}
+                    <div><Text fw={700}>Selected Services</Text></div>
                     <OnBoardPage.CostSection />
-                </Space>
-            </Card>,
-            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} open={!!getServiceDialogData?.id} footer={null} destroyOnClose={true} onCancel={() => setServiceDialogData(null)} >
+                </Stack>
+            </Card>
+            <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} opened={!!getServiceDialogData?.id} onClose={() => setServiceDialogData(null)} >
                 {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeType={activeType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
             </Modal>
-        ]
+        </>
     },
     CostSection: () => {
         const data = useLoaderData<LoaderData>();
 
-        return data.profile.VendorServiceGroup?.length ? <Collapse accordion>
-            {data.profile.VendorServiceGroup.map((item, index) => <Collapse.Panel key={index} header={item.group.name}>
-                <OnBoardPage.UpdateGroupServiceCost item={item} />
-            </Collapse.Panel>)}
-        </Collapse> : 'Please add services from above list to get started.'
+        return data.profile.VendorServiceGroup?.length ? <Accordion>
+            {data.profile.VendorServiceGroup.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
+                <Accordion.Control>{item.group.name}</Accordion.Control>
+                <Accordion.Panel>
+                    <OnBoardPage.UpdateGroupServiceCost item={item} />
+                </Accordion.Panel>
+            </Accordion.Item>)}
+        </Accordion> : 'Please add services from above list to get started.'
     },
     Documents: ({ data }: { data: LoaderData }) => {
         const fetcher = useFetcher();
@@ -537,42 +539,43 @@ const OnBoardPage = {
 
         return <>
             <fetcher.Form method="post" action="">
-                <Card size="small" title="Confirm your identity">
-                    <Row gutter={[40, 40]}>
-                        <Col sm={24} xs={24} md={10}>
-                            <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)}>
-                                {fileTypes.map(x => <option key={x.name} value={x.name}>{x.name}</option>)}
-                            </Select>
-                            <Typography.Text type="secondary">Upload any valid document to prove your identity.</Typography.Text>
-                        </Col>
-                        <Col sm={24} xs={24} md={14}>
+                <Card shadow="sm" title="Confirm your identity">
+                    <Grid gutter={40}>
+                        <Grid.Col span={{ base: 12, md: 5 }}>
+                            <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)} data={fileTypes.map(x => ({ label: x.name, value: x.name }))} />
+                            <Text c="dimmed">Upload any valid document to prove your identity.</Text>
+                        </Grid.Col >
+                        <Grid.Col span={{ base: 12, md: 7 }}>
                             <FileUploader id={fileType || ''} label="Choose file" onUpload={v => uploadDocs(v)} />
-                            {!fileType && <Typography.Text type="secondary">Please select a document type</Typography.Text>}
-                        </Col>
-                        <Col>
-                            {fetcher.state === 'submitting' && <Spin />}
-                        </Col>
-                    </Row>
+                            {!fileType && <Text c="dimmed">Please select a document type</Text>}
+                        </Grid.Col >
+                        <Grid.Col >
+                            {fetcher.state === 'submitting' && <Loader />}
+                        </Grid.Col >
+                    </Grid>
                 </Card>
             </fetcher.Form>
 
-            <Table dataSource={data.files}
-                columns={[
-                    {
-                        title: 'Document Type',
-                        dataIndex: 'fileType',
-                        key: 'fileType',
-                    },
-                    {
-                        title: 'File Name',
-                        dataIndex: 'fileName',
-                        key: 'fileName',
-                    },
-                ]} />
+            <Table>
+                <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Document Type</Table.Th>
+                        <Table.Th>File Name</Table.Th>
+                        <Table.Th></Table.Th>
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                    {data.files.map(element => <Table.Tr key={element.id}>
+                        <Table.Td>{element.fileType}</Table.Td>
+                        <Table.Td>{element.fileName}</Table.Td>
+                        <Table.Td></Table.Td>
+                    </Table.Tr>)}
+                </Table.Tbody>
+            </Table>
             <Divider />
-            <Row justify={'end'}>
-                <Col><Link to="success"><Button type="primary" disabled={!data.files.length}>Contiue</Button></Link></Col>
-            </Row>
+            <Flex justify={'end'}>
+                <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Contiue</Button></Link>
+            </Flex>
 
             {/* <Table dataSource={data.files}
                     columns={[
@@ -619,65 +622,65 @@ const OnBoardPage = {
         }
 
 
-        return [<fetcher.Form method="post" action="">
-            <Alert message="Kindly read all the inclusive services and set your base charge accordingly." type="info" showIcon /><br />
-            <Row gutter={[20, 20]}>
-                <Col sm={24} xs={24} md={12}>
-                    <div><Typography.Title level={5}>Base Charge</Typography.Title></div>
-                    <Input width={'100%'} addonBefore="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
+        return <fetcher.Form method="post" action="">
+            <Alert title="Kindly read all the inclusive services and set your base charge accordingly." variant="light" color="blue" icon={<IconInfoCircle />} /><br />
+            <Grid gutter={20}>
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <div><Title order={5}>Base Charge</Title></div>
+                    <Input width={'100%'} leftSection="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
                     <input type="hidden" name="categoryId" value={activeType} />
                     <input type="hidden" name="serviceGroupId" value={item.group.id} />
-                </Col>
-                <Col sm={24} xs={24} md={12}>
-                    <div><Typography.Title level={5}>Extra hour charges</Typography.Title></div>
-                    <Input width={'100%'} addonBefore="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
-                </Col>
-            </Row>
+                </Grid.Col >
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <div><Title order={5}>Extra hour charges</Title></div>
+                    <Input width={'100%'} leftSection="₹" name="extraHourCost" type="number" min="0" defaultValue={item.costExtraHour} />
+                </Grid.Col >
+            </Grid>
             <div style={{ padding: '10px 0 20px' }}>Approximate hour required for this job is {item.group.minHour} hours.</div>
 
-            {item.group.serviceGroupItem.map((service, i) => <Row key={service.service.id} gutter={[20, 20]}>
-                {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Col span={24}>
-                    {service.isOptional ? [<Typography.Title style={{ color: '#1890ff' }} level={5}>Additional Services</Typography.Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert message="Do not add base charge to additional service." type="info" showIcon />] : <Typography.Title style={{ color: '#1890ff' }} level={5}>Services included in this category</Typography.Title>}</Col>
+            {item.group.serviceGroupItem.map((service, i) => <Grid key={service.service.id} gutter={20}>
+                {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Grid.Col span={24}>
+                    {service.isOptional ? [<Title style={{ color: '#1890ff' }} order={5}>Additional Services</Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert variant="light" color="blue" title="Do not add base charge to additional service." icon={<IconInfoCircle />} />] : <Title style={{ color: '#1890ff' }} order={5}>Services included in this category</Title>}</Grid.Col >
                 }
-                <Col span={2}>
+                <Grid.Col span={2}>
                     {service.isOptional ? <Checkbox
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
                         onChange={v => setEnabledList(service.service.id, v.target.checked)}
                     /> : [<input type="hidden" name="serviceId"
                         value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
-                </Col>
-                <Col span={22}>
+                </Grid.Col >
+                <Grid.Col span={22}>
                     <b>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</b>
                     <div>
-                        <Typography.Text type="secondary">{service.service.description}</Typography.Text>
+                        <Text c="dimmed">{service.service.description}</Text>
                     </div>
-                    {enabledIds.includes(service.service.id) && service.isOptional && <Row gutter={[20, 10]} style={{ paddingTop: '10px' }}>
-                        <Col sm={24} xs={24} md={10}>
+                    {enabledIds.includes(service.service.id) && service.isOptional && <Grid gutter={20} style={{ paddingTop: '10px' }}>
+                        <Grid.Col span={{ base: 12, md: 5 }}>
                             <input type="hidden" value={service.service.fareMode} name="fareMode" />
-                            <div><Typography.Text>Charged by:</Typography.Text> {FareModeLabel.get(service.service.fareMode)}</div>
-                            {service.service.fareMode === FareMode.HOURLY ? [<div><Typography.Text>Duration</Typography.Text></div>,
-                            <Input addonAfter="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
-                        </Col>
-                        <Col sm={24} xs={24} md={14}>
-                            <div><Typography.Text>Cost</Typography.Text></div>
-                            <Input addonBefore="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />
-                            <Typography.Text type="secondary">Enter zero, if you don't charge additional for these services.</Typography.Text>
-                        </Col>
-                    </Row>}
-                </Col>
-                <Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Col>
-            </Row>)}
-            <Row gutter={[20, 20]}>
-                <Col>
+                            <div><Text>Charged by:</Text> {FareModeLabel.get(service.service.fareMode)}</div>
+                            {service.service.fareMode === FareMode.HOURLY ? [<div><Text>Duration</Text></div>,
+                            <Input rightSection="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                        </Grid.Col >
+                        <Grid.Col span={{ base: 12, md: 7 }}>
+                            <div><Text>Cost</Text></div>
+                            <Input leftSection="₹" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.cost || 0} name="cost" type="number" required min={0} />
+                            <Text c="dimmed">Enter zero, if you don't charge additional for these services.</Text>
+                        </Grid.Col >
+                    </Grid>}
+                </Grid.Col >
+                <Grid.Col span={24}><Divider style={{ padding: 0, margin: '0 0 10px' }} /></Grid.Col >
+            </Grid>)}
+            <Grid gutter={20}>
+                <Grid.Col >
                     <input type="hidden" name="vendorGroupId" value={item.id} />
-                    <Button loading={fetcher.state === 'submitting'} type="primary" htmlType="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
-                </Col>
-                {!addService && <Col>
-                    <Button danger htmlType="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
-                </Col>}
-            </Row>
-        </fetcher.Form>];
+                    <Button loading={fetcher.state === 'submitting'} variant="filled" radius="xl" type="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
+                </Grid.Col >
+                {!addService && <Grid.Col >
+                    <Button variant="filled" color="red" radius="xl" type="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
+                </Grid.Col >}
+            </Grid>
+        </fetcher.Form>;
     },
     EditProfileForm: ({ onSuccess }: { onSuccess: Function }) => {
         const data = useLoaderData<typeof loader>();
@@ -713,37 +716,35 @@ const OnBoardPage = {
 
         }
 
-        return <Row gutter={[20, 20]}>
-            <Col sm={24} xs={24} md={12}>
-                <Space direction="vertical" style={{ width: '100%' }}><Typography.Text strong>Profile Category:</Typography.Text>
-                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value })} placeholder="Select a category" style={{ width: '100%' }}>
-                        {data?.categories.map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
-                    </Select>
-                </Space>
-            </Col>
-            <Col sm={24} xs={24} md={12}>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                    <Typography.Text strong>Public name:</Typography.Text>
-                    <Select disabled={!data?.profile.usernameSuggestion} style={{ width: '100%' }} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value })} placeholder="Select a username">
-                        {data?.profile.usernameSuggestion?.split(',').map((item) => <Select.Option key={item} value={item}>{item}</Select.Option>)}
-                    </Select>
-                    <div><Typography.Text type="secondary">User will see this instead of your real name</Typography.Text></div>
-                </Space>
-            </Col>
-            <Col span={24}>
-                {showWarnMsg && <Alert style={{ marginBottom: '20px' }} type="error" message="Are you sure?" description="Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one." action={
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                        <Button size="small" danger type="primary" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
+        return <Grid gutter={20}>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+                <Stack style={{ width: '100%' }}>
+                    <Text fw={700}>Profile Category:</Text>
+                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
+                </Stack>
+            </Grid.Col >
+            <Grid.Col span={{ base: 12, md: 6 }}>
+                <Stack>
+                    <Text fw={700}>Public name:</Text>
+                    <Select disabled={!data?.profile.usernameSuggestion} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || []} />
+                    <div><Text c="dimmed">User will see this instead of your real name</Text></div>
+                </Stack>
+            </Grid.Col >
+            <Grid.Col span={24}>
+                {showWarnMsg && <Alert variant="light" color="red" mb={'md'} title="Are you sure?" icon={<IconInfoCircle />}>
+                    Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one.
+                    <Flex>
+                        <Button color="red" size="xs" variant="filled" radius="xl" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
                             Decline
                         </Button>
-                        <Button size="small" danger ghost onClick={() => setWarnMsg(false)}>
-                            Procced
+                        <Button color="red" size="xs" variant="outline" onClick={() => setWarnMsg(false)}>
+                            Proceed
                         </Button>
-                    </Space>
-                } />}
-                {!showWarnMsg && <Button type="primary" onClick={saveForm}>Save and Continue</Button>}
-            </Col>
-        </Row>
+                    </Flex>
+                </Alert>}
+                {!showWarnMsg && <Button variant="filled" radius="xl" onClick={saveForm}>Save and Continue</Button>}
+            </Grid.Col >
+        </Grid>
     }
 }
 

@@ -301,7 +301,7 @@ const Home = {
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
         <Grid.Col span={{ base: 12, md: 6 }}>
-          <Box style={{ display: 'flex', justifyContent: 'end' }}>
+          <Box style={{ display: 'flex', justifyContent: 'end', height: '100%' }}>
             <div className="homepage-hero-search-wrapper">
               <div className="homepage-hero-search-container">
                 <Grid gutter={20}>

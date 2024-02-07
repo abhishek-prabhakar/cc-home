@@ -1,7 +1,7 @@
+import { Box, Button, Flex, Grid, Image, Input, Stack, Text, Title } from "@mantine/core";
 import { UserSource } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLocation } from "@remix-run/react";
-import { Button, Col, Image, Input, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
@@ -100,46 +100,46 @@ const Onboard = {
 
         return <div className="container">
             <Form method="post">
-                <Typography.Title level={3}>Sign up as vendor</Typography.Title>
-                <Row>
-                    <Col xs={24} sm={24} md={10}>
-                        <Row gutter={[20, 20]}>
-                            <Col span={24}>
-                                <Typography.Title level={5}>Full Name*</Typography.Title>
+                <Title order={3}>Sign up as vendor</Title>
+                <Grid gutter={0}>
+                    <Grid.Col span={{ base: 12, md: 6 }} >
+                        <Stack>
+                            <Box>
+                                <Title order={5}>Full Name*</Title>
                                 <Input name="fullName" placeholder="Enter your full name." required />
-                            </Col>
-                            <Col span={24}>
-                                <Typography.Title level={5}>Email*</Typography.Title>
+                            </Box>
+                            <Box>
+                                <Title order={5}>Email*</Title>
                                 <Input name="email" placeholder="Enter your email for communication purpose." required type="email" />
-                            </Col>
-                            <Col span={24}>
-                                <Typography.Title level={5}>Phone*</Typography.Title>
+                            </Box>
+                            <Box>
+                                <Title order={5}>Phone*</Title>
                                 <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
-                            </Col>
-                            <Col span={24}>
-                                <Typography.Title level={5}>Portfolio*</Typography.Title>
-                                <Typography.Text type="secondary">Add atleast ten of your best works.</Typography.Text>
+                            </Box>
+                            <Box>
+                                <Title order={5}>Portfolio*</Title>
+                                <Text c="dimmed">Add atleast ten of your best works.</Text>
                                 <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
                                 <br />
-                                <Space style={{ marginTop: '10px' }}>
+                                <Flex style={{ marginTop: '10px' }}>
                                     {
                                         files.map(img => <div key={img}>
                                             <Image src={PATH.RESOURCE_URL + img} width={100} />
                                             <input type="hidden" name="portfolio" value={img} />
                                         </div>)
                                     }
-                                </Space>
-                            </Col>
-                            <Col span={24}>
-                                <Typography.Title level={5}>Social media url</Typography.Title>
+                                </Flex>
+                            </Box>
+                            <Box>
+                                <Title order={5}>Social media url</Title>
                                 <Input name="socialUrl" type="url" required />
-                            </Col>
-                            <Col span={24}>
-                                <Button type="primary" loading={location.state === 'submitting'} htmlType="submit" name="actionType" value="signup">Sign up as vendor</Button>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
+                            </Box>
+                            <Box>
+                                <Button variant="filled" radius="xl" loading={location.state === 'submitting'} type="submit" name="actionType" value="signup">Sign up as vendor</Button>
+                            </Box>
+                        </Stack>
+                    </Grid.Col>
+                </Grid>
             </Form>
         </div>
     }
