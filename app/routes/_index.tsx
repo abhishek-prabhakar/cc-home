@@ -249,18 +249,21 @@ const Home = {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 4 }}>
                   <div className="card-style-item">
-                    <Flex align="center" gap={'sm'}><Title order={5}>50+</Title><Text c="dimmed">professionals</Text></Flex>
-
-                    <Avatar.Group>
-                      <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                      <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                      <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
-                      <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
-                      <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                      <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                      <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
-                      <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
-                    </Avatar.Group>
+                    <Stack gap="md">
+                      <Flex align="center" gap={'sm'} justify={'center'}>
+                        <Title order={5}>50+</Title><Text c="dimmed">professionals</Text>
+                      </Flex>
+                      <Avatar.Group>
+                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                        <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
+                        <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
+                        <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
+                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                        <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
+                        <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
+                        <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
+                      </Avatar.Group>
+                    </Stack>
                   </div>
                 </Grid.Col>
               </Grid>
@@ -407,7 +410,7 @@ const Home = {
                   <Stack>
                     <Image className="thumbnail" src={item.image || ''} />
                     <div className="title-wrapper">
-                      <Text fw={700}>{item.title}</Text>
+                      <Text size="sm">{item.title}</Text>
                     </div>
                   </Stack>
                   <IconChevronRight className="btn-wrapper" />
@@ -458,7 +461,7 @@ const Home = {
                       <Title order={5}>{item.title}</Title>
                     </div>
                     <div className="label-wrapper">
-                      <Text>{item.label}</Text>
+                      <Text size="sm">{item.label}</Text>
                     </div>
                     <div className="btn-wrapper">
                       <Link to={item.path}>

@@ -10,6 +10,11 @@ body {
     margin: 0;
 }
 
+a, a:active{
+    color: var(--mantine-color-blue-6);
+    text-decoration: none;
+}
+
 ._color-primary{
     color: var(--ui-color-primary);
 }

@@ -33,21 +33,21 @@ const AppNavigation = {
 
     function dropdownContent(navitem: HeaderNavListItem) {
       return <Stack p={'sm'}>
-        <Title order={5}>
+        <Text>
           {" "}
           <Link to={Routes.Services.replace(":id", navitem.id)}>
             Browse all {navitem.name}
           </Link>
-        </Title>
+        </Text>
         {navitem.children?.map((menuItem) => (
           <div key={menuItem.name}>
-            <Title order={5}>
-              {menuItem.name}
-            </Title>
-            <Stack>
+            <Stack gap={'xs'}>
+              <Text c="dimmed">
+                {menuItem.name}
+              </Text>
               {menuItem.list.map((item) => (
                 <Link key={item.id} to={item.path}>
-                  <Text>{item.name}</Text>
+                  <Text size="sm" c="black">{item.name}</Text>
                 </Link>
               ))}
               {!menuItem.list.length && <Text c="dimmed">Sorry, no results found.</Text>}

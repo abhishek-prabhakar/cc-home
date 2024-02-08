@@ -6,8 +6,9 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Box, Button, Divider, Flex, Grid, Menu, Stack, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Divider, Flex, Grid, Menu, Popover, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
 const userMenuStyle: React.CSSProperties = { width: '300px', background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
@@ -20,6 +21,7 @@ export function Header({ user }: { user?: User | null }) {
     const navigation = useNavigation();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
     const dispatch = useDispatch();
+    const [opened, { close, open }] = useDisclosure(false);
 
     useEffect(() => {
         dispatch(setUser(user?.id));
@@ -62,37 +64,34 @@ export function Header({ user }: { user?: User | null }) {
                                 </ActionIcon>
                             </Link>
                             <Box visibleFrom="md" >
-                                <Menu trigger="click-hover">
-                                    <Menu.Target>
-                                        <Button>My Account</Button>
-                                    </Menu.Target>
-                                    <Menu.Dropdown>
-                                        <Menu.Item disabled p={0}>
-                                            <div style={userMenuStyle}>
-                                                <div style={{ padding: '12px' }}>
-                                                    {user?.id ?
-                                                        <Grid justify={'space-between'}>
-                                                            <Grid.Col>
-                                                                <Title order={5}>Hej!</Title>
-                                                                <Link to={'/user/home'}>My Bookings</Link>
-                                                            </Grid.Col>
-                                                            <Grid.Col>
-                                                                <Link to="/logout"><Button size="small" >Logout</Button></Link>
-                                                            </Grid.Col>
-                                                        </Grid>
-                                                        : <UserLogin />}
-                                                </div>
-                                                <Menu.Divider />
-                                                <div style={menuArtisantStyle}>
-                                                    <Stack style={{ padding: 8 }} >
-                                                        <Title order={3}>Artisan?</Title>
-                                                        <Link to="/partner/signup"><Button radius="xl" variant="outline" >Signup</Button></Link>
-                                                    </Stack>
-                                                </div>
+                                <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
+                                    <Popover.Target>
+                                        <Button onMouseEnter={open}>My Account</Button>
+                                    </Popover.Target>
+                                    <Popover.Dropdown p={0}>
+                                        <div style={userMenuStyle}>
+                                            <div style={{ padding: '12px' }}>
+                                                {user?.id ?
+                                                    <Grid justify={'space-between'}>
+                                                        <Grid.Col>
+                                                            <Title order={5}>Hej!</Title>
+                                                            <Link to={'/user/home'}>My Bookings</Link>
+                                                        </Grid.Col>
+                                                        <Grid.Col>
+                                                            <Link to="/logout"><Button size="small" >Logout</Button></Link>
+                                                        </Grid.Col>
+                                                    </Grid>
+                                                    : <UserLogin />}
                                             </div>
-                                        </Menu.Item>
-                                    </Menu.Dropdown>
-                                </Menu>
+                                            <div style={menuArtisantStyle}>
+                                                <Stack style={{ padding: 8 }} >
+                                                    <Title order={3}>Artisan?</Title>
+                                                    <Link to="/partner/signup"><Button radius="xl" variant="outline" >Signup</Button></Link>
+                                                </Stack>
+                                            </div>
+                                        </div>
+                                    </Popover.Dropdown>
+                                </Popover>
                             </Box>
                         </Flex>
                     </Grid.Col>
