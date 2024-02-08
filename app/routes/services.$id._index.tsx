@@ -343,18 +343,16 @@ const budgetMarks = {
 const SortResultsPanel = () => {
   return (
     <div style={sortPanelStyles}>
-      <Grid align={"middle"}>
-        <Grid.Col>Sort By: </Grid.Col>
-        <Grid.Col>
-          <Select
-            defaultValue="0"
-            data={[
-              { value: "0", label: "Price" },
-              { value: "1", label: "Rating" },
-            ]}
-          />
-        </Grid.Col>
-      </Grid>
+      <Flex align={"middle"} gap={'sm'}>
+        <Text c="dimmed" size="sm">Sort By:</Text>
+        <Select
+          defaultValue="0"
+          data={[
+            { value: "0", label: "Price" },
+            { value: "1", label: "Rating" },
+          ]}
+        />
+      </Flex>
     </div>
   );
 };
@@ -461,15 +459,14 @@ const Photography = {
                 {filter.category.map((item) => (
                   <Checkbox
                     key={item.id}
+                    label={item.name}
                     value={item.id}
                     checked={getCategory.includes(item.id)}
                     className=""
                     onChange={(e) =>
                       toggleCategoryItem(e?.target?.checked, e?.target?.value)
                     }
-                  >
-                    {item.name}
-                  </Checkbox>
+                  />
                 ))}
                 {!filter.category?.length && <div>Unavailable right now.</div>}
               </Stack>
