@@ -1,7 +1,6 @@
-import { CheckCircleOutlined, FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
+import { Card, Container, Grid, Stack, Text, Title } from "@mantine/core";
 import { LoaderArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import { Button, Card, Col, Rate, Row, Space, Typography } from "antd";
+import { IconCircleCheck } from "@tabler/icons-react";
 import { vendorSignupCookie } from "~/session.server";
 
 export async function loader(args: LoaderArgs) {
@@ -23,25 +22,23 @@ export async function loader(args: LoaderArgs) {
 const SignupSuccess = {
     Index: () => {
 
-        return <div className="container">
-            <Row justify={'center'} align={'middle'}>
-                <Col xs={24} sm={24} md={8} lg={10}>
-                    <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-                        <Card>
-                            <Space direction="vertical" align="center" style={{ width: '100%' }}>
-                                <Typography.Text type="success">
-                                    <CheckCircleOutlined style={{ fontSize: '50px' }} />
-                                </Typography.Text>
-                                <div style={{ textAlign: 'center' }}>
-                                    <Typography.Title level={2}>Thank you for your interest!</Typography.Title>
-                                    <Typography.Text>You'll recieve a confirmation email in 2-3 business days.</Typography.Text>
-                                </div>
-                            </Space>
+        return <Container>
+            <Grid justify={'center'} align={'middle'}>
+                <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
+                    <Stack gap={'lg'}>
+                        <Card withBorder>
+                            <Stack justify="center" align="center" p={'lg'}>
+                                <IconCircleCheck style={{ width: '50px', height: '50px' }} color="var(--ui-color-success)" />
+                                <Stack style={{ textAlign: 'center' }}>
+                                    <Title order={2}>Thank you for your interest!</Title>
+                                    <Text>You'll recieve a confirmation email in 2-3 business days.</Text>
+                                </Stack>
+                            </Stack>
                         </Card>
-                    </Space>
-                </Col>
-            </Row>
-        </div>;
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>;
     }
 }
 export default SignupSuccess.Index;

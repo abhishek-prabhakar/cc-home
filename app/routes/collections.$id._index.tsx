@@ -1,6 +1,7 @@
+import { Badge, Button, Container, Flex, Grid, Image, Skeleton, Tabs, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Badge, Button, Col, Divider, Image, Row, Skeleton, Space, Tabs, Typography } from "antd";
+import { Divider } from "antd";
 import { Suspense } from "react";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
@@ -35,69 +36,70 @@ const CollectionsPage = {
     Header: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <div className="container no-spacer" style={{ paddingBottom: '40px' }}>
+        return <Container style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
-                <Row align={"middle"} justify={'center'}>
-                    <Col span={19} style={{ padding: '20px 0' }}>
-                        <Suspense fallback={<Skeleton active />}>
+                <Grid align={"middle"} justify={'center'}>
+                    <Grid.Col span={19} style={{ padding: '20px 0' }}>
+                        <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>
                                 {result => [
-                                    <Typography.Title level={5}>The easiest way to find</Typography.Title>,
-                                    <Typography.Title level={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Typography.Title>,
-                                    <Typography.Text>By bringing together ambitious and talented professionals with AI, we are making your work easier.</Typography.Text>, <br />,
-                                    <Space align={'center'} style={{ paddingTop: '30px' }}>
-                                        <Typography.Text strong type="secondary">See how it works</Typography.Text>
-                                        <Button shape='round' type="default">Watch Video</Button>
-                                    </Space>
+                                    <Title order={5}>The easiest way to find</Title>,
+                                    <Title order={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Title>,
+                                    <Text size="sm">By bringing together ambitious and talented professionals with AI, we are making your work easier.</Text>, <br />,
+                                    <Flex align={'center'} style={{ paddingTop: '30px' }}>
+                                        <Text c="dimmed">See how it works</Text>
+                                        <Button radius="xl" variant="outline">Watch Video</Button>
+                                    </Flex>
                                 ]}
                             </Await>
                         </Suspense>
-                    </Col>
-                    <Col span={5} style={{ overflow: 'hidden', marginBottom: '-40px' }}>
+                    </Grid.Col>
+                    <Grid.Col span={5} style={{ overflow: 'hidden', marginBottom: '-40px' }}>
                         <img src="/assets/art-1.png" />
-                    </Col>
-                </Row>
+                    </Grid.Col>
+                </Grid>
             </div>
-        </div>
+        </Container>
     },
     Section: () => {
         const data = useLoaderData<typeof loader>();
 
         return <div className="container">
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.results}>
-                    {result => <Tabs
-                        defaultActiveKey="1"
-                        items={result.map(item => ({
-                            key: item.keyName,
-                            label: <Typography.Title level={4}>{item.name}</Typography.Title>,
-                            children: <Row key={item.keyName} gutter={[40, 40]} style={{ padding: '40px 0' }}>
-                                {item.serviceGroup.map(service => <Col key={service.id} sm={24} xs={24} md={6}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
+                    {result => <Tabs defaultValue="0">
+                        <Tabs.List>
+                            {result.map((item, i) => <Tabs.Tab value={'' + i}>{item.name}</Tabs.Tab>)}
+                        </Tabs.List>
+                        {result.map((item, i) => <Tabs.Panel value={'' + i}>
+                            <Grid key={item.keyName} gutter={40} style={{ padding: '40px 0' }}>
+                                {item.serviceGroup.map(service => <Grid.Col key={service.id} span={{ base: 12, md: 3 }}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
-                                        <Image preview={false} src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} fallback={PATH.FALLBACK_IMG} />
+                                        <Image src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} />
                                         <div style={{ paddingBottom: '20px' }}></div>
                                         <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
-                                            <Typography.Title level={5}>{service.name}</Typography.Title>
+                                            <Title order={5}>{service.name}</Title>
                                         </Link>
-                                        <Typography.Text strong type="secondary">Includes</Typography.Text>
+                                        <Text fw={500} c="dimmed" >Includes</Text>
                                         <div>
                                             {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
-                                                <Typography.Text type="secondary">{description.service.name}.</Typography.Text>
+                                                <Text fw={500} c="dimmed">{description.service.name}.</Text>
                                             </div>)}
                                         </div>
                                         <div style={{ marginTop: '10px', height: '26px' }}>
-                                            {service.VendorServiceGroup.length ? <div style={{ borderTop: '1px solid #ddd', paddingTop: '4px' }}><Badge text={'Starts from ₹' + service.VendorServiceGroup[0].cost} status="success" /></div>
+                                            {service.VendorServiceGroup.length ? <div style={{ borderTop: '1px solid #ddd', paddingTop: '4px' }}><Badge color="yellow"> 'Starts from ₹' + service.VendorServiceGroup[0].cost</Badge></div>
                                                 : ''}
                                         </div>
                                     </div>
                                 </Link>
-                                </Col>)}
-                                <Col span={24}>
+                                </Grid.Col>)}
+                                <Grid.Col span={12}>
                                     <Divider />
-                                </Col>
-                            </Row>
-                        })
-                        )} />
+                                </Grid.Col>
+                            </Grid>
+                        </Tabs.Panel>
+                        )}
+                    </Tabs>
                     }</Await>
             </Suspense>
         </div>

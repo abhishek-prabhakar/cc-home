@@ -55,7 +55,7 @@ export function Header({ user }: { user?: User | null }) {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={{ base: 2, md: 4, lg: 3 }}>
-                        <Flex gap={10} justify={'end'} align="center">
+                        <Flex gap={40} justify={'end'} align="center">
                             <Link to="/cart/checkout">
                                 <ActionIcon variant="subtle" size="xl" radius="xl" >
                                     <IconShoppingCart />

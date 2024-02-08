@@ -572,7 +572,7 @@ const OnBoardPage = {
                 </Table.Tbody>
             </Table>
             <Divider />
-            <Flex justify={'end'}>
+            <Flex justify={'end'} pt={24}>
                 <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Contiue</Button></Link>
             </Flex>
         </Card>
@@ -702,20 +702,20 @@ const OnBoardPage = {
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack style={{ width: '100%' }}>
                     <Text fw={500}>Profile Category:</Text>
-                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
+                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))}  />
                 </Stack>
             </Grid.Col >
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
                     <Text fw={500}>Public name:</Text>
                     <Select disabled={!data?.profile.usernameSuggestion} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || []} />
-                    <div><Text c="dimmed">User will see this instead of your real name</Text></div>
+                    <div><Text size="sm" c="dimmed">User will see this instead of your real name</Text></div>
                 </Stack>
             </Grid.Col >
             <Grid.Col span={12}>
                 {showWarnMsg && <Alert variant="light" color="red" mb={'md'} title="Are you sure?" icon={<IconInfoCircle />}>
                     Updating your profile type will reset your saved changes. If you are trying to signup for multiple categories, kindly signup after successfully submitting this one.
-                    <Flex gap={'sm'}>
+                    <Flex gap={'sm'} pt={10}>
                         <Button color="red" size="xs" variant="filled" radius="xl" onClick={v => updateData({ jobType: data?.profile?.vendorType?.id })}>
                             Decline
                         </Button>
