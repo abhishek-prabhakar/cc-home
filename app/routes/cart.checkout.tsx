@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Divider, Flex, Grid, Group, Image, Modal, Skeleton, Stack, Text, Textarea, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Skeleton, Stack, Text, Textarea, Title } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -31,7 +31,7 @@ const Cart = {
         const user = useSelector(getUser);
         const data = useLoaderData<typeof loader>();
 
-        return <div className="container">
+        return <Container>
             <Title order={3}>Checkout</Title>
             <Divider />
             <Grid gutter={30}>
@@ -55,7 +55,7 @@ const Cart = {
                     </Suspense>
                 </Grid.Col>
             </Grid>
-        </div>
+        </Container>
     },
     Preview: ({ cart }: { cart: CartItem[] }) => {
         const [editService, setEditService] = useState<{ id: string, services: CartActiveService[] }>();

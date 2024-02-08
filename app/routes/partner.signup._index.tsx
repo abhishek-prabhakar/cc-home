@@ -1,19 +1,7 @@
 import { FundOutlined } from "@ant-design/icons";
+import { Button, Card, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
-import {
-  Button,
-  Card,
-  Col,
-  Image,
-  Input,
-  Modal,
-  Radio,
-  Result,
-  Row,
-  Space,
-  Typography,
-} from "antd";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -114,47 +102,46 @@ const PartnerSignup = {
   Index: () => {
     return (
       <div className="container">
-        <Space direction="vertical" size={"large"}>
+        <Stack gap={'lg'}>
           <PartnerSignup.Jumbotron />
           <PartnerSignup.Counter />
           <PartnerSignup.Intro />
           <PartnerSignup.Features />
           <PartnerSignup.Form />
-        </Space>
+        </Stack>
       </div>
     );
   },
   Jumbotron: () => {
     function buttonClick(e: any) {
-      console.log(e);
       scroll("signup-form");
     }
     return (
       <div style={jumbotronStyle}>
-        <Row justify={"center"}>
-          <Col>
-            <Space direction="vertical" align="center">
-              <Typography.Title level={1} style={{ color: "white" }}>
+        <Grid justify={"center"}>
+          <Grid.Col>
+            <Stack align="center" justify="center">
+              <Title order={1} style={{ color: "white" }}>
                 Earn upto 3 times your current income and change your life.
-              </Typography.Title>
-              <Typography.Title level={3}>
+              </Title>
+              <Title order={3}>
                 Become a part of a community with more than 50,000 service
                 professionals
-              </Typography.Title>
+              </Title>
               <br />
               <br />
-
               <Button
-                type="primary"
-                size="large"
+                variant="filled"
+                size="lg"
+                radius={'xl'}
                 color="white"
                 onClick={buttonClick}
               >
                 Join Us
               </Button>
-            </Space>
-          </Col>
-        </Row>
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </div>
     );
   },
@@ -162,47 +149,47 @@ const PartnerSignup = {
   Counter: () => {
     return (
       <div style={{ padding: "50px 0" }}>
-        <Row justify={"center"} gutter={[100, 40]}>
-          <Col>
-            <Typography.Title>50+</Typography.Title>
-            <Typography.Title level={4}>Members</Typography.Title>
-          </Col>
-          <Col>
-            <Typography.Title>500+</Typography.Title>
-            <Typography.Title level={4}>Customers</Typography.Title>
-          </Col>
-          <Col>
-            <Typography.Title>500+</Typography.Title>
-            <Typography.Title level={4}>Services</Typography.Title>
-          </Col>
-        </Row>
+        <Grid justify={"center"} gutter={40}>
+          <Grid.Col>
+            <Title>50+</Title>
+            <Title order={4}>Members</Title>
+          </Grid.Col>
+          <Grid.Col>
+            <Title>500+</Title>
+            <Title order={4}>Customers</Title>
+          </Grid.Col>
+          <Grid.Col>
+            <Title>500+</Title>
+            <Title order={4}>Services</Title>
+          </Grid.Col>
+        </Grid>
       </div>
     );
   },
 
   Intro: () => {
     return (
-      <Row justify={"center"}>
-        <Col span={6}>
+      <Grid justify={"center"}>
+        <Grid.Col span={6}>
           <div className="line"></div>
-        </Col>
-        <Col span={24}></Col>
-        <Col className="_text-center" xs={24} sm={24} md={20} lg={16}>
+        </Grid.Col>
+        <Grid.Col span={24}></Grid.Col>
+        <Grid.Col className="_text-center" span={{ base: 12, md: 10, lg: 8 }}>
           <div style={{ padding: "50px 0" }}>
-            <Typography.Title level={2}>
+            <Title order={2}>
               {" "}
               Lorem ipsum dolor sit amet
-            </Typography.Title>
-            <Typography.Text type="secondary">
+            </Title>
+            <Text c="dimmed">
               Celebria Collective is more than just a platform; it's a launchpad
               for photographers, makeup artists, videographers, and fashion
               designers looking to scale their business and amplify their
               artistic influence. Ready to elevate your craft and take your
               business to the next level?
-            </Typography.Text>
+            </Text>
           </div>
-        </Col>
-      </Row>
+        </Grid.Col>
+      </Grid>
     );
   },
 
@@ -212,39 +199,38 @@ const PartnerSignup = {
         className="_rounded"
         style={{ background: "#f8f8f8", padding: "20px" }}
       >
-        <Row justify={"center"} align={"middle"} gutter={[100, 40]}>
-          <Col xs={24} sm={24} md={12}>
+        <Grid justify={"center"} align={"middle"} gutter={40}>
+          <Grid.Col span={{ base: 12, md: 6 }}>
             <Image
               src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg"
               className="_rounded"
               width={"100%"}
-              preview={false}
             />
-          </Col>
-          <Col xs={24} sm={24} md={12}>
-            <Typography.Title level={2}>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Title order={2}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit
-            </Typography.Title>
-            <Row>
-              <Col>
-                <Typography.Title style={{ color: "var( --ui-color-primary)" }}>
+            </Title>
+            <Grid>
+              <Grid.Col>
+                <Title style={{ color: "var( --ui-color-primary)" }}>
                   <FundOutlined />
-                </Typography.Title>
-              </Col>
-              <Col flex={"auto"}>
-                <Typography.Title level={4}>
+                </Title>
+              </Grid.Col>
+              <Grid.Col flex={"auto"}>
+                <Title order={4}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                </Typography.Title>
-                <Typography.Text type="secondary">
+                </Title>
+                <Text c="dimmed">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco
                   laboris nisi ut aliquip ex ea commodo consequat.
-                </Typography.Text>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+                </Text>
+              </Grid.Col>
+            </Grid>
+          </Grid.Col>
+        </Grid>
       </div>
     );
   },
@@ -253,16 +239,16 @@ const PartnerSignup = {
     const [activeCard, setActiveCard] = useState<string | null>(null);
 
     return (
-      <Row id="signup-form" gutter={[40, 40]}>
-        <Col span={24}>
+      <Grid id="signup-form" gutter={40}>
+        <Grid.Col span={24}>
           <div style={{ paddingTop: "50px", textAlign: "center" }}>
-            <Typography.Title level={1}>
+            <Title order={1}>
               Join us in the following categories
-            </Typography.Title>
+            </Title>
           </div>
-        </Col>
+        </Grid.Col>
         {VendorList.map((vendor) => (
-          <Col key={vendor.id} sm={24} md={8} lg={8}>
+          <Grid.Col key={vendor.id} span={{ base: 12, lg: 4 }}>
             <Card
               style={{
                 background: vendor.background,
@@ -270,39 +256,39 @@ const PartnerSignup = {
                 width: "100%",
                 borderRadius: "8px",
               }}
-              cover={
-                <img
+            >
+              <Card.Section>
+                <Image
                   src={vendor.img}
                   style={{ padding: "50px", height: "300px" }}
                 />
-              }
-            >
+              </Card.Section>
               <div style={{ marginTop: "-10px" }}>
-                <Space direction="vertical" size={"large"}>
-                  <Typography.Title style={{ color: "white" }} level={2}>
+                <Stack gap={'lg'}>
+                  <Title style={{ color: "white" }} order={2}>
                     {vendor.title}
-                  </Typography.Title>
-                  <Typography.Title style={{ color: "white" }} level={4}>
+                  </Title>
+                  <Title style={{ color: "white" }} order={4}>
                     {vendor.description}
-                  </Typography.Title>
+                  </Title>
                   <Button
-                    shape="round"
-                    type="primary"
+                    radius={'xl'}
+                    variant="filled"
                     size="large"
                     onClick={() => setActiveCard(vendor.id)}
                   >
                     Signup
                   </Button>
-                </Space>
+                </Stack>
               </div>
             </Card>
-          </Col>
+          </Grid.Col>
         ))}
         <PartnerSignup.SignupForm
           type={activeCard}
           onClose={() => setActiveCard(null)}
         />
-      </Row>
+      </Grid>
     );
   },
 
@@ -337,60 +323,57 @@ const PartnerSignup = {
 
     const SuccessMessage = () => {
       return (
-        <Result
-          status="success"
-          title="Thank you for your interest"
-          subTitle="Our representative will contact you soon."
-          extra={[
-            <Button key="buy" onClick={customClose}>
-              Close
-            </Button>,
-          ]}
-        />
+        <Stack align="center" justify="center">
+          <Title order={3}>Thank you for your interest</Title>
+          <Text size="sm">Our representative will contact you soon.</Text>
+          <Button key="buy" onClick={customClose}>
+            Close
+          </Button>
+        </Stack>
       );
     };
 
     const RequestForm = () => {
       return type ? (
         <fetcher.Form onSubmit={submitHandler}>
-          <Row gutter={[20, 20]}>
-            <Col>
-              <Typography.Title level={5}>I'm a</Typography.Title>
-              <Radio.Group defaultValue={type} name="type">
+          <Grid gutter={20}>
+            <Grid.Col>
+              <Title order={5}>I'm a</Title>
+              <Group defaultValue={type}>
                 {VendorList.map((item) => (
-                  <Radio.Button key={item.id} value={item.id}>
+                  <Radio key={item.id} value={item.id} name="type">
                     {item.name}
-                  </Radio.Button>
+                  </Radio>
                 ))}
-              </Radio.Group>
-            </Col>
-            <Col span={24}>
-              <Typography.Title level={5}>Full Name</Typography.Title>
+              </Group>
+            </Grid.Col>
+            <Grid.Col span={24}>
+              <Title order={5}>Full Name</Title>
               <Input
                 name="fullName"
                 placeholder="Enter your full name"
                 required
               />
-            </Col>
-            <Col span={24}>
-              <Typography.Title level={5}>Contact Number</Typography.Title>
-              <Input name="phone" addonBefore="+91" maxLength={10} required />
-            </Col>
-            <Col span={24}>
-              <Typography.Title level={5}>Email</Typography.Title>
+            </Grid.Col>
+            <Grid.Col span={24}>
+              <Title order={5}>Contact Number</Title>
+              <Input name="phone" leftSection="+91" maxLength={10} required />
+            </Grid.Col>
+            <Grid.Col span={24}>
+              <Title order={5}>Email</Title>
               <Input name="email" type="email" required />
-            </Col>
-            <Col span={24}>
-              <Typography.Title level={5}>Social media url</Typography.Title>
+            </Grid.Col>
+            <Grid.Col span={24}>
+              <Title order={5}>Social media url</Title>
               <Input name="socialUrl" type="url" required />
-            </Col>
-            <Col span={24}>
+            </Grid.Col>
+            <Grid.Col span={24}>
               <input type="hidden" name="category" value={type} />
-              <Button type="primary" shape="round" htmlType="submit">
+              <Button variant="filled" radius="xl" type="submit">
                 Submit
               </Button>
-            </Col>
-          </Row>
+            </Grid.Col>
+          </Grid>
         </fetcher.Form>
       ) : (
         <></>
@@ -399,10 +382,9 @@ const PartnerSignup = {
 
     return (
       <Modal
-        open={!!type}
-        onCancel={onClose}
+        opened={!!type}
+        onClose={onClose}
         title="Register as a professional"
-        footer={null}
       >
         {formSubmitted ? <SuccessMessage /> : <RequestForm />}
       </Modal>
