@@ -119,17 +119,19 @@ const AppNavigation = {
 
                   {navList.map(item => <Accordion.Item key={item.id} value={item.id}>
                     <Accordion.Control>{item.name}</Accordion.Control>
-                    {item.children.map((child, i) => <Stack key={'child' + i}>
-                      <Title order={5}>{child.name}</Title>
-                      {[{
-                        key: Routes.Services.replace(":id", item.id),
-                        label: 'Browse all ',
-                      }].concat(
-                        child.list.map(x => ({ key: x.path, label: x.name, })))
-                        .map(menuItem => <Text key={menuItem.key}>{menuItem.label}</Text>)
+                    <Accordion.Panel>
+                      {item.children.map((child, i) => <Stack key={'child' + i}>
+                        <Title order={5}>{child.name}</Title>
+                        {[{
+                          key: Routes.Services.replace(":id", item.id),
+                          label: 'Browse all ',
+                        }].concat(
+                          child.list.map(x => ({ key: x.path, label: x.name, })))
+                          .map(menuItem => <Text key={menuItem.key}>{menuItem.label}</Text>)
+                        }
+                      </Stack>)
                       }
-                    </Stack>)
-                    }
+                    </Accordion.Panel>
                   </Accordion.Item>)}
                 </Accordion>
               )}

@@ -33,7 +33,7 @@ export function Header({ user }: { user?: User | null }) {
         <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
             <div className="container">
                 <Grid justify={'space-between'} align="center" gutter={0}>
-                    <Grid.Col span={{ base: 0, md: 3, lg: 2 }} visibleFrom="md">
+                    <Grid.Col span={{ base: 0, md: 4, lg: 3 }} visibleFrom="md">
                         <Menu>
                             <Menu.Target>
                                 <Flex className="cursor-pointer" gap={'sm'} align={'center'}>

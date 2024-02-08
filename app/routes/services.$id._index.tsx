@@ -12,41 +12,14 @@ import {
   useLocation,
   useNavigate,
 } from "@remix-run/react";
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Checkbox,
-  Col,
-  Collapse,
-  CollapseProps,
-  Layout,
-  Menu,
-  Rate,
-  Row,
-  Select,
-  Skeleton,
-  Slider,
-  Space,
-  Tag,
-  Typography,
-  theme,
-} from "antd";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ServiceGroup } from "@prisma/client";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
 import Banner from "~/components/Banner";
-const { Title } = Typography;
-const { Header, Content, Footer, Sider } = Layout;
+import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Rating, Select, Skeleton, Stack, Text, Title } from "@mantine/core";
 
 const sortPanelStyles: React.CSSProperties = {
   background: "var(--ui-color-accent)",
@@ -370,19 +343,18 @@ const budgetMarks = {
 const SortResultsPanel = () => {
   return (
     <div style={sortPanelStyles}>
-      <Row align={"middle"}>
-        <Col>Sort By: </Col>
-        <Col>
+      <Grid align={"middle"}>
+        <Grid.Col>Sort By: </Grid.Col>
+        <Grid.Col>
           <Select
             defaultValue="0"
-            bordered={false}
-            options={[
+            data={[
               { value: "0", label: "Price" },
               { value: "1", label: "Rating" },
             ]}
           />
-        </Col>
-      </Row>
+        </Grid.Col>
+      </Grid>
     </div>
   );
 };
@@ -392,24 +364,20 @@ const Photography = {
     const data = useLoaderData<loaderData>();
 
     return (
-      <div className="container">
-        <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+      <Container>
+        <Stack gap={'lg'}>
           <Banner.Default />
-          <Row gutter={[40, 40]}>
+          <Grid gutter={40}>
             <Photography.Filters />
-            <Col sm={24} xs={24} md={16} lg={18}>
-              <Space
-                direction="vertical"
-                size={"large"}
-                style={{ width: "100%" }}
-              >
-                <Content>
-                  <Title level={3}>{data.meta.name} in Banglore</Title>
-                  <p>{data.meta.description}</p>
-                </Content>
+            <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
+              <Stack gap={'lg'}>
+                <Stack>
+                  <Title order={3}>{data.meta.name} in Banglore</Title>
+                  <Text size="sm">{data.meta.description}</Text>
+                </Stack>
                 <SortResultsPanel />
                 <Suspense
-                  fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}
+                  fallback={<Skeleton />}
                 >
                   <Await resolve={data?.result}>
                     {(response) => (
@@ -420,11 +388,11 @@ const Photography = {
                     )}
                   </Await>
                 </Suspense>
-              </Space>
-            </Col>
-          </Row>
-        </Space>
-      </div>
+              </Stack>
+            </Grid.Col>
+          </Grid>
+        </Stack>
+      </Container>
     );
   },
   Filters: () => {
@@ -475,27 +443,21 @@ const Photography = {
     }
 
     function filterItems(filters: Filter[]) {
-      const filterOptionsList: CollapseProps["items"] = filters.map(
+      const filterOptionsList = filters.map(
         (filter, index) => {
           const selectedCategoryCount = getSelectedCatgoryCount(
             filter.category
           );
-          return {
-            key: index,
-            label: (
-              <>
-                <Typography.Text strong>{filter.name}</Typography.Text>{" "}
-                {selectedCategoryCount !== 0 ? (
-                  <Badge
-                    count={selectedCategoryCount}
-                    showZero={false}
-                    color="#faad14"
-                  />
-                ) : null}
-              </>
-            ),
-            children: (
-              <Space direction="vertical">
+          return <Accordion.Item value={filter.name}>
+            <Accordion.Control>
+              <Text fw={500}>{filter.name}</Text>{" "}
+              {selectedCategoryCount !== 0 ? (
+                <Badge color="#faad14"
+                >{selectedCategoryCount}</Badge>
+              ) : null}
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Stack>
                 {filter.category.map((item) => (
                   <Checkbox
                     key={item.id}
@@ -505,21 +467,19 @@ const Photography = {
                     onChange={(e) =>
                       toggleCategoryItem(e?.target?.checked, e?.target?.value)
                     }
-                  //style={{ display: "flex" }}
                   >
                     {item.name}
                   </Checkbox>
                 ))}
                 {!filter.category?.length && <div>Unavailable right now.</div>}
-              </Space>
-            ),
-          };
-        }
-      );
+              </Stack>
+            </Accordion.Panel>
+          </Accordion.Item>
+        });
 
       //     {
       //         key: '2',
-      //         label: <Typography.Text strong>Budget</Typography.Text>,
+      //         label: <Text strong>Budget</Text>,
       //         children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
       //     },
       //     {
@@ -534,27 +494,25 @@ const Photography = {
 
     return (
       <>
-        <Col sm={24} xs={24} md={0} lg={0} xl={0} xxl={0}>
+        <Grid.Col span={{ base: 12 }} hiddenFrom="md">
           <div className="filters-section-wrapper">
             <div className="section-title">Filter:</div>
           </div>
-        </Col>
-        <Col sm={0} xs={0} md={8} lg={6}>
+        </Grid.Col>
+        <Grid.Col span={{ md: 4, lg: 30 }} visibleFrom="md">
           <div className="filters-section-wrapper _sticky-top">
             <div className="section-title">Filter:</div>
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<Skeleton />}>
               <Await resolve={data.filters}>
                 {(filters) => (
-                  <Collapse
-                    defaultActiveKey={["x"]}
-                    ghost
-                    items={filterItems(filters)}
-                  />
+                  <Accordion>
+                    {filterItems(filters)}
+                  </Accordion>
                 )}
               </Await>
             </Suspense>
           </div>
-        </Col>
+        </Grid.Col>
       </>
     );
   },
@@ -593,7 +551,7 @@ const Photography = {
         hasMore={loadMore}
         loader={
           <div style={{ padding: "40px" }}>
-            <Skeleton active avatar paragraph={{ rows: 4 }} />
+            <Skeleton />
           </div>
         }
         endMessage={
@@ -603,56 +561,49 @@ const Photography = {
         }
       >
         {" "}
-        <Row gutter={[0, 40]}>
+        <Grid gutter={40}>
           {result?.map((item) => (
-            <Col span={24} key={"profile" + item.id}>
+            <Grid.Col span={24} key={"profile" + item.id}>
               <div style={itemStyles}>
                 <div style={itemThumbStyles}>
-                  <Row justify={"end"}>
-                    <Col xs={6} sm={6} md={3} lg={3}>
+                  <Grid justify={"end"}>
+                    <Grid.Col span={{ base: 6, md: 2, lg: 2 }}>
                       <Avatar
-                        size={{
-                          xs: 100,
-                          sm: 100,
-                          md: 100,
-                          lg: 120,
-                          xl: 120,
-                          xxl: 120,
-                        }}
+                        size={'lg'}
                         src={item.profileImg}
                       />
-                    </Col>
-                  </Row>
+                    </Grid.Col>
+                  </Grid>
                 </div>
                 <div style={itemDataWapperStyles}>
                   <div style={itemDataStyles}>
-                    <Space size={"middle"}>
-                      <Title level={3}>@{item.name}</Title>
-                      {item.tag && <Tag color="green">{item.tag}</Tag>}
-                    </Space>
-                    <Row justify={"space-between"} gutter={[20, 20]}>
-                      <Col>
-                        <Rate allowHalf disabled defaultValue={item.rating} />{" "}
+                    <Flex gap={'md'}>
+                      <Title order={3}>@{item.name}</Title>
+                      {item.tag && <Badge color="green">{item.tag}</Badge>}
+                    </Flex>
+                    <Grid justify={"space-between"} gutter={20}>
+                      <Grid.Col>
+                        <Rating value={item.rating} />{" "}
                         {item.rating}{" "}
-                        <Typography.Text type="secondary">
+                        <Text c="dimmed">
                           (23 Reviews)
-                        </Typography.Text>
-                      </Col>
-                      <Col>
+                        </Text>
+                      </Grid.Col>
+                      <Grid.Col>
                         <Button
-                          type="primary"
-                          shape="round"
+                          variant="filled"
+                          radius={'xl'}
                           onClick={() => navigate("/profile/" + item.id)}
                         >
                           View Profile
                         </Button>
-                      </Col>
-                    </Row>
+                      </Grid.Col>
+                    </Grid>
                   </div>
                   <PhotoProvider>
-                    <Row>
+                    <Grid>
                       {item.portfolio.map((imgThumb, kj) => (
-                        <Col span={6} key={"thumb" + kj}>
+                        <Grid.Col span={6} key={"thumb" + kj}>
                           <PhotoView src={imgThumb}>
                             <div style={itemDataItemStyles}>
                               <img
@@ -662,22 +613,22 @@ const Photography = {
                               />
                             </div>
                           </PhotoView>
-                        </Col>
+                        </Grid.Col>
                       ))}
-                    </Row>
+                    </Grid>
                   </PhotoProvider>
                   <div style={{ padding: "20px 5px" }}>
-                    <Typography.Text strong>Services:</Typography.Text>{" "}
+                    <Text fw={500} size="sm">Services:</Text>{" "}
                     {item.services.map((x, index) => (
-                      <Tag key={"tag" + index}>{x}</Tag>
+                      <Badge key={"tag" + index}>{x}</Badge>
                     ))}{" "}
                     <Link to={"/profile/" + item.id}>View all</Link>
                   </div>
                 </div>
               </div>
-            </Col>
+            </Grid.Col>
           ))}
-        </Row>
+        </Grid>
       </InfiniteScroll>
     );
   },

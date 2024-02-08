@@ -39,7 +39,7 @@ const CollectionsPage = {
         return <Container style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
                 <Grid align={"middle"} justify={'center'}>
-                    <Grid.Col span={19} style={{ padding: '20px 0' }}>
+                    <Grid.Col span={8} style={{ padding: '20px 0' }}>
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>
                                 {result => [
@@ -54,7 +54,7 @@ const CollectionsPage = {
                             </Await>
                         </Suspense>
                     </Grid.Col>
-                    <Grid.Col span={5} style={{ overflow: 'hidden', marginBottom: '-40px' }}>
+                    <Grid.Col span={3} style={{ overflow: 'hidden', marginBottom: '-40px' }}>
                         <img src="/assets/art-1.png" />
                     </Grid.Col>
                 </Grid>
@@ -69,7 +69,7 @@ const CollectionsPage = {
                 <Await resolve={data.results}>
                     {result => <Tabs defaultValue="0">
                         <Tabs.List>
-                            {result.map((item, i) => <Tabs.Tab value={'' + i}>{item.name}</Tabs.Tab>)}
+                            {result.map((item, i) => <Tabs.Tab value={'' + i}><Title order={5}>{item.name}</Title></Tabs.Tab>)}
                         </Tabs.List>
                         {result.map((item, i) => <Tabs.Panel value={'' + i}>
                             <Grid key={item.keyName} gutter={40} style={{ padding: '40px 0' }}>
