@@ -27,7 +27,7 @@ import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, Grid, MantineProvider, Skeleton } from "@mantine/core";
+import { ColorSchemeScript, Box, Grid, MantineProvider, Skeleton, Container } from "@mantine/core";
 import '@mantine/core/styles.css';
 
 export const links: LinksFunction = () => [
@@ -161,17 +161,17 @@ export default function App() {
               </Suspense>
             </Box>
             <Box style={{ paddingTop: '40px' }}>
-              {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <div className="container">
+              {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <Container>
                 <Grid gutter={80}>
-                  <Grid.Col span={{ base: 24, md: 16 }}>
+                  <Grid.Col span={{ base: 12, md: 8 }}>
                     <Skeleton />
                     <Skeleton />
                     <Skeleton />
                   </Grid.Col>
-                  <Grid.Col span={{ base: 24, md: 8 }}>
+                  <Grid.Col span={{ base: 12, md: 4 }}>
                     <Skeleton />
                   </Grid.Col>
-                </Grid></div>}
+                </Grid></Container>}
             </Box>
             <Footer />
           </Provider>

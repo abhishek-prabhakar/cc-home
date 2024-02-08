@@ -43,7 +43,7 @@ const CollectionsPage = {
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>
                                 {result => <Stack>
-                                    <Title order={5}>The easiest way to find</Title>,
+                                    <Title order={5}>The easiest way to find</Title>
                                     <Title order={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Title>
                                     <Text size="sm">By bringing together ambitious and talented professionals with AI, we are making your work easier.</Text>
                                     <Flex gap={'md'} align={'center'} style={{ paddingTop: '30px' }}>
@@ -87,7 +87,7 @@ const CollectionsPage = {
                                             </div>)}
                                         </div>
                                         <div style={{ marginTop: '10px', height: '26px' }}>
-                                            {service.VendorServiceGroup.length ? <div style={{ borderTop: '1px solid #ddd', paddingTop: '4px' }}><Badge color="yellow"> 'Starts from ₹' + service.VendorServiceGroup[0].cost</Badge></div>
+                                            {service.VendorServiceGroup.length ? <div style={{ borderTop: '1px solid #ddd', paddingTop: '4px' }}><Flex gap={'sm'} align={'center'}><Text size="sm">Starts from</Text><Badge color="yellow">₹{service.VendorServiceGroup[0].cost}</Badge></Flex></div>
                                                 : ''}
                                         </div>
                                     </div>
