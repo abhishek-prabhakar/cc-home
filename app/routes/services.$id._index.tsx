@@ -499,7 +499,7 @@ const Photography = {
             <div className="section-title">Filter:</div>
           </div>
         </Grid.Col>
-        <Grid.Col span={{ md: 4, lg: 30 }} visibleFrom="md">
+        <Grid.Col span={{ md: 4, lg: 3 }} visibleFrom="md">
           <div className="filters-section-wrapper _sticky-top">
             <div className="section-title">Filter:</div>
             <Suspense fallback={<Skeleton />}>
