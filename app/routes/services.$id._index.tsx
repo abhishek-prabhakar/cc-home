@@ -19,7 +19,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
 import Banner from "~/components/Banner";
-import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Rating, Select, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Group, Rating, Select, Skeleton, Stack, Text, Title } from "@mantine/core";
 
 const sortPanelStyles: React.CSSProperties = {
   background: "var(--ui-color-accent)",
@@ -448,11 +448,13 @@ const Photography = {
           );
           return <Accordion.Item value={filter.name}>
             <Accordion.Control>
-              <Text fw={500}>{filter.name}</Text>{" "}
-              {selectedCategoryCount !== 0 ? (
-                <Badge color="#faad14"
-                >{selectedCategoryCount}</Badge>
-              ) : null}
+              <Group justify="space-between" align="center">
+                <Text fw={500}>{filter.name}</Text>{" "}
+                {selectedCategoryCount !== 0 ? (
+                  <Badge color="#faad14"
+                  >{selectedCategoryCount}</Badge>
+                ) : null}
+              </Group>
             </Accordion.Control>
             <Accordion.Panel>
               <Stack>

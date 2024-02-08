@@ -55,7 +55,7 @@ export function Header({ user }: { user?: User | null }) {
                         </div>
                     </Grid.Col>
                     <Grid.Col span={{ base: 2, md: 4, lg: 3 }}>
-                        <Flex gap={40} justify={'end'} align="center">
+                        <Flex gap={20} justify={'end'} align="center">
                             <Link to="/cart/checkout">
                                 <ActionIcon variant="subtle" size="xl" radius="xl" >
                                     <IconShoppingCart />
@@ -67,7 +67,7 @@ export function Header({ user }: { user?: User | null }) {
                                         <Button>My Account</Button>
                                     </Menu.Target>
                                     <Menu.Dropdown>
-                                        <Menu.Item>
+                                        <Menu.Item disabled p={0}>
                                             <div style={userMenuStyle}>
                                                 <div style={{ padding: '12px' }}>
                                                     {user?.id ?
@@ -86,7 +86,7 @@ export function Header({ user }: { user?: User | null }) {
                                                 <div style={menuArtisantStyle}>
                                                     <Stack style={{ padding: 8 }} >
                                                         <Title order={3}>Artisan?</Title>
-                                                        <Link to="/partner/signup"><Button radius="xl" variant="filled" >Signup</Button></Link>
+                                                        <Link to="/partner/signup"><Button radius="xl" variant="outline" >Signup</Button></Link>
                                                     </Stack>
                                                 </div>
                                             </div>

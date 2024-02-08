@@ -44,7 +44,7 @@ const CollectionsPage = {
                             <Await resolve={data.data}>
                                 {result => <Stack>
                                     <Title order={5}>The easiest way to find</Title>
-                                    <Title order={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Title>
+                                    <Title order={3}>Services in <span className="_color-primary">{result.name}</span></Title>
                                     <Text size="sm">By bringing together ambitious and talented professionals with AI, we are making your work easier.</Text>
                                     <Flex gap={'md'} align={'center'} style={{ paddingTop: '30px' }}>
                                         <Text c="dimmed">See how it works</Text>
