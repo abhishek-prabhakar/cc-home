@@ -1,4 +1,4 @@
-import { Badge, Button, Container, Flex, Grid, Image, Skeleton, Tabs, Text, Title } from "@mantine/core";
+import { Badge, Button, Container, Flex, Grid, Image, Skeleton, Stack, Tabs, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { Divider } from "antd";
@@ -42,15 +42,15 @@ const CollectionsPage = {
                     <Grid.Col span={8} style={{ padding: '20px 0' }}>
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>
-                                {result => [
+                                {result => <Stack>
                                     <Title order={5}>The easiest way to find</Title>,
-                                    <Title order={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Title>,
-                                    <Text size="sm">By bringing together ambitious and talented professionals with AI, we are making your work easier.</Text>, <br />,
-                                    <Flex align={'center'} style={{ paddingTop: '30px' }}>
+                                    <Title order={3} style={{ margin: '0 0 14px 0' }}>Services in <span className="_color-primary">{result.name}</span></Title>
+                                    <Text size="sm">By bringing together ambitious and talented professionals with AI, we are making your work easier.</Text>
+                                    <Flex gap={'md'} align={'center'} style={{ paddingTop: '30px' }}>
                                         <Text c="dimmed">See how it works</Text>
                                         <Button radius="xl" variant="outline">Watch Video</Button>
                                     </Flex>
-                                ]}
+                                </Stack>}
                             </Await>
                         </Suspense>
                     </Grid.Col>
@@ -64,7 +64,7 @@ const CollectionsPage = {
     Section: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <div className="container">
+        return <Container>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.results}>
                     {result => <Tabs defaultValue="0">
@@ -102,7 +102,7 @@ const CollectionsPage = {
                     </Tabs>
                     }</Await>
             </Suspense>
-        </div>
+        </Container>
     }
 }
 

@@ -1,4 +1,4 @@
-import { Avatar, Grid, Image, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Container, Grid, Image, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
@@ -29,7 +29,7 @@ export function loader(args: LoaderArgs) {
 
 const CollectionsHighlightPage = {
     Index: () => {
-        return <div className="container">
+        return <Container>
             <CollectionsHighlightPage.Highlight />
             <div style={{ paddingBottom: '50px' }}></div>
             <Grid gutter={40}>
@@ -42,7 +42,7 @@ const CollectionsHighlightPage = {
                     <CollectionsHighlightPage.OtherServices />
                 </Grid.Col>
             </Grid>
-        </div>
+        </Container>
     },
     Highlight: () => {
         const data = useLoaderData<typeof loader>();

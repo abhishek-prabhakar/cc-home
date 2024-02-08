@@ -1,7 +1,8 @@
 import { CheckCircleOutlined, FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
+import { Button, Container, Grid, Rating, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { Button, Card, Col, Rate, Row, Space, Typography } from "antd";
+import { Card } from "antd";
 
 type LoaderData = {
     id: string
@@ -21,45 +22,57 @@ export async function loader({
     return { id: orderId };
 }
 
+const getIconStyle = (color?: string) => ({
+    width: rem(24),
+    height: rem(24),
+    color: color ? `var(--mantine-color-${color}-7)` : undefined,
+});
+const iconStyle = getIconStyle();
+
 const customIcons: Record<number, React.ReactNode> = {
-    1: <FrownOutlined />,
-    2: <FrownOutlined />,
-    3: <MehOutlined />,
-    4: <SmileOutlined />,
-    5: <SmileOutlined />,
+    1: <FrownOutlined style={iconStyle} />,
+    2: <FrownOutlined style={iconStyle} />,
+    3: <MehOutlined style={iconStyle} />,
+    4: <SmileOutlined style={iconStyle} />,
+    5: <SmileOutlined style={iconStyle} />,
+};
+
+
+const getEmptyIcon = (value: number) => {
+    return customIcons[value + 1];
 };
 
 const OrderSuccess = {
     Index: () => {
         const data = useLoaderData<LoaderData>();
 
-        return <div className="container">
-            <Row justify={'center'} align={'middle'}>
-                <Col xs={24} sm={24} md={8} lg={10}>
-                    <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
-                        <Card>
-                            <Space direction="vertical" align="center" style={{ width: '100%' }}>
-                                <Typography.Text type="success">
+        return <Container>
+            <Grid justify={'center'} align={'middle'}>
+                <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
+                    <Stack gap={'md'}>
+                        <Card bordered>
+                            <Stack>
+                                <Text size="sm" c="dimmed">
                                     <CheckCircleOutlined style={{ fontSize: '50px' }} />
-                                </Typography.Text>
+                                </Text>
                                 <div style={{ textAlign: 'center' }}>
-                                    <Typography.Title level={2}>Your Order is Confirmed!</Typography.Title>
-                                    <Typography.Text>We'll send you a confirmation email<br /> as soon as the vendor confirms the availability.</Typography.Text>
+                                    <Title order={2}>Your Order is Confirmed!</Title>
+                                    <Text>We'll send you a confirmation email<br /> as soon as the vendor confirms the availability.</Text>
                                 </div>
                                 <br />
                                 <Link to={'/user/order/' + data?.id}>
-                                    <Button type="primary">CHECK STATUS</Button>
+                                    <Button variant="filled" radius={'xl'}>CHECK STATUS</Button>
                                 </Link>
-                            </Space>
+                            </Stack>
                         </Card>
                         <Card>
-                            <Typography.Title level={5}>How was your experience?</Typography.Title>
-                            <Rate defaultValue={3} character={({ index }: any) => customIcons[index + 1]} />
+                            <Title order={5}>How was your experience?</Title>
+                            <Rating defaultValue={3} emptySymbol={({ index }: any) => customIcons[index + 1]} />
                         </Card>
-                    </Space>
-                </Col>
-            </Row>
-        </div>;
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>;
     }
 }
 export default OrderSuccess.Index;
