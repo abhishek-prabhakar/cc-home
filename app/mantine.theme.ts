@@ -12,17 +12,17 @@ const CONTAINER_SIZES: Record<string, string> = {
 
 const theme = createTheme({
     components: {
-        Container: Container.extend({
-            vars: (_, { size, fluid }) => ({
-                root: {
-                    '--container-size': fluid
-                        ? '100%'
-                        : size !== undefined && size in CONTAINER_SIZES
-                            ? CONTAINER_SIZES[size]
-                            : rem(size),
+        Container: {
+            defaultProps: {
+                sizes: {
+                    xs: 600,
+                    sm: 800,
+                    md: 1200,
+                    lg: 1200,
+                    xl: 1400,
                 },
-            }),
-        }),
+            }
+        }
     },
 });
 

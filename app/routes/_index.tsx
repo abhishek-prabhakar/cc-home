@@ -242,7 +242,7 @@ const Home = {
                   <Stack align="center">
                     <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>
                     <Flex align={'center'} gap={'md'}>
-                      <Text fw={700}>Check out</Text>
+                      <Text fw={500}>Check out</Text>
                       <Link to="/collections/commercial"><Button variant="outline" radius="xl">Commercial Services</Button></Link>
                     </Flex>
                   </Stack>
@@ -312,9 +312,9 @@ const Home = {
                     <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, md: 9 }}>
-                    <Stack>
-                      <Title order={5} c="dimmed">Get Started</Title>
-                      <Input placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={'sm'} />} onChange={search} />
+                    <Stack gap={'sm'}>
+                      <Text fw={500} c="dimmed">Get Started</Text>
+                      <Input placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} onChange={search} />
                     </Stack>
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
@@ -588,7 +588,7 @@ const Home = {
                         : PATH.AVATAR_PLACEHOLDER}
                     /></Grid.Col>
                   <Grid.Col flex={'auto'}>
-                    <div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><Text fw={700}>{vendor.username}</Text></Link></div></Grid.Col>
+                    <div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><Text fw={500}>{vendor.username}</Text></Link></div></Grid.Col>
                 </Grid>)}
                 {!category.vendor.length && 'Sorry, no data found.'}
                 <Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Text>
