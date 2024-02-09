@@ -12,6 +12,13 @@ const CONTAINER_SIZES: Record<string, string> = {
 
 const theme = {
     fontFamily: 'Inter, sans-serif',
+    fontSizes: {
+        xs: rem(10),
+        sm: rem(11),
+        md: rem(14),
+        lg: rem(16),
+        xl: rem(20),
+    },
     components: {
         Container: {
             defaultProps: {
