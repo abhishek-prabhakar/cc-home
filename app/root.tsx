@@ -31,12 +31,22 @@ import { ColorSchemeScript, Box, Grid, MantineProvider, Skeleton, Container } fr
 import '@mantine/core/styles.css';
 import theme from "./mantine.theme";
 
+
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },
   { rel: "stylesheet", href: cssTransitions },
   { rel: 'stylesheet', href: carouselStyles },
-  { rel: 'stylesheet', href: CarouselSliderStyles }
+  { rel: 'stylesheet', href: CarouselSliderStyles },
+  {
+    rel: 'preconnect', href: 'https://fonts.googleapis.com'
+  },
+  {
+    rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous'
+  },
+  {
+    rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap'
+  }
 ];
 
 

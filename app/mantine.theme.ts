@@ -10,7 +10,8 @@ const CONTAINER_SIZES: Record<string, string> = {
     xxl: rem(900),
 };
 
-const theme = createTheme({
+const theme = {
+    fontFamily: 'Inter, sans-serif',
     components: {
         Container: {
             defaultProps: {
@@ -24,7 +25,7 @@ const theme = createTheme({
             }
         }
     },
-});
+};
 
 
 export default theme;
