@@ -1,7 +1,6 @@
-import { Form } from "@remix-run/react";
+import { Button } from "@mantine/core";
 import Uploady, { useUploady, useItemFinishListener, useItemProgressListener, useItemErrorListener, FILE_STATES } from "@rpldy/uploady";
-import { Button } from "antd";
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PATH } from "~/path.data";
 
 type DefaultProps = { id?: string, label?: string, buttonType?: 'primary' | 'default', onUpload?: (file: string) => void };
@@ -34,7 +33,7 @@ const Uploader = (props: DefaultProps) => {
     })
 
     return <>
-        <Button loading={isBusy} type={props.buttonType} disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
+        <Button loading={isBusy} variant={props.buttonType === 'primary' ? 'filled' : 'outline'} disabled={!props.id} onClick={onClick}>{props.label || 'Choose Image'}</Button>
     </>;
 }
 

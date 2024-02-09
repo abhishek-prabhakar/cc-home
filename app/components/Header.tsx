@@ -1,4 +1,4 @@
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react";
+import { Link, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import AppNavigation from "./NavigationMenu";
 import { locationList } from "~/data/locations.data";
@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Box, Button, Divider, Flex, Grid, Group, Menu, Popover, Stack, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Container, Divider, Flex, Grid, Group, Menu, Popover, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -33,7 +33,7 @@ export function Header({ user }: { user?: User | null }) {
 
     return <>
         <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
-            <div className="container">
+            <Container>
                 <Grid justify={'space-between'} align="center" gutter={0}>
                     <Grid.Col span={{ base: 0, md: 4, lg: 3 }} visibleFrom="md">
                         <Menu>
@@ -96,7 +96,7 @@ export function Header({ user }: { user?: User | null }) {
                         </Flex>
                     </Grid.Col>
                 </Grid>
-            </div>
+            </Container>
         </div>
         <Grid gutter={0}>
             <Grid.Col span={{ base: 0, md: 12 }} visibleFrom="md" style={{ borderBottom: '1px solid var(--ui-color-black)' }} >

@@ -312,8 +312,10 @@ const Home = {
                     <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, md: 9 }}>
-                    <Title order={5}>Get Started</Title>
-                    <Input placeholder="Search" leftSection={searchBusy ? <Loader /> : <IconSearch />} onChange={search} />
+                    <Stack>
+                      <Title order={5} c="dimmed">Get Started</Title>
+                      <Input placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={'sm'} />} onChange={search} />
+                    </Stack>
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>

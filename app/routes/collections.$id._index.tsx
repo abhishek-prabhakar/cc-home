@@ -1,7 +1,6 @@
-import { Badge, Button, Container, Flex, Grid, Image, Skeleton, Stack, Tabs, Text, Title } from "@mantine/core";
+import { Badge, Button, Container, Divider, Flex, Grid, Image, Skeleton, Stack, Tabs, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Divider } from "antd";
 import { Suspense } from "react";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";

@@ -29,6 +29,7 @@ import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
 import { ColorSchemeScript, Box, Grid, MantineProvider, Skeleton, Container } from "@mantine/core";
 import '@mantine/core/styles.css';
+import theme from "./mantine.theme";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -150,7 +151,7 @@ export default function App() {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider theme={theme}>
           <Provider store={store}>
             <Ticker />
             <Box style={headerStyle}>

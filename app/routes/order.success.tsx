@@ -1,8 +1,7 @@
 import { CheckCircleOutlined, FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
-import { Button, Container, Grid, Rating, Stack, Text, Title, rem } from "@mantine/core";
+import { Button, Card, Container, Grid, Rating, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { Card } from "antd";
 
 type LoaderData = {
     id: string
@@ -50,7 +49,7 @@ const OrderSuccess = {
             <Grid justify={'center'} align={'middle'}>
                 <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
                     <Stack gap={'md'}>
-                        <Card bordered>
+                        <Card withBorder>
                             <Stack>
                                 <Text size="sm" c="dimmed">
                                     <CheckCircleOutlined style={{ fontSize: '50px' }} />
