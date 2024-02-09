@@ -123,11 +123,11 @@ const AppNavigation = {
                       {item.children.map((child, i) => <Stack key={'child' + i}>
                         <Title order={5}>{child.name}</Title>
                         {[{
-                          key: Routes.Services.replace(":id", item.id),
-                          label: 'Browse all ',
-                        }].concat(
-                          child.list.map(x => ({ key: x.path, label: x.name, })))
-                          .map(menuItem => <Text key={menuItem.key}>{menuItem.label}</Text>)
+                          id: item.id,
+                          path: Routes.Services.replace(":id", item.id),
+                          name: 'Browse all ',
+                        }].concat(child.list)
+                          .map(menuItem => <Link to={menuItem.path}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
                         }
                       </Stack>)
                       }
@@ -137,7 +137,6 @@ const AppNavigation = {
               )}
             </Await>
           </Suspense>
-          <Divider />
           <Stack gap={'lg'}>
             <UserLogin onSuccess={() => toggleDrawer()} />
             <div style={menuArtisantStyle}>
