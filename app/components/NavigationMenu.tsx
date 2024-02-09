@@ -64,7 +64,7 @@ const AppNavigation = {
             <Flex justify={"center"} gap={20} py={'md'}>
               {navList.map((item) => (
                 <Box key={"menu-" + item.id} style={{ cursor: "pointer" }}>
-                  <Menu trigger="click-hover">
+                  <Menu trigger="click-hover" shadow="md" width={350}>
                     <Menu.Target>
                       <Flex
                         align={'center'}

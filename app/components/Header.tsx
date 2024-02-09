@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Box, Button, Divider, Flex, Grid, Menu, Popover, Stack, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Divider, Flex, Grid, Group, Menu, Popover, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -72,15 +72,15 @@ export function Header({ user }: { user?: User | null }) {
                                         <div style={userMenuStyle}>
                                             <div style={{ padding: '12px' }}>
                                                 {user?.id ?
-                                                    <Grid justify={'space-between'}>
-                                                        <Grid.Col>
+                                                    <Group align="center" justify={'space-between'}>
+                                                        <Box>
                                                             <Title order={5}>Hej!</Title>
                                                             <Link to={'/user/home'}>My Bookings</Link>
-                                                        </Grid.Col>
-                                                        <Grid.Col>
-                                                            <Link to="/logout"><Button size="small" >Logout</Button></Link>
-                                                        </Grid.Col>
-                                                    </Grid>
+                                                        </Box>
+                                                        <Box>
+                                                            <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
+                                                        </Box>
+                                                    </Group>
                                                     : <UserLogin />}
                                             </div>
                                             <div style={menuArtisantStyle}>
