@@ -1,5 +1,5 @@
 import { FundOutlined } from "@ant-design/icons";
-import { Button, Card, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
+import { Button, Card, Container, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
@@ -101,7 +101,7 @@ function scroll(elmId: string) {
 const PartnerSignup = {
   Index: () => {
     return (
-      <div className="container">
+      <Container>
         <Stack gap={'lg'}>
           <PartnerSignup.Jumbotron />
           <PartnerSignup.Counter />
@@ -109,7 +109,7 @@ const PartnerSignup = {
           <PartnerSignup.Features />
           <PartnerSignup.Form />
         </Stack>
-      </div>
+      </Container>
     );
   },
   Jumbotron: () => {
@@ -134,7 +134,6 @@ const PartnerSignup = {
                 variant="filled"
                 size="lg"
                 radius={'xl'}
-                color="white"
                 onClick={buttonClick}
               >
                 Join Us
@@ -150,15 +149,15 @@ const PartnerSignup = {
     return (
       <div style={{ padding: "50px 0" }}>
         <Grid justify={"center"} gutter={40}>
-          <Grid.Col>
+          <Grid.Col span={{ base: 4, md: 3 }}>
             <Title>50+</Title>
             <Title order={4}>Members</Title>
           </Grid.Col>
-          <Grid.Col>
+          <Grid.Col span={{ base: 4, md: 3 }}>
             <Title>500+</Title>
             <Title order={4}>Customers</Title>
           </Grid.Col>
-          <Grid.Col>
+          <Grid.Col span={{ base: 4, md: 3 }}>
             <Title>500+</Title>
             <Title order={4}>Services</Title>
           </Grid.Col>
@@ -173,7 +172,7 @@ const PartnerSignup = {
         <Grid.Col span={6}>
           <div className="line"></div>
         </Grid.Col>
-        <Grid.Col span={24}></Grid.Col>
+        <Grid.Col span={12}></Grid.Col>
         <Grid.Col className="_text-center" span={{ base: 12, md: 10, lg: 8 }}>
           <div style={{ padding: "50px 0" }}>
             <Title order={2}>
@@ -240,7 +239,7 @@ const PartnerSignup = {
 
     return (
       <Grid id="signup-form" gutter={40}>
-        <Grid.Col span={24}>
+        <Grid.Col span={12}>
           <div style={{ paddingTop: "50px", textAlign: "center" }}>
             <Title order={1}>
               Join us in the following categories
@@ -336,7 +335,7 @@ const PartnerSignup = {
     const RequestForm = () => {
       return type ? (
         <fetcher.Form onSubmit={submitHandler}>
-          <Grid gutter={20}>
+          <Grid gutter={10}>
             <Grid.Col>
               <Title order={5}>I'm a</Title>
               <Group defaultValue={type}>
@@ -347,7 +346,7 @@ const PartnerSignup = {
                 ))}
               </Group>
             </Grid.Col>
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
               <Title order={5}>Full Name</Title>
               <Input
                 name="fullName"
@@ -355,19 +354,19 @@ const PartnerSignup = {
                 required
               />
             </Grid.Col>
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
               <Title order={5}>Contact Number</Title>
               <Input name="phone" leftSection="+91" maxLength={10} required />
             </Grid.Col>
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
               <Title order={5}>Email</Title>
               <Input name="email" type="email" required />
             </Grid.Col>
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
               <Title order={5}>Social media url</Title>
               <Input name="socialUrl" type="url" required />
             </Grid.Col>
-            <Grid.Col span={24}>
+            <Grid.Col span={12}>
               <input type="hidden" name="category" value={type} />
               <Button variant="filled" radius="xl" type="submit">
                 Submit
