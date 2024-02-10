@@ -46,6 +46,7 @@ export type VendorService = {
     vendorServiceGroupId: string,
     title: string,
     minHour: number,
+    cost: number,
     included: VendorServiceOption[],
     addons: VendorServiceOption[],
     selectableList?: AddonGroupItem[]

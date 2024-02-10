@@ -1,15 +1,18 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
+import { Accordion, Badge, Box, Button, Card, Container, Divider, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
-import { Alert, Button, Calendar, Col, Input, Radio, Row, Select, SelectProps, Space, Tabs, Tag, Typography, Form as FormAnt, Divider, Card, Skeleton, Avatar, Modal } from "antd";
+import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ConfigureBooking from "~/components/ConfigureBooking";
+import COMMON_DATA from "~/data/common.data";
 import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
-const { Title } = Typography;
 type RequiredMark = boolean | 'optional' | 'customize';
+import classes from '../styles/accordian.module.css';
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -40,31 +43,28 @@ const ProfileLayout = {
     Index: () => {
         const data: loaderData = useLoaderData();
 
-        return <div>
-            <div className="container" style={{ paddingTop: '20px' }}>
-                <Suspense fallback={<Skeleton active />}>
-                    <Await resolve={data.profile}>
-                        {profile => <ProfileLayout.Cover profile={profile} />}
-                    </Await>
-                </Suspense>
-            </div>
+        return <Container>
+            <Suspense fallback={<Skeleton />}>
+                <Await resolve={data.profile}>
+                    {profile => <ProfileLayout.Cover profile={profile} />}
+                </Await>
+            </Suspense>
             <div style={pageWrapperStyles}>
                 <Outlet />
             </div>
-            <Suspense fallback={<div className="container"><Skeleton active /></div>}>
+            <Suspense fallback={<div className="container"><Skeleton /></div>}>
                 <Await resolve={data.services}>
-                    {services => <ProfileLayout.Contact services={services} />}
+                    {services => <ProfileLayout.Pricing services={services} />}
                 </Await>
             </Suspense>
             <ProfileLayout.CartSuggestion />
-        </div >
-
+        </Container>
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
 
         return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: profile?.primaryColor }}>
             <div className="container">
-                <Row wrap={false}>
+                {/* <Row wrap={false}>
                     <Col sm={24} xs={24} flex={'none'}>
                         <Card style={{ borderRadius: '14px' }}>
                             <Row gutter={[0, 40]} align={'middle'}>
@@ -88,9 +88,102 @@ const ProfileLayout = {
                             </Row>
                         </Card>
                     </Col>
-                </Row>
+                </Row> */}
             </div>
         </div>
+    },
+    Pricing: ({ services }: { services: VendorService[] }) => {
+        const [activeService, setActive] = useState<VendorService>();
+
+        useEffect(() => {
+            setActive(services[0]);
+        }, []);
+
+        function setActiveService(id: string | null) {
+            const item = services.find(x => x.vendorServiceGroupId === id);
+            if (item) {
+                setActive(item);
+            }
+        }
+
+        return <Grid gutter={40}>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+                <Card h={'100%'} withBorder style={{ borderColor: '#1D4ED7' }} p="30px">
+                    <Title order={3} mb={rem(20)}>Save your money now.</Title>
+                    <Stack>
+                        <Text>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        </Text>
+                        <Text>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        </Text>
+                        <Image src="/assets/savings.png" width={'70%'} />
+                    </Stack>
+                </Card>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 8 }}>
+                <Group align="end" justify="space-between" py={rem(40)}>
+                    <Title order={3}>Book now<br />and <Mark color="lime">Pay later</Mark>.</Title>
+                    <Box ta={'right'}>
+                        <Text fw={500}>Having trouble?</Text>
+                        <Text><a href="mailto:support@celebriacollective.com" target="_BLANK">Contact us</a></Text>
+                    </Box>
+                </Group>
+                <Grid gutter={40}>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        <Card bg={'#F2F5FB'} h={'100%'}>
+                            <Stack>
+                                <Group justify="space-between" align="center">
+                                    <Title order={5}>{activeService?.title}</Title>
+                                    <Badge variant="light" color="teal">Most Booked</Badge>
+                                </Group>
+                                <Divider size="md" w={'10%'} />
+                                <Box>
+                                    <Text c="dimmed">Starts from:</Text>
+                                    <Title order={3}><NumberFormatter prefix={COMMON_DATA.currency} value={activeService?.cost} thousandSeparator /></Title>
+                                </Box>
+                                <Text fw={500}>Services Included:</Text>
+
+                                <List
+                                    spacing="xs"
+                                    size="sm"
+                                    center
+                                    icon={
+                                        <IconCircleCheck size={rem(16)} />
+                                    }
+                                >
+                                    {activeService?.included.map(item => <List.Item key={item.id}>
+                                        {item.title}
+                                    </List.Item>)}
+                                </List>
+
+                                {activeService?.addons.length ? <Stack gap="xs">
+                                    <Text fw={500}>Additional</Text>
+                                    <List>
+                                        {activeService?.addons.map(item => <List.Item key={item.id}>{item.title}</List.Item>)}
+                                    </List>
+                                </Stack> : ''}
+
+                                <Button variant="filled">Book Now</Button>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        <Card bg={'linear-gradient(#358BD6, #0F73C9)'} c={'white'} h={'100%'}>
+                            <Stack>
+                                <Title order={5}>Browse Services</Title>
+                                <Divider size="md" w={'10%'} />
+                                <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
+                                    {services.map(item => <Accordion.Item key={item.vendorServiceGroupId} value={item.vendorServiceGroupId}>
+                                        <Accordion.Control icon={activeService?.vendorServiceGroupId === item.vendorServiceGroupId ? <IconCheck /> : <IconPlus />} color="inherit">{item.title}</Accordion.Control>
+                                    </Accordion.Item>)}
+                                </Accordion>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                </Grid>
+            </Grid.Col>
+        </Grid>
     },
     Contact: ({ services }: { services: VendorService[] }) => {
         const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
@@ -143,7 +236,7 @@ const ProfileLayout = {
         }
 
         return <div className="container" id="book-now-section">
-            <Divider />
+            {/* <Divider />
             <Title level={2}>Book Now, Pay later</Title>
             <Row gutter={[40, 40]}>
                 <Col span={24} md={12} lg={12} xl={8}>
@@ -212,7 +305,7 @@ const ProfileLayout = {
                 <Col span={24} md={12} lg={12} xl={16}>
                     {showConfigPanel && service?.id && <ConfigureBooking vendorServiceGroupId={service?.id} minHour={service?.minHour || 1} options={serviceList.concat(selectedAddons)} />}
                 </Col>
-            </Row>
+            </Row> */}
         </div>
     },
     CartSuggestion: () => {
@@ -231,8 +324,8 @@ const ProfileLayout = {
             navigate(Routes.Cart);
         }
 
-        return <Modal title="Your cart has been updated." open={showModal} onCancel={() => setModal(false)} onOk={gotoCart} okText="Proceed to Checkout" cancelButtonProps={{ hidden: true }}>
-            <Typography.Title level={5}>Forgot to add something?</Typography.Title>
+        return <Modal title="Your cart has been updated." opened={showModal} onClose={() => setModal(false)} >
+            <Title order={5}>Forgot to add something?</Title>
         </Modal>;
     }
 }

@@ -7,12 +7,12 @@ import { RootLoaderData } from "~/types";
 export function Footer() {
     const data = useLoaderData<RootLoaderData>();
 
-    return <Container pt={'lg'}>
+    return <Container pt={'xl'}>
         <Stack gap="lg">
             <Grid gutter={40} style={{ background: '#EEF5FE', borderRadius: '10px', padding: '40px' }}>
                 <Grid.Col span={{ base: 12, md: 4 }}>
                     <Title order={5}>About</Title>
-                    <Text color="#3d5b7d">Our commitment to excellence is the cornerstone of our vision, empowering both clients and artisans to revel in an unparalleded creative odyssey.</Text>
+                    <Text c="#3d5b7d">Our commitment to excellence is the cornerstone of our vision, empowering both clients and artisans to revel in an unparalleded creative odyssey.</Text>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 4 }}>
                     <Title order={5}>Categories</Title>

@@ -1,7 +1,8 @@
 import { CheckCircleFilled, WarningFilled } from "@ant-design/icons";
+import { Alert, Button, Card, Divider, Grid, Select, Title } from "@mantine/core";
+import { Calendar } from "@mantine/dates";
 import { Form, Link } from "@remix-run/react";
-import { Alert, Button, Calendar, Card, Checkbox, Col, Divider, Radio, Row, Select, Tabs, TimePicker, Tooltip, Typography } from "antd";
-const { Title } = Typography;
+import { IconInfoCircle } from "@tabler/icons-react";
 import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { VendorServiceOption } from "~/types";
@@ -60,51 +61,51 @@ function ConfigureBooking(service: { minHour: number, vendorServiceGroupId: stri
         }
     }
 
-    return <Card title="Configure Services">
+    return <Card withBorder title="Configure Services">
         <Form method="post" onSubmit={handleSubmit(proceedToCheckout)} action="/cart/add">
             <input type="hidden" {...register(`vendorServiceGroupId`)} value={service.vendorServiceGroupId} />
-            <Row gutter={[30, 30]}>
-                <Col sm={24} md={12}>
+            <Grid gutter={30}>
+                <Grid.Col span={{ base: 12, md: 6 }}>
                     {service.options.map((item, key) => <input key={item.id} type="hidden" {...register(`services.${key}.id`)} value={item.id} />)}
                     <input type="hidden" {...register(`date`)} />
-                    <Title level={5}>Select date</Title>
-                    <Calendar fullscreen={false} disabledDate={(e) => { return e.toDate() <= (new Date()); }} headerRender={() => <></>} onSelect={r => setServiceOptionDate(r.toDate())} />
-                </Col>
-                <Col sm={24} md={12}>
-                    <Title level={5}>Choose time slot</Title>
+                    <Title order={5}>Select date</Title>
+                    { /*   <Calendar fullscreen={false} disabledDate={(e) => { return e.toDate() <= (new Date()); }} headerRender={() => <></>} onSelect={r => setServiceOptionDate(r.toDate())} /> */}
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <Title order={5}>Choose time slot</Title>
                     <div>
-                        <TimePicker hourStep={1} format={timeFormat} onChange={r => setServiceOptionTime(1, r?.hour())} />
+                        {/* <TimePicker hourStep={1} format={timeFormat} onChange={r => setServiceOptionTime(1, r?.hour())} /> */}
                     </div>
 
-                    <Title level={5}>Duration of the service</Title>
+                    <Title order={5}>Duration of the service</Title>
                     <Select
-                        onChange={(value) => setServiceOptionDuration(2, value)}
+                        onChange={(value) => setServiceOptionDuration(2, parseInt(value || ''))}
                         placeholder="Choose"
-                        options={[
+                        data={[
                             {
                                 label: minDuration + ' hours',
-                                value: minDuration,
+                                value: '' + minDuration,
                             }
                         ].concat(
                             new Array(24).fill(minDuration + 1).map((x, i) => ({
                                 label: (x + i) + ' hours',
-                                value: x + i
+                                value: '' + x + i
                             }))
                         )} />
-                </Col>
-            </Row>
+                </Grid.Col>
+            </Grid>
             <Divider />
-            <Row justify={'end'} align={'middle'} gutter={[20, 20]}>
-                <Col>
-                    {serviceChecklist.includes(false) ? <Alert message="Please complete the above step to proceed." type="warning" showIcon /> : ''}
-                </Col>
-                <Col>
-                    <Link to="/cart/checkout"><Button type="default">View Cart</Button></Link>
-                </Col>
-                <Col>
-                    <Button disabled={serviceChecklist.includes(false)} type="primary" htmlType="submit">Add to Cart</Button>
-                </Col>
-            </Row>
+            <Grid justify={'end'} align={'middle'} gutter={20}>
+                <Grid.Col>
+                    {serviceChecklist.includes(false) ? <Alert title="Please complete the above step to proceed." c="yellow" icon={<IconInfoCircle />} /> : ''}
+                </Grid.Col>
+                <Grid.Col>
+                    <Link to="/cart/checkout"><Button variant="outline">View Cart</Button></Link>
+                </Grid.Col>
+                <Grid.Col>
+                    <Button disabled={serviceChecklist.includes(false)} variant="filled" type="submit">Add to Cart</Button>
+                </Grid.Col>
+            </Grid>
         </Form>
         <div className="hidden">
             <Form ref={checkoutForm} method="post" action="/cart/add">

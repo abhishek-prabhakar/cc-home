@@ -79,8 +79,8 @@ const ProfileHome = {
         return <div className="container">
             <Space direction="vertical" size={'large'}>
                 <ProfileHome.Services />
-                <ProfileHome.Gallery />
-                <ProfileHome.Testimonials />
+                {/* <ProfileHome.Gallery /> */}
+                {/* <ProfileHome.Testimonials /> */}
             </Space>
         </div>;
     },
