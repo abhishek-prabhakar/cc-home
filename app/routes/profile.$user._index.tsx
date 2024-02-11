@@ -76,13 +76,11 @@ const quoteStyle: React.CSSProperties = { fontSize: '30px', color: '#009e66' };
 
 const ProfileHome = {
     Index: () => {
-        return <div className="container">
-            <Stack gap={'xl'}>
-                <ProfileHome.Services />
-                <ProfileHome.Gallery />
-                {/* <ProfileHome.Testimonials /> */}
-            </Stack>
-        </div>;
+        return <Stack gap={'xl'}>
+            <ProfileHome.Services />
+            <ProfileHome.Gallery />
+            {/* <ProfileHome.Testimonials /> */}
+        </Stack>;
     },
     Services: () => {
         const data = useLoaderData<loaderData>();
@@ -112,7 +110,7 @@ const ProfileHome = {
 
         return <Stack>
             <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
-                <Grid.Col span={24}><Title order={2}>Our amazing work</Title></Grid.Col>
+                <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
                 <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
                 <Grid.Col>
                     <Button variant="filled" radius={'xl'} onClick={() => navigate('portfolio')} >

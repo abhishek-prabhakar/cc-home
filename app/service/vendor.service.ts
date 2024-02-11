@@ -5,7 +5,7 @@ import { db } from "~/utils/database";
 export const VendorQuery = {
     getVendorByUsername: (username: string) => {
         return new Promise<VendorProfile | null>(function (resolve) {
-            db.vendor.findFirst({
+            db.vendor.findFirstOrThrow({
                 where: {
                     username,
                     isActive: true

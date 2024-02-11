@@ -20,15 +20,11 @@ const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
 type ServiceGroup = { name: string, services: VendorService[] };
-type loaderData = { profile: VendorProfile | null, services: ServiceGroup[], serviceGroupId: string | null };
 type VendorAddonOption = VendorServiceOption & { hide?: boolean }
 
 export async function loader({ params, request }: LoaderArgs) {
-    const id = params.user;
+    const id = params.user || '';
 
-    if (!id) {
-        return redirect(`/404`);
-    }
     const searchParams = new URL(request.url).searchParams;
     const vendorDetails = VendorQuery.getVendorByUsername(id);
     const serviceList = VendorQuery.getServices(id);
@@ -40,9 +36,15 @@ export async function loader({ params, request }: LoaderArgs) {
     });
 }
 
+export function ErrorBoundary() {
+    return <div>
+        404!
+    </div>
+}
+
 const ProfileLayout = {
     Index: () => {
-        const data = useLoaderData<loaderData>();
+        const data = useLoaderData<typeof loader>();
 
         return <Container>
             <Grid gutter={'xl'}>
@@ -53,11 +55,14 @@ const ProfileLayout = {
                         </Await>
                     </Suspense>
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 9 }}>
+                <Grid.Col span="content" visibleFrom="md">
+                    <Divider orientation="vertical" h="100%" />
+                </Grid.Col>
+                <Grid.Col span="auto" >
                     <Outlet />
                 </Grid.Col>
             </Grid>
-            <Divider />
+            <Divider my="xl" />
             <Suspense fallback={<div className="container"><Skeleton /></div>}>
                 <Await resolve={data.services}>
                     {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} />}
@@ -69,19 +74,21 @@ const ProfileLayout = {
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
 
         return <Stack>
-            <Grid>
+            <Grid align={'center'}>
                 <Grid.Col span={{ base: 4, md: 12 }}>
                     <Image src={profile?.avatar} width={'100%'} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 4, md: 12 }}>
-                    <Title order={4} >{profile?.fullName}</Title>
+                    <Stack gap={0}>
+                        <Title order={4}>{profile?.fullName}</Title>
+                        <Text c="dimmed" fw={500}>Location:</Text>
+                        <Title order={5}>{profile?.location}</Title>
+                    </Stack>
                 </Grid.Col>
             </Grid>
-
-            <Stack gap={0}>
-                <Text c="dimmed" fw={500}>Location:</Text>
-                <Title order={5}>{profile?.location}</Title>
-            </Stack>
+            <Text c="dimmed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </Text>
         </Stack>
 
 
