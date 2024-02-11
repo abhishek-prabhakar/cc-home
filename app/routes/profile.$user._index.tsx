@@ -111,8 +111,8 @@ const ProfileHome = {
         return <Stack>
             <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
                 <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
-                <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
-                <Grid.Col>
+                <Grid.Col span={'auto'}>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
+                <Grid.Col span={{ base: 12, md: 'content' }}>
                     <Button variant="outline" radius={'xl'} onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
