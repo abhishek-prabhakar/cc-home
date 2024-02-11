@@ -426,7 +426,7 @@ const Photography = {
                                                 <Button
                                                     type="primary"
                                                     shape="round"
-                                                    onClick={() => navigate(Routes.VendorProfileWithService.replace(':id', item.id).replace(':sId', categoryId || ''))}
+                                                    onClick={() => navigate(Routes.VendorProfileWithService.replace(':id', item.id).replace(':sGrpId', categoryId || ''))}
                                                 >
                                                     View Profile
                                                 </Button>
