@@ -1,5 +1,5 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
-import { Accordion, Badge, Box, Button, Card, Container, Divider, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Stack, Text, Title, rem } from "@mantine/core";
+import { Accordion, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { IconCheck, IconPlus } from "@tabler/icons-react";
@@ -89,7 +89,10 @@ const ProfileLayout = {
             <Text c="dimmed">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </Text>
-        </Stack>
+            <Flex justify={'center'}>
+                <a href="#book-now-section"><Button variant="filled" radius={'xl'}>Book a service</Button></a>
+            </Flex>
+        </Stack>;
 
 
         return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: profile?.primaryColor }}>
@@ -143,9 +146,9 @@ const ProfileLayout = {
             }
         }
 
-        return <Grid gutter={'xl'}>
-            <Grid.Col span={{ base: 12, md: 4 }}>
-                <Card withBorder style={{ borderColor: '#1D4ED7' }} p="30px">
+        return <Grid gutter={'xl'} id="book-now-section">
+            <Grid.Col span={{ base: 12, md: 3 }}>
+                <Card withBorder style={{ borderColor: '#1D4ED7' }} p="10px">
                     <Title order={3} mb={rem(20)}>Save your money now.</Title>
                     <Stack>
                         <Text>
@@ -158,7 +161,7 @@ const ProfileLayout = {
                     </Stack>
                 </Card>
             </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 8 }}>
+            <Grid.Col span={{ base: 12, md: 9 }}>
                 <Group align="end" justify="space-between" py={rem(40)}>
                     <Title order={3}>Book now<br />and <Mark color="lime">Pay later</Mark>.</Title>
                     <Box ta={'right'}>

@@ -113,7 +113,7 @@ const ProfileHome = {
                 <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
                 <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
                 <Grid.Col>
-                    <Button variant="filled" radius={'xl'} onClick={() => navigate('portfolio')} >
+                    <Button variant="outline" radius={'xl'} onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
                 </Grid.Col>
@@ -134,7 +134,7 @@ const ProfileHome = {
                     </Suspense>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
-                    <Button size="large" radius={'xl'} onClick={() => navigate('portfolio')} >
+                    <Button variant="outline" size="xs" radius={'xl'} onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
                 </div>
