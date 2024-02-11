@@ -82,9 +82,12 @@ const ProfileLayout = {
                 </Grid.Col>
                 <Grid.Col span={{ base: 4, md: 12 }}>
                     <Stack gap={0}>
-                        <Title order={4}>{profile?.fullName} <IconDiscountCheckFilled color="var(--ui-color-success)" /></Title>
-                        <Flex align={'center'}>
-                            <IconMapPin />
+                        <Flex gap={'sm'}>
+                            <Title order={4}>{profile?.fullName}</Title>
+                            <IconDiscountCheckFilled style={{ color: 'var(--ui-color-success)' }} />
+                        </Flex>
+                        <Flex align={'center'} gap={'sm'}>
+                            <IconMapPin style={{ color: 'gray' }} size={18} />
                             <Text fw={500}>Location: {profile?.location} Bangalore</Text>
                         </Flex>
                     </Stack>

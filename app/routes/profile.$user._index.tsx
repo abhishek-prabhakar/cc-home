@@ -92,7 +92,7 @@ const ProfileHome = {
                     {services =>
                         <Grid gutter={'md'}>
                             {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 3 }}>
-                                <Card withBorder>
+                                <Card withBorder h="100%">
                                     <Title order={5}>{x.name}</Title>
                                     {x.description}
                                 </Card>
