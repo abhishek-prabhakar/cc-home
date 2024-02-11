@@ -173,18 +173,23 @@ const ProfileLayout = {
                         </Card>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 6 }}>
-                        <Card bg={'linear-gradient(#358BD6, #0F73C9)'} c={'white'} h={'100%'}>
+                        <Card bg={'linear-gradient(#358BD6, #0F73C9)'} c={'white'}>
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
-                                <Accordion unstyled chevron={null} defaultValue={'0'}>
+                                <Accordion unstyled defaultValue={'0'}>
                                     {services.map((group, index) => <Accordion.Item value={'' + index} key={'' + index}>
                                         <Accordion.Control style={{
                                             width: '100%',
                                             background: 'none',
                                             border: '0',
                                             textAlign: 'left',
-                                            padding: '10px 20px'
+                                            padding: '10px 20px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            direction: 'rtl',
+                                            color: 'white'
                                         }}><Text c="white">{group.name}</Text></Accordion.Control>
                                         <Accordion.Panel>
                                             <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
