@@ -19,7 +19,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { concat, forkJoin, of, switchMap } from "rxjs";
 import { PATH } from "~/path.data";
 import Banner from "~/components/Banner";
-import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Group, Rating, Select, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Group, Rating, Select, Stack, Text, Title } from "@mantine/core";
+import Skeleton from "~/components/Skeleton";
 
 const sortPanelStyles: React.CSSProperties = {
   background: "var(--ui-color-accent)",

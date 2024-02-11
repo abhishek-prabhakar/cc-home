@@ -1,7 +1,8 @@
-import { Avatar, Container, Grid, Image, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Container, Grid, Image, Stack, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
+import Skeleton from "~/components/Skeleton";
 import Routes from "~/routes.data";
 import CollectionService from "~/service/collections.service";
 import { VendorQuery } from "~/service/vendor.service";

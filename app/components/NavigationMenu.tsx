@@ -11,8 +11,9 @@ import {
 import { redirect } from "@remix-run/node";
 import { HeaderNavListItem, RootLoaderData } from "~/types";
 import Routes from "~/routes.data";
-import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Stack, Text, Title } from "@mantine/core";
 import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
+import Skeleton from "./Skeleton";
 
 const menuArtisantStyle: React.CSSProperties = {
   borderRadius: "3px",

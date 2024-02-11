@@ -1,4 +1,4 @@
-import { Container, MantineProvider, createTheme, rem } from '@mantine/core';
+import { Container, MantineProvider, MantineTheme, createTheme, rem } from '@mantine/core';
 
 const CONTAINER_SIZES: Record<string, string> = {
     xxs: rem(300),
@@ -10,7 +10,7 @@ const CONTAINER_SIZES: Record<string, string> = {
     xxl: rem(900),
 };
 
-const theme = {
+const theme: Partial<MantineTheme> = {
     fontFamily: 'Inter, sans-serif',
     fontSizes: {
         xs: rem(10),
@@ -23,11 +23,12 @@ const theme = {
         Container: {
             defaultProps: {
                 sizes: {
-                    xs: 600,
-                    sm: 800,
-                    md: 1200,
-                    lg: 1200,
-                    xl: 1400,
+                    xs: rem(400),
+                    sm: rem(500),
+                    md: rem(1600),
+                    lg: rem(700),
+                    xl: rem(800),
+                    xxl: rem(900),
                 },
             }
         }

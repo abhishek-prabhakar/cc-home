@@ -1,8 +1,9 @@
-import { Badge, Container, Flex, Grid, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Badge, Container, Flex, Grid, Stack, Text, Title } from "@mantine/core";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import Routes from "~/routes.data";
 import { RootLoaderData } from "~/types";
+import Skeleton from "./Skeleton";
 
 export function Footer() {
     const data = useLoaderData<RootLoaderData>();

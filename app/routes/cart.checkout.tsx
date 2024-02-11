@@ -1,10 +1,11 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Skeleton, Stack, Text, Textarea, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Stack, Text, Textarea, Title } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
+import Skeleton from "~/components/Skeleton";
 import UserLogin from "~/components/UserLogin";
 import { PATH } from "~/path.data";
 import { CartService } from "~/service/cart.service";

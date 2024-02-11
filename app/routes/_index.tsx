@@ -11,8 +11,9 @@ import { getCategoryCollection, getCollections, getJumbotronList, getPopularServ
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Stack, Text, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconChevronRight, IconFlame, IconSearch } from "@tabler/icons-react";
+import Skeleton from "~/components/Skeleton";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',

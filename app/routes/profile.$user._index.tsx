@@ -1,11 +1,12 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
-import { Avatar, Button, Card, Carousel, Col, Row, Skeleton, Space, Typography } from "antd";
+import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 import { Suspense } from "react";
 const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 import { db } from "~/utils/database";
@@ -89,7 +90,7 @@ const ProfileHome = {
 
         return <div>
             <Title level={2}>My Services</Title>
-            <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
+            <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.services}>
                     {services =>
                         <Row gutter={[40, 40]}>
@@ -123,7 +124,7 @@ const ProfileHome = {
             </Row>
             <div>
                 <PhotoProvider>
-                    <Suspense fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}>
+                    <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.portfolio}>
                             {portfolio => <>
                                 <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 0: 2, 350: 3, 750: 3, 900: 3 }}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
