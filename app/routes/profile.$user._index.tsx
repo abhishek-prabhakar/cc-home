@@ -85,13 +85,13 @@ const ProfileHome = {
     Services: () => {
         const data = useLoaderData<loaderData>();
 
-        return <div>
+        return <Stack>
             <Title order={4}>Featured Stories</Title>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.services}>
                     {services =>
                         <Grid gutter={'md'}>
-                            {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 2 }}>
+                            {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 3 }}>
                                 <Card withBorder>
                                     <Title order={5}>{x.name}</Title>
                                     {x.description}
@@ -102,7 +102,7 @@ const ProfileHome = {
                     }
                 </Await>
             </Suspense>
-        </div>
+        </Stack>
     },
     Gallery: () => {
         const data = useLoaderData<loaderData>();

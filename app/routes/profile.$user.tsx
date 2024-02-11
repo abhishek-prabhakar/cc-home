@@ -13,6 +13,8 @@ import { VendorQuery } from "~/service/vendor.service";
 import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 type RequiredMark = boolean | 'optional' | 'customize';
 import classes from '../styles/accordian.module.css';
+import { IconDiscountCheckFilled } from "@tabler/icons-react";
+import { IconMapPin } from "@tabler/icons-react";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -80,9 +82,11 @@ const ProfileLayout = {
                 </Grid.Col>
                 <Grid.Col span={{ base: 4, md: 12 }}>
                     <Stack gap={0}>
-                        <Title order={4}>{profile?.fullName}</Title>
-                        <Text c="dimmed" fw={500}>Location:</Text>
-                        <Title order={5}>{profile?.location}</Title>
+                        <Title order={4}>{profile?.fullName} <IconDiscountCheckFilled color="var(--ui-color-success)" /></Title>
+                        <Flex align={'center'}>
+                            <IconMapPin />
+                            <Text fw={500}>Location: {profile?.location} Bangalore</Text>
+                        </Flex>
                     </Stack>
                 </Grid.Col>
             </Grid>
