@@ -94,8 +94,7 @@ const AppNavigation = {
     const [openDrawer, setDrawerState] = useState(false);
 
 
-    function navigateToPage(event: any) {
-      navigate(event?.key);
+    function navigateToPage() {
       toggleDrawer();
     }
 
@@ -128,7 +127,7 @@ const AppNavigation = {
                           path: Routes.Services.replace(":id", item.id),
                           name: 'Browse all ',
                         }].concat(child.list)
-                          .map(menuItem => <Link to={menuItem.path}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
+                          .map(menuItem => <Link to={menuItem.path} onClick={() => navigateToPage()}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
                         }
                       </Stack>)
                       }
