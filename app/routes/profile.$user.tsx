@@ -20,23 +20,23 @@ const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
 type ServiceGroup = { name: string, services: VendorService[] };
-type loaderData = { profile: VendorProfile | null, services: ServiceGroup[] };
+type loaderData = { profile: VendorProfile | null, services: ServiceGroup[], serviceGroupId: string | null };
 type VendorAddonOption = VendorServiceOption & { hide?: boolean }
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params, request }: LoaderArgs) {
     const id = params.user;
 
     if (!id) {
         return redirect(`/404`);
     }
-
+    const searchParams = new URL(request.url).searchParams;
     const vendorDetails = VendorQuery.getVendorByUsername(id);
-
     const serviceList = VendorQuery.getServices(id);
 
     return defer({
         profile: vendorDetails,
-        services: serviceList
+        services: serviceList,
+        serviceGroupId: searchParams.get('service')
     });
 }
 
@@ -55,7 +55,7 @@ const ProfileLayout = {
             </div>
             <Suspense fallback={<div className="container"><Skeleton /></div>}>
                 <Await resolve={data.services}>
-                    {services => <ProfileLayout.Pricing services={services} />}
+                    {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} />}
                 </Await>
             </Suspense>
             <ProfileLayout.CartSuggestion />
@@ -93,14 +93,18 @@ const ProfileLayout = {
             </div>
         </div>
     },
-    Pricing: ({ services }: { services: ServiceGroup[] }) => {
+    Pricing: ({ services, preSelectedGroupId }: { services: ServiceGroup[], preSelectedGroupId: string | null }) => {
         const [activeService, setActive] = useState<VendorService>();
         const [flatList, setFlatList] = useState<VendorService[]>([]);
 
         useEffect(() => {
             const list = services.reduce<VendorService[]>((acc, x) => acc.concat(x.services), []);
             setFlatList(list);
-            setActive(list[0]);
+            if (preSelectedGroupId) {
+                setActive(list.find(x => x.groupId === preSelectedGroupId));
+            } else {
+                setActive(list[0]);
+            }
         }, []);
 
         function setActiveService(id: string | null) {

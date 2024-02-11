@@ -1,6 +1,6 @@
 const Routes = {
     VendorProfile: '/profile/:id',
-    VendorProfileWithService: '/profile/:id?service=:sId',
+    VendorProfileWithService: '/profile/:id?service=:sGrpId',
     Collections: '/collections/:id',
     CollectionsByVendor: '/collections/:id/:vendorType',
     Services: '/services/:id',

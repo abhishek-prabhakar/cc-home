@@ -455,7 +455,7 @@ const Photography = {
                                         {item.services.map((x, index) => (
                                             <Tag key={"tag" + index}>{x}</Tag>
                                         ))}{" "}
-                                        <Link to={Routes.VendorProfileWithService.replace(':id', item.id).replace(':sId', categoryId || '')}>View all</Link>
+                                        <Link to={Routes.VendorProfileWithService.replace(':id', item.id).replace(':sGrpId', categoryId || '')}>View all</Link>
                                     </div>
                                 </div>
                             </div>

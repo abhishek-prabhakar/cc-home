@@ -76,9 +76,13 @@ export const VendorQuery = {
                                     name: true
                                 }
                             },
+                            id: true,
                             name: true,
                             minHour: true,
                             serviceGroupItem: {
+                                orderBy: {
+                                    position: 'asc'
+                                },
                                 where: {
                                     service: {
                                         vendorService: {
@@ -163,6 +167,7 @@ export const VendorQuery = {
 
                     groupedItems[grouptype].services.push({
                         vendorServiceGroupId: x.id,
+                        groupId: x.group.id,
                         title: x.group.name,
                         minHour: x.group.minHour,
                         cost: x.cost,
