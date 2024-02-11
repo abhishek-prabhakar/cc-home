@@ -19,10 +19,11 @@ const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', 
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
-type loaderData = { profile: VendorProfile | null, services: VendorService[] };
+type ServiceGroup = { name: string, services: VendorService[] };
+type loaderData = { profile: VendorProfile | null, services: ServiceGroup[] };
 type VendorAddonOption = VendorServiceOption & { hide?: boolean }
 
-export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<any> | TypedResponse<never>> {
+export async function loader({ params }: LoaderArgs) {
     const id = params.user;
 
     if (!id) {
@@ -41,7 +42,7 @@ export async function loader({ params }: LoaderArgs): Promise<TypedDeferredData<
 
 const ProfileLayout = {
     Index: () => {
-        const data: loaderData = useLoaderData();
+        const data = useLoaderData<loaderData>();
 
         return <Container>
             <Suspense fallback={<Skeleton />}>
@@ -92,23 +93,26 @@ const ProfileLayout = {
             </div>
         </div>
     },
-    Pricing: ({ services }: { services: VendorService[] }) => {
+    Pricing: ({ services }: { services: ServiceGroup[] }) => {
         const [activeService, setActive] = useState<VendorService>();
+        const [flatList, setFlatList] = useState<VendorService[]>([]);
 
         useEffect(() => {
-            setActive(services[0]);
+            const list = services.reduce<VendorService[]>((acc, x) => acc.concat(x.services), []);
+            setFlatList(list);
+            setActive(list[0]);
         }, []);
 
         function setActiveService(id: string | null) {
-            const item = services.find(x => x.vendorServiceGroupId === id);
+            const item = flatList.find(x => x.vendorServiceGroupId === id);
             if (item) {
                 setActive(item);
             }
         }
 
-        return <Grid gutter={40}>
+        return <Grid gutter={'xl'}>
             <Grid.Col span={{ base: 12, md: 4 }}>
-                <Card h={'100%'} withBorder style={{ borderColor: '#1D4ED7' }} p="30px">
+                <Card withBorder style={{ borderColor: '#1D4ED7' }} p="30px">
                     <Title order={3} mb={rem(20)}>Save your money now.</Title>
                     <Stack>
                         <Text>
@@ -129,9 +133,9 @@ const ProfileLayout = {
                         <Text><a href="mailto:support@celebriacollective.com" target="_BLANK">Contact us</a></Text>
                     </Box>
                 </Group>
-                <Grid gutter={40}>
+                <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 6 }}>
-                        <Card bg={'#F2F5FB'} h={'100%'}>
+                        <Card bg={'#F2F5FB'}>
                             <Stack>
                                 <Group justify="space-between" align="center">
                                     <Title order={5}>{activeService?.title}</Title>
@@ -149,7 +153,7 @@ const ProfileLayout = {
                                     size="sm"
                                     center
                                     icon={
-                                        <IconCircleCheck size={rem(16)} />
+                                        <IconCircleCheck size={16} />
                                     }
                                 >
                                     {activeService?.included.map(item => <List.Item key={item.id}>
@@ -173,10 +177,24 @@ const ProfileLayout = {
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
-                                <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
-                                    {services.map(item => <Accordion.Item key={item.vendorServiceGroupId} value={item.vendorServiceGroupId}>
-                                        <Accordion.Control icon={activeService?.vendorServiceGroupId === item.vendorServiceGroupId ? <IconCheck /> : <IconPlus />} color="inherit">{item.title}</Accordion.Control>
+                                <Accordion unstyled chevron={null} defaultValue={'0'}>
+                                    {services.map((group, index) => <Accordion.Item value={'' + index} key={'' + index}>
+                                        <Accordion.Control style={{
+                                            width: '100%',
+                                            background: 'none',
+                                            border: '0',
+                                            textAlign: 'left',
+                                            padding: '10px 20px'
+                                        }}><Text c="white">{group.name}</Text></Accordion.Control>
+                                        <Accordion.Panel>
+                                            <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
+                                                {group.services.map(item => <Accordion.Item key={item.vendorServiceGroupId} value={item.vendorServiceGroupId}>
+                                                    <Accordion.Control icon={activeService?.vendorServiceGroupId === item.vendorServiceGroupId ? <IconCheck /> : <IconPlus size={12} />} color="inherit">{item.title}</Accordion.Control>
+                                                </Accordion.Item>)}
+                                            </Accordion>
+                                        </Accordion.Panel>
                                     </Accordion.Item>)}
+
                                 </Accordion>
                             </Stack>
                         </Card>

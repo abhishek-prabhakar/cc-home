@@ -43,14 +43,20 @@ export const VendorQuery = {
         });
     },
     getServices: (username: string) => {
-        return new Promise<VendorService[]>(function (resolve) {
+        return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve) {
 
             db.vendorServiceGroup.findMany({
-                orderBy: {
+                orderBy: [{
                     group: {
                         name: 'asc'
                     }
-                },
+                }, {
+                    group: {
+                        serviceGroupType: {
+                            name: 'asc'
+                        }
+                    }
+                }],
                 where: {
                     vendorService: {
                         some: {
@@ -65,6 +71,11 @@ export const VendorQuery = {
                     cost: true,
                     group: {
                         select: {
+                            serviceGroupType: {
+                                select: {
+                                    name: true
+                                }
+                            },
                             name: true,
                             minHour: true,
                             serviceGroupItem: {
@@ -112,8 +123,14 @@ export const VendorQuery = {
                     }
                 },
             }).then(r => {
+                const groupedItems: { [key in string]: { name: string, services: VendorService[] } } = {};
 
-                resolve(r.map(x => {
+                r.forEach(x => {
+                    const grouptype = x.group.serviceGroupType?.name || 'Others';
+                    if (!groupedItems[grouptype]) {
+                        groupedItems[grouptype] = { name: grouptype, services: [] };
+                    }
+
                     const includedIds = x.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
                     const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
                     let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
@@ -144,7 +161,7 @@ export const VendorQuery = {
                         return acc;
                     }, []);
 
-                    return {
+                    groupedItems[grouptype].services.push({
                         vendorServiceGroupId: x.id,
                         title: x.group.name,
                         minHour: x.group.minHour,
@@ -160,8 +177,10 @@ export const VendorQuery = {
                             duration: i.duration
                         })),
                         selectableList
-                    }
-                }));
+                    });
+                });
+
+                resolve(Object.values(groupedItems));
             });
         });
     },
