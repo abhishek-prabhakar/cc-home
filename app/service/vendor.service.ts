@@ -4,7 +4,7 @@ import { db } from "~/utils/database";
 
 export const VendorQuery = {
     getVendorByUsername: (username: string) => {
-        return new Promise<VendorProfile | null>(function (resolve) {
+        return new Promise<VendorProfile | null>(function (resolve, reject) {
             db.vendor.findFirstOrThrow({
                 where: {
                     username,
@@ -39,7 +39,7 @@ export const VendorQuery = {
                 } else {
                     resolve(null);
                 }
-            });
+            }).catch(e => reject(false));
         });
     },
     getServices: (username: string) => {

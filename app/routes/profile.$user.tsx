@@ -81,7 +81,7 @@ const ProfileLayout = {
                     <Image src={profile?.avatar} width={'100%'} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 4, md: 12 }}>
-                    <Stack gap={0}>
+                    <Stack gap={'xs'}>
                         <Flex gap={'sm'}>
                             <Title order={4}>{profile?.fullName}</Title>
                             <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
