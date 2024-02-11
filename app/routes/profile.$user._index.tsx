@@ -1,9 +1,8 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Card, Grid, Stack, Title } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, useLoaderData, useNavigate } from "@remix-run/react";
-import { Avatar, Button, Card, Carousel, Col, Row, Space, Typography } from "antd";
 import { Suspense } from "react";
-const { Title, Text } = Typography;
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import Skeleton from "~/components/Skeleton";
@@ -78,31 +77,30 @@ const quoteStyle: React.CSSProperties = { fontSize: '30px', color: '#009e66' };
 const ProfileHome = {
     Index: () => {
         return <div className="container">
-            <Space direction="vertical" size={'large'}>
+            <Stack gap={'xl'}>
                 <ProfileHome.Services />
-                {/* <ProfileHome.Gallery /> */}
+                <ProfileHome.Gallery />
                 {/* <ProfileHome.Testimonials /> */}
-            </Space>
+            </Stack>
         </div>;
     },
     Services: () => {
         const data = useLoaderData<loaderData>();
 
         return <div>
-            <Title level={2}>My Services</Title>
+            <Title order={4}>Featured Stories</Title>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.services}>
                     {services =>
-                        <Row gutter={[40, 40]}>
-                            {services.map((x, i) => <Col key={'card-' + i} sm={12} xs={12} md={4} lg={4} xl={8} xxl={8}>
-                                <Card bordered={false}>
-                                    <CameraOutlined style={quoteStyle} />
-                                    <Title level={4}>{x.name}</Title>
+                        <Grid gutter={'md'}>
+                            {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 2 }}>
+                                <Card withBorder>
+                                    <Title order={5}>{x.name}</Title>
                                     {x.description}
                                 </Card>
-                            </Col>
+                            </Grid.Col>
                             )}
-                        </Row>
+                        </Grid>
                     }
                 </Await>
             </Suspense>
@@ -112,16 +110,16 @@ const ProfileHome = {
         const data = useLoaderData<loaderData>();
         const navigate = useNavigate();
 
-        return <Space direction="vertical" size={'large'}>
-            <Row justify={'space-between'} align={'middle'} gutter={[10, 20]}>
-                <Col span={24}><Title level={2}>Our amazing work</Title></Col>
-                <Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Col>
-                <Col>
-                    <Button type="primary" size="large" shape="round" onClick={() => navigate('portfolio')} >
+        return <Stack>
+            <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
+                <Grid.Col span={24}><Title order={2}>Our amazing work</Title></Grid.Col>
+                <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
+                <Grid.Col>
+                    <Button variant="filled" radius={'xl'} onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
-                </Col>
-            </Row>
+                </Grid.Col>
+            </Grid>
             <div>
                 <PhotoProvider>
                     <Suspense fallback={<Skeleton />}>
@@ -138,45 +136,45 @@ const ProfileHome = {
                     </Suspense>
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
-                    <Button size="large" shape="round" onClick={() => navigate('portfolio')} >
+                    <Button size="large" radius={'xl'} onClick={() => navigate('portfolio')} >
                         View all project
                     </Button>
                 </div>
             </div>
-        </Space>;
+        </Stack>;
     },
     Testimonials: () => {
         return <div className="container">
-            <Title level={2} style={{ textAlign: 'center' }}>Testimonials</Title>
-            <Carousel>
+            <Title order={2} style={{ textAlign: 'center' }}>Testimonials</Title>
+            {/* <Carousel>
                 <div>
-                    <Row justify={'center'}>
-                        <Col md={8} sm={24} xs={24}>
+                    <Grid justify={'center'}>
+                        <Grid.Col md={8} sm={24} xs={24}>
                             <Card>
                                 <Space direction="vertical" size={'middle'}>
-                                    <Row gutter={20} align={'middle'}>
-                                        <Col>
+                                    <Grid gutter={20} align={'middle'}>
+                                        <Grid.Col>
                                             <Avatar size={64} icon={<UserOutlined />} />
-                                        </Col>
-                                        <Col flex={'auto'}>
+                                        </Grid.Col>
+                                        <Grid.Col flex={'auto'}>
                                             <Text strong>Julia</Text>
                                             <br />
                                             <Text>Bangalore</Text>
-                                        </Col>
-                                        <Col>
+                                        </Grid.Col>
+                                        <Grid.Col>
                                             <CommentOutlined style={quoteStyle} />
-                                        </Col>
-                                    </Row>
+                                        </Grid.Col>
+                                    </Grid>
 
                                     <Text>
                                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                                     </Text>
                                 </Space>
                             </Card>
-                        </Col>
-                    </Row>
+                        </Grid.Col>
+                    </Grid>
                 </div>
-            </Carousel>
+            </Carousel> */}
         </div>
     }
 }

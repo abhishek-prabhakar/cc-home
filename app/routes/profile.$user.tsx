@@ -45,14 +45,19 @@ const ProfileLayout = {
         const data = useLoaderData<loaderData>();
 
         return <Container>
-            <Suspense fallback={<Skeleton />}>
-                <Await resolve={data.profile}>
-                    {profile => <ProfileLayout.Cover profile={profile} />}
-                </Await>
-            </Suspense>
-            <div style={pageWrapperStyles}>
-                <Outlet />
-            </div>
+            <Grid gutter={'xl'}>
+                <Grid.Col span={{ base: 12, md: 3 }}>
+                    <Suspense fallback={<Skeleton />}>
+                        <Await resolve={data.profile}>
+                            {profile => <ProfileLayout.Cover profile={profile} />}
+                        </Await>
+                    </Suspense>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 9 }}>
+                    <Outlet />
+                </Grid.Col>
+            </Grid>
+            <Divider />
             <Suspense fallback={<div className="container"><Skeleton /></div>}>
                 <Await resolve={data.services}>
                     {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} />}
@@ -62,6 +67,23 @@ const ProfileLayout = {
         </Container>
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
+
+        return <Stack>
+            <Grid>
+                <Grid.Col span={{ base: 4, md: 12 }}>
+                    <Image src={profile?.avatar} width={'100%'} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 4, md: 12 }}>
+                    <Title order={4} >{profile?.fullName}</Title>
+                </Grid.Col>
+            </Grid>
+
+            <Stack gap={0}>
+                <Text c="dimmed" fw={500}>Location:</Text>
+                <Title order={5}>{profile?.location}</Title>
+            </Stack>
+        </Stack>
+
 
         return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: profile?.primaryColor }}>
             <div className="container">
