@@ -91,7 +91,7 @@ const ProfileHome = {
                 <Await resolve={data.services}>
                     {services =>
                         <Grid gutter={'md'}>
-                            {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 3 }}>
+                            {services.map((x, i) => <Grid.Col key={'card-' + i} span={{ base: 4, md: 3 }}>
                                 <Card withBorder h="100%">
                                     <Title order={5}>{x.name}</Title>
                                     {x.description}

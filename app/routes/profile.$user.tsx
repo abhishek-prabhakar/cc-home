@@ -84,11 +84,11 @@ const ProfileLayout = {
                     <Stack gap={0}>
                         <Flex gap={'sm'}>
                             <Title order={4}>{profile?.fullName}</Title>
-                            <IconDiscountCheckFilled style={{ color: 'var(--ui-color-success)' }} />
+                            <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
                         </Flex>
-                        <Flex align={'center'} gap={'sm'}>
-                            <IconMapPin style={{ color: 'gray' }} size={18} />
-                            <Text fw={500}>Location: {profile?.location} Bangalore</Text>
+                        <Flex align={'center'} gap={'xs'}>
+                            <IconMapPin style={{ color: 'gray' }} size={rem(18)} />
+                            <Text fw={500}>{profile?.location} Bangalore</Text>
                         </Flex>
                     </Stack>
                 </Grid.Col>
