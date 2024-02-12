@@ -180,8 +180,8 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''}
 
-                                {activeService?.vendorServiceGroupId && <Link to={Routes.CartItem.replace(':id', activeService?.vendorServiceGroupId)}>
-                                    <Button variant="filled">Book Now</Button>
+                                {activeService?.vendorServiceGroupId && <Link to={Routes.CartItem.replace(':id', activeService?.vendorServiceGroupId)} >
+                                    <Button variant="filled" w={'100%'}>Book Now</Button>
                                 </Link>
                                 }
                             </Stack>
