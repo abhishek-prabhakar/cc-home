@@ -50,7 +50,7 @@ const Page = {
                         </Grid>
                         <Space h="xl" />
                         <Grid gutter={'xl'}>
-                            <Grid.Col span={{ base: 12, md: 4 }}>
+                            <Grid.Col span={{ base: 12, md: 8 }}>
                                 <Card withBorder>
                                     <SimpleGrid cols={{ base: 1, md: 2, lg: 2 }}>
                                         <Page.SelectDate />
@@ -81,7 +81,7 @@ const Page = {
                                 </Stack>
                             </Grid.Col>
                         </Grid>
-                        <Divider my={'md'} />
+                        <Space h="lg" />
                         <Stack>
                             <Title order={4}>Recommended Addons</Title>
                             <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
