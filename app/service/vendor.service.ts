@@ -310,7 +310,8 @@ export const VendorQuery = {
                     addons: optional.map(i => ({
                         id: i.service.id,
                         title: i.service.name,
-                        duration: i.duration
+                        duration: i.duration,
+                        cost: i.cost
                     })),
                     selectableList
                 };

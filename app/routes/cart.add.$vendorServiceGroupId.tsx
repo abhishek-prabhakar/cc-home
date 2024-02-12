@@ -87,7 +87,7 @@ const Page = {
                             <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
                                 spacing={{ base: 'sm', sm: 'xl' }}>
                                 {serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
-                                    <Stack>
+                                    <Stack gap={'sm'}>
                                         <Checkbox
                                             checked={selectedAddons.includes(item.id)}
                                             color="green"
