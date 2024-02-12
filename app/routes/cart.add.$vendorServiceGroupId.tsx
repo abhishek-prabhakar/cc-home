@@ -82,7 +82,7 @@ const Page = {
                             </Grid.Col>
                         </Grid>
                         <Space h="lg" />
-                        <Stack>
+                        {serviceGroup.addons.length ? <Stack>
                             <Title order={4}>Recommended Addons</Title>
                             <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
                                 spacing={{ base: 'sm', sm: 'xl' }}>
@@ -98,7 +98,7 @@ const Page = {
                                     </Stack>
                                 </Card>)}
                             </SimpleGrid>
-                        </Stack>
+                        </Stack> : ''}
                     </Form>}
                 </Await>
             </Suspense>
