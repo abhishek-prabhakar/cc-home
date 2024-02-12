@@ -1,7 +1,7 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { Accordion, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
-import { Await, Form, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
+import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { IconCheck, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
@@ -100,37 +100,6 @@ const ProfileLayout = {
                 <a href="#book-now-section"><Button variant="filled" radius={'xl'}>Book a service</Button></a>
             </Flex>
         </Stack>;
-
-
-        return <div style={{ ...coverStyles, backgroundImage: profile?.coverImageName ? `url(${profile?.coverImageName})` : '', backgroundColor: profile?.primaryColor }}>
-            <div className="container">
-                {/* <Row wrap={false}>
-                    <Col sm={24} xs={24} flex={'none'}>
-                        <Card style={{ borderRadius: '14px' }}>
-                            <Row gutter={[0, 40]} align={'middle'}>
-                                <Col span={24}>
-                                    <Title level={3}>Hi There!</Title>
-                                    <Title level={2} style={{ marginTop: 0 }}>I am {profile?.fullName}</Title>
-                                    <Avatar size={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100, xxl: 100 }}
-                                        src={profile?.avatar} />
-                                    <div style={{ paddingTop: '20px' }}>
-                                        <a href="#book-now-section">
-                                            <Button type="primary">Book Now</Button>
-                                        </a>
-                                    </div>
-                                </Col>
-                                <Col span={24}>
-                                    <div style={locationStyles}>
-                                        <Title level={4}>Location</Title>
-                                        <Title color="" level={5}>{profile?.location}</Title>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row> */}
-            </div>
-        </div>
     },
     Pricing: ({ services, preSelectedGroupId }: { services: ServiceGroup[], preSelectedGroupId: string | null }) => {
         const [activeService, setActive] = useState<VendorService>();
@@ -211,7 +180,10 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''}
 
-                                <Button variant="filled">Book Now</Button>
+                                {activeService?.vendorServiceGroupId && <Link to={Routes.CartItem.replace(':id', activeService?.vendorServiceGroupId)}>
+                                    <Button variant="filled">Book Now</Button>
+                                </Link>
+                                }
                             </Stack>
                         </Card>
                     </Grid.Col>

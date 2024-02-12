@@ -5,7 +5,8 @@ const Routes = {
     CollectionsByVendor: '/collections/:id/:vendorType',
     Services: '/services/:id',
     ServiceGroup: '/services/:id/:subId',
-    Cart: '/cart/checkout'
+    Cart: '/cart/checkout',
+    CartItem: '/cart/add/:id'
 }
 
 export default Routes;

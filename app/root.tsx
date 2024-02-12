@@ -29,6 +29,7 @@ import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
 import { ColorSchemeScript, Box, Grid, MantineProvider, Container } from "@mantine/core";
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
 

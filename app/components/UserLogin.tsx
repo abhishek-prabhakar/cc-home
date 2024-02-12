@@ -1,9 +1,8 @@
+import { Button, Grid, Input, Modal, Stack, Title } from "@mantine/core";
 import { Form } from "@remix-run/react";
-import { Button, Col, Input, Modal, Row, Typography } from "antd";
 import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import UserService from "~/service/user.service";
-const { Title } = Typography;
 
 const UserLogin = {
     Index: ({ title = 'Manage your booking', redirectUrl = '', onSuccess }: { title?: string, redirectUrl?: string, onSuccess?: Function }) => {
@@ -34,13 +33,11 @@ const UserLogin = {
         }
 
         return <><Form onSubmit={handleSubmit(startUserLogin)}>
-            <Title level={5}>{title}</Title>
-            <Row justify={'end'} gutter={[10, 10]}>
-                <Col span={24}>
-                    <Controller name="phone" control={control} render={({ field }) => <Input prefix="+91" placeholder="Enter your phone number." required {...field} />} />
-                </Col>
-                <Col span={24}><Button block type="primary" htmlType="submit" loading={isBusy}>Login</Button></Col>
-            </Row>
+            <Stack>
+                <Title order={5}>{title}</Title>
+                <Controller name="phone" control={control} render={({ field }) => <Input leftSection="+91" placeholder="Enter your phone number." required {...field} />} />
+                <Button variant="filled" type="submit" loading={isBusy}>Login</Button>
+            </Stack>
         </Form>
             <UserLogin.VerifyOtp redirectUrl={redirectUrl} username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
         </>
@@ -72,13 +69,12 @@ const UserLogin = {
             onClose();
         }
 
-        return <Modal destroyOnClose={true} confirmLoading={isBusy} title="Verify OTP" open={modalOpen} onOk={() => verifyOtp()} onCancel={() => onClose()}>
-            <Row justify={'end'} gutter={[10, 10]}>
-                <Col span={24}>
+        return <Modal title="Verify OTP" opened={modalOpen} onClose={() => onClose()}>
+            <Form method="post" action="/login/redirect">
+                <Stack gap={'md'}>
                     <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />
-                </Col>
-            </Row>
-            <Form method="post" action="/login/redirect" ref={formRef}>
+                    <Button type="submit" variant="filled">Continue</Button>
+                </Stack>
                 <input type="hidden" name="id" ref={formInputIdRef} />
                 <input type="hidden" name="redirect" ref={formInputUrlRef} />
             </Form>

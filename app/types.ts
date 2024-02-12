@@ -37,7 +37,9 @@ export type VendorPortfolio = {
 export type VendorServiceOption = {
     id: string,
     title: string,
-    duration: number
+    duration: number,
+    cost?: number,
+    fareMode?: FareMode
 }
 
 export type AddonGroupItem = { id: string, title: string, services: VendorServiceOption[] }
@@ -48,6 +50,7 @@ export type VendorService = {
     groupId: string,
     minHour: number,
     cost: number,
+    costExtraHour?: number,
     included: VendorServiceOption[],
     addons: VendorServiceOption[],
     selectableList?: AddonGroupItem[]
