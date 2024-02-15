@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Checkbox, Container, Divider, Grid, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Alert, Avatar, Button, Card, Checkbox, Container, Divider, Flex, Grid, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useLoaderData } from "@remix-run/react";
@@ -7,16 +7,30 @@ import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { Suspense, useState } from "react";
 import COMMON_DATA from "~/data/common.data";
+import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { db } from "~/utils/database";
 
 export async function loader(args: LoaderArgs) {
-    const id = args.params.vendorServiceGroupId;
+    const id = args.params.vendorServiceGroupId || '';
 
-    const service = VendorQuery.getVendorServiceGroup(id || '');
-
+    const service = VendorQuery.getVendorServiceGroup(id);
+    const vendor = db.vendorServiceGroup.findFirstOrThrow({
+        where: {
+            id
+        },
+        select: {
+            vendor: {
+                select: {
+                    username: true,
+                    profileImageName: true
+                }
+            }
+        }
+    })
     return defer({
-        service
+        service,
+        vendor
     })
 }
 
@@ -37,15 +51,21 @@ const Page = {
 
         return <Container>
             <Suspense fallback={<Skeleton />}>
-                <Await resolve={data.service}>
-                    {serviceGroup => <Form>
+                <Await resolve={Promise.all([data.service, data.vendor])}>
+                    {([serviceGroup, vendor]) => <Form>
                         <Grid gutter={'md'}>
                             <Grid.Col span={'content'}>
-                                <IconCircleArrowLeft size={rem(24)} />
+                                <IconCircleArrowLeft size={24} />
                             </Grid.Col>
                             <Grid.Col span={'auto'}>
                                 <Title order={5}>{serviceGroup.title}</Title>
                                 <Title order={3}>Customize Booking</Title>
+                            </Grid.Col>
+                            <Grid.Col span={{ sm: 12, md: 'content' }}>
+                                <Flex align={'center'} gap={'md'}>
+                                    {/* <Title order={5}>{vendor.vendor.username}</Title>
+                                    <Avatar size="xl" src={vendor.vendor.profileImageName ? PATH.RESOURCE_URL + vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} /> */}
+                                </Flex>
                             </Grid.Col>
                         </Grid>
                         <Space h="xl" />
@@ -116,6 +136,7 @@ const Page = {
                 getDayProps={(date) => ({
                     selected: selected.some((s) => dayjs(date).isSame(s, 'date')),
                     onClick: () => handleSelect(date),
+                    disabled: dayjs(date).isBefore(new Date())
                 })}
             />
         </Stack>

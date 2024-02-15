@@ -32,7 +32,11 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
+import Tracker from '@openreplay/tracker/cjs';
 
+const tracker = new Tracker({
+  projectKey: "rTOIL6yXtT3QWBpBcTSB",
+});
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -152,6 +156,10 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
 export default function App() {
   const data: LoaderData = useLoaderData();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    tracker.start();
+  }, [])
 
   return (
     <html lang="en">
