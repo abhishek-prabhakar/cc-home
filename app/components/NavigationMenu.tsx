@@ -73,7 +73,7 @@ const AppNavigation = {
                         gap={'xs'}
                       >
                         <span>{item.name}</span>
-                        <IconChevronDown style={{ fontSize: "8px" }} />
+                        <IconChevronDown size={12} />
                       </Flex>
                     </Menu.Target>
                     <Menu.Dropdown>

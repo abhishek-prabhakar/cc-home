@@ -37,6 +37,9 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                 <Grid justify={'space-between'} align="center" gutter={'md'}>
                     <Grid.Col span={'content'}>
                         <Grid>
+                            <Grid.Col span={{ base: 'content', md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
+                                <AppNavigation.Drawer />
+                            </Grid.Col>
                             <Grid.Col span={'content'}>
                                 <div className="header-brand">
                                     <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
@@ -46,7 +49,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                 <Menu>
                                     <Menu.Target>
                                         <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
-                                            <IconWorld />
+                                            <IconWorld size={16} />
                                             {currentLocation}
                                         </Flex>
                                     </Menu.Target>
@@ -54,9 +57,6 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                         {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
                                     </Menu.Dropdown>
                                 </Menu >
-                            </Grid.Col>
-                            <Grid.Col span={{ base: 'content', md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
-                                <AppNavigation.Drawer />
                             </Grid.Col>
                         </Grid>
                     </Grid.Col>
