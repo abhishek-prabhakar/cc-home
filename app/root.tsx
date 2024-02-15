@@ -32,7 +32,7 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
-import Tracker from '@openreplay/tracker/cjs';
+import Tracker from '@openreplay/tracker';
 
 const tracker = new Tracker({
   projectKey: "rTOIL6yXtT3QWBpBcTSB",
