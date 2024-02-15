@@ -147,7 +147,7 @@ export async function loader({ request }: LoaderArgs) {
     user,
     pages,
     ENV: {
-      projectKey: process.env.OPENREPLAY_PROJECT_KEY
+      openReplyprojectKey: process.env.NODE_ENV === "production" ? 'rTOIL6yXtT3QWBpBcTSB' : null
     }
   });
 }
@@ -158,9 +158,9 @@ export default function App() {
 
 
   useEffect(() => {
-    if (data.ENV.projectKey) {
+    if (data.ENV.openReplyprojectKey) {
       startTracker({
-        projectKey: data.ENV.projectKey
+        projectKey: data.ENV.openReplyprojectKey
       });
     }
   }, [])
