@@ -563,7 +563,7 @@ const Photography = {
         {" "}
         <Grid gutter={40}>
           {result?.map((item) => (
-            <Grid.Col span={24} key={"profile" + item.id}>
+            <Grid.Col span={12} key={"profile" + item.id}>
               <div style={itemStyles}>
                 <div style={itemThumbStyles}>
                   <Grid justify={"end"}>
