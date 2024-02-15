@@ -62,18 +62,18 @@ const AppNavigation = {
       <Suspense fallback={<Skeleton />}>
         <Await resolve={data.pages}>
           {(navList) => (
-            <Flex justify={"center"} gap={20} py={'md'}>
+            <Flex justify={"center"} gap={'sm'} py={'md'}>
               {navList.map((item) => (
                 <Box key={"menu-" + item.id} style={{ cursor: "pointer" }}>
-                  <Menu trigger="click-hover" shadow="md" width={350}>
+                  <Menu trigger="click-hover" shadow="md" >
                     <Menu.Target>
                       <Flex
                         align={'center'}
                         className="header-nav-item-text"
-                        gap={'sm'}
+                        gap={'xs'}
                       >
                         <span>{item.name}</span>
-                        <IconChevronDown style={{ fontSize: "10px" }} />
+                        <IconChevronDown style={{ fontSize: "8px" }} />
                       </Flex>
                     </Menu.Target>
                     <Menu.Dropdown>

@@ -19,7 +19,7 @@ import { Footer } from "~/components/Footer";
 import { Ticker } from "~/components/Ticker";
 import { Header } from "./components/Header";
 import { HeaderNavListItem, RootLoaderData, User } from "./types";
-import { USER_SESSION_KEY, getSession } from "./session.server";
+import { USER_SESSION_KEY, getSession, userCartCookie } from "./session.server";
 import { db } from "./utils/database";
 import { Provider } from 'react-redux';
 import store from './store/store';
@@ -34,6 +34,7 @@ import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
 import Tracker from '@openreplay/tracker/cjs';
 import { startTracker } from "./tracker";
+import { CartService } from "./service/cart.service";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -54,16 +55,21 @@ export const links: LinksFunction = () => [
 
 
 const headerStyle: React.CSSProperties = {
-  height: 'auto',
   padding: '0',
   backgroundColor: '#fff',
+  position: 'sticky',
+  top: 0,
+  boxShadow: '0 0 5px #c0c0c0',
+  zIndex: 1
 };
 
 type LoaderData = RootLoaderData;
 
 export async function loader({ request }: LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
+  const cookie = request.headers.get("Cookie");
+  const session = await getSession(cookie);
   const userId = session.get(USER_SESSION_KEY);
+  const userCart = await userCartCookie.parse(cookie);
 
   const user = new Promise<User | null>(async function (resolve) {
     if (!userId) {
@@ -146,6 +152,7 @@ export async function loader({ request }: LoaderArgs) {
   return defer({
     user,
     pages,
+    cartCount: userCart?.length || 0,
     ENV: {
       openReplyprojectKey: process.env.NODE_ENV === "production" ? 'rTOIL6yXtT3QWBpBcTSB' : null
     }
@@ -181,7 +188,7 @@ export default function App() {
             <Box style={headerStyle}>
               <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.user}>
-                  {response => <Header user={response} />}
+                  {response => <Header user={response} cartCount={data.cartCount} />}
                 </Await>
               </Suspense>
             </Box>

@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Box, Button, Container, Divider, Flex, Grid, Group, Menu, Popover, Stack, Title } from "@mantine/core";
+import { ActionIcon, Box, Button, Container, Divider, Flex, Grid, Group, Indicator, Menu, Popover, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -17,7 +17,7 @@ const menuArtisantStyle: React.CSSProperties = {
 }
 
 
-export function Header({ user }: { user?: User | null }) {
+export function Header({ user, cartCount }: { user?: User | null, cartCount: number }) {
     const navigation = useNavigation();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
     const dispatch = useDispatch();
@@ -32,41 +32,50 @@ export function Header({ user }: { user?: User | null }) {
     }
 
     return <>
-        <div style={{ borderBottom: '1px solid var(--ui-color-black)', padding: '20px 0' }} >
-            <Container>
-                <Grid justify={'space-between'} align="center" gutter={0}>
-                    <Grid.Col span={{ base: 0, md: 4, lg: 3 }} visibleFrom="md">
-                        <Menu>
-                            <Menu.Target>
-                                <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
-                                    <IconWorld />
-                                    {currentLocation}
-                                </Flex>
-                            </Menu.Target>
-                            <Menu.Dropdown>
-                                {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
-                            </Menu.Dropdown>
-                        </Menu >
+        <div >
+            <Container size={'xl'}>
+                <Grid justify={'space-between'} align="center" gutter={'md'}>
+                    <Grid.Col span={'content'}>
+                        <Grid>
+                            <Grid.Col span={'content'}>
+                                <div className="header-brand">
+                                    <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
+                                </div>
+                            </Grid.Col>
+                            <Grid.Col span={{ base: 0, md: 'content' }} visibleFrom="md">
+                                <Menu>
+                                    <Menu.Target>
+                                        <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
+                                            <IconWorld />
+                                            {currentLocation}
+                                        </Flex>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
+                                    </Menu.Dropdown>
+                                </Menu >
+                            </Grid.Col>
+                            <Grid.Col span={{ base: 'content', md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
+                                <AppNavigation.Drawer />
+                            </Grid.Col>
+                        </Grid>
                     </Grid.Col>
-                    <Grid.Col span={{ base: 2, md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
-                        <AppNavigation.Drawer />
+                    <Grid.Col span={'auto'} visibleFrom="md" >
+                        <AppNavigation.MainMenu />
                     </Grid.Col>
-                    <Grid.Col flex={'auto'}>
-                        <div className="header-brand">
-                            <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'150px'} /></Link>
-                        </div>
-                    </Grid.Col>
-                    <Grid.Col span={{ base: 2, md: 4, lg: 3 }}>
+                    <Grid.Col span={'content'}>
                         <Flex gap={20} justify={'end'} align="center">
                             <Link to="/cart/checkout">
-                                <ActionIcon variant="subtle" size="xl" radius="xl" >
-                                    <IconShoppingCart />
-                                </ActionIcon>
+                                <Indicator disabled={!cartCount} inline processing color="red" size={12} label={cartCount}>
+                                    <ActionIcon variant="subtle"  >
+                                        <IconShoppingCart />
+                                    </ActionIcon>
+                                </Indicator>
                             </Link>
                             <Box visibleFrom="md" >
                                 <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
                                     <Popover.Target>
-                                        <Button onMouseEnter={open}>My Account</Button>
+                                        <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>
                                     </Popover.Target>
                                     <Popover.Dropdown p={0}>
                                         <div style={userMenuStyle}>
@@ -98,10 +107,5 @@ export function Header({ user }: { user?: User | null }) {
                 </Grid>
             </Container>
         </div>
-        <Grid gutter={0}>
-            <Grid.Col span={{ base: 0, md: 12 }} visibleFrom="md" style={{ borderBottom: '1px solid var(--ui-color-black)' }} >
-                <AppNavigation.MainMenu />
-            </Grid.Col>
-        </Grid>
     </>
 }

@@ -228,7 +228,7 @@ const Home = {
       <div className="container no-spacer">
         <Home.Services />
       </div>,
-      <Container>
+      <Container size={'xl'}>
         <Grid>
           <Grid.Col span={12}>
             <Home.PopularServices />

@@ -25,7 +25,7 @@ const theme: Partial<MantineTheme> = {
                 sizes: {
                     xs: rem(400),
                     sm: rem(500),
-                    md: rem(1600),
+                    md: rem(600),
                     lg: rem(700),
                     xl: rem(800),
                     xxl: rem(900),
