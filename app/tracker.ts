@@ -1,0 +1,48 @@
+import { v4 as uuidV4 } from 'uuid'
+
+function defaultGetUserId() {
+    return uuidV4()
+}
+
+type TrackerConfig = {
+    projectKey: string,
+    userIdEnabled?: boolean,
+    getUserId?: () => string
+}
+
+export function startTracker(config: TrackerConfig) {
+    let tracker = null;
+    let Tracker = null
+    let userId = "";
+
+    (async () => {
+        //dynamic import 
+        Tracker = (await import('@openreplay/tracker')).default
+        console.log("Starting tracker...")
+        console.log("Custom configuration received: ", config)
+
+        const getUserId = (config?.userIdEnabled && config?.getUserId) ? config.getUserId : defaultGetUserId
+
+        const trackerConfig: TrackerConfig = {
+            projectKey: config?.projectKey
+        }
+
+        console.log("Tracker configuration")
+        console.log(trackerConfig)
+        tracker = new Tracker(trackerConfig);
+
+        if (config?.userIdEnabled) {
+            userId = getUserId()
+            tracker.setUserID(userId)
+        }
+
+
+        tracker.start();
+
+    })()
+
+    return {
+        tracker,
+        userId
+    }
+}
