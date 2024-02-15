@@ -702,13 +702,13 @@ const OnBoardPage = {
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack style={{ width: '100%' }}>
                     <Text fw={500}>Profile Category:</Text>
-                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))}  />
+                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
                 </Stack>
             </Grid.Col >
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
                     <Text fw={500}>Public name:</Text>
-                    <Select disabled={!data?.profile.usernameSuggestion} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || []} />
+                    <Select unselectable="on" defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || [{ value: data?.profile?.username || '', label: data?.profile?.username || '' }]} />
                     <div><Text size="sm" c="dimmed">User will see this instead of your real name</Text></div>
                 </Stack>
             </Grid.Col >
