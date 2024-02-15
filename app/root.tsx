@@ -61,7 +61,7 @@ const headerStyle: React.CSSProperties = {
 
 type LoaderData = RootLoaderData;
 
-export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData<any>> {
+export async function loader({ request }: LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get(USER_SESSION_KEY);
 
@@ -143,22 +143,26 @@ export async function loader({ request }: LoaderArgs): Promise<TypedDeferredData
     })));
   });
 
-
   return defer({
     user,
-    pages
+    pages,
+    ENV: {
+      projectKey: process.env.OPENREPLAY_PROJECT_KEY
+    }
   });
 }
 
 export default function App() {
-  const data: LoaderData = useLoaderData();
+  const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
 
   useEffect(() => {
-    startTracker({
-      projectKey: 'rTOIL6yXtT3QWBpBcTSB'
-    })
+    if (data.ENV.projectKey) {
+      startTracker({
+        projectKey: data.ENV.projectKey
+      });
+    }
   }, [])
 
   return (

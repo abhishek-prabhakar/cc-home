@@ -708,7 +708,7 @@ const OnBoardPage = {
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
                     <Text fw={500}>Public name:</Text>
-                    <Select unselectable="on" defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || [{ value: data?.profile?.username || '', label: data?.profile?.username || '' }]} />
+                    <Select allowDeselect={false} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || [{ value: data?.profile?.username || '', label: data?.profile?.username || '' }]} />
                     <div><Text size="sm" c="dimmed">User will see this instead of your real name</Text></div>
                 </Stack>
             </Grid.Col >
