@@ -45,7 +45,7 @@ const OrderSuccess = {
     Index: () => {
         const data = useLoaderData<LoaderData>();
 
-        return <Container>
+        return <Container size={'xl'} >
             <Grid justify={'center'} align={'center'}>
                 <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
                     <Stack gap={'md'}>

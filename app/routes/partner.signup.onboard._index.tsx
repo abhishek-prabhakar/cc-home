@@ -98,7 +98,7 @@ const Onboard = {
             setFiles(files.concat(file));
         }
 
-        return <Container>
+        return <Container size={'xl'} >
             <Form method="post">
                 <Grid gutter={0}>
                     <Grid.Col span={{ base: 12, md: 6 }} >

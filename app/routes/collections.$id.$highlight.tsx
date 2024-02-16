@@ -30,7 +30,7 @@ export function loader(args: LoaderArgs) {
 
 const CollectionsHighlightPage = {
     Index: () => {
-        return <Container>
+        return <Container size={'xl'} >
             <CollectionsHighlightPage.Highlight />
             <div style={{ paddingBottom: '50px' }}></div>
             <Grid gutter={40}>

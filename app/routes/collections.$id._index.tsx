@@ -36,7 +36,7 @@ const CollectionsPage = {
     Header: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <Container style={{ paddingBottom: '40px' }}>
+        return <Container size={'xl'} style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
                 <Grid align={"center"} justify={'center'}>
                     <Grid.Col span={8} style={{ padding: '20px 0' }}>
@@ -64,7 +64,7 @@ const CollectionsPage = {
     Section: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <Container>
+        return <Container size={'xl'} >
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.results}>
                     {result => <Tabs defaultValue="0">

@@ -363,7 +363,7 @@ const Photography = {
     const data = useLoaderData<loaderData>();
 
     return (
-      <Container>
+      <Container size={'xl'} >
         <Stack gap={'lg'}>
           <Banner.Default />
           <Grid gutter={40}>

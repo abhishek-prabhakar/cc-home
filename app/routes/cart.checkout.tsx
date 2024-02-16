@@ -32,7 +32,7 @@ const Cart = {
         const user = useSelector(getUser);
         const data = useLoaderData<typeof loader>();
 
-        return <Container>
+        return <Container size={'xl'} >
             <Title order={3}>Checkout</Title>
             <Divider />
             <Grid gutter={30}>

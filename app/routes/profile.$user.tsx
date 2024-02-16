@@ -48,7 +48,7 @@ const ProfileLayout = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <Container>
+        return <Container size={'xl'} >
             <Grid gutter={'xl'}>
                 <Grid.Col span={{ base: 12, md: 3 }}>
                     <Suspense fallback={<Skeleton />}>

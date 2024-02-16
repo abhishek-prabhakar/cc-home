@@ -101,7 +101,7 @@ function scroll(elmId: string) {
 const PartnerSignup = {
   Index: () => {
     return (
-      <Container>
+      <Container size={'xl'} >
         <Stack gap={'lg'}>
           <PartnerSignup.Jumbotron />
           <PartnerSignup.Counter />

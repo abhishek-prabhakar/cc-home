@@ -438,7 +438,7 @@ const OnBoardPage = {
             setProfileDialog(false)
         }
 
-        return <Container>
+        return <Container size={'xl'} >
             <Grid gutter={40}>
                 <Grid.Col span={12}>
                     <Title>Welcome</Title>

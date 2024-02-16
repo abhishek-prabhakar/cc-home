@@ -49,7 +49,7 @@ const Page = {
             }
         }
 
-        return <Container>
+        return <Container size={'xl'} >
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={Promise.all([data.service, data.vendor])}>
                     {([serviceGroup, vendor]) => <Form>
