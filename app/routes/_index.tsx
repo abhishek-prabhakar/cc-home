@@ -389,7 +389,7 @@ const Home = {
 
     function sliderCount() { return isMobile ? 2 : 4; }
 
-    return <Grid justify={'space-between'} align={'middle'}>
+    return <Grid justify={'space-between'} align={'center'}>
       <Grid.Col span={{ base: 12, md: 2 }}>
         <div className="home-section-card-wrapper">
           <Title order={4}>Popular Services</Title>

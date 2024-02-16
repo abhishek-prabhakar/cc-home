@@ -8,7 +8,7 @@ import Skeleton from "./Skeleton";
 export function Footer() {
     const data = useLoaderData<RootLoaderData>();
 
-    return <Container pt={'xl'}>
+    return <Container size={'xl'} pt={'xl'}>
         <Stack gap="lg">
             <Grid gutter={40} style={{ background: '#EEF5FE', borderRadius: '10px', padding: '40px' }}>
                 <Grid.Col span={{ base: 12, md: 4 }}>
