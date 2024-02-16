@@ -344,7 +344,7 @@ const budgetMarks = {
 const SortResultsPanel = () => {
   return (
     <div style={sortPanelStyles}>
-      <Flex align={"middle"} gap={'sm'}>
+      <Flex align={'center'} gap={'sm'}>
         <Text c="dimmed" size="sm">Sort By:</Text>
         <Select
           defaultValue="0"

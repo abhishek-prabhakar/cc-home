@@ -238,7 +238,7 @@ const Home = {
           </Grid.Col>
           <Grid.Col span={12}>
             <div className="card-style-3">
-              <Grid gutter={40} align={'middle'} justify={'center'}>
+              <Grid gutter={40} align={'center'} justify={'center'}>
                 <Grid.Col span={{ base: 12, md: 7 }}>
                   <Stack align="center">
                     <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>
@@ -581,7 +581,7 @@ const Home = {
             <div className="home-section-card-wrapper">
               <Stack>
                 <Title order={5}>{category.name}</Title>
-                {category.vendor.map((vendor, i) => <Grid key={vendor.username} gutter={20} align={'middle'}>
+                {category.vendor.map((vendor, i) => <Grid key={vendor.username} gutter={20} align={'center'}>
                   <Grid.Col>{i + 1}</Grid.Col>
                   <Grid.Col>
                     <Avatar

@@ -198,7 +198,7 @@ const PartnerSignup = {
         className="_rounded"
         style={{ background: "#f8f8f8", padding: "20px" }}
       >
-        <Grid justify={"center"} align={"middle"} gutter={40}>
+        <Grid justify={"center"} align={"center"} gutter={40}>
           <Grid.Col span={{ base: 12, md: 6 }}>
             <Image
               src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg"

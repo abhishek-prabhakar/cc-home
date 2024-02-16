@@ -23,7 +23,7 @@ const SignupSuccess = {
     Index: () => {
 
         return <Container>
-            <Grid justify={'center'} align={'middle'}>
+            <Grid justify={'center'} align={'center'}>
                 <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
                     <Stack gap={'lg'}>
                         <Card withBorder>

@@ -410,7 +410,7 @@ const Photography = {
                                 </div>
                                 <div style={itemDataWapperStyles}>
                                     <div style={itemDataStyles}>
-                                        <Space size={"middle"}>
+                                        <Space size={'middle'}>
                                             <Title level={3}>@{item.name}</Title>
                                             {item.tag && <Tag color="green">{item.tag}</Tag>}
                                         </Space>

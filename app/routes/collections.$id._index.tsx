@@ -38,7 +38,7 @@ const CollectionsPage = {
 
         return <Container style={{ paddingBottom: '40px' }}>
             <div className="section-bg-pattern _pattern-1">
-                <Grid align={"middle"} justify={'center'}>
+                <Grid align={"center"} justify={'center'}>
                     <Grid.Col span={8} style={{ padding: '20px 0' }}>
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.data}>

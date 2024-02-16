@@ -107,7 +107,7 @@ const CollectionsHighlightPage = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
                     {response => <Stack gap={'lg'}>
-                        {response?.map(item => <Grid gutter={20} align={'middle'} key={item.id}>
+                        {response?.map(item => <Grid gutter={20} align={'center'} key={item.id}>
                             <Grid.Col span={{ md: 12 }}>
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}>
                                     <Avatar src={item.image} size={'lg'} />
