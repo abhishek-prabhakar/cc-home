@@ -590,7 +590,7 @@ const Photography = {
                   <Flex gap={'xs'} wrap={'wrap'} align={'center'}>
                     <Text>Services:</Text>
                     {item.services.map((x, index) => (
-                      <Badge variant="outline" key={"tag" + index} size="xs">{x}</Badge>
+                      <Badge variant="light" key={"tag" + index} color="gray" size="xs">{x}</Badge>
                     ))}{" "}
                   </Flex>
                 )}
