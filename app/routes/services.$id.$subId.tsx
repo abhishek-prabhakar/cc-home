@@ -309,28 +309,26 @@ const Photography = {
             });
         }
 
-        return (
-            <InfiniteScroll
-                dataLength={result.length}
-                next={loadNextPage}
-                hasMore={loadMore}
-                loader={
-                    <div style={{ padding: "40px" }}>
-                        <Skeleton />
-                    </div>
-                }
-                endMessage={
-                    <div style={{ textAlign: "center", padding: "40px" }}>
-                        End of results.
-                    </div>
-                }
-            >
-                <Stack gap={'xl'}>
-                    {/* {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)} */}
-                    ....
-                </Stack>
-            </InfiniteScroll>
-        );
+        return result.length ? <InfiniteScroll
+            dataLength={result.length}
+            next={loadNextPage}
+            hasMore={loadMore}
+            loader={
+                <div style={{ padding: "40px" }}>
+                    <Skeleton />
+                </div>
+            }
+            endMessage={
+                <div style={{ textAlign: "center", padding: "40px" }}>
+                    End of results.
+                </div>
+            }
+        >
+            <Stack gap={'xl'}>
+                {/* {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)} */}
+                ....
+            </Stack>
+        </InfiniteScroll> : <></>;
     },
 };
 
