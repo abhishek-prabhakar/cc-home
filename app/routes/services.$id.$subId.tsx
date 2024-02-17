@@ -12,18 +12,13 @@ import {
     useLocation,
     useNavigate,
 } from "@remix-run/react";
-import {
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-} from "@ant-design/icons";
 import Banner from "~/components/Banner";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { forkJoin } from "rxjs";
 import { PATH } from "~/path.data";
-import { Badge, Card, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 
@@ -31,30 +26,6 @@ const sortPanelStyles: React.CSSProperties = {
     background: "var(--ui-color-accent)",
     padding: "10px 20px",
     borderRadius: "4px",
-};
-
-const itemStyles: React.CSSProperties = {};
-const itemThumbStyles: React.CSSProperties = {
-    padding: "0 40px",
-    marginBottom: "-50px",
-};
-const itemDataStyles: React.CSSProperties = { padding: "15px" };
-const itemDataItemStyles: React.CSSProperties = { padding: "5px" };
-const itemDataThumbSetStyles: React.CSSProperties = {
-    width: "100%",
-    height: "150px",
-    objectFit: "cover",
-    cursor: "pointer",
-    borderRadius: "4px",
-};
-const itemDataWapperStyles: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    height: "100%",
-    background: "#f3f3f3",
-    borderRadius: "10px",
-    padding: "20px",
 };
 
 export const meta: V2_MetaFunction = () => {
@@ -267,7 +238,7 @@ const Photography = {
         const data = useLoaderData<typeof loader>();
 
         return (
-            <div className="container">
+            <Container size={'xl'}>
                 <Stack gap={'lg'}>
                     <Grid gutter={40}>
                         <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
@@ -286,11 +257,12 @@ const Photography = {
                                 >
                                     <Await resolve={data?.result}>
                                         {(response) => (
-                                            <Photography.Results
-                                                categoryId={data.meta.categoryId}
-                                                vendors={response.data}
-                                                loadMore={response.loadMore}
-                                            />
+                                            // <Photography.Results
+                                            //     categoryId={data.meta.categoryId}
+                                            //     vendors={response.data}
+                                            //     loadMore={response.loadMore}
+                                            // />
+                                            <div>...</div>
                                         )}
                                     </Await>
                                 </Suspense>
@@ -305,7 +277,7 @@ const Photography = {
                         </Grid.Col>
                     </Grid>
                 </Stack>
-            </div>
+            </Container>
         );
     },
     Results: ({
@@ -317,7 +289,7 @@ const Photography = {
         vendors: Vendor[];
         loadMore: boolean;
     }) => {
-        const data = useLoaderData<loaderData>();
+        const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
         const location = useLocation();
         const [result, setResult] = useState<Vendor[]>([]);
