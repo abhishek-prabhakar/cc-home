@@ -213,3 +213,10 @@ export default function App() {
     </html>
   );
 }
+
+
+export function ErrorBoundary() {
+  return <div>
+    Oops, Something went wrong!
+  </div>
+}
