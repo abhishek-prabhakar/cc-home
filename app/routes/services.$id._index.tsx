@@ -559,7 +559,7 @@ const Photography = {
           </div>
         }
       >
-        <Stack gap={'lg'}>
+        <Stack gap={'xl'}>
           {result?.map((item, index) => (
             <Grid key={"profile" + item.id} gutter={0} align="end">
               <Grid.Col span={{ base: 12, md: 6 }}>
@@ -579,7 +579,6 @@ const Photography = {
                     </Group>
                   </Grid.Col>
                 </Grid>
-                <Space h={'xs'} />
                 <Group gap={'sm'}>
                   <Rating defaultValue={item.rating} fractions={3} readOnly size="sm" />
                   <Text c="dimmed">
@@ -588,8 +587,8 @@ const Photography = {
                 </Group>
                 <Space h={'sm'} />
                 {item.services?.length > 0 && (
-                  <Flex gap={'xs'} style={{ padding: "1px 5px" }} wrap={'wrap'}>
-                    <Text>Services:</Text>{" "}
+                  <Flex gap={'xs'} wrap={'wrap'} align={'center'}>
+                    <Text>Services:</Text>
                     {item.services.map((x, index) => (
                       <Badge variant="outline" key={"tag" + index} size="xs">{x}</Badge>
                     ))}{" "}
@@ -597,12 +596,12 @@ const Photography = {
                 )}
                 <Space h={'sm'} />
                 <Link to={"/profile/" + item.id}>View Profile</Link>
-                <Space h={'md'} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 'auto' }}>
+                <Space h={'md'} />
                 <PhotoProvider>
-                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'}>
-                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '90px', height: '90px' }}>
+                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
+                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
                       <PhotoView src={imageItem}>
                         <Image
                           style={itemDataThumbSetStyles}
@@ -612,7 +611,7 @@ const Photography = {
                       </PhotoView>
                     </Box>)}
                     <Link to={"/profile/" + item.id}>
-                      <Button w={'90px'} h={'90px'} variant="outline">
+                      <Button w={'95px'} h={'95px'} variant="outline">
                         View<br />Profile
                       </Button>
                     </Link>
