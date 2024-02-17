@@ -1,26 +1,25 @@
+import { Accordion, Avatar, Badge, Box, Button, Checkbox, Container, Flex, Grid, Group, Image, Rating, Select, Space, Stack, Text, Title } from "@mantine/core";
 import {
-  defer,
   TypedDeferredData,
+  defer,
   type LoaderArgs,
   type V2_MetaFunction,
 } from "@remix-run/node";
 import {
   Await,
   Link,
-  Outlet,
   useLoaderData,
   useLocation,
   useNavigate,
 } from "@remix-run/react";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import { Suspense, useEffect, useState } from "react";
-import { db } from "~/utils/database";
+import React, { Suspense, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { concat, forkJoin, of, switchMap } from "rxjs";
-import { PATH } from "~/path.data";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import { forkJoin, of, switchMap } from "rxjs";
 import Banner from "~/components/Banner";
-import { Accordion, Avatar, Badge, Button, Checkbox, Container, Flex, Grid, Group, Rating, Select, Stack, Text, Title } from "@mantine/core";
 import Skeleton from "~/components/Skeleton";
+import { PATH } from "~/path.data";
+import { db } from "~/utils/database";
 
 const sortPanelStyles: React.CSSProperties = {
   background: "var(--ui-color-accent)",
@@ -34,22 +33,22 @@ const itemThumbStyles: React.CSSProperties = {
   marginBottom: "-50px",
 };
 const itemDataStyles: React.CSSProperties = { padding: "15px" };
-const itemDataItemStyles: React.CSSProperties = { padding: "5px" };
+const itemDataItemStyles: React.CSSProperties = {
+  height: "200px",
+  overflow: "hidden",
+};
+
+const itemDataItemStyles1: React.CSSProperties = {
+  height: "200px",
+  overflow: "hidden",
+};
 const itemDataThumbSetStyles: React.CSSProperties = {
   width: "100%",
-  height: "150px",
+  height: "100%",
   objectFit: "cover",
   cursor: "pointer",
   borderRadius: "4px",
-};
-const itemDataWapperStyles: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  height: "100%",
-  background: "#f3f3f3",
-  borderRadius: "10px",
-  padding: "20px",
+  background: '#808080'
 };
 
 export const meta: V2_MetaFunction = () => {
@@ -365,7 +364,7 @@ const Photography = {
     return (
       <Container size={'xl'} >
         <Stack gap={'lg'}>
-          <Banner.Default />
+          {/* <Banner.Default /> */}
           <Grid gutter={40}>
             <Photography.Filters />
             <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
@@ -560,75 +559,68 @@ const Photography = {
           </div>
         }
       >
-        {" "}
-        <Grid gutter={40}>
-          {result?.map((item) => (
-            <Grid.Col span={12} key={"profile" + item.id}>
-              <div style={itemStyles}>
-                <div style={itemThumbStyles}>
-                  <Grid justify={"end"}>
-                    <Grid.Col span={{ base: 6, md: 2, lg: 2 }}>
-                      <Avatar
-                        size={'lg'}
-                        src={item.profileImg}
-                      />
-                    </Grid.Col>
-                  </Grid>
-                </div>
-                <div style={itemDataWapperStyles}>
-                  <div style={itemDataStyles}>
-                    <Flex gap={'md'}>
-                      <Title order={3}>@{item.name}</Title>
-                      {item.tag && <Badge color="green">{item.tag}</Badge>}
-                    </Flex>
-                    <Grid justify={"space-between"} gutter={20}>
-                      <Grid.Col>
-                        <Rating value={item.rating} />{" "}
-                        {item.rating}{" "}
-                        <Text c="dimmed">
-                          (23 Reviews)
-                        </Text>
-                      </Grid.Col>
-                      <Grid.Col>
-                        <Button
-                          variant="filled"
-                          radius={'xl'}
-                          onClick={() => navigate("/profile/" + item.id)}
-                        >
-                          View Profile
-                        </Button>
-                      </Grid.Col>
-                    </Grid>
-                  </div>
-                  <PhotoProvider>
-                    <Grid>
-                      {item.portfolio.map((imgThumb, kj) => (
-                        <Grid.Col span={6} key={"thumb" + kj}>
-                          <PhotoView src={imgThumb}>
-                            <div style={itemDataItemStyles}>
-                              <img
-                                style={itemDataThumbSetStyles}
-                                src={imgThumb}
-                                alt={imgThumb}
-                              />
-                            </div>
-                          </PhotoView>
-                        </Grid.Col>
-                      ))}
-                    </Grid>
-                  </PhotoProvider>
-                  <div style={{ padding: "20px 5px" }}>
-                    <Text fw={500} size="sm">Services:</Text>{" "}
+        <Stack gap={'lg'}>
+          {result?.map((item, index) => (
+            <Grid key={"profile" + item.id}>
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                <Grid gutter={'md'}>
+                  <Grid.Col span={{ base: 'content' }}>
+                    <Avatar
+                      size={'xl'}
+                      src={item.profileImg}
+                      onClick={() => navigate("/profile/" + item.id)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 'auto', md: 12 }}>
+                    <Group gap={'sm'} align="center">
+                      <Title order={4}>{item.name}</Title>
+                      {item.tag && <Badge color="green" size="xs">{item.tag}</Badge>}
+                    </Group>
+                  </Grid.Col>
+                </Grid>
+                <Space h={'xs'} />
+                <Group gap={'sm'}>
+                  <Rating defaultValue={item.rating} fractions={3} readOnly size="sm" />
+                  <Text c="dimmed">
+                    (23 Reviews)
+                  </Text>
+                </Group>
+                <Space h={'sm'} />
+                {item.services?.length > 0 && (
+                  <Flex gap={'xs'} style={{ padding: "1px 5px" }} wrap={'wrap'}>
+                    <Text>Services:</Text>{" "}
                     {item.services.map((x, index) => (
-                      <Badge key={"tag" + index}>{x}</Badge>
+                      <Badge key={"tag" + index} size="xs">{x}</Badge>
                     ))}{" "}
-                    <Link to={"/profile/" + item.id}>View all</Link>
-                  </div>
-                </div>
-              </div>
-            </Grid.Col>
+                  </Flex>
+                )}
+                <Space h={'sm'} />
+                <Link to={"/profile/" + item.id}>View Profile</Link>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 'content' }}>
+                <PhotoProvider>
+                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'}>
+                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '100px', height: '100px' }}>
+                      <PhotoView src={imageItem}>
+                        <Image
+                          style={itemDataThumbSetStyles}
+                          src={imageItem}
+                          alt={'reload to display image'}
+                        />
+                      </PhotoView>
+                    </Box>)}
+                    <Link to={"/profile/" + item.id}>
+                      <Button w={'100px'} h={'100px'} variant="outline">
+                        View<br />Profile
+                      </Button>
+                    </Link>
+                  </Flex>
+                </PhotoProvider>
+              </Grid.Col>
+            </Grid>
           ))}
-        </Grid>
+        </Stack>
       </InfiniteScroll>
     );
   },
