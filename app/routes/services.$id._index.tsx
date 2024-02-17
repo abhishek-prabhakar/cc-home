@@ -561,7 +561,7 @@ const Photography = {
       >
         <Stack gap={'lg'}>
           {result?.map((item, index) => (
-            <Grid key={"profile" + item.id}>
+            <Grid key={"profile" + item.id} justify="space-between" align="end">
               <Grid.Col span={{ base: 12, md: 6 }}>
                 <Grid gutter={'md'}>
                   <Grid.Col span={{ base: 'content' }}>
