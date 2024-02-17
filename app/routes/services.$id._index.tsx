@@ -563,7 +563,7 @@ const Photography = {
           {result?.map((item, index) => (
             <Grid key={"profile" + item.id} gutter={0} align="end">
               <Grid.Col span={{ base: 12, md: 6 }}>
-                <Grid gutter={'md'}>
+                <Grid gutter={'md'} align="center">
                   <Grid.Col span={{ base: 'content' }}>
                     <Avatar
                       size={'xl'}
@@ -577,14 +577,14 @@ const Photography = {
                       <Title order={4}>{item.name}</Title>
                       {item.tag && <Badge color="green" size="xs">{item.tag}</Badge>}
                     </Group>
+                    <Group gap={'sm'}>
+                      <Rating defaultValue={item.rating} fractions={3} readOnly size="sm" />
+                      <Text c="dimmed">
+                        (23 Reviews)
+                      </Text>
+                    </Group>
                   </Grid.Col>
                 </Grid>
-                <Group gap={'sm'}>
-                  <Rating defaultValue={item.rating} fractions={3} readOnly size="sm" />
-                  <Text c="dimmed">
-                    (23 Reviews)
-                  </Text>
-                </Group>
                 <Space h={'sm'} />
                 {item.services?.length > 0 && (
                   <Flex gap={'xs'} wrap={'wrap'} align={'center'}>
