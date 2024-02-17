@@ -561,7 +561,7 @@ const Photography = {
       >
         <Stack gap={'lg'}>
           {result?.map((item, index) => (
-            <Grid key={"profile" + item.id} justify="space-between" align="end">
+            <Grid key={"profile" + item.id} gutter={0} align="end">
               <Grid.Col span={{ base: 12, md: 6 }}>
                 <Grid gutter={'md'}>
                   <Grid.Col span={{ base: 'content' }}>
@@ -591,17 +591,18 @@ const Photography = {
                   <Flex gap={'xs'} style={{ padding: "1px 5px" }} wrap={'wrap'}>
                     <Text>Services:</Text>{" "}
                     {item.services.map((x, index) => (
-                      <Badge key={"tag" + index} size="xs">{x}</Badge>
+                      <Badge variant="outline" key={"tag" + index} size="xs">{x}</Badge>
                     ))}{" "}
                   </Flex>
                 )}
                 <Space h={'sm'} />
                 <Link to={"/profile/" + item.id}>View Profile</Link>
+                <Space h={'md'} />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 'content' }}>
+              <Grid.Col span={{ base: 12, md: 'auto' }}>
                 <PhotoProvider>
-                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'}>
-                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '100px', height: '100px' }}>
+                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'}>
+                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '90px', height: '90px' }}>
                       <PhotoView src={imageItem}>
                         <Image
                           style={itemDataThumbSetStyles}
@@ -611,7 +612,7 @@ const Photography = {
                       </PhotoView>
                     </Box>)}
                     <Link to={"/profile/" + item.id}>
-                      <Button w={'100px'} h={'100px'} variant="outline">
+                      <Button w={'90px'} h={'90px'} variant="outline">
                         View<br />Profile
                       </Button>
                     </Link>
