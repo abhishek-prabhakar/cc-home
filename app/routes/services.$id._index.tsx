@@ -594,8 +594,6 @@ const Photography = {
                     ))}{" "}
                   </Flex>
                 )}
-                <Space h={'sm'} />
-                <Link to={"/profile/" + item.id}>View Profile</Link>
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 'auto' }}>
                 <Space h={'md'} />
