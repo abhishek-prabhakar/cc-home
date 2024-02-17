@@ -1,4 +1,4 @@
-import { Accordion, Avatar, Badge, Box, Button, Checkbox, Container, Flex, Grid, Group, Image, Rating, Select, Space, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Checkbox, Container, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import {
   TypedDeferredData,
   defer,
@@ -7,16 +7,15 @@ import {
 } from "@remix-run/node";
 import {
   Await,
-  Link,
   useLoaderData,
   useLocation,
   useNavigate,
 } from "@remix-run/react";
 import React, { Suspense, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { PhotoProvider, PhotoView } from "react-photo-view";
 import { forkJoin, of, switchMap } from "rxjs";
 import Banner from "~/components/Banner";
+import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { db } from "~/utils/database";
@@ -27,29 +26,6 @@ const sortPanelStyles: React.CSSProperties = {
   borderRadius: "4px",
 };
 
-const itemStyles: React.CSSProperties = {};
-const itemThumbStyles: React.CSSProperties = {
-  padding: "0 40px",
-  marginBottom: "-50px",
-};
-const itemDataStyles: React.CSSProperties = { padding: "15px" };
-const itemDataItemStyles: React.CSSProperties = {
-  height: "200px",
-  overflow: "hidden",
-};
-
-const itemDataItemStyles1: React.CSSProperties = {
-  height: "200px",
-  overflow: "hidden",
-};
-const itemDataThumbSetStyles: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  cursor: "pointer",
-  borderRadius: "4px",
-  background: '#808080'
-};
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -560,64 +536,7 @@ const Photography = {
         }
       >
         <Stack gap={'xl'}>
-          {result?.map((item, index) => (
-            <Grid key={"profile" + item.id} gutter={0} align="end">
-              <Grid.Col span={{ base: 12, md: 6 }}>
-                <Grid gutter={'md'} align="center">
-                  <Grid.Col span={{ base: 'content' }}>
-                    <Avatar
-                      size={'xl'}
-                      src={item.profileImg}
-                      onClick={() => navigate("/profile/" + item.id)}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 'auto', md: 12 }}>
-                    <Group gap={'sm'} align="center">
-                      <Title order={4}>{item.name}</Title>
-                      {item.tag && <Badge color="green" size="xs">{item.tag}</Badge>}
-                    </Group>
-                    <Group gap={'sm'}>
-                      <Rating defaultValue={item.rating} fractions={3} readOnly size="sm" />
-                      <Text c="dimmed">
-                        (23 Reviews)
-                      </Text>
-                    </Group>
-                  </Grid.Col>
-                </Grid>
-                <Space h={'sm'} />
-                {item.services?.length > 0 && (
-                  <Flex gap={'xs'} wrap={'wrap'} align={'center'}>
-                    <Text>Services:</Text>
-                    {item.services.map((x, index) => (
-                      <Badge variant="light" key={"tag" + index} color="gray" size="xs">{x}</Badge>
-                    ))}{" "}
-                  </Flex>
-                )}
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 'auto' }}>
-                <Space h={'md'} />
-                <PhotoProvider>
-                  <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
-                    {item.portfolio.map((imageItem, i) => <Box style={i === 0 || item.portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
-                      <PhotoView src={imageItem}>
-                        <Image
-                          style={itemDataThumbSetStyles}
-                          src={imageItem}
-                          alt={'reload to display image'}
-                        />
-                      </PhotoView>
-                    </Box>)}
-                    <Link to={"/profile/" + item.id}>
-                      <Button w={'95px'} h={'95px'} variant="outline">
-                        View<br />Profile
-                      </Button>
-                    </Link>
-                  </Flex>
-                </PhotoProvider>
-              </Grid.Col>
-            </Grid>
-          ))}
+          {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} />)}
         </Stack>
       </InfiniteScroll>
     );

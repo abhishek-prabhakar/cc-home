@@ -17,39 +17,15 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from "@ant-design/icons";
-import {
-    Avatar,
-    Badge,
-    Button,
-    Card,
-    Checkbox,
-    Col,
-    Collapse,
-    CollapseProps,
-    Divider,
-    Layout,
-    Menu,
-    Rate,
-    Row,
-    Select,
-    Skeleton,
-    Slider,
-    Space,
-    Tag,
-    Typography,
-    theme,
-} from "antd";
 import Banner from "~/components/Banner";
-import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ServiceGroup } from "@prisma/client";
-import { concat, forkJoin, of, switchMap } from "rxjs";
+import { forkJoin } from "rxjs";
 import { PATH } from "~/path.data";
-import Routes from "~/routes.data";
-const { Title } = Typography;
-const { Header, Content, Footer, Sider } = Layout;
+import { Badge, Card, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import ProfileQuickCard from "~/components/ProfileQuickCard";
+import Skeleton from "~/components/Skeleton";
 
 const sortPanelStyles: React.CSSProperties = {
     background: "var(--ui-color-accent)",
@@ -272,19 +248,16 @@ export async function loader({
 const SortResultsPanel = () => {
     return (
         <div style={sortPanelStyles}>
-            <Row align={"middle"}>
-                <Col>Sort By: </Col>
-                <Col>
-                    <Select
-                        defaultValue="0"
-                        bordered={false}
-                        options={[
-                            { value: "0", label: "Price" },
-                            { value: "1", label: "Rating" },
-                        ]}
-                    />
-                </Col>
-            </Row>
+            <Group align="center">
+                <Text>Sort By: </Text>
+                <Select
+                    defaultValue="0"
+                    data={[
+                        { value: "0", label: "Price" },
+                        { value: "1", label: "Rating" },
+                    ]}
+                />
+            </Group>
         </div>
     );
 };
@@ -295,26 +268,21 @@ const Photography = {
 
         return (
             <div className="container">
-                <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
-                    <Row gutter={[40, 40]}>
-                        <Col sm={24} xs={24} md={16} lg={18}>
-                            <Space
-                                direction="vertical"
-                                size={"large"}
-                                style={{ width: "100%" }}
-                            >
-                                <Content>
-                                    <Typography.Text type="secondary"><Tag color="magenta">{data.meta.name}</Tag> in Banglore</Typography.Text>
-                                    <Suspense>
-                                        <Await resolve={data.data}>
-                                            {response => <Title style={{ marginTop: '12px' }} level={3}>{response?.name}</Title>}
-                                        </Await>
-                                    </Suspense>
-                                    <p>{data.meta.description}</p>
-                                </Content>
+                <Stack gap={'lg'}>
+                    <Grid gutter={40}>
+                        <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
+                            <Stack gap={'lg'}>
+                                <Text c="dimmed"><Badge color="magenta">{data.meta.name}</Badge> in Banglore</Text>
+                                <Suspense>
+                                    <Await resolve={data.data}>
+                                        {response => <Title order={3}>{response?.name}</Title>}
+                                    </Await>
+                                </Suspense>
+                                <p>{data.meta.description}</p>
+
                                 <SortResultsPanel />
                                 <Suspense
-                                    fallback={<Skeleton active avatar paragraph={{ rows: 4 }} />}
+                                    fallback={<Skeleton />}
                                 >
                                     <Await resolve={data?.result}>
                                         {(response) => (
@@ -326,17 +294,17 @@ const Photography = {
                                         )}
                                     </Await>
                                 </Suspense>
-                            </Space>
-                        </Col>
-                        <Col sm={24} xs={24} md={8} lg={6}>
+                            </Stack>
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
                             <Card style={{ borderColor: '#c6c3c3', borderRadius: '20px' }}>
-                                <Typography.Title className="_underline" level={3}>Hiring<br />Without the<br />Headache</Typography.Title>
+                                <Title order={3}>Hiring<br />Without the<br />Headache</Title>
 
                                 <img style={{ maxWidth: '100%' }} src="/assets/web-thumb1.jpg" />
                             </Card>
-                        </Col>
-                    </Row>
-                </Space>
+                        </Grid.Col>
+                    </Grid>
+                </Stack>
             </div>
         );
     },
@@ -377,7 +345,7 @@ const Photography = {
                 hasMore={loadMore}
                 loader={
                     <div style={{ padding: "40px" }}>
-                        <Skeleton active avatar paragraph={{ rows: 4 }} />
+                        <Skeleton />
                     </div>
                 }
                 endMessage={
@@ -386,82 +354,9 @@ const Photography = {
                     </div>
                 }
             >
-                {" "}
-                <Row gutter={[0, 40]}>
-                    {result?.map((item) => (
-                        <Col span={24} key={"profile" + item.id}>
-                            <div style={itemStyles}>
-                                <div style={itemThumbStyles}>
-                                    <Row justify={"end"}>
-                                        <Col xs={6} sm={6} md={3} lg={3}>
-                                            <Avatar
-                                                size={{
-                                                    xs: 100,
-                                                    sm: 100,
-                                                    md: 100,
-                                                    lg: 120,
-                                                    xl: 120,
-                                                    xxl: 120,
-                                                }}
-                                                src={item.profileImg}
-                                            />
-                                        </Col>
-                                    </Row>
-                                </div>
-                                <div style={itemDataWapperStyles}>
-                                    <div style={itemDataStyles}>
-                                        <Space size={'middle'}>
-                                            <Title level={3}>@{item.name}</Title>
-                                            {item.tag && <Tag color="green">{item.tag}</Tag>}
-                                        </Space>
-                                        <Row justify={"space-between"} gutter={[20, 20]}>
-                                            <Col>
-                                                <Rate allowHalf disabled defaultValue={item.rating} />{" "}
-                                                {item.rating}{" "}
-                                                <Typography.Text type="secondary">
-                                                    (23 Reviews)
-                                                </Typography.Text>
-                                            </Col>
-                                            <Col>
-                                                <Button
-                                                    type="primary"
-                                                    shape="round"
-                                                    onClick={() => navigate(Routes.VendorProfileWithService.replace(':id', item.id).replace(':sGrpId', categoryId || ''))}
-                                                >
-                                                    View Profile
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </div>
-                                    <PhotoProvider>
-                                        <Row>
-                                            {item.portfolio.map((imgThumb, kj) => (
-                                                <Col span={6} key={"thumb" + kj}>
-                                                    <PhotoView src={imgThumb}>
-                                                        <div style={itemDataItemStyles}>
-                                                            <img
-                                                                style={itemDataThumbSetStyles}
-                                                                src={imgThumb}
-                                                                alt={imgThumb}
-                                                            />
-                                                        </div>
-                                                    </PhotoView>
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </PhotoProvider>
-                                    <div style={{ padding: "20px 5px" }}>
-                                        <Typography.Text strong>Services:</Typography.Text>{" "}
-                                        {item.services.map((x, index) => (
-                                            <Tag key={"tag" + index}>{x}</Tag>
-                                        ))}{" "}
-                                        <Link to={Routes.VendorProfileWithService.replace(':id', item.id).replace(':sGrpId', categoryId || '')}>View all</Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </Col>
-                    ))}
-                </Row>
+                <Stack gap={'xl'}>
+                    {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)}
+                </Stack>
             </InfiniteScroll>
         );
     },
