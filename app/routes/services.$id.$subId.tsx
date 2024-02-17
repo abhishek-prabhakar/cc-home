@@ -257,12 +257,11 @@ const Photography = {
                                 >
                                     <Await resolve={data?.result}>
                                         {(response) => (
-                                            // <Photography.Results
-                                            //     categoryId={data.meta.categoryId}
-                                            //     vendors={response.data}
-                                            //     loadMore={response.loadMore}
-                                            // />
-                                            <div>...</div>
+                                            <Photography.Results
+                                                categoryId={data.meta.categoryId}
+                                                vendors={response.data}
+                                                loadMore={response.loadMore}
+                                            />
                                         )}
                                     </Await>
                                 </Suspense>
@@ -327,7 +326,8 @@ const Photography = {
                 }
             >
                 <Stack gap={'xl'}>
-                    {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)}
+                    {/* {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)} */}
+                    ....
                 </Stack>
             </InfiniteScroll>
         );
