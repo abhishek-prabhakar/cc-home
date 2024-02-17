@@ -1,6 +1,6 @@
+import { Grid, Stack, Title } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Button, Col, Row, Space, Typography } from "antd";
 import Masonry from "react-masonry-css";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
@@ -25,11 +25,11 @@ export default function Portfolio() {
     const data = useLoaderData<loaderData>();
 
     return <div className="container">
-        <Space direction="vertical" size={'large'}>
-            <Row justify={'space-between'} align={'middle'} gutter={[10, 20]}>
-                <Col span={24}><Typography.Title level={2}>Our amazing work</Typography.Title></Col>
-                <Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Col>
-            </Row>
+        <Stack gap={'lg'}>
+            <Grid justify={'space-between'} align={'middle'} gutter={20}>
+                <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
+                <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
+            </Grid>
             <div>
                 <PhotoProvider>
                     <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
@@ -39,6 +39,6 @@ export default function Portfolio() {
                     </Masonry>
                 </PhotoProvider>
             </div>
-        </Space>
+        </Stack>
     </div>
 }

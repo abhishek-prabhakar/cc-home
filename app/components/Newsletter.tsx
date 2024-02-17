@@ -1,13 +1,13 @@
-import { Button, Input, Space, Typography } from "antd";
+import { Button, Input, Stack, Text } from "@mantine/core";
 
 export function Newsletter() {
-    return <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
+    return <Stack gap={'md'}>
         <div>
-            <Typography.Text style={{ fontSize: '20px' }}>Newsletter</Typography.Text>
+            <Text>Newsletter</Text>
             <br />
-            <Typography.Text type="secondary">Want to be always informed?</Typography.Text>
+            <Text c="dimmed">Want to be always informed?</Text>
         </div>
         <Input placeholder="Your email" />
-        <Button block size="large" type="primary">Subscribe</Button>
-    </Space>
+        <Button size="lg" >Subscribe</Button>
+    </Stack>
 }

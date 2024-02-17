@@ -15,7 +15,7 @@ const itemDataThumbSetStyles: React.CSSProperties = {
 function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string }) {
   const url = categoryId ? Routes.VendorProfileWithService.replace(':id', id).replace(':sGrpId', categoryId) : Routes.VendorProfile.replace(':id', id);
 
-  return <Grid key={"profile" + id} gutter={0} align="end">
+  return <Grid gutter={0} align="end">
     <Grid.Col span={{ base: 12, md: 6 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
@@ -54,7 +54,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
       <Space h={'md'} />
       <PhotoProvider>
         <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
-          {portfolio.map((imageItem, i) => <Box style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
+          {portfolio?.map((imageItem, i) => <Box style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
             <PhotoView src={imageItem}>
               <Image
                 style={itemDataThumbSetStyles}
