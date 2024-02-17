@@ -13,13 +13,16 @@ const itemDataThumbSetStyles: React.CSSProperties = {
 };
 
 function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string }) {
-  const url = categoryId ? Routes.VendorProfileWithService.replace(':id', id).replace(':sGrpId', categoryId) : Routes.VendorProfile.replace(':id', id);
+
+  function url() {
+    return categoryId ? Routes.VendorProfileWithService.replace(':id', id).replace(':sGrpId', categoryId) : Routes.VendorProfile.replace(':id', id);
+  }
 
   return <Grid gutter={0} align="end">
     <Grid.Col span={{ base: 12, md: 6 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
-          <Link to={url}>
+          <Link to={url()}>
             <Avatar
               size={'xl'}
               src={profileImg}
@@ -63,7 +66,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
               />
             </PhotoView>
           </Box>)}
-          <Link to={url}>
+          <Link to={url()}>
             <Button w={'95px'} h={'95px'} variant="outline">
               View<br />Profile
             </Button>
