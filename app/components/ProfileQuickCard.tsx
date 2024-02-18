@@ -7,7 +7,6 @@ const itemDataThumbSetStyles: React.CSSProperties = {
   width: "100%",
   height: "100%",
   objectFit: "cover",
-  cursor: "pointer",
   borderRadius: "4px",
   background: '#808080'
 };
@@ -60,6 +59,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           {portfolio?.map((imageItem, i) => <Box style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
             <PhotoView src={imageItem}>
               <Image
+                className="cursor-pointer"
                 style={itemDataThumbSetStyles}
                 src={imageItem}
                 alt={'reload to display image'}
