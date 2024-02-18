@@ -66,6 +66,12 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
               />
             </PhotoView>
           </Box>)}
+          {!portfolio?.length ? [
+            <Box key="empty-box-1" w={'95px'} h={'95px'} opacity={0.1}><div style={itemDataThumbSetStyles}></div></Box>,
+            <Box key="empty-box-2" w={'95px'} h={'95px'}></Box>,
+            <Box key="empty-box-3" w={'95px'} h={'95px'}></Box>,
+            <Box key="empty-box-4" w={'95px'} h={'95px'} opacity={0.3}><div style={itemDataThumbSetStyles}></div></Box>,
+            <Box key="empty-box-5" w={'95px'} h={'95px'} opacity={0.2}><div style={itemDataThumbSetStyles}></div></Box>] : <></>}
           <Link to={url()}>
             <Button w={'95px'} h={'95px'} variant="outline">
               View<br />Profile

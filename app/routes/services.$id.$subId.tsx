@@ -309,7 +309,7 @@ const Photography = {
             });
         }
 
-        return result.length ? <InfiniteScroll
+        return <InfiniteScroll
             dataLength={result.length}
             next={loadNextPage}
             hasMore={loadMore}
@@ -327,7 +327,7 @@ const Photography = {
             <Stack gap={'xl'}>
                 {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)}
             </Stack>
-        </InfiniteScroll> : <></>;
+        </InfiniteScroll>;
     },
 };
 
