@@ -45,7 +45,6 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
       <Space h={'sm'} />
       {services?.length > 0 && (
         <Flex gap={'xs'} wrap={'wrap'} align={'center'}>
-          <Text>Services:</Text>
           {services.map((x, index) => (
             <Badge variant="light" key={"tag" + index} color="gray" size="xs">{x}</Badge>
           ))}{" "}
