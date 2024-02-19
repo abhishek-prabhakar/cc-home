@@ -34,18 +34,16 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
     return <>
         <div >
             <Container size={'xl'}>
-                <Grid justify={'space-between'} align="center" gutter={'md'}>
-                    <Grid.Col span={'content'}>
-                        <Grid>
-                            <Grid.Col span={{ base: 'content', md: 0, lg: 0, xl: 0 }} hiddenFrom="md" >
+                <Grid justify={'space-between'} align="center" gutter={0} py={10}>
+                    <Grid.Col span={{ base: 'content', md: 3 }}>
+                        <Group gap={'sm'}>
+                            <Box hiddenFrom="md">
                                 <AppNavigation.Drawer />
-                            </Grid.Col>
-                            <Grid.Col span={'content'}>
-                                <div className="header-brand">
-                                    <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
-                                </div>
-                            </Grid.Col>
-                            <Grid.Col span={{ base: 0, md: 'content' }} visibleFrom="md">
+                            </Box>
+                            <div className="header-brand">
+                                <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
+                            </div>
+                            <Box visibleFrom="md">
                                 <Menu>
                                     <Menu.Target>
                                         <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
@@ -57,13 +55,13 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                         {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
                                     </Menu.Dropdown>
                                 </Menu >
-                            </Grid.Col>
-                        </Grid>
+                            </Box>
+                        </Group>
                     </Grid.Col>
                     <Grid.Col span={'auto'} visibleFrom="md" >
                         <AppNavigation.MainMenu />
                     </Grid.Col>
-                    <Grid.Col span={'content'}>
+                    <Grid.Col span={{ base: 'content', md: 3 }}>
                         <Flex gap={20} justify={'end'} align="center">
                             <Link to="/cart/checkout">
                                 <Indicator disabled={!cartCount} inline processing color="red" size={12} label={cartCount}>

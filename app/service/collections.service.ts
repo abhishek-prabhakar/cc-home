@@ -44,6 +44,9 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                             where: {
                                 isOptional: false
                             },
+                            orderBy: {
+                                position: 'asc'
+                            },
                             take: 5
                         }
                     }
