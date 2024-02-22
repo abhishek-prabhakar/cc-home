@@ -5,6 +5,7 @@ import { Form, useLocation } from "@remix-run/react";
 import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
+import { VendorQuery } from "~/service/vendor.service";
 import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
 import usernameTransformer from "~/utils/username.transformer";
@@ -43,17 +44,12 @@ export async function action(args: ActionArgs) {
                     }
                     while (!usernameAccepted);
 
-                    const data = await db.vendor.create({
-                        data: {
-                            id: generateUuid(),
-                            name: fullName,
-                            mobileNumber,
-                            email,
-                            username: newUsername,
-                            source: UserSource.MANUAL,
-                            isActive: false,
-                            socialUrl
-                        }
+                    const data = await VendorQuery.Signup({
+                        fullName: fullName,
+                        mobileNumber,
+                        email,
+                        username: newUsername,
+                        socialUrl
                     });
 
                     await db.vendorPortfolio.createMany({

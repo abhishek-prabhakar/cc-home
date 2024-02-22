@@ -1,8 +1,32 @@
+import { UserSource } from "@prisma/client";
 import { PATH } from "~/path.data";
 import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
 import { db } from "~/utils/database";
+import generateUuid from "~/utils/uuid.generator";
 
 export const VendorQuery = {
+    Signup: (props: {
+        fullName: string,
+        mobileNumber: string,
+        email: string,
+        username: string
+        socialUrl?: string | null,
+        categoryId?: string | null
+    }) => {
+        return db.vendor.create({
+            data: {
+                id: generateUuid(),
+                name: props.fullName,
+                mobileNumber: props.mobileNumber,
+                email: props.email,
+                username: props.username,
+                source: UserSource.MANUAL,
+                isActive: false,
+                socialUrl: props.socialUrl,
+                categoryId: props.categoryId
+            }
+        });
+    },
     getVendorByUsername: (username: string) => {
         return new Promise<VendorProfile | null>(function (resolve, reject) {
             db.vendor.findFirstOrThrow({

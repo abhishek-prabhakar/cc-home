@@ -6,7 +6,8 @@ const Routes = {
     Services: '/services/:id',
     ServiceGroup: '/services/:id/:subId',
     Cart: '/cart/checkout',
-    CartItem: '/cart/add/:id'
+    CartItem: '/cart/add/:id',
+    VendorSignupForm: '/partner/signup/onboard/:id'
 }
 
 export default Routes;
