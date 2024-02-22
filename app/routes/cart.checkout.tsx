@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Stack, Text, Textarea, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Space, Stack, Text, Textarea, Title } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -34,7 +34,7 @@ const Cart = {
 
         return <Container size={'xl'} >
             <Title order={3}>Checkout</Title>
-            <Divider />
+            <Space h={'md'} />
             <Grid gutter={30}>
                 <Grid.Col span={{ base: 12, md: 4, lg: 8 }}>
                     <Suspense fallback={<Skeleton />}>
@@ -65,52 +65,51 @@ const Cart = {
             setEditService({ id, services });
         }
 
-        return <>
-            {cart.map((data, i) =>
-                [<Grid gutter={20} key={data.vendorServiceGroupId + i}>
-                    <Grid.Col span={{ base: 12, md: 5 }}>
-                        <Card withBorder>
-                            <Card.Section>
-                                <Image
-                                    style={{ width: '100%', height: '100px', objectFit: 'cover' }}
-                                    src={data.coverImg || ''}
-                                />
-                            </Card.Section>
-                            <Flex justify={'center'} gap={'lg'}>
-                                <DeleteOutlined key="remove" />,
-                                <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
-                            </Flex>
-                            <Group justify="space-between">
-                                <Flex>
-                                    <Avatar src={data.vendorImg} />
-                                    <Text size="sm">{data.name}</Text>
-                                </Flex>
-                                <Badge>{data.vendorType}</Badge>
-                            </Group>
-                            <Stack>
-                                <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
-                                <br />
-                                <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
-                                <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={{ base: 12, md: 7 }}>
-                        <Stack>
-                            <Text size="sm" fw={500}>Personal Note:</Text>
-                            <Textarea
-                                placeholder="Write down your requirements here..."
-                                autosize
-                                minRows={4}
-                                maxRows={6}
+        return <Stack>
+            {cart.map((data, i) => <Grid gutter={20} key={data.vendorServiceGroupId + i}>
+                <Grid.Col span={{ base: 12, md: 5 }}>
+                    <Card withBorder>
+                        <Card.Section>
+                            <Image
+                                style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                                src={data.coverImg || ''}
                             />
+                        </Card.Section>
+                        <Flex justify={'center'} gap={'lg'}>
+                            <DeleteOutlined key="remove" />,
+                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
+                        </Flex>
+                        <Group justify="space-between">
+                            <Flex>
+                                <Avatar src={data.vendorImg} />
+                                <Text size="sm">{data.name}</Text>
+                            </Flex>
+                            <Badge>{data.vendorType}</Badge>
+                        </Group>
+                        <Stack>
+                            <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
+                            <br />
+                            <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
+                            <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
                         </Stack>
-                    </Grid.Col>
-                </Grid>, <Divider />])}
+                    </Card>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 7 }}>
+                    <Stack>
+                        <Text size="sm" fw={500}>Personal Note:</Text>
+                        <Textarea
+                            placeholder="Write down your requirements here..."
+                            autosize
+                            minRows={4}
+                            maxRows={6}
+                        />
+                    </Stack>
+                </Grid.Col>
+            </Grid>)}
             {!cart?.length && <div>Sorry, Your cart is empty.</div>}
 
             {editService?.id && <Cart.Edit serviceId={editService.id} services={editService.services} onClose={() => setEditService(undefined)} />}
-        </>
+        </Stack>
     },
     Edit: (params: { serviceId: string, services: CartActiveService[], onClose: Function }) => {
         return <Modal opened={true} w={'1000px'} onClose={() => params.onClose()}>

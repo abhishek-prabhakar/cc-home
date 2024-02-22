@@ -12,9 +12,11 @@ export async function action({
     let redirectUrl;
     try {
         const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
-        currentCart.push(newItem)
+        if (newItem) {
+            currentCart.push(newItem);
+        }
 
-        redirectUrl = new URL(body.get('redirectUrl')?.toString() || '');
+        redirectUrl = new URL(body.get('redirectUrl')?.toString() || '/cart/checkout');
         redirectUrl.searchParams.set('cartStatus', 'true');
     } catch (e) {
         redirectUrl = null
