@@ -333,27 +333,29 @@ const Page = {
         //     />
         // </div>
 
-        return <GoogleMap
-            apiKey=""
-            defaultCenter={{ lat: 45.4046987, lng: 12.2472504 }}
-            defaultZoom={5}
-            mapMinHeight="300px"
-            onGoogleApiLoaded={onGoogleApiLoaded}
-            onChange={(map) => console.log('Map moved', map)}
-        >
-            {/* {coordinates.map(({ lat, lng, name }, index) => (
-                <Marker
-                    key={index}
-                    lat={lat}
-                    lng={lng}
-                    markerId={name}
-                // draggable={true}
-                // onDragStart={(e, { latLng }) => {}}
-                // onDrag={(e, { latLng }) => {}}
-                // onDragEnd={(e, { latLng }) => {}}
-                />
-            ))} */}
-        </GoogleMap>
+        return 'hello';
+
+        // return <GoogleMap
+        //     apiKey=""
+        //     defaultCenter={{ lat: 45.4046987, lng: 12.2472504 }}
+        //     defaultZoom={5}
+        //     mapMinHeight="300px"
+        //     onGoogleApiLoaded={onGoogleApiLoaded}
+        //     onChange={(map) => console.log('Map moved', map)}
+        // >
+        //     {/* {coordinates.map(({ lat, lng, name }, index) => (
+        //         <Marker
+        //             key={index}
+        //             lat={lat}
+        //             lng={lng}
+        //             markerId={name}
+        //         // draggable={true}
+        //         // onDragStart={(e, { latLng }) => {}}
+        //         // onDrag={(e, { latLng }) => {}}
+        //         // onDragEnd={(e, { latLng }) => {}}
+        //         />
+        //     ))} */}
+        // </GoogleMap>
     },
     Summary: ({ data }: { data?: FormParams | null }) => {
         const submit = useSubmit();
