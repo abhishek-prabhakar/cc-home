@@ -1,34 +1,50 @@
-import { Alert, Avatar, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
-import { LoaderArgs, defer } from "@remix-run/node";
-import { Await, Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
+import { Await, Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
+import { IconNumber1, IconNumber2 } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { IconNumber3 } from "@tabler/icons-react";
+import { IconNumber4 } from "@tabler/icons-react";
 import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { Suspense, useState } from "react";
+import GoogleMap from "google-maps-react-markers";
+import { Suspense, useEffect, useRef, useState } from "react";
 import COMMON_DATA from "~/data/common.data";
 import { PATH } from "~/path.data";
+import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
-import { CartInput } from "~/types";
+import { CartInput, CartItem } from "~/types";
 import { db } from "~/utils/database";
 
-export async function loader(args: LoaderArgs) {
-    const id = args.params.vendorServiceGroupId || '';
+enum ActionType {
+    ESTIMATION = 'ESTIMATION',
+    ADD_TO_CART = 'ADD_TO_CART',
+    TIME_SLOTS = 'TIME_SLOTS'
+}
 
-    const service = await VendorQuery.getVendorServiceGroup(id);
-    const vendor = await db.vendorServiceGroup.findFirstOrThrow({
-        where: {
-            id
-        },
-        select: {
-            vendor: {
-                select: {
-                    username: true,
-                    profileImageName: true
-                }
-            }
-        }
-    });
+type FormParams = {
+    date?: string;
+    timeHour?: number;
+    services?: {
+        vendorServiceGroupId: string,
+        addonsIds: string[];
+        date?: string;
+        timeHour?: number;
+        duration?: number
+    }[]
+}
+
+async function cartSummary(input: CartInput[]) {
+    const cartSummary = await CartService.summary(input);
+    const estimation = await CartService.calculate(cartSummary);
+    return {
+        cartSummary,
+        estimation
+    }
+}
+
+async function getTimeSlots() {
 
     const timeSlot = [{
         label: '9 AM',
@@ -47,149 +63,390 @@ export async function loader(args: LoaderArgs) {
         label: '12 PM',
         value: 12,
         available: false
-    }]
+    }];
+
+    return timeSlot;
+}
+
+export async function action(args: ActionArgs) {
+    const form = await args.request.formData();
+    const actionType: ActionType = form.get('action')?.toString() as any;
+    switch (actionType) {
+        case ActionType.ESTIMATION:
+            const input: CartInput[] = JSON.parse(form.get('input')?.toString() || '') as any;
+            return await cartSummary(input);
+            break;
+        case ActionType.TIME_SLOTS:
+            return await getTimeSlots();
+            break;
+    }
+
+    return null;
+}
+
+export async function loader(args: LoaderArgs) {
+    const id = args.params.vendorServiceGroupId || '';
+
+    const service = await VendorQuery.getVendorServiceGroup(id);
+    const vendor = await db.vendorServiceGroup.findFirstOrThrow({
+        where: {
+            id
+        },
+        select: {
+            vendor: {
+                select: {
+                    username: true,
+                    profileImageName: true,
+                    vendorType: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+        }
+    });
 
 
     return ({
         serviceGroup: service,
         vendor,
-        vendorServiceGroupId: id,
-        timeSlot
+        vendorServiceGroupId: id
     })
 }
 
-
 const Page = {
     Index: () => {
-        const [selectedAddons, setAddons] = useState<string[]>([]);
-        const submit = useSubmit();
+        const [activeStep, setActiveStep] = useState(1);
         const data = useLoaderData<typeof loader>();
-        const [formData, setFormData] = useState<{ date: Date | null, timeHour: number | null }>({ date: null, timeHour: null });
+        const [formData, setFormData] = useState<FormParams>();
 
+        const steps = [{
+            title: 'Select service',
+            icon: IconNumber1,
+            child: <Page.Addons onChange={updateFormData} />
+        }, {
+            title: 'Select slot',
+            icon: IconNumber2,
+            child: <Page.SelectDate onChange={updateFormData} />
+        }, {
+            title: 'Choose venue',
+            icon: IconNumber3,
+            child: <Page.ChooseVenue />
+        }, {
+            title: 'Confirm',
+            icon: IconNumber4,
+            child: <Page.Summary data={formData} />
+        }];
 
-        function toggleAddon(id: string) {
-            if (selectedAddons.includes(id)) {
-                setAddons(selectedAddons.filter(x => x !== id))
-            } else {
-                setAddons([...selectedAddons, id]);
-            }
-        }
-
-        function setTimeHour(time: number) {
-            setFormData({ ...formData, timeHour: time });
-        }
-
-        function setDate(date: Date) {
-            setFormData({ ...formData, date });
-        }
-
-
-        function addToCart() {
-            if (formData?.date && formData.timeHour) {
-                const input: CartInput = {
-                    vendorServiceGroupId: data.vendorServiceGroupId,
-                    date: formData?.date.toDateString(),
-                    timeHour: formData?.timeHour,
-                    duration: data.serviceGroup.minHour,
-                    services: selectedAddons.map(x => ({ id: x }))
-                }
-
-                submit({ cart: JSON.stringify(input) }, {
-                    action: '/cart/add',
-                    method: 'post',
-                });
-            }
+        function updateFormData(params: FormParams) {
+            setFormData({ ...formData, ...params })
         }
 
         return <Container size={'md'} >
-            <Grid gutter={'md'}>
-                <Grid.Col span={'content'}>
-                    <IconCircleArrowLeft size={24} />
-                </Grid.Col>
+            <Grid gutter={'md'} justify="space-between">
                 <Grid.Col span={'auto'}>
-                    <Title order={5}>{data.serviceGroup.title}</Title>
-                    <Title order={3}>Customize Booking</Title>
+                    <Title order={5}>Book you session</Title>
+                    <Text>Complete these steps to proceed</Text>
                 </Grid.Col>
                 <Grid.Col span={{ sm: 12, md: 'content' }}>
                     <Flex align={'center'} gap={'md'}>
-                        {/* <Title order={5}>{vendor.vendor.username}</Title>
-                                    <Avatar size="xl" src={vendor.vendor.profileImageName ? PATH.RESOURCE_URL + vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} /> */}
+                        <Title order={5}>{data.vendor.vendor.username}</Title>
+                        <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
                     </Flex>
                 </Grid.Col>
             </Grid>
             <Space h="xl" />
-            <Grid gutter={'xl'}>
-                <Grid.Col span={{ base: 12, md: 8 }}>
-                    <Card withBorder>
-                        <SimpleGrid cols={{ base: 1, md: 2, lg: 2 }}>
-                            <Page.SelectDate onChange={setDate} />
-                            <Stack>
-                                <Title order={5}>Select a preferred time</Title>
-                                <Group gap={'sm'}>
-                                    {data.timeSlot.map(time => <Box><Card withBorder>
-                                        <Checkbox checked={formData?.timeHour === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
-                                    </Card></Box>)}
-                                </Group>
 
-                                <Alert variant="outline" color="gray" icon={<IconInfoCircle />}>
-                                    The estimated duration of this job is {data.serviceGroup.minHour} hours.{data.serviceGroup.costExtraHour ? 'An additional amount of ' + <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> + ' will be charged if applicable.' : ''}
-                                </Alert>
-                            </Stack>
-                        </SimpleGrid>
-                    </Card>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Alert variant="light" color="blue">
-                        <Stack>
-                            <Title order={5}>Summary</Title>
-                            <Divider />
-                            <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
-                        </Stack>
-                    </Alert>
-                    <Space h="md" />
-                    <Stack>
-                        <Text>Forgot something?</Text>
-                        <Button variant="outline">Add to cart</Button>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
+            {steps.map((step, i) =>
+                <Box key={'step-' + i}>
+                    <Group>
+                        <ActionIcon variant="light" size="xl" radius="xl" aria-label="Settings">
+                            {/* <IconAdjustments style={{ width: '70%', height: '70%' }} stroke={1.5} /> */}
+                            <step.icon />
+                        </ActionIcon>
+                        <Title order={5}>{step.title}</Title>
+                    </Group>
+                    <Grid>
+                        <Grid.Col span={'content'} p={'0 30px 0 30px'}>
+                            {i < steps.length - 1 ? <Divider orientation="vertical" h="100%" /> : ''}
+                        </Grid.Col>
+                        <Grid.Col span="auto" pt="sm" pb="md">
+                            {step.child}
+                        </Grid.Col>
+                    </Grid>
+                </Box>)}
             <Space h="lg" />
-            {data.serviceGroup.addons.length ? <Stack>
-                <Title order={4}>Recommended Addons</Title>
-                <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
-                    spacing={{ base: 'sm', sm: 'xl' }}>
-                    {data.serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
-                        <Stack gap={'sm'}>
-                            <Checkbox
-                                checked={selectedAddons.includes(item.id)}
-                                color="green"
-                                style={{ userSelect: 'none' }}
-                            />
-                            <Text>{item.title}</Text>
-                            <Text fw={500}><NumberFormatter prefix={COMMON_DATA.currency} value={item.cost} thousandSeparator /></Text>
-                        </Stack>
-                    </Card>)}
-                </SimpleGrid>
-            </Stack> : ''}
         </Container>
     },
-    SelectDate: ({ onChange }: { onChange: (d: Date) => void }) => {
-        const [selected, setSelected] = useState<Date[]>([]);
-        const handleSelect = (date: Date) => {
-            setSelected([date]);
-            onChange(date);
+    Addons: ({ onChange }: { onChange: (p: FormParams) => void }) => {
+        const data = useLoaderData<typeof loader>();
+        const [selectedAddons, setAddons] = useState<string[]>([]);
+
+        useEffect(() => {
+            onChange({
+                services: [{
+                    vendorServiceGroupId: data.vendorServiceGroupId,
+                    addonsIds: []
+                }]
+            });
+        }, []);
+
+        function toggleAddon(id: string) {
+            let newIds;
+            if (selectedAddons.includes(id)) {
+                newIds = selectedAddons.filter(x => x !== id);
+            } else {
+                newIds = [...selectedAddons, id];
+            }
+            setAddons(newIds);
+
+            onChange({
+                services: [{
+                    vendorServiceGroupId: data.vendorServiceGroupId,
+                    addonsIds: newIds
+                }]
+            });
+        }
+
+        return <Card>
+            <Grid>
+                <Grid.Col span={{ base: 12, md: 'auto' }}>
+                    <Stack>
+                        <Image src={data.serviceGroup.image} h={150} w={150} fit="cover" radius={'md'} />
+                        <Title order={5}>{data.serviceGroup.title}</Title>
+                    </Stack>
+                    <Space h="md" />
+                    <Group gap="xs">
+                        <Text fw={500}>Services included:</Text>
+                        {data.serviceGroup.included.map(x => <Text c="dimmed">{x.title}, </Text>)}
+                    </Group>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 'auto' }}>
+
+                    {data.serviceGroup.addons.length ? <Stack>
+                        <Title order={4}>Recommended Addons</Title>
+                        <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
+                            spacing={{ base: 'sm', sm: 'xl' }}>
+                            {data.serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
+                                <Stack gap={'sm'}>
+                                    <Checkbox
+                                        checked={selectedAddons.includes(item.id)}
+                                        color="green"
+                                        style={{ userSelect: 'none' }}
+                                    />
+                                    <Text>{item.title}</Text>
+                                    <Text fw={500}><NumberFormatter prefix={COMMON_DATA.currency} value={item.cost} thousandSeparator /></Text>
+                                </Stack>
+                            </Card>)}
+                        </SimpleGrid>
+                    </Stack> : ''}
+                </Grid.Col>
+            </Grid>
+        </Card>
+    },
+    SelectDate: ({ onChange }: { onChange: (p: FormParams) => void }) => {
+        const [selectedDate, setSelectedDate] = useState<Date>();
+        const [selectedTime, setTime] = useState<number>();
+        const data = useLoaderData<typeof loader>();
+        const fetcher = useFetcher<typeof getTimeSlots>();
+
+        const handleDaySelect = (date: Date) => {
+            setSelectedDate(date);
+            onChange({
+                date: undefined,
+                timeHour: undefined
+            });
+
+            fetcher.submit({
+                date: date.toISOString(),
+                action: ActionType.TIME_SLOTS
+            }, {
+                method: 'post',
+            });
         };
 
-        return <Stack>
-            <Title order={4}>When you are looking for?</Title>
-            <Calendar
-                getDayProps={(date) => ({
-                    selected: selected.some((s) => dayjs(date).isSame(s, 'date')),
-                    onClick: () => handleSelect(date),
-                    disabled: dayjs(date).isBefore(new Date())
-                })}
-            />
-        </Stack>
+        function setTimeHour(time: number) {
+            setTime(time);
+            onChange({
+                date: selectedDate?.toISOString(),
+                timeHour: time
+            });
+        }
+
+        return <Grid gutter={'md'}>
+            <Grid.Col span={{ base: 12, md: 'content' }}>
+                <Text fw={500}>When you are looking for?</Text>
+                <Calendar
+                    getDayProps={(date) => ({
+                        selected: dayjs(date).isSame(selectedDate, 'date'),
+                        onClick: () => handleDaySelect(date),
+                        disabled: dayjs(date).isBefore(new Date())
+                    })}
+                />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 'auto' }}>
+                <Text fw={500}>Select a preferred time</Text>
+                <Suspense fallback={<Skeleton />}>
+                    <Await resolve={fetcher.data}>
+                        {response => <Group gap={'sm'}>
+                            {response?.map(time => <Box><Card withBorder>
+                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
+                            </Card></Box>)}
+                            {!response?.length ? <Text>Please select a date first.</Text> : ''}
+                        </Group>}
+                    </Await>
+                </Suspense>
+                <Space h="md" />
+                <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
+                    The estimated duration of this job is {data.serviceGroup.minHour} hours.{data.serviceGroup.costExtraHour ? 'An additional amount of ' + <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> + ' will be charged if applicable.' : ''}
+                </Alert>
+            </Grid.Col>
+        </Grid>
+    },
+    ChooseVenue: () => {
+        const mapRef = useRef(null)
+        const [mapReady, setMapReady] = useState(false)
+
+        const onGoogleApiLoaded = ({ map, maps }: any) => {
+            mapRef.current = map
+            setMapReady(true)
+        }
+
+        // const onMarkerClick = (e, { markerId, lat, lng }) => {
+        //     console.log('This is ->', markerId)
+
+        //     // inside the map instance you can call any google maps method
+        //     // mapRef.current.setCenter({ lat, lng })
+        //     // ref. https://developers.google.com/maps/documentation/javascript/reference?hl=it
+        // }
+
+        // function handleLocationChange({ position, address, places }) {
+        //     this.setState({ position, address });
+        // }
+        // return <div>
+        //     <LocationPicker
+        //         containerElement={<div style={{ height: '100%' }} />}
+        //         mapElement={<div style={{ height: '400px' }} />}
+        //         defaultPosition={defaultPosition}
+        //         onChange={handleLocationChange}
+        //     />
+        // </div>
+
+        return <GoogleMap
+            apiKey=""
+            defaultCenter={{ lat: 45.4046987, lng: 12.2472504 }}
+            defaultZoom={5}
+            mapMinHeight="300px"
+            onGoogleApiLoaded={onGoogleApiLoaded}
+            onChange={(map) => console.log('Map moved', map)}
+        >
+            {/* {coordinates.map(({ lat, lng, name }, index) => (
+                <Marker
+                    key={index}
+                    lat={lat}
+                    lng={lng}
+                    markerId={name}
+                // draggable={true}
+                // onDragStart={(e, { latLng }) => {}}
+                // onDrag={(e, { latLng }) => {}}
+                // onDragEnd={(e, { latLng }) => {}}
+                />
+            ))} */}
+        </GoogleMap>
+    },
+    Summary: ({ data }: { data?: FormParams | null }) => {
+        const submit = useSubmit();
+        const fetcher = useFetcher<typeof cartSummary>();
+
+        useEffect(() => {
+            if (data?.services?.length && data?.date && data.timeHour) {
+                const params = getInputParams();
+                fetcher.submit({
+                    action: ActionType.ESTIMATION,
+                    input: JSON.stringify(params)
+                }, {
+                    method: 'post'
+                });
+            }
+            else {
+                fetcher.submit({
+                    action: ''
+                }, {
+                    method: 'post'
+                });
+            }
+            console.log('---')
+        }, [data]);
+
+        function addToCart() {
+            const input = getInputParams();
+            submit({ cart: JSON.stringify(input) }, {
+                action: '/cart/add',
+                method: 'post',
+            });
+        }
+
+        function getInputParams() {
+            const params: CartInput[] = data?.services?.map(x => ({
+                vendorServiceGroupId: x.vendorServiceGroupId,
+                date: x.date || data.date || '',
+                timeHour: x.timeHour || data.timeHour || 0,
+                duration: 1,
+                services: x.addonsIds.map(i => ({ id: i }))
+            })) || [];
+
+            return params;
+        }
+
+        return <Grid gutter={'xl'}>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+
+                <Suspense fallback={<Skeleton />}>
+                    <Await resolve={fetcher.data}>
+                        {response => response ? <>
+                            <Alert variant="light" color="blue">
+                                <Stack>
+                                    <Title order={5}>Summary</Title>
+                                    <Divider />
+                                    {
+                                        response?.cartSummary.map(group => <div key={group.vendorServiceGroupId}>
+                                            <b>{group.name}</b>
+                                            {group.services.map(service => <Flex key={service.id} justify={'space-between'}>
+                                                <Text size="sm" fw={500}>{service.name}</Text>
+                                                <Text size="sm">{service.cost} INR</Text>
+                                            </Flex>
+                                            )}
+                                        </div>)}
+                                    <Divider />
+                                    <Flex justify={'space-between'}>
+                                        <Text size="sm" fw={500}>Subtotal</Text>
+                                        <Text size="sm" fw={500}>{response?.estimation?.total} INR</Text>
+                                    </Flex>
+                                    <Flex justify={'space-between'}>
+                                        <Text c="dimmed">GST({response?.estimation?.gst}%)</Text>
+                                        <Text >{response?.estimation?.tax} INR</Text>
+                                    </Flex>
+                                    <Divider />
+                                    <Flex justify={'space-between'}>
+                                        <Text size="sm" fw={500}>Total</Text>
+                                        <Text size="sm" fw={500}>{response?.estimation?.final} INR</Text>
+                                    </Flex>
+                                    <Divider />
+                                    <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
+                                </Stack>
+                            </Alert>
+                            <Space h="md" />
+                            <Stack>
+                                <Text>Forgot something?</Text>
+                                <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
+                            </Stack>
+                        </> : <Text>Complete the above steps to estimate the cost.</Text>
+                        }
+                    </Await>
+                </Suspense>
+            </Grid.Col>
+        </Grid>
     }
 }
 

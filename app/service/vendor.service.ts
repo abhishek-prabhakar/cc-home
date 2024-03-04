@@ -251,6 +251,7 @@ export const VendorQuery = {
                             id: true,
                             name: true,
                             minHour: true,
+                            imageName: true,
                             serviceGroupItem: {
                                 orderBy: {
                                     position: 'asc'
@@ -319,10 +320,11 @@ export const VendorQuery = {
                     return acc;
                 }, []);
 
-                const groupData = {
+                const groupData: VendorService = {
                     vendorServiceGroupId: r.id,
                     groupId: r.group.id,
                     title: r.group.name,
+                    image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
                     minHour: r.group.minHour,
                     cost: r.cost,
                     costExtraHour: r.costExtraHour,

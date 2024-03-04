@@ -64,8 +64,9 @@ const CollectionsHighlightPage = {
                                     <Title order={5}>{service.name}</Title>
                                 </Link>
                                 <ul style={{ paddingLeft: '14px' }}>
+                                    <Text>Includes:</Text>
                                     {service.description.map((description, key) => <li key={'d-' + key}>
-                                        <Text>Includes {description}.</Text>
+                                        <Text>{description}.</Text>
                                     </li>)}
                                 </ul>
                             </Grid.Col>)

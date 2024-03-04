@@ -7,13 +7,13 @@ export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    const currentCart: CartInput[] = await userCartCookie.parse(cookieHeader) || [];
+    let currentCart: CartInput[] = await userCartCookie.parse(cookieHeader) || [];
     const body = await request.formData();
     let redirectUrl;
     try {
         const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
         if (newItem) {
-            currentCart.push(newItem);
+            currentCart = currentCart.concat(newItem);
         }
 
         redirectUrl = new URL(body.get('redirectUrl')?.toString() || '/cart/checkout');
