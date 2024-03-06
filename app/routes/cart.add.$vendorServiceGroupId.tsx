@@ -247,12 +247,13 @@ const Page = {
     },
     SelectDate: ({ onChange }: { onChange: (p: FormParams) => void }) => {
         const [selectedDate, setSelectedDate] = useState<Date>();
-        const [selectedTime, setTime] = useState<number>();
+        const [selectedTime, setTime] = useState<number | null>();
         const data = useLoaderData<typeof loader>();
         const fetcher = useFetcher<typeof getTimeSlots>();
 
         const handleDaySelect = (date: Date) => {
             setSelectedDate(date);
+            setTime(null);
             onChange({
                 date: undefined,
                 timeHour: undefined
