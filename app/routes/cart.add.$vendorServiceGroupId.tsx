@@ -26,12 +26,14 @@ enum ActionType {
 type FormParams = {
     date?: string;
     timeHour?: number;
+    venue?: string;
     services?: {
         vendorServiceGroupId: string,
         addonsIds: string[];
         date?: string;
         timeHour?: number;
-        duration?: number
+        duration?: number;
+        venue?: string;
     }[]
 }
 
@@ -124,14 +126,17 @@ const Page = {
         const steps = [{
             title: 'Select service',
             icon: IconNumber1,
+            success: formData?.services?.length ? true : false,
             child: <Page.Addons onChange={updateFormData} />
         }, {
             title: 'Select slot',
             icon: IconNumber2,
+            success: formData?.date && formData.timeHour,
             child: <Page.SelectDate onChange={updateFormData} />
         }, {
             title: 'Choose venue',
             icon: IconNumber3,
+            success: formData?.venue,
             child: <Page.ChooseVenue />
         }, {
             title: 'Confirm',
@@ -161,8 +166,7 @@ const Page = {
             {steps.map((step, i) =>
                 <Box key={'step-' + i}>
                     <Group>
-                        <ActionIcon variant="light" size="xl" radius="xl" aria-label="Settings">
-                            {/* <IconAdjustments style={{ width: '70%', height: '70%' }} stroke={1.5} /> */}
+                        <ActionIcon variant="light" color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
                             <step.icon />
                         </ActionIcon>
                         <Title order={5}>{step.title}</Title>
@@ -213,8 +217,8 @@ const Page = {
             <Grid>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     <Stack align="center" justify="center">
-                        <Image src={data.serviceGroup.image} h={150} w={150} fit="cover" radius={'md'} />
-                        <Text fw={700}>{data.serviceGroup.title}</Text>
+                        <Image src={data.serviceGroup.image} h={120} w={120} fit="cover" radius={'md'} />
+                        <Text>{data.serviceGroup.title}</Text>
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
