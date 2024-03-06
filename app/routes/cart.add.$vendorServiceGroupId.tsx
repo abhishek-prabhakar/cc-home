@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
@@ -14,6 +14,7 @@ import { PATH } from "~/path.data";
 import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { CartInput, CartItem } from "~/types";
+import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 
 enum ActionType {
@@ -230,7 +231,7 @@ const Page = {
                                         style={{ userSelect: 'none' }}
                                     />
                                     <Text>{item.title}</Text>
-                                    <Text fw={500}><NumberFormatter prefix={COMMON_DATA.currency} value={item.cost} thousandSeparator /></Text>
+                                    <Text fw={500}><Currency value={item.cost} /></Text>
                                 </Stack>
                             </Card>)}
                         </SimpleGrid>
@@ -294,7 +295,7 @@ const Page = {
                                 {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
                                     <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
                                     {data.serviceGroup.costExtraHour ? <>
-                                        An additional amount of <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> per extra hour will be charged if applicable.</> : ''}
+                                        An additional amount of <Currency value={data.serviceGroup.costExtraHour} /> per extra hour will be charged if applicable.</> : ''}
                                 </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
                             </Group>
 
@@ -386,7 +387,7 @@ const Page = {
                                         <b>{group.name}</b>
                                         {group.services.map(service => <Flex key={service.id} justify={'space-between'}>
                                             <Text size="sm" fw={500}>{service.name}</Text>
-                                            <Text size="sm">{COMMON_DATA.currency} {service.cost}</Text>
+                                            <Text size="sm"><Currency value={service.cost} /></Text>
                                         </Flex>
                                         )}
                                     </div>)}
@@ -402,19 +403,19 @@ const Page = {
                                 <Divider />
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Subtotal</Text>
-                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.total}</Text>
+                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.total} /></Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text c="dimmed">GST ({response?.estimation?.gst}%)</Text>
-                                    <Text>{COMMON_DATA.currency} {response?.estimation?.tax}</Text>
+                                    <Text><Currency value={response?.estimation?.tax} /></Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Discount</Text>
-                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.discount}</Text>
+                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.discount} /></Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Total</Text>
-                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.final}</Text>
+                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.final} /></Text>
                                 </Flex>
                                 <Divider />
                                 <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
