@@ -167,7 +167,7 @@ const Page = {
             {steps.map((step, i) =>
                 <Box key={'step-' + i}>
                     <Group>
-                        <ActionIcon variant="light" color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
+                        <ActionIcon variant={step.success ? 'filled' : 'light'} color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
                             <step.icon />
                         </ActionIcon>
                         <Title order={5}>{step.title}</Title>
