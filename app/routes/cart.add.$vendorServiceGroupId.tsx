@@ -379,7 +379,7 @@ const Page = {
 
         return isStepsReady ? <Suspense fallback={<Skeleton />}>
             <Await resolve={fetcher.data}>
-                {response => <Grid gutter={'xl'}>
+                {response => ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <Text fw={700}>Order</Text>
                         <Space h="sm" />
@@ -433,7 +433,7 @@ const Page = {
                 </Grid>
                 }
             </Await>
-        </Suspense> : ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
+        </Suspense> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
     }
 }
 

@@ -138,7 +138,7 @@ const AppNavigation = {
             </Await>
           </Suspense>
           <Stack gap={'lg'}>
-            <UserLogin onSuccess={() => toggleDrawer()} />
+            <UserLogin onSuccess={() => toggleDrawer()} inlineMode={true} />
             <div style={menuArtisantStyle}>
               <Stack
                 style={{ padding: 8 }}
