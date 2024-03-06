@@ -225,11 +225,11 @@ const Page = {
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
 
                     {data.serviceGroup.addons.length ? <Stack>
-                        <Title order={4}>Recommended Addons</Title>
-                        <SimpleGrid cols={{ base: 1, sm: 2, md: 4, lg: 5 }}
+                        <Text fw={500}>Recommended Addons</Text>
+                        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 3, xl: 4 }}
                             spacing={{ base: 'sm', sm: 'xl' }}>
                             {data.serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
-                                <Stack gap={'sm'}>
+                                <Stack gap={'xs'}>
                                     <Checkbox
                                         checked={selectedAddons.includes(item.id)}
                                         color="green"
