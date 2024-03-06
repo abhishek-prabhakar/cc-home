@@ -323,17 +323,15 @@ const Page = {
         const submit = useSubmit();
         const fetcher = useFetcher<typeof cartSummary>();
         const [getCoupon, setCoupon] = useState('');
+        const [isStepsReady, setStepsReady] = useState(false);
 
         useEffect(() => {
             if (data?.services?.length && data?.date && data.timeHour) {
+                setStepsReady(true);
                 getEstimation();
             }
             else {
-                fetcher.submit({
-                    action: ''
-                }, {
-                    method: 'post'
-                });
+                setStepsReady(false);
             }
         }, [data]);
 
@@ -379,9 +377,9 @@ const Page = {
             <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
         </Group>;
 
-        return <Suspense fallback={<Skeleton />}>
+        return isStepsReady ? <Suspense fallback={<Skeleton />}>
             <Await resolve={fetcher.data}>
-                {response => response ? <Grid gutter={'xl'}>
+                {response => <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <Text fw={700}>Order</Text>
                         <Space h="sm" />
@@ -432,10 +430,10 @@ const Page = {
                             <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
                         </Stack>
                     </Grid.Col>
-                </Grid> : ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
+                </Grid>
                 }
             </Await>
-        </Suspense>
+        </Suspense> : ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
     }
 }
 
