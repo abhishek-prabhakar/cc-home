@@ -224,9 +224,9 @@ const Page = {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
 
-                    {data.serviceGroup.addons.length ? <Stack>
+                    {data.serviceGroup.addons.length ? <Stack gap="xs">
                         <Text fw={500}>Recommended Addons</Text>
-                        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 3, xl: 4 }}
+                        <SimpleGrid cols={{ base: 2, md: 3, lg: 3, xl: 4 }}
                             spacing={{ base: 'sm', sm: 'xl' }}>
                             {data.serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
                                 <Stack gap={'xs'}>
