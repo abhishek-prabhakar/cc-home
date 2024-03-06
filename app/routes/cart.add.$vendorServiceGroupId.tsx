@@ -141,6 +141,7 @@ const Page = {
         }, {
             title: 'Confirm',
             icon: IconNumber4,
+            success: false,
             child: <Page.Summary data={formData} />
         }];
 
