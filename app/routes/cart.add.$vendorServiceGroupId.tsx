@@ -131,12 +131,12 @@ const Page = {
         }, {
             title: 'Select slot',
             icon: IconNumber2,
-            success: formData?.date && formData.timeHour,
+            success: formData?.date && formData.timeHour ? true : false,
             child: <Page.SelectDate onChange={updateFormData} />
         }, {
             title: 'Choose venue',
             icon: IconNumber3,
-            success: formData?.venue,
+            success: formData?.venue ? true : false,
             child: <Page.ChooseVenue />
         }, {
             title: 'Confirm',
@@ -432,8 +432,7 @@ const Page = {
                             <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
                         </Stack>
                     </Grid.Col>
-                </Grid> : <Group gap="sm">
-                    <Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
+                </Grid> : ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
                 }
             </Await>
         </Suspense>
