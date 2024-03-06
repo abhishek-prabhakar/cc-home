@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
@@ -427,7 +427,8 @@ const Page = {
                             <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
                         </Stack>
                     </Grid.Col>
-                </Grid> : <Text>Complete the above steps to estimate the cost.</Text>
+                </Grid> : <Group gap="sm">
+                    <Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
                 }
             </Await>
         </Suspense>
