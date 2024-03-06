@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, NumberFormatter, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
@@ -8,7 +8,6 @@ import { IconNumber3 } from "@tabler/icons-react";
 import { IconNumber4 } from "@tabler/icons-react";
 import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import GoogleMap from "google-maps-react-markers";
 import { Suspense, useEffect, useRef, useState } from "react";
 import COMMON_DATA from "~/data/common.data";
 import { PATH } from "~/path.data";
@@ -212,15 +211,10 @@ const Page = {
         return <Card>
             <Grid>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
-                    <Stack>
+                    <Stack align="center" justify="center">
                         <Image src={data.serviceGroup.image} h={150} w={150} fit="cover" radius={'md'} />
-                        <Title order={5}>{data.serviceGroup.title}</Title>
+                        <Text fw={700} pt="sm">{data.serviceGroup.title}</Text>
                     </Stack>
-                    <Space h="md" />
-                    <Group gap="xs">
-                        <Text fw={500}>Services included:</Text>
-                        {data.serviceGroup.included.map(x => <Text c="dimmed">{x.title}, </Text>)}
-                    </Group>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
 
@@ -277,6 +271,7 @@ const Page = {
         return <Grid gutter={'md'}>
             <Grid.Col span={{ base: 12, md: 'content' }}>
                 <Text fw={500}>When you are looking for?</Text>
+                <Space h="sm" />
                 <Calendar
                     getDayProps={(date) => ({
                         selected: dayjs(date).isSame(selectedDate, 'date'),
@@ -287,20 +282,24 @@ const Page = {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 'auto' }}>
                 <Text fw={500}>Select a preferred time</Text>
+                <Space h="sm" />
                 <Suspense fallback={<Skeleton />}>
                     <Await resolve={fetcher.data}>
-                        {response => <Group gap={'sm'}>
-                            {response?.map(time => <Box><Card withBorder>
-                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
-                            </Card></Box>)}
-                            {!response?.length ? <Text>Please select a date first.</Text> : ''}
-                        </Group>}
+                        {response => <>
+                            <Group gap={'sm'}>
+                                {response?.map(time => <Box><Card withBorder>
+                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
+                                </Card></Box>)}
+                                <Space h="md" />
+                                {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
+                                    The estimated duration of this job is {data.serviceGroup.minHour} hours.{data.serviceGroup.costExtraHour ? 'An additional amount of ' + <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> + ' will be charged if applicable.' : ''}
+                                </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
+                            </Group>
+
+
+                        </>}
                     </Await>
                 </Suspense>
-                <Space h="md" />
-                <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
-                    The estimated duration of this job is {data.serviceGroup.minHour} hours.{data.serviceGroup.costExtraHour ? 'An additional amount of ' + <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> + ' will be charged if applicable.' : ''}
-                </Alert>
             </Grid.Col>
         </Grid>
     },
@@ -308,68 +307,18 @@ const Page = {
         const mapRef = useRef(null)
         const [mapReady, setMapReady] = useState(false)
 
-        const onGoogleApiLoaded = ({ map, maps }: any) => {
-            mapRef.current = map
-            setMapReady(true)
-        }
 
-        // const onMarkerClick = (e, { markerId, lat, lng }) => {
-        //     console.log('This is ->', markerId)
+        return '...';
 
-        //     // inside the map instance you can call any google maps method
-        //     // mapRef.current.setCenter({ lat, lng })
-        //     // ref. https://developers.google.com/maps/documentation/javascript/reference?hl=it
-        // }
-
-        // function handleLocationChange({ position, address, places }) {
-        //     this.setState({ position, address });
-        // }
-        // return <div>
-        //     <LocationPicker
-        //         containerElement={<div style={{ height: '100%' }} />}
-        //         mapElement={<div style={{ height: '400px' }} />}
-        //         defaultPosition={defaultPosition}
-        //         onChange={handleLocationChange}
-        //     />
-        // </div>
-
-        return 'hello';
-
-        // return <GoogleMap
-        //     apiKey=""
-        //     defaultCenter={{ lat: 45.4046987, lng: 12.2472504 }}
-        //     defaultZoom={5}
-        //     mapMinHeight="300px"
-        //     onGoogleApiLoaded={onGoogleApiLoaded}
-        //     onChange={(map) => console.log('Map moved', map)}
-        // >
-        //     {/* {coordinates.map(({ lat, lng, name }, index) => (
-        //         <Marker
-        //             key={index}
-        //             lat={lat}
-        //             lng={lng}
-        //             markerId={name}
-        //         // draggable={true}
-        //         // onDragStart={(e, { latLng }) => {}}
-        //         // onDrag={(e, { latLng }) => {}}
-        //         // onDragEnd={(e, { latLng }) => {}}
-        //         />
-        //     ))} */}
-        // </GoogleMap>
     },
     Summary: ({ data }: { data?: FormParams | null }) => {
         const submit = useSubmit();
         const fetcher = useFetcher<typeof cartSummary>();
+        const [getCoupon, setCoupon] = useState('');
 
         useEffect(() => {
             if (data?.services?.length && data?.date && data.timeHour) {
-                const params = getInputParams();
-                fetcher.submit({
-                    action: ActionType.ESTIMATION,
-                    input: JSON.stringify(params)
-                }, {
-                    method: 'post'
-                });
+                getEstimation();
             }
             else {
                 fetcher.submit({
@@ -378,8 +327,18 @@ const Page = {
                     method: 'post'
                 });
             }
-            console.log('---')
         }, [data]);
+
+        function getEstimation(coupon?: string | null) {
+            const params = getInputParams();
+            fetcher.submit({
+                action: ActionType.ESTIMATION,
+                input: JSON.stringify(params),
+                coupon: coupon || ''
+            }, {
+                method: 'post'
+            });
+        }
 
         function addToCart() {
             const input = getInputParams();
@@ -387,6 +346,10 @@ const Page = {
                 action: '/cart/add',
                 method: 'post',
             });
+        }
+
+        function applyCoupon() {
+            getEstimation(getCoupon);
         }
 
         function getInputParams() {
@@ -401,54 +364,70 @@ const Page = {
             return params;
         }
 
-        return <Grid gutter={'xl'}>
-            <Grid.Col span={{ base: 12, md: 4 }}>
+        const CouponSection = <Group gap={'md'} align="end">
+            <Input.Wrapper flex={1} label="Coupon">
+                <Input value={getCoupon} onChange={v => setCoupon(v.target.value)} />
+            </Input.Wrapper>
+            <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
+        </Group>;
 
-                <Suspense fallback={<Skeleton />}>
-                    <Await resolve={fetcher.data}>
-                        {response => response ? <>
-                            <Alert variant="light" color="blue">
-                                <Stack>
-                                    <Title order={5}>Summary</Title>
-                                    <Divider />
-                                    {
-                                        response?.cartSummary.map(group => <div key={group.vendorServiceGroupId}>
-                                            <b>{group.name}</b>
-                                            {group.services.map(service => <Flex key={service.id} justify={'space-between'}>
-                                                <Text size="sm" fw={500}>{service.name}</Text>
-                                                <Text size="sm">{service.cost} INR</Text>
-                                            </Flex>
-                                            )}
-                                        </div>)}
-                                    <Divider />
-                                    <Flex justify={'space-between'}>
-                                        <Text size="sm" fw={500}>Subtotal</Text>
-                                        <Text size="sm" fw={500}>{response?.estimation?.total} INR</Text>
-                                    </Flex>
-                                    <Flex justify={'space-between'}>
-                                        <Text c="dimmed">GST({response?.estimation?.gst}%)</Text>
-                                        <Text >{response?.estimation?.tax} INR</Text>
-                                    </Flex>
-                                    <Divider />
-                                    <Flex justify={'space-between'}>
-                                        <Text size="sm" fw={500}>Total</Text>
-                                        <Text size="sm" fw={500}>{response?.estimation?.final} INR</Text>
-                                    </Flex>
-                                    <Divider />
-                                    <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
-                                </Stack>
-                            </Alert>
-                            <Space h="md" />
+        return <Suspense fallback={<Skeleton />}>
+            <Await resolve={fetcher.data}>
+                {response => response ? <Grid gutter={'xl'}>
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                        <Text fw={700}>Order</Text>
+                        <Space h="sm" />
+                        <Card shadow="sm" withBorder>
                             <Stack>
-                                <Text>Forgot something?</Text>
-                                <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
+                                {
+                                    response?.cartSummary.map(group => <div key={group.vendorServiceGroupId}>
+                                        <b>{group.name}</b>
+                                        {group.services.map(service => <Flex key={service.id} justify={'space-between'}>
+                                            <Text size="sm" fw={500}>{service.name}</Text>
+                                            <Text size="sm">{service.cost} INR</Text>
+                                        </Flex>
+                                        )}
+                                    </div>)}
                             </Stack>
-                        </> : <Text>Complete the above steps to estimate the cost.</Text>
-                        }
-                    </Await>
-                </Suspense>
-            </Grid.Col>
-        </Grid>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                        <Text fw={700}>Payment Summary</Text>
+                        <Space h="sm" />
+                        <Card shadow="sm" withBorder>
+                            <Stack>
+                                {CouponSection}
+                                <Divider />
+                                <Flex justify={'space-between'}>
+                                    <Text size="sm" fw={500}>Subtotal</Text>
+                                    <Text size="sm" fw={500}>{response?.estimation?.total} INR</Text>
+                                </Flex>
+                                <Flex justify={'space-between'}>
+                                    <Text c="dimmed">GST ({response?.estimation?.gst}%)</Text>
+                                    <Text >{response?.estimation?.tax} INR</Text>
+                                </Flex>
+                                <Flex justify={'space-between'}>
+                                    <Text size="sm" fw={500}>Discount</Text>
+                                    <Text size="sm" fw={500}>{response?.estimation?.discount} INR</Text>
+                                </Flex>
+                                <Flex justify={'space-between'}>
+                                    <Text size="sm" fw={500}>Total</Text>
+                                    <Text size="sm" fw={500}>{response?.estimation?.final} INR</Text>
+                                </Flex>
+                                <Divider />
+                                <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
+                            </Stack>
+                        </Card>
+                        <Space h="md" />
+                        <Stack>
+                            <Text>Forgot something?</Text>
+                            <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
+                        </Stack>
+                    </Grid.Col>
+                </Grid> : <Text>Complete the above steps to estimate the cost.</Text>
+                }
+            </Await>
+        </Suspense>
     }
 }
 

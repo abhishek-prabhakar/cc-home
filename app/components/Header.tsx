@@ -88,7 +88,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                                             <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
                                                         </Box>
                                                     </Group>
-                                                    : <UserLogin />}
+                                                    : <UserLogin inlineMode={true} />}
                                             </div>
                                             <div style={menuArtisantStyle}>
                                                 <Stack style={{ padding: 8 }} >

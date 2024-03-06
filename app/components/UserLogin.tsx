@@ -1,11 +1,11 @@
 import { Button, Grid, Input, Modal, Stack, Title } from "@mantine/core";
-import { Form } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import UserService from "~/service/user.service";
 
 const UserLogin = {
-    Index: ({ title = 'Manage your booking', redirectUrl = '', onSuccess }: { title?: string, redirectUrl?: string, onSuccess?: Function }) => {
+    Index: ({ title = 'Manage your booking', redirectUrl = '', onSuccess, inlineMode }: { title?: string, redirectUrl?: string, onSuccess?: Function, inlineMode?: boolean }) => {
         const { control, handleSubmit } = useForm();
         const [showVerifyUserDialog, setVerifyUserDialogState] = useState(false);
         const [isBusy, setBusy] = useState(false);
@@ -32,53 +32,50 @@ const UserLogin = {
             })
         }
 
-        return <><Form onSubmit={handleSubmit(startUserLogin)}>
+        return <>{inlineMode && showVerifyUserDialog ? '' : <Form onSubmit={handleSubmit(startUserLogin)}>
             <Stack>
                 <Title order={5}>{title}</Title>
                 <Controller name="phone" control={control} render={({ field }) => <Input leftSection="+91" placeholder="Enter your phone number." required {...field} />} />
                 <Button variant="filled" type="submit" loading={isBusy}>Login</Button>
             </Stack>
-        </Form>
-            <UserLogin.VerifyOtp redirectUrl={redirectUrl} username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} />
+        </Form>}
+            <UserLogin.VerifyOtp redirectUrl={redirectUrl} username={getUsername} modalOpen={showVerifyUserDialog} onClose={() => toggleVerifyUserDialog(false)} inlineMode={inlineMode || false} />
         </>
     },
-    VerifyOtp: ({ username, redirectUrl, modalOpen, onClose }: { username: number | null | undefined, modalOpen: boolean, redirectUrl?: string, onClose: Function }) => {
+    VerifyOtp: ({ username, redirectUrl, modalOpen, onClose, inlineMode }: { username: number | null | undefined, modalOpen: boolean, redirectUrl?: string, onClose: Function, inlineMode: boolean }) => {
         const { control, getValues, handleSubmit } = useForm();
         const [isBusy, setBusy] = useState(false);
         const formRef = useRef<any>(null);
         const formInputIdRef = useRef<any>(null);
         const formInputUrlRef = useRef<any>(null);
+        const fetcher = useFetcher();
 
         const verifyOtp = () => {
-            setBusy(true);
-            UserService.VerifyOtp({ phone: username || 0, otp: getValues().otp }).then(r => {
-
-                setBusy(false);
-                formInputIdRef.current.value = r.data.token;
-                formInputUrlRef.current.value = redirectUrl || '';
-                formRef.current.submit();
-                // if (onClose) {
-                //     onClose();
-                // }
-            }).catch(e => {
-                setBusy(false);
-            })
+            fetcher.submit({
+                phone: username || 0,
+                otp: getValues().otp,
+                redirectUrl: redirectUrl || ''
+            }, {
+                method: 'post',
+                action: 'verify-otp'
+            });
         }
 
         function closeModal() {
             onClose();
         }
 
-        return <Modal title="Verify OTP" opened={modalOpen} onClose={() => onClose()}>
-            <Form method="post" action="/login/redirect">
-                <Stack gap={'md'}>
-                    <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />
-                    <Button type="submit" variant="filled">Continue</Button>
-                </Stack>
-                <input type="hidden" name="id" ref={formInputIdRef} />
-                <input type="hidden" name="redirect" ref={formInputUrlRef} />
-            </Form>
-        </Modal>
+        const formBody = <form onSubmit={e => e.preventDefault()}><Stack gap={'md'}>
+            <Input.Wrapper label="Enter OTP">
+                <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4}  {...field} />} />
+            </Input.Wrapper>
+            <Button type="submit" variant="filled" loading={['submitting', 'loading'].includes(fetcher.state)} onClick={verifyOtp}>Continue</Button>
+        </Stack></form>;
+
+
+        return inlineMode && modalOpen ? formBody : <Modal title="Verify OTP" opened={modalOpen} onClose={() => onClose()}>
+            {formBody}
+        </Modal>;
     }
 }
 
