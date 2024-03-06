@@ -3410,7 +3410,7 @@ var Page = {
       icon: import_icons_react5.IconNumber1,
       child: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(Page.Addons, { onChange: updateFormData }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 129,
+        lineNumber: 126,
         columnNumber: 20
       }, this)
     }, {
@@ -3418,7 +3418,7 @@ var Page = {
       icon: import_icons_react5.IconNumber2,
       child: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(Page.SelectDate, { onChange: updateFormData }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 133,
+        lineNumber: 130,
         columnNumber: 20
       }, this)
     }, {
@@ -3426,7 +3426,7 @@ var Page = {
       icon: import_icons_react7.IconNumber3,
       child: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(Page.ChooseVenue, {}, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 137,
+        lineNumber: 134,
         columnNumber: 20
       }, this)
     }, {
@@ -3434,7 +3434,7 @@ var Page = {
       icon: import_icons_react8.IconNumber4,
       child: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(Page.Summary, { data: formData }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 141,
+        lineNumber: 138,
         columnNumber: 20
       }, this)
     }];
@@ -3446,103 +3446,103 @@ var Page = {
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: "auto", children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Title, { order: 5, children: "Book you session" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 151,
+            lineNumber: 148,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: "Complete these steps to proceed" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 152,
+            lineNumber: 149,
             columnNumber: 21
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 150,
+          lineNumber: 147,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { sm: 12, md: "content" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { align: "center", gap: "md", children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Title, { order: 5, children: data.vendor.vendor.username }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 156,
+            lineNumber: 153,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Avatar, { size: "xl", src: data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 157,
+            lineNumber: 154,
             columnNumber: 25
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 155,
+          lineNumber: 152,
           columnNumber: 21
         }, this) }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 154,
+          lineNumber: 151,
           columnNumber: 17
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 149,
+        lineNumber: 146,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "xl" }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 161,
+        lineNumber: 158,
         columnNumber: 13
       }, this),
       steps.map((step, i) => /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Box, { children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Group, { children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.ActionIcon, { variant: "light", size: "xl", radius: "xl", "aria-label": "Settings", children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(step.icon, {}, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 168,
+            lineNumber: 165,
             columnNumber: 29
           }, this) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 166,
+            lineNumber: 163,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Title, { order: 5, children: step.title }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 170,
+            lineNumber: 167,
             columnNumber: 25
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 165,
+          lineNumber: 162,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid, { children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: "content", p: "0 30px 0 30px", children: i < steps.length - 1 ? /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Divider, { orientation: "vertical", h: "100%" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 174,
+            lineNumber: 171,
             columnNumber: 53
           }, this) : "" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 173,
+            lineNumber: 170,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: "auto", pt: "sm", pb: "md", children: step.child }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 176,
+            lineNumber: 173,
             columnNumber: 25
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 172,
+          lineNumber: 169,
           columnNumber: 21
         }, this)
       ] }, "step-" + i, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 164,
+        lineNumber: 161,
         columnNumber: 17
       }, this)),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "lg" }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 181,
+        lineNumber: 178,
         columnNumber: 13
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 148,
+      lineNumber: 145,
       columnNumber: 16
     }, this);
   },
@@ -3569,27 +3569,27 @@ var Page = {
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: "auto" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Stack, { align: "center", justify: "center", children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Image, { src: data.serviceGroup.image, h: 150, w: 150, fit: "cover", radius: "md" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 218,
+          lineNumber: 215,
           columnNumber: 25
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 700, pt: "sm", children: data.serviceGroup.title }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 219,
+          lineNumber: 216,
           columnNumber: 25
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 217,
+        lineNumber: 214,
         columnNumber: 21
       }, this) }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 216,
+        lineNumber: 213,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: "auto" }, children: data.serviceGroup.addons.length ? /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Stack, { children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Title, { order: 4, children: "Recommended Addons" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 225,
+          lineNumber: 222,
           columnNumber: 25
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(
@@ -3609,32 +3609,32 @@ var Page = {
                 !1,
                 {
                   fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                  lineNumber: 230,
+                  lineNumber: 227,
                   columnNumber: 37
                 },
                 this
               ),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: item.title }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 235,
+                lineNumber: 232,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 500, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.NumberFormatter, { prefix: common_data_default.currency, value: item.cost, thousandSeparator: !0 }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 236,
+                lineNumber: 233,
                 columnNumber: 52
               }, this) }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 236,
+                lineNumber: 233,
                 columnNumber: 37
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 229,
+              lineNumber: 226,
               columnNumber: 33
             }, this) }, item.id, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 228,
+              lineNumber: 225,
               columnNumber: 67
             }, this))
           },
@@ -3642,27 +3642,27 @@ var Page = {
           !1,
           {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 226,
+            lineNumber: 223,
             columnNumber: 25
           },
           this
         )
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 224,
+        lineNumber: 221,
         columnNumber: 56
       }, this) : "" }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 222,
+        lineNumber: 219,
         columnNumber: 17
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 215,
+      lineNumber: 212,
       columnNumber: 13
     }, this) }, void 0, !1, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 214,
+      lineNumber: 211,
       columnNumber: 16
     }, this);
   },
@@ -3688,12 +3688,12 @@ var Page = {
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: "content" }, children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 500, children: "When you are looking for?" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 276,
+          lineNumber: 273,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "sm" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 277,
+          lineNumber: 274,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(
@@ -3709,108 +3709,120 @@ var Page = {
           !1,
           {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 278,
+            lineNumber: 275,
             columnNumber: 17
           },
           this
         )
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 275,
+        lineNumber: 272,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: "auto" }, children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 500, children: "Select a preferred time" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 287,
+          lineNumber: 284,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "sm" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 288,
+          lineNumber: 285,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_react17.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Skeleton, {}, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 289,
+          lineNumber: 286,
           columnNumber: 37
         }, this), children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_react16.Await, { resolve: fetcher.data, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_jsx_dev_runtime12.Fragment, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Group, { gap: "sm", children: [
           response == null ? void 0 : response.map((time) => /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Box, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Card, { withBorder: !0, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Checkbox, { checked: selectedTime === time.value, label: time.label, onChange: () => setTimeHour(time.value), disabled: !time.available }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 294,
+            lineNumber: 291,
             columnNumber: 37
           }, this) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 293,
+            lineNumber: 290,
             columnNumber: 61
           }, this) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 293,
+            lineNumber: 290,
             columnNumber: 56
           }, this)),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "md" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 296,
+            lineNumber: 293,
             columnNumber: 33
           }, this),
           response != null && response.length ? /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Alert, { variant: "light", color: "green", icon: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_icons_react6.IconInfoCircle, {}, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 297,
+            lineNumber: 294,
             columnNumber: 96
           }, this), children: [
-            "The estimated duration of this job is ",
-            data.serviceGroup.minHour,
-            " hours.",
-            data.serviceGroup.costExtraHour ? "An additional amount of " + /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.NumberFormatter, { prefix: common_data_default.currency, value: data.serviceGroup.costExtraHour, thousandSeparator: !0 }, void 0, !1, {
+            /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: [
+              "The estimated duration of this job is ",
+              data.serviceGroup.minHour,
+              " hours."
+            ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 298,
-              columnNumber: 173
-            }, this) + " will be charged if applicable." : ""
+              lineNumber: 295,
+              columnNumber: 37
+            }, this),
+            data.serviceGroup.costExtraHour ? /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: [
+              "An additional amount of ",
+              /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.NumberFormatter, { prefix: common_data_default.currency, value: data.serviceGroup.costExtraHour, thousandSeparator: !0 }, void 0, !1, {
+                fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
+                lineNumber: 297,
+                columnNumber: 65
+              }, this),
+              " will be charged if applicable."
+            ] }, void 0, !0, {
+              fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
+              lineNumber: 296,
+              columnNumber: 72
+            }, this) : ""
           ] }, void 0, !0, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 297,
+            lineNumber: 294,
             columnNumber: 53
           }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Alert, { variant: "light", color: "yellow", icon: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_icons_react6.IconInfoCircle, {}, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 299,
+            lineNumber: 298,
             columnNumber: 88
           }, this), children: "Please select a date first." }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 299,
+            lineNumber: 298,
             columnNumber: 44
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 292,
+          lineNumber: 289,
           columnNumber: 29
         }, this) }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 291,
+          lineNumber: 288,
           columnNumber: 38
         }, this) }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 290,
+          lineNumber: 287,
           columnNumber: 21
         }, this) }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 289,
+          lineNumber: 286,
           columnNumber: 17
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 286,
+        lineNumber: 283,
         columnNumber: 13
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 274,
+      lineNumber: 271,
       columnNumber: 16
     }, this);
   },
   ChooseVenue: () => {
-    let mapRef = (0, import_react17.useRef)(null), [mapReady, setMapReady] = (0, import_react17.useState)(!1), onGoogleApiLoaded = ({ map, maps }) => {
-      mapRef.current = map, setMapReady(!0);
-    };
+    let mapRef = (0, import_react17.useRef)(null), [mapReady, setMapReady] = (0, import_react17.useState)(!1);
     return "...";
   },
   Summary: ({ data }) => {
@@ -3856,26 +3868,26 @@ var Page = {
     let CouponSection = /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Group, { gap: "md", align: "end", children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Input.Wrapper, { flex: 1, label: "Coupon", children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Input, { value: getCoupon, onChange: (v) => setCoupon(v.target.value) }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 408,
+        lineNumber: 371,
         columnNumber: 17
       }, this) }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 407,
+        lineNumber: 370,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Button, { variant: "outline", size: "xs", onClick: applyCoupon, children: "Apply" }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 410,
+        lineNumber: 373,
         columnNumber: 13
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 406,
+      lineNumber: 369,
       columnNumber: 31
     }, this);
     return /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_react17.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Skeleton, {}, void 0, !1, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 413,
+      lineNumber: 376,
       columnNumber: 36
     }, this), children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_react16.Await, { resolve: fetcher.data, children: (response) => {
       var _a, _b, _c, _d, _e;
@@ -3883,25 +3895,25 @@ var Page = {
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: 4 }, children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 700, children: "Order" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 417,
+            lineNumber: 380,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "sm" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 418,
+            lineNumber: 381,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Card, { shadow: "sm", withBorder: !0, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Stack, { children: response == null ? void 0 : response.cartSummary.map((group) => /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)("b", { children: group.name }, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 423,
+              lineNumber: 386,
               columnNumber: 41
             }, this),
             group.services.map(
               (service) => /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { justify: "space-between", children: [
                 /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: service.name }, void 0, !1, {
                   fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                  lineNumber: 425,
+                  lineNumber: 388,
                   columnNumber: 45
                 }, this),
                 /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", children: [
@@ -3909,55 +3921,55 @@ var Page = {
                   " INR"
                 ] }, void 0, !0, {
                   fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                  lineNumber: 426,
+                  lineNumber: 389,
                   columnNumber: 45
                 }, this)
               ] }, service.id, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 424,
+                lineNumber: 387,
                 columnNumber: 72
               }, this)
             )
           ] }, group.vendorServiceGroupId, !0, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 422,
+            lineNumber: 385,
             columnNumber: 72
           }, this)) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 420,
+            lineNumber: 383,
             columnNumber: 29
           }, this) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 419,
+            lineNumber: 382,
             columnNumber: 25
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 416,
+          lineNumber: 379,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Grid.Col, { span: { base: 12, md: 4 }, children: [
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { fw: 700, children: "Payment Summary" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 434,
+            lineNumber: 397,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "sm" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 435,
+            lineNumber: 398,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Card, { shadow: "sm", withBorder: !0, children: /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Stack, { children: [
             CouponSection,
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Divider, {}, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 439,
+              lineNumber: 402,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { justify: "space-between", children: [
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: "Subtotal" }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 441,
+                lineNumber: 404,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: [
@@ -3965,12 +3977,12 @@ var Page = {
                 " INR"
               ] }, void 0, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 442,
+                lineNumber: 405,
                 columnNumber: 37
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 440,
+              lineNumber: 403,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { justify: "space-between", children: [
@@ -3980,7 +3992,7 @@ var Page = {
                 "%)"
               ] }, void 0, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 445,
+                lineNumber: 408,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: [
@@ -3988,18 +4000,18 @@ var Page = {
                 " INR"
               ] }, void 0, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 446,
+                lineNumber: 409,
                 columnNumber: 37
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 444,
+              lineNumber: 407,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { justify: "space-between", children: [
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: "Discount" }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 449,
+                lineNumber: 412,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: [
@@ -4007,18 +4019,18 @@ var Page = {
                 " INR"
               ] }, void 0, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 450,
+                lineNumber: 413,
                 columnNumber: 37
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 448,
+              lineNumber: 411,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Flex, { justify: "space-between", children: [
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: "Total" }, void 0, !1, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 453,
+                lineNumber: 416,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { size: "sm", fw: 500, children: [
@@ -4026,75 +4038,75 @@ var Page = {
                 " INR"
               ] }, void 0, !0, {
                 fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-                lineNumber: 454,
+                lineNumber: 417,
                 columnNumber: 37
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 452,
+              lineNumber: 415,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Divider, {}, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 456,
+              lineNumber: 419,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Button, { variant: "filled", onClick: addToCart, children: "Proceed to payment" }, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 457,
+              lineNumber: 420,
               columnNumber: 33
             }, this)
           ] }, void 0, !0, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 437,
+            lineNumber: 400,
             columnNumber: 29
           }, this) }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 436,
+            lineNumber: 399,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Space, { h: "md" }, void 0, !1, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 460,
+            lineNumber: 423,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Stack, { children: [
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: "Forgot something?" }, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 462,
+              lineNumber: 425,
               columnNumber: 29
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Button, { variant: "outline", onClick: addToCart, children: "Checkout Later" }, void 0, !1, {
               fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-              lineNumber: 463,
+              lineNumber: 426,
               columnNumber: 29
             }, this)
           ] }, void 0, !0, {
             fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-            lineNumber: 461,
+            lineNumber: 424,
             columnNumber: 25
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-          lineNumber: 433,
+          lineNumber: 396,
           columnNumber: 21
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 415,
+        lineNumber: 378,
         columnNumber: 41
       }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime12.jsxDEV)(import_core11.Text, { children: "Complete the above steps to estimate the cost." }, void 0, !1, {
         fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-        lineNumber: 466,
+        lineNumber: 429,
         columnNumber: 27
       }, this);
     } }, void 0, !1, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 414,
+      lineNumber: 377,
       columnNumber: 13
     }, this) }, void 0, !1, {
       fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
-      lineNumber: 413,
+      lineNumber: 376,
       columnNumber: 16
     }, this);
   }
@@ -9484,7 +9496,7 @@ async function action11({
         username,
         otpHash
       }
-    }), console.log(otp), await sms_service_default.sendSMS({
+    }), await sms_service_default.sendSMS({
       to: username,
       message: otp + " is your OTP to login to Celebria Collective - celebriacollective.com"
     }), success = !0;
@@ -10832,7 +10844,7 @@ function UserLayout() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-7N3MQQOM.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-6YNDQ63K.js", imports: ["/build/_shared/chunk-ZQMARLQI.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-24YMUWTT.js", "/build/_shared/chunk-C32MY333.js", "/build/_shared/chunk-YPPC4632.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-YC6VSMS6.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-AQP3BU3O.js", imports: ["/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-NLV5UEVN.js", imports: ["/build/_shared/chunk-5UZB3SLW.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-HMDIUKHL.js", imports: ["/build/_shared/chunk-5UZB3SLW.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-MGPTRZRD.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-R5HDJFDC.js", imports: ["/build/_shared/chunk-X4V4WML7.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-2YRUXJOV.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout": { id: "routes/cart.checkout", parentId: "root", path: "cart/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.checkout-77RED4NP.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-YJCSIA24.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-QTCZ2NU5.js", imports: ["/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-RNLUBHBS.js", imports: ["/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "root", path: "partner/signup", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-X2X7LBDC.js", imports: ["/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "root", path: "partner/signup/onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-L6OTEAZZ.js", imports: ["/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-F4KWH25A.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "root", path: "partner/signup/onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-5TG3JUGY.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "root", path: "partner/signup/onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-KAYVH5DK.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-F4KWH25A.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-7LOBS2TL.js", imports: ["/build/_shared/chunk-X4V4WML7.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-WD6DECGW.js", imports: ["/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-C32MY333.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-WIVSVGKO.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-ECESO4J7.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-WIVSVGKO.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-25EPFQR7.js", imports: ["/build/_shared/chunk-Y7GYIM4Z.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-WIVSVGKO.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-NU5C3S52.js", imports: ["/build/_shared/chunk-Y7GYIM4Z.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-WIVSVGKO.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "96d93ab0", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1709731054729 }, url: "/build/manifest-96D93AB0.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-7N3MQQOM.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-6YNDQ63K.js", imports: ["/build/_shared/chunk-ZQMARLQI.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-24YMUWTT.js", "/build/_shared/chunk-C32MY333.js", "/build/_shared/chunk-YPPC4632.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-YC6VSMS6.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-AQP3BU3O.js", imports: ["/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-NLV5UEVN.js", imports: ["/build/_shared/chunk-5UZB3SLW.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-HMDIUKHL.js", imports: ["/build/_shared/chunk-5UZB3SLW.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-S5ZRTWHC.js", "/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-MGPTRZRD.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-SQ4R23NZ.js", imports: ["/build/_shared/chunk-X4V4WML7.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-2YRUXJOV.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout": { id: "routes/cart.checkout", parentId: "root", path: "cart/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.checkout-77RED4NP.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-YJCSIA24.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-QTCZ2NU5.js", imports: ["/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-RNLUBHBS.js", imports: ["/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "root", path: "partner/signup", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-X2X7LBDC.js", imports: ["/build/_shared/chunk-FWMSOPMH.js", "/build/_shared/chunk-D7D3MAI5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "root", path: "partner/signup/onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-L6OTEAZZ.js", imports: ["/build/_shared/chunk-NFLAYZ4G.js", "/build/_shared/chunk-ZFB5SYWB.js", "/build/_shared/chunk-F4KWH25A.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "root", path: "partner/signup/onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-5TG3JUGY.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "root", path: "partner/signup/onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-KAYVH5DK.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-F4KWH25A.js", "/build/_shared/chunk-2Q7K6WD5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-7LOBS2TL.js", imports: ["/build/_shared/chunk-X4V4WML7.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-WD6DECGW.js", imports: ["/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-C32MY333.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-WIVSVGKO.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-ECESO4J7.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-WIVSVGKO.js", "/build/_shared/chunk-5JCJOMNE.js", "/build/_shared/chunk-S5U6Z5DG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-25EPFQR7.js", imports: ["/build/_shared/chunk-Y7GYIM4Z.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-WIVSVGKO.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-NU5C3S52.js", imports: ["/build/_shared/chunk-Y7GYIM4Z.js", "/build/_shared/chunk-2Q7K6WD5.js", "/build/_shared/chunk-WIVSVGKO.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "55a9644b", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1709732918192 }, url: "/build/manifest-55A9644B.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_dev: !0, unstable_postcss: !1, unstable_tailwind: !1, v2_errorBoundary: !0, v2_headers: !0, v2_meta: !0, v2_normalizeFormMethod: !0, v2_routeConvention: !0 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {

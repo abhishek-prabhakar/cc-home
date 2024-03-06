@@ -213,7 +213,7 @@ const Page = {
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     <Stack align="center" justify="center">
                         <Image src={data.serviceGroup.image} h={150} w={150} fit="cover" radius={'md'} />
-                        <Text fw={700} pt="sm">{data.serviceGroup.title}</Text>
+                        <Text fw={700}>{data.serviceGroup.title}</Text>
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
@@ -292,7 +292,9 @@ const Page = {
                                 </Card></Box>)}
                                 <Space h="md" />
                                 {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
-                                    The estimated duration of this job is {data.serviceGroup.minHour} hours.{data.serviceGroup.costExtraHour ? 'An additional amount of ' + <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> + ' will be charged if applicable.' : ''}
+                                    <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
+                                    {data.serviceGroup.costExtraHour ? <>
+                                        An additional amount of <NumberFormatter prefix={COMMON_DATA.currency} value={data.serviceGroup.costExtraHour} thousandSeparator /> per extra hour will be charged if applicable.</> : ''}
                                 </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
                             </Group>
 
@@ -384,7 +386,7 @@ const Page = {
                                         <b>{group.name}</b>
                                         {group.services.map(service => <Flex key={service.id} justify={'space-between'}>
                                             <Text size="sm" fw={500}>{service.name}</Text>
-                                            <Text size="sm">{service.cost} INR</Text>
+                                            <Text size="sm">{COMMON_DATA.currency} {service.cost}</Text>
                                         </Flex>
                                         )}
                                     </div>)}
@@ -400,19 +402,19 @@ const Page = {
                                 <Divider />
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Subtotal</Text>
-                                    <Text size="sm" fw={500}>{response?.estimation?.total} INR</Text>
+                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.total}</Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text c="dimmed">GST ({response?.estimation?.gst}%)</Text>
-                                    <Text >{response?.estimation?.tax} INR</Text>
+                                    <Text>{COMMON_DATA.currency} {response?.estimation?.tax}</Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Discount</Text>
-                                    <Text size="sm" fw={500}>{response?.estimation?.discount} INR</Text>
+                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.discount}</Text>
                                 </Flex>
                                 <Flex justify={'space-between'}>
                                     <Text size="sm" fw={500}>Total</Text>
-                                    <Text size="sm" fw={500}>{response?.estimation?.final} INR</Text>
+                                    <Text size="sm" fw={500}>{COMMON_DATA.currency} {response?.estimation?.final}</Text>
                                 </Flex>
                                 <Divider />
                                 <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
