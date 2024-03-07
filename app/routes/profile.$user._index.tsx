@@ -125,19 +125,19 @@ const elementSize = 400;
 const ProfileHome = {
     Index: () => {
         return <>
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Card shadow="sm" padding="lg" radius="md">
                 <Text fw={500}>Stories</Text>
                 <Space h="sm" />
                 <ProfileHome.Stories />
-                <Space h="lg" />
-                <Stack>
+                <Space h="xl" />
+                <Stack gap={'sm'}>
                     <Text fw={700}>50+</Text>
                     <Text c="dimmed">Happy clients</Text>
                 </Stack>
                 <Space h="md" />
                 <Divider />
                 <Space h="md" />
-                <Grid gutter={'lg'}>
+                <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 8 }}>
                         <Text> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</Text>
                     </Grid.Col>
