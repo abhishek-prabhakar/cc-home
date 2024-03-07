@@ -4,7 +4,58 @@ import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } fro
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
+
+function Stories(username?: string) {
+    if (!username) {
+        throw new Error("invalid user");
+    }
+    return db.vendorPortfolio.findMany({
+        select: {
+            serviceGroupId: true,
+            serviceGroup: {
+                select: {
+                    name: true,
+                    vendorType: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            },
+            fileName: true,
+        },
+        where: {
+            vendor: {
+                username
+            }
+        },
+        orderBy: {
+            createdAt: 'desc'
+        },
+        distinct: ['serviceGroupId']
+    });
+}
+
+function portfolioByAlbumId(input: { username: string, albumId?: string | null }) {
+    return db.vendorPortfolio.findMany({
+        where: {
+            vendor: {
+                username: input.username,
+            },
+            serviceGroupId: input.albumId
+        },
+        select: {
+            fileName: true
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+}
+
 export const VendorQuery = {
+    Stories,
+    portfolioByAlbumId,
     Signup: (props: {
         fullName: string,
         mobileNumber: string,

@@ -1,5 +1,5 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
-import { Accordion, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Stack, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { IconCheck, IconPlus } from "@tabler/icons-react";
@@ -15,6 +15,8 @@ type RequiredMark = boolean | 'optional' | 'customize';
 import classes from '../styles/accordian.module.css';
 import { IconDiscountCheckFilled } from "@tabler/icons-react";
 import { IconMapPin } from "@tabler/icons-react";
+import { IconHeart } from "@tabler/icons-react";
+import Currency from "~/utils/currency.transformer";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -48,7 +50,7 @@ const ProfileLayout = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
 
-        return <Container size={'lg'} >
+        return <Container size={'xl'} >
             <Grid gutter={'xl'}>
                 <Grid.Col span={{ base: 12, md: 3 }}>
                     <Suspense fallback={<Skeleton />}>
@@ -57,10 +59,7 @@ const ProfileLayout = {
                         </Await>
                     </Suspense>
                 </Grid.Col>
-                <Grid.Col span="content" visibleFrom="md">
-                    <Divider orientation="vertical" h="100%" />
-                </Grid.Col>
-                <Grid.Col span="auto" >
+                <Grid.Col span={{ base: 12, md: 9 }}>
                     <Outlet />
                 </Grid.Col>
             </Grid>
@@ -75,31 +74,44 @@ const ProfileLayout = {
     },
     Cover: ({ profile }: { profile: VendorProfile | null }) => {
 
-        return <Stack>
-            <Grid align={'center'}>
-                <Grid.Col span={{ base: 4, md: 12 }}>
-                    <Image src={profile?.avatar} width={'100%'} radius={'sm'} />
-                </Grid.Col>
-                <Grid.Col span={{ base: 4, md: 12 }}>
-                    <Stack gap={'xs'}>
-                        <Flex gap={'sm'} align={'center'}>
-                            <Title order={4}>{profile?.fullName}</Title>
-                            <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
-                        </Flex>
-                        <Flex align={'center'} gap={'xs'}>
-                            <IconMapPin style={{ color: 'gray' }} size={rem(18)} />
-                            <Text fw={500}>{profile?.location} Bangalore</Text>
-                        </Flex>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-            <Text c="dimmed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Text>
-            <Flex justify={'center'}>
-                <a href="#book-now-section"><Button variant="filled" radius={'xl'}>Book a service</Button></a>
-            </Flex>
-        </Stack>;
+        return <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Card.Section>
+                <Grid align={'center'}>
+                    <Grid.Col span={{ base: 4, md: 12 }}>
+                        <Image src={profile?.avatar} width={'100%'} />
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 4, md: 12 }}>
+                        <Box p="md">
+                            <Stack gap={'xs'} justify="center">
+                                <Flex gap={'sm'} align={'center'}>
+                                    <Title order={4}>{profile?.fullName}</Title>
+                                    <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
+                                </Flex>
+                                <Flex align={'center'} gap={'xs'}>
+                                    <IconMapPin style={{ color: 'gray' }} size={rem(18)} />
+                                    <Text fw={500}>{profile?.location} Bangalore</Text>
+                                </Flex>
+                            </Stack>
+                            <Space h="md" />
+                            <Flex justify={'center'} gap={'sm'}>
+                                <Box flex={'auto'}>
+                                    <a href="#book-now-section">
+                                        <Button variant="filled" radius={'sm'} fullWidth>Book a service</Button>
+                                    </a>
+                                </Box>
+                                <ActionIcon size="lg" variant="light" color="pink" aria-label="Favourite">
+                                    <IconHeart style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                                </ActionIcon>
+                            </Flex>
+                            <Space h="md" />
+                            <Divider />
+                            <Space h="md" />
+                            <Text c="dimmed">Starting from <Currency /></Text>
+                        </Box>
+                    </Grid.Col>
+                </Grid>
+            </Card.Section>
+        </Card>;
     },
     Pricing: ({ services, preSelectedGroupId }: { services: ServiceGroup[], preSelectedGroupId: string | null }) => {
         const [activeService, setActive] = useState<VendorService>();
@@ -222,129 +234,6 @@ const ProfileLayout = {
                 </Grid>
             </Grid.Col>
         </Grid>
-    },
-    Contact: ({ services }: { services: VendorService[] }) => {
-        const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
-        const [service, setService] = useState<{ id: string, minHour: number } | null>();
-        const [showConfigPanel, setShowConfigPanel] = useState(false);
-        const [selectableList, setSelectList] = useState<AddonGroupItem[]>([]);
-        const [addonsList, setAddonsList] = useState<VendorAddonOption[]>([]);
-        const [serviceList, setServiceList] = useState<VendorServiceOption[]>([]);
-        const [selectedAddons, setSelectedAddons] = useState<VendorAddonOption[]>([]);
-
-        const onRequiredTypeChange = ({ requiredMarkValue }: { requiredMarkValue: RequiredMark }) => {
-            setRequiredMarkType(requiredMarkValue);
-        };
-
-
-        function setServiceOptions(id: string) {
-            const selected = services?.find(x => x.vendorServiceGroupId === id);
-            if (selected) {
-                setService({ id, minHour: selected?.minHour });
-                setServiceList(selected.included);
-                setAddonsList(selected.addons);
-                setSelectList(selected.selectableList || []);
-            } else {
-                setServiceList([]);
-                setAddonsList([]);
-                setSelectList([]);
-                setService(null);
-            }
-
-            setShowConfigPanel(false);
-            setSelectedAddons([]);
-        }
-
-        function setAddon(id: string) {
-            const addonItem = addonsList.find(x => x.id === id);
-            if (addonItem) {
-                setSelectedAddons(selectedAddons.concat([addonItem]));
-                addonItem.hide = true;
-            }
-        }
-
-        function removeAddon(id: string) {
-            const addonItem = selectedAddons.find(x => x.id === id);
-            const filtered = selectedAddons.filter(x => x.id !== id);
-            // setAddonsList([...addonsList, ]);
-            setSelectedAddons(filtered);
-            if (addonItem) {
-                addonItem.hide = false;
-            }
-        }
-
-        return <div className="container" id="book-now-section">
-            {/* <Divider />
-            <Title level={2}>Book Now, Pay later</Title>
-            <Row gutter={[40, 40]}>
-                <Col span={24} md={12} lg={12} xl={8}>
-                    <Space style={{ width: '100%' }} direction="vertical" size={'large'}>
-                        <Select
-                            style={{ width: '100%' }}
-                            showSearch
-                            placeholder="Search a service"
-                            options={services.map(x => ({ value: x.vendorServiceGroupId, label: x.title }))}
-                            onChange={setServiceOptions}
-                        />
-
-                        {serviceList?.length ? [<Alert
-                            message="Services Included"
-                            description={
-                                <Space wrap={true} size={'small'}>
-                                    {
-                                        serviceList.map((item) => <Tag
-                                            key={item.id} color="#108ee9"
-                                        >{item.title}</Tag>
-                                        )}
-                                    {
-                                        selectedAddons.map((item) => <Tag
-                                            key={item.id}
-                                            closable={true}
-                                            color="#108ee9"
-                                            onClose={() => removeAddon(item.id)}
-                                        >{item.title}</Tag>)
-                                    }
-                                </Space >
-                            }
-                            showIcon
-                            type="success"
-                        />,
-                        <div>
-                            {
-                                selectableList.map(item => <div>
-                                    <Title level={5}>{item.title}</Title>
-                                    <select>
-                                        {item.services.map(service => <option value={service.id}>{service.title}</option>)}
-                                    </select>
-                                </div>)
-                            }
-                        </div>,
-                        <div>
-                            <Title level={5}>Available addons</Title>
-                            {
-                                addonsList.filter(x => !x.hide).map((item) => <Tag
-                                    key={item.id}
-                                    color="blue"
-                                    closable={true}
-                                    closeIcon={<PlusOutlined color="primary" />}
-                                    onClose={() => setAddon(item.id)}
-                                >{item.title}</Tag>)
-                            }
-                            {!addonsList.filter(x => !x.hide)?.length && <div>No addons</div>}
-                        </div>]
-                            : ''}
-                        <Row justify={'end'}>
-                            <Col>
-                                {!showConfigPanel && service?.id && <Button onClick={() => setShowConfigPanel(true)} type="primary">Continue</Button>}
-                            </Col>
-                        </Row>
-                    </Space>
-                </Col>
-                <Col span={24} md={12} lg={12} xl={16}>
-                    {showConfigPanel && service?.id && <ConfigureBooking vendorServiceGroupId={service?.id} minHour={service?.minHour || 1} options={serviceList.concat(selectedAddons)} />}
-                </Col>
-            </Row> */}
-        </div>
     },
     CartSuggestion: () => {
         const location = useLocation();
