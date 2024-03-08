@@ -65,7 +65,7 @@ export async function loader({ params }: LoaderArgs) {
                     username
                 }
             },
-            take: 8
+            take: 9
         }).then(r => {
             resolve(r.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''))
         });
