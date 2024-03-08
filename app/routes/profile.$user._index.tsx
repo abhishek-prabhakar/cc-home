@@ -216,9 +216,8 @@ const ProfileHome = {
             }}/>
             </PhotoProvider> */}
 
-            <Modal opened={!!stories.length} onClose={() => setStories([])} p={0} withCloseButton={false} overlayProps={{
-                blur: 3,
-            }} >
+            <Modal.Root opened={!!stories.length} onClose={() => setStories([])} p={0} >
+                <Modal.Overlay />
                 <Modal.Content p={0}>
                     <Modal.Body>
                         {stories.length ? <Stories
@@ -229,7 +228,7 @@ const ProfileHome = {
                         /> : 'Nothing to display'}
                     </Modal.Body>
                 </Modal.Content>
-            </Modal>
+            </Modal.Root>
         </>;
     },
     Services: () => {

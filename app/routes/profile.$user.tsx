@@ -85,7 +85,7 @@ const ProfileLayout = {
                             <Stack gap={'xs'} justify="center">
                                 <Flex gap={'sm'} align={'center'}>
                                     <Title order={4}>{profile?.fullName}</Title>
-                                    <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
+                                    <IconDiscountCheckFilled size={'20px'} style={{ color: 'var(--ui-color-success)' }} />
                                 </Flex>
                                 <Flex align={'center'} gap={'xs'}>
                                     <IconMapPin style={{ color: 'gray' }} size={'18px'} />
@@ -93,7 +93,7 @@ const ProfileLayout = {
                                 </Flex>
                             </Stack>
                             <Space h="md" />
-                            <Flex justify={'center'} gap={'sm'}>
+                            <Flex justify={'center'} gap={'xs'}>
                                 <Box flex={'auto'}>
                                     <a href="#book-now-section">
                                         <Button variant="filled" radius={'sm'} fullWidth>Book a service</Button>
