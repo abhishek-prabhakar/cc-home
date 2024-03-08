@@ -78,9 +78,9 @@ const ProfileLayout = {
             <Card.Section>
                 <Grid align={'center'}>
                     <Grid.Col span={{ base: 4, md: 12 }}>
-                        <Image src={profile?.avatar} width={'100%'} />
+                        <Image src={profile?.avatar} width={'100%'} mah={'300px'} />
                     </Grid.Col>
-                    <Grid.Col span={{ base: 4, md: 12 }}>
+                    <Grid.Col span={{ base: 8, md: 12 }}>
                         <Box p="md">
                             <Stack gap={'xs'} justify="center">
                                 <Flex gap={'sm'} align={'center'}>

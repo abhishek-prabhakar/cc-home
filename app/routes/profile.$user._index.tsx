@@ -1,10 +1,10 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, ScrollArea, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Masonry from 'react-masonry-css'
-import { PhotoProvider, PhotoView } from "react-photo-view";
+import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
@@ -30,7 +30,6 @@ enum ActionType {
 
 export async function action(args: ActionArgs) {
     const username = args.params.user;
-    console.log(username, ' ------')
     if (!username) {
         return;
     }
@@ -125,7 +124,7 @@ const elementSize = 400;
 const ProfileHome = {
     Index: () => {
         return <>
-            <Card shadow="sm" padding="lg" radius="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
                 <Text fw={500}>Stories</Text>
                 <Space h="sm" />
                 <ProfileHome.Stories />
@@ -177,44 +176,59 @@ const ProfileHome = {
             });
         }
 
-        function sliderCount() { return isMobile ? 1 : 4; }
+        function sliderCount() { return isMobile ? 3 : 5; }
 
-        return <Suspense fallback={<Skeleton />}>
-            <Await resolve={data.stories}>
-                {
-                    album => <CarouselProvider
-                        naturalSlideWidth={300}
-                        naturalSlideHeight={400}
-                        totalSlides={album.length}
-                        visibleSlides={sliderCount()}
-                        isIntrinsicHeight={true}
-                        step={sliderCount()} dragStep={sliderCount()}
-                        className="carousel-slider-wrapper"
-                    >
+        return <>
+            <Suspense fallback={<Skeleton />}>
+                <Await resolve={data.stories}>
+                    {
+                        album => <CarouselProvider
+                            naturalSlideWidth={300}
+                            naturalSlideHeight={400}
+                            totalSlides={album.length}
+                            visibleSlides={sliderCount()}
+                            isIntrinsicHeight={true}
+                            step={sliderCount()} dragStep={sliderCount()}
+                            className="carousel-slider-wrapper"
+                        >
 
-                        <Slider>
-                            {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
-                                <PhotoProvider>  <PhotoView width={500} height={500} render={({ scale, attrs }) => {
-                                    const width: any = attrs.style?.width || 0;
-                                    const offset = (width - elementSize) / elementSize;
-                                    const childScale = scale === 1 ? scale + offset : 1 + offset;
+                            <Slider>
+                                {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
+                                    <Image w={'100%'} h={rem(260)} radius={'sm'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
+                                </Slide>)}
+                            </Slider>
+                        </CarouselProvider>}
+                </Await>
+            </Suspense>
+            {/* <PhotoProvider> 
+                 <PhotoView  width={500} height={500} render={({ scale, attrs }) => {
+                const width: any = attrs.style?.width || 0;
+                const offset = (width - elementSize) / elementSize;
+                const childScale = scale === 1 ? scale + offset : 1 + offset;
 
-                                    return <div {...attrs}><div style={{ transform: `scale(${childScale})`, width: elementSize, transformOrigin: '0 0' }}>{
-                                        stories?.length ? <Stories
-                                            stories={stories}
-                                            defaultInterval={1500}
-                                            width={'inherit'}
-                                            height={'inherit'}
-                                        /> : <Loader />}</div></div>
-                                }}>
-                                    <Image w={rem(180)} h={rem(260)} radius={'sm'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" />
-                                </PhotoView>
-                                </PhotoProvider>
-                            </Slide>)}
-                        </Slider>
-                    </CarouselProvider>}
-            </Await>
-        </Suspense>;
+                return <div {...attrs}><div style={{ transform: `scale(${childScale})`, width: elementSize, transformOrigin: '0 0' }}>
+                    <Stories
+                        stories={stories}
+                        defaultInterval={1500}
+                        width={'inherit'}
+                        height={'inherit'}
+                    /></div></div>
+            }}/>
+            </PhotoProvider> */}
+
+            <Modal opened={!!stories.length} onClose={() => setStories([])} p={0} withCloseButton={false} overlayProps={{
+                blur: 3,
+            }} >
+                <Modal.Content p={0}>
+                    {stories.length ? <Stories
+                        stories={stories}
+                        defaultInterval={1500}
+                        width={'inherit'}
+                        height={'inherit'}
+                    /> : 'Nothing to display'}
+                </Modal.Content>
+            </Modal>
+        </>;
     },
     Services: () => {
         const data = useLoaderData<loaderData>();
