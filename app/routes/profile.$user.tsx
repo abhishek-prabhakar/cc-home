@@ -88,7 +88,7 @@ const ProfileLayout = {
                                     <IconDiscountCheckFilled size={rem(20)} style={{ color: 'var(--ui-color-success)' }} />
                                 </Flex>
                                 <Flex align={'center'} gap={'xs'}>
-                                    <IconMapPin style={{ color: 'gray' }} size={rem(18)} />
+                                    <IconMapPin style={{ color: 'gray' }} size={'18px'} />
                                     <Text fw={500}>{profile?.location} Bangalore</Text>
                                 </Flex>
                             </Stack>

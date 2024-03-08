@@ -220,12 +220,14 @@ const ProfileHome = {
                 blur: 3,
             }} >
                 <Modal.Content p={0}>
-                    {stories.length ? <Stories
-                        stories={stories}
-                        defaultInterval={1500}
-                        width={'inherit'}
-                        height={'inherit'}
-                    /> : 'Nothing to display'}
+                    <Modal.Body>
+                        {stories.length ? <Stories
+                            stories={stories}
+                            defaultInterval={1500}
+                            width={'inherit'}
+                            height={'inherit'}
+                        /> : 'Nothing to display'}
+                    </Modal.Body>
                 </Modal.Content>
             </Modal>
         </>;
