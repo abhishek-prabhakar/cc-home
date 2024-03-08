@@ -202,7 +202,7 @@ const ProfileHome = {
                                                 <Overlay
                                                     gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                                     opacity={0.85}
-                                                    p={'md'}
+                                                    p={isMobile ? 'xs' : 'md'}
                                                 >
                                                     <Flex align={'end'} h="100%">
                                                         <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>
