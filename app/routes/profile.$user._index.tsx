@@ -124,11 +124,11 @@ const elementSize = 400;
 const ProfileHome = {
     Index: () => {
         return <>
+            <Text fw={500}>Stories</Text>
+            <Space h="sm" />
+            <ProfileHome.Stories />
+            <Space h="xl" />
             <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Text fw={500}>Stories</Text>
-                <Space h="sm" />
-                <ProfileHome.Stories />
-                <Space h="xl" />
                 <Stack gap={'xs'}>
                     <Text fw={700}>50+</Text>
                     <Text c="dimmed">Happy clients</Text>
@@ -195,11 +195,11 @@ const ProfileHome = {
                             <Slider>
                                 {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
                                     <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
-                                        <div className="story-block">
-                                            <div>
-                                                <Image w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
+                                        <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
+                                            <div style={{ position: 'relative', cursor: 'pointer' }}>
+                                                <Image w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
                                                 <Overlay
-                                                    gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
+                                                    gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                                     opacity={0.85}
                                                     p={'md'}
                                                 >
