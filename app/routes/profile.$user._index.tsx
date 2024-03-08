@@ -129,7 +129,7 @@ const ProfileHome = {
             <ProfileHome.Stories />
             <Space h="xl" />
             <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Stack gap={'xs'}>
+                <Stack gap={0}>
                     <Text fw={700}>50+</Text>
                     <Text c="dimmed">Happy clients</Text>
                 </Stack>
@@ -197,7 +197,8 @@ const ProfileHome = {
                                     <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                                         <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
                                             <div style={{ position: 'relative', cursor: 'pointer' }}>
-                                                <Image w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                <Image visibleFrom="md" w={'100%'} h={px('15rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
                                                 <Overlay
                                                     gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                                     opacity={0.85}
