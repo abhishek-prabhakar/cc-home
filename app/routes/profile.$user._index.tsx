@@ -224,7 +224,7 @@ const ProfileHome = {
                             stories={stories}
                             defaultInterval={1500}
                             width={'inherit'}
-                            height={'inherit'}
+                            height={'80vh'}
                         /> : 'Nothing to display'}
                     </Modal.Body>
                 </Modal.Content>
