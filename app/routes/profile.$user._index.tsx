@@ -184,7 +184,7 @@ const ProfileHome = {
             });
         }
 
-        function sliderCount() { return isMobile ? 3 : 5; }
+        function sliderCount() { return isMobile ? 3 : 6; }
 
         return <>
             <Suspense fallback={<Skeleton />}>
@@ -205,7 +205,7 @@ const ProfileHome = {
                                     <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                                         <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
                                             <div style={{ position: 'relative', cursor: 'pointer' }}>
-                                                <Image visibleFrom="md" w={'100%'} h={px('15rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
                                                 <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
                                                 <Overlay
                                                     gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
@@ -285,7 +285,7 @@ const ProfileHome = {
                 <Grid.Col span="content"><Title order={4}>Best works</Title></Grid.Col>
                 <Grid.Col span="content">
                     <Button variant="subtle" radius={'xl'} onClick={() => navigate('portfolio')} >
-                        See all works
+                        See all
                     </Button>
                 </Grid.Col>
             </Grid>
@@ -306,7 +306,7 @@ const ProfileHome = {
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
                     <Button variant="outline" size="xs" radius={'xl'} onClick={() => navigate('portfolio')} >
-                        See all
+                        See all works
                     </Button>
                 </div>
             </div>
