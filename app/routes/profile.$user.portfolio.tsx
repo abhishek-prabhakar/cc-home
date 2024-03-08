@@ -18,7 +18,7 @@ export default function Portfolio() {
 
     return <div className="container">
         <Stack gap={'lg'}>
-            <Grid.Col span={12}><Title order={2}>Best works</Title></Grid.Col>
+            <Title order={4}>Best works</Title>
             <Space h="md" />
             <div>
                 <PhotoProvider>
