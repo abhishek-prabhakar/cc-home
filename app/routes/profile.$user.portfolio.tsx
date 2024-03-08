@@ -17,18 +17,14 @@ export default function Portfolio() {
     const data = useLoaderData<typeof loader>();
 
     return <div className="container">
-        <Stack gap={'lg'}>
-            <Title order={4}>Best works</Title>
-            <Space h="md" />
-            <div>
-                <PhotoProvider>
-                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>
-                        {data?.map((image, key) => <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
-                            <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
-                        </PhotoView>)}
-                    </Masonry>
-                </PhotoProvider>
-            </div>
-        </Stack>
+        <Title order={4}>Best works</Title>
+        <Space h="md" />
+        <PhotoProvider>
+            <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>
+                {data?.map((image, key) => <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
+                    <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
+                </PhotoView>)}
+            </Masonry>
+        </PhotoProvider>
     </div>
 }
