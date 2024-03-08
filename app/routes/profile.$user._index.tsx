@@ -196,7 +196,7 @@ const ProfileHome = {
                                 {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
                                     <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                                         <div className="story-block">
-                                            <Image w={'100%'} h={rem(260)} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
+                                            <Image w={'100%'} h={'260px'} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
                                         </div>
                                     </div>
                                 </Slide>)}
