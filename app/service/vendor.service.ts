@@ -53,9 +53,30 @@ function portfolioByAlbumId(input: { username: string, albumId?: string | null }
     });
 }
 
+function portfolioByUsername(username?: string) {
+    if (!username) {
+        throw new Error("invalid user");
+    }
+
+    return db.vendorPortfolio.findMany({
+        where: {
+            vendor: {
+                username: username,
+            }
+        },
+        select: {
+            fileName: true
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+}
+
 export const VendorQuery = {
     Stories,
     portfolioByAlbumId,
+    portfolioByUsername,
     Signup: (props: {
         fullName: string,
         mobileNumber: string,

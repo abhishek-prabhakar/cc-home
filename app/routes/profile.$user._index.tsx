@@ -15,7 +15,6 @@ import { CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { VendorQuery } from "~/service/vendor.service";
 
 type ProfileService = { name: string, description: string };
-type loaderData = VendorProfile & VendorPortfolio & { services: ProfileService[] };
 type Story = {
     url?: string;
     seeMore?: Function;
@@ -52,6 +51,8 @@ export async function loader({ params }: LoaderArgs) {
     if (!username) {
         new Error("404");
     };
+
+    const profile = await VendorQuery.getVendorByUsername(username || '');
 
     const portfolio = new Promise<string[]>(function (resolve) {
         db.vendorPortfolio.findMany({
@@ -107,6 +108,7 @@ export async function loader({ params }: LoaderArgs) {
     });
 
     return defer({
+        profile,
         username: username,
         portfolio: portfolio,
         services,
@@ -138,6 +140,12 @@ const ProfileHome = {
                 <Space h="md" />
                 <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 8 }}>
+                        <Title order={4} c={'var(--ui-color-primary)'}>About me</Title>
+                        <Space h="sm" />
+                        <Divider size="lg" w="50px" style={{
+                            borderColor: '#2a2a2a'
+                        }} />
+                        <Space h="md" />
                         <Text> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</Text>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
@@ -248,7 +256,7 @@ const ProfileHome = {
         </>;
     },
     Services: () => {
-        const data = useLoaderData<loaderData>();
+        const data = useLoaderData<typeof loader>();
 
         return <Stack>
 
@@ -269,7 +277,7 @@ const ProfileHome = {
         </Stack>
     },
     Gallery: () => {
-        const data = useLoaderData<loaderData>();
+        const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
 
         return <Stack>
@@ -277,7 +285,7 @@ const ProfileHome = {
                 <Grid.Col span="content"><Title order={4}>Best works</Title></Grid.Col>
                 <Grid.Col span="content">
                     <Button variant="subtle" radius={'xl'} onClick={() => navigate('portfolio')} >
-                        See all
+                        See all works
                     </Button>
                 </Grid.Col>
             </Grid>

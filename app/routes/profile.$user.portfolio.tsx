@@ -1,40 +1,30 @@
-import { Grid, Stack, Title } from "@mantine/core";
+import { Grid, Space, Stack, Title } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Masonry from "react-masonry-css";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { PATH } from "~/path.data";
+import { VendorQuery } from "~/service/vendor.service";
 
-type loaderData = { portfolio: string[] };
-export function loader({ params }: LoaderArgs): loaderData {
+export async function loader({ params }: LoaderArgs) {
     const id = params.user;
-    const data = {
-        portfolio: [
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio1-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio2-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio3-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio4-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio5-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio6-min.png',
-            'https://ld-wp73.template-help.com/wordpress/prod_15696/v7//wp-content/uploads/2022/06/portfolio7-min.png']
-    };
+    const portfolio = await VendorQuery.portfolioByUsername(id);
 
-    return data;
+    return portfolio;
 }
 
 export default function Portfolio() {
-    const data = useLoaderData<loaderData>();
+    const data = useLoaderData<typeof loader>();
 
     return <div className="container">
         <Stack gap={'lg'}>
-            <Grid justify={'space-between'} align={'middle'} gutter={20}>
-                <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
-                <Grid.Col>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
-            </Grid>
+            <Grid.Col span={12}><Title order={2}>Best works</Title></Grid.Col>
+            <Space h="md" />
             <div>
                 <PhotoProvider>
-                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 2, 750: 3, 900: 3 }}>
-                        {data.portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
-                            <img className="cursor-pointer" src={image} />
+                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{ 350: 3, 750: 4, 900: 4 }}>
+                        {data?.map((image, key) => <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
+                            <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
                         </PhotoView>)}
                     </Masonry>
                 </PhotoProvider>
