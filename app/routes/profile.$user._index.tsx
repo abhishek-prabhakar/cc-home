@@ -1,5 +1,5 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, ScrollArea, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, Overlay, ScrollArea, Space, Stack, Text, Title, px, rem } from "@mantine/core";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -129,7 +129,7 @@ const ProfileHome = {
                 <Space h="sm" />
                 <ProfileHome.Stories />
                 <Space h="xl" />
-                <Stack gap={'sm'}>
+                <Stack gap={'xs'}>
                     <Text fw={700}>50+</Text>
                     <Text c="dimmed">Happy clients</Text>
                 </Stack>
@@ -196,7 +196,18 @@ const ProfileHome = {
                                 {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
                                     <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                                         <div className="story-block">
-                                            <Image w={'100%'} h={'260px'} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
+                                            <div>
+                                                <Image w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} onClick={() => loadStories(item.serviceGroupId)} fit="cover" style={{ cursor: 'pointer' }} />
+                                                <Overlay
+                                                    gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
+                                                    opacity={0.85}
+                                                    p={'md'}
+                                                >
+                                                    <Flex align={'end'} h="100%">
+                                                        <Text fw={500} c="white">{item.serviceGroup?.name}</Text>
+                                                    </Flex>
+                                                </Overlay>
+                                            </div>
                                         </div>
                                     </div>
                                 </Slide>)}
