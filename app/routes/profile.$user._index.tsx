@@ -257,9 +257,9 @@ const ProfileHome = {
                 <Await resolve={data.services}>
                     {services =>
                         <Stack>
-                            {services.map((x, i) => <Group>
+                            {services.map((x, i) => <Group gap="xs">
                                 <Text>{x.name}</Text>
-                                <Text c="dimmed">{x.description}</Text>
+                                <Text c="dimmed" size="sm">{x.description}</Text>
                             </Group>
                             )}
                         </Stack>
@@ -274,11 +274,10 @@ const ProfileHome = {
 
         return <Stack>
             <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
-                <Grid.Col span={12}><Title order={2}>Our amazing work</Title></Grid.Col>
-                <Grid.Col span={'auto'}>We offer versatile templates that can be used by individuals and companies looking for a simple one page template.</Grid.Col>
+                <Grid.Col span={12}><Title order={5}>Best works</Title></Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'content' }}>
-                    <Button variant="outline" radius={'xl'} onClick={() => navigate('portfolio')} >
-                        View all project
+                    <Button variant="subtle" radius={'xl'} onClick={() => navigate('portfolio')} >
+                        See all
                     </Button>
                 </Grid.Col>
             </Grid>
@@ -299,7 +298,7 @@ const ProfileHome = {
                 </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
                     <Button variant="outline" size="xs" radius={'xl'} onClick={() => navigate('portfolio')} >
-                        View all project
+                        See all
                     </Button>
                 </div>
             </div>
