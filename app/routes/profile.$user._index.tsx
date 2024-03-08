@@ -204,7 +204,7 @@ const ProfileHome = {
                                                     p={'md'}
                                                 >
                                                     <Flex align={'end'} h="100%">
-                                                        <Text fw={500} c="white">{item.serviceGroup?.name}</Text>
+                                                        <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>
                                                     </Flex>
                                                 </Overlay>
                                             </div>
