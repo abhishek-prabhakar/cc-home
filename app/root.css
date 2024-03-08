@@ -480,3 +480,11 @@ a, a:active{
         background-position-x: -120px; */
     }
 }
+
+
+.story-block{
+    border-style: solid;
+    border-width: 2px;
+    border-image: conic-gradient(#833ab4, #3f5efb, #fc466b, #fd1d1d, #fcb045, #fc466b, #833ab4) 1;
+    padding: 2px
+}
