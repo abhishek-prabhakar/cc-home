@@ -274,8 +274,8 @@ const ProfileHome = {
 
         return <Stack>
             <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
-                <Grid.Col span={12}><Title order={5}>Best works</Title></Grid.Col>
-                <Grid.Col span={{ base: 12, md: 'content' }}>
+                <Grid.Col span="content"><Title order={4}>Best works</Title></Grid.Col>
+                <Grid.Col span="content">
                     <Button variant="subtle" radius={'xl'} onClick={() => navigate('portfolio')} >
                         See all
                     </Button>
