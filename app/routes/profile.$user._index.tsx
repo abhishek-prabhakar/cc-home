@@ -216,10 +216,10 @@ const ProfileHome = {
             }}/>
             </PhotoProvider> */}
 
-            <Modal.Root opened={!!stories.length} onClose={() => setStories([])} p={0} >
+            <Modal.Root opened={!!stories.length} onClose={() => setStories([])} p={0} centered>
                 <Modal.Overlay />
                 <Modal.Content p={0}>
-                    <Modal.Body>
+                    <Modal.Body p={0}>
                         {stories.length ? <Stories
                             stories={stories}
                             defaultInterval={1500}
