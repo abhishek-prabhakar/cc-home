@@ -1,9 +1,11 @@
-import { Badge, Container, Flex, Grid, Stack, Text, Title, Group, Space, Divider } from "@mantine/core";
+import { Badge, Container, Flex, Grid, Stack, Text, Title, Group, Space, Divider, ThemeIcon } from "@mantine/core";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import Routes from "~/routes.data";
 import { RootLoaderData } from "~/types";
 import Skeleton from "./Skeleton";
+import { IconBrandInstagram } from "@tabler/icons-react";
+import { IconBrandYoutube } from "@tabler/icons-react";
 
 export function Footer() {
     const data = useLoaderData<RootLoaderData>();
@@ -17,7 +19,7 @@ export function Footer() {
                 <Await resolve={data.pages}>
                     {navList =>
                         <Grid gutter={'xl'}>
-                            {navList.map(item => <Grid.Col span="content">
+                            {navList.map(item => <Grid.Col span={{ base: 6, md: 2 }}>
                                 <Text fw={500} pb={'sm'}>{item.name}</Text>
                                 <Stack>
                                     {item.children[0]?.list.map((child, i) => <Link to={child.path}><Text size="sm">{child.name}</Text></Link>)}
@@ -28,6 +30,18 @@ export function Footer() {
                 </Await>
             </Suspense>
             <Space h="xl" />
+            <Divider />
+            <Space h="md" />
+            <Text c="dimmed">Follow us on social media</Text>
+            <Group gap="xl" pt="sm">
+                <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
+                    <IconBrandInstagram />
+                </ThemeIcon>
+                <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
+                    <IconBrandYoutube />
+                </ThemeIcon>
+            </Group>
+            <Space h="md" />
             <Divider />
             <Space h="xl" />
             <Text ta="center">© Celebria Collective 2024. All Rights Reserved.</Text>

@@ -296,7 +296,7 @@ const ProfileHome = {
                         <Await resolve={data.portfolio}>
                             {portfolio => <>
                                 <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
-                                    <img src={image} className="cursor-pointer" />
+                                    <Image radius={'md'} src={image} className="cursor-pointer" />
                                 </PhotoView>)}
                                 </Masonry>
                                 {!portfolio.length ? 'Sorry, This profile doesnt contains any works to display' : ''}

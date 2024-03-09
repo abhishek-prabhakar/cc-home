@@ -12,8 +12,9 @@ import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
 import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Stack, Text, Title } from "@mantine/core";
-import { IconArrowNarrowLeft, IconArrowNarrowRight, IconChevronRight, IconFlame, IconSearch } from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
+import { IconHanger } from "@tabler/icons-react";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -341,45 +342,6 @@ const Home = {
       </Grid>
     </div>;
   },
-  QuickPick: () => {
-    const data = useLoaderData<HomePage>();
-
-    // return <div className="category-list home-section-card-wrapper">
-    //   <Title order={2}>Featured</Title>
-    //   <Suspense fallback={<Skeleton active />}>
-    //     <Await resolve={data.quickLinks}>
-    //       {response => <Grid gutter={40} justify={'center'}>
-    //         {response.map(item => <Grid.Col key={item.id} span={12} md={6}>
-    //           <Stack>
-    //             <div>
-    //               <div className="category-badge">
-    //                 {item.label}
-    //               </div>
-    //               <div className="category-thumb">
-    //                 <div className="cover">
-    //                   <Image  src={item.image || ''} fallback={FALLBACK_IMG} />
-    //                 </div>
-    //                 <div className="hover">
-    //                   <Image  src={item.image || ''} fallback={FALLBACK_IMG} />
-    //                 </div>
-    //                 <div className="link">
-    //                   <Link to={item.path}>
-    //                     <RightCircleOutlined />
-    //                   </Link>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //             <div>
-    //               <Link to={item.path}><Title order={5}>{item.title}</Title></Link>
-    //               {item.cost && <div>Starting from {item.cost}</div>}
-    //             </div>
-    //           </Space>
-    //         </Grid.Col>)}
-    //       </Grid>}
-    //     </Await>
-    //   </Suspense>
-    // </div>;
-  },
   PopularServices: () => {
     const data = useLoaderData<HomePage>();
     const [isMobile, setMobile] = useState(false);
@@ -512,6 +474,23 @@ const Home = {
 
     function sliderCount() { return isMobile ? 2 : 5; }
 
+    const CatIconList = [{
+      name: 'video',
+      icon: <IconVideo />
+    },
+    {
+      name: 'photo',
+      icon: <IconCamera />
+    },
+    {
+      name: 'makeup',
+      icon: <IconBrush />
+    },
+    {
+      name: 'design',
+      icon: <IconHanger />
+    }]
+
     return [
       <Suspense fallback={<Skeleton />}>
         <Await resolve={loaderData.categories}>
@@ -528,9 +507,8 @@ const Home = {
               <div className="item-spacer">
                 <div className="item">
                   <Stack>
-                    <IconFlame style={{ fontSize: '2em' }} />
+                    {CatIconList.find(x => item.title.toLowerCase().includes(x.name))?.icon}
                     <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
-                    <Text className="item-description" c="dimmed" style={{ fontSize: '0.8em', color: 'whitesmoke' }}>{item.description}</Text>
                   </Stack>
                 </div>
               </div>
