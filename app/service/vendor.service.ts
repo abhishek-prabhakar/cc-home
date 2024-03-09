@@ -113,6 +113,7 @@ export const VendorQuery = {
                     primaryColor: true,
                     coverImageName: true,
                     profileImageName: true,
+                    bio: true,
                     vendorType: {
                         select: {
                             name: true
@@ -131,6 +132,7 @@ export const VendorQuery = {
                         primaryColor: r.primaryColor,
                         avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
                         coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
+                        bio: r.bio
                     });
                 } else {
                     resolve(null);

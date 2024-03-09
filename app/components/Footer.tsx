@@ -1,4 +1,4 @@
-import { Badge, Container, Flex, Grid, Stack, Text, Title } from "@mantine/core";
+import { Badge, Container, Flex, Grid, Stack, Text, Title, Group, Space, Divider } from "@mantine/core";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import Routes from "~/routes.data";
@@ -9,33 +9,33 @@ export function Footer() {
     const data = useLoaderData<RootLoaderData>();
 
     return <Container size={'xl'} pt={'xl'}>
-        <Stack gap="lg">
-            <Grid gutter={40} style={{ background: '#EEF5FE', borderRadius: '10px', padding: '40px' }}>
-                <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Title order={5}>About</Title>
-                    <Text c="#3d5b7d">Our commitment to excellence is the cornerstone of our vision, empowering both clients and artisans to revel in an unparalleded creative odyssey.</Text>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Title order={5}>Categories</Title>
-                    <Suspense fallback={<Skeleton />}>
-                        <Await resolve={data.pages}>
-                            {navList => <Flex wrap="wrap" gap="sm">{navList.map(item => <Link to={Routes.Services.replace(':id', item.id)}> <Badge variant="outline" color="gray" key={item.id}>{item.name}</Badge></Link>)}</Flex>}
-                        </Await>
-                    </Suspense>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Title order={5}>Support</Title>
-                    <Text>support@celebriacollective.com</Text>
-                </Grid.Col>
-            </Grid>
-            <Grid justify={'space-between'}>
-                <Grid.Col>
-                    <Text c="dimmed">© Celebria Collective {new Date().getFullYear()}. All Rights Reserved.</Text>
-                </Grid.Col>
-                <Grid.Col>
-                    <Text c="dimmed">Privacy Policy | Terms And Conditions</Text>
-                </Grid.Col>
-            </Grid>
-        </Stack>
+        <Space h="xl" />
+        <Link to="/" ><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
+        <Space h="lg" />
+        <Suspense fallback={<Skeleton />}>
+            <Await resolve={data.pages}>
+                {navList =>
+                    <Grid gutter={'lg'}>
+                        {navList.map(item => <Grid.Col span="content">
+                            <Text fw={500} pb={'sm'}>{item.name}</Text>
+                            <Stack>
+                                {item.children[0]?.list.map((child, i) => <Link to={child.path}><Text size="sm">{child.name}</Text></Link>)}
+                            </Stack>
+                        </Grid.Col>)}
+                    </Grid>
+                }
+            </Await>
+        </Suspense>
+        <Space h="xl" />
+        <Divider />
+        <Space h="xl" />
+        <Text ta="center">© Celebria Collective 2024. All Rights Reserved.</Text>
+        <Space h="md" />
+        <Group justify="center" gap="lg">
+            <Text c="dimmed" ta="center">© Celebria Collective 2024. All Rights Reserved.</Text>
+            <Text c="dimmed" ta="center">Privacy Policy</Text>
+            <Text c="dimmed" ta="center">Terms And Conditions</Text>
+        </Group>
+        <Space h="xl" />
     </Container>;
 }

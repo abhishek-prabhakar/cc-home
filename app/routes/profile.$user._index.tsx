@@ -125,6 +125,7 @@ const elementSize = 400;
 
 const ProfileHome = {
     Index: () => {
+        const data = useLoaderData<typeof loader>();
         return <>
             <Text fw={500}>Stories</Text>
             <Space h="sm" />
@@ -146,7 +147,7 @@ const ProfileHome = {
                             borderColor: '#2a2a2a'
                         }} />
                         <Space h="md" />
-                        <Text> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</Text>
+                        <Text>{data.profile?.bio}</Text>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <ProfileHome.Services />

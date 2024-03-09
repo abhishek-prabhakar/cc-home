@@ -28,6 +28,7 @@ export type VendorProfile = {
     coverImageName?: string | null;
     primaryColor?: string;
     avatar?: string;
+    bio?: string | null
 }
 
 export type VendorPortfolio = {

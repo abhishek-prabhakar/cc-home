@@ -274,9 +274,9 @@ const UserOrderHome = {
                                 <Text size="xs" mt={4}>{DateFormatter.short(orderData.date)}</Text>
                             </Timeline.Item>
                             {orderStatusCheckList.filter(x => x.filter?.includes(orderData.status)).map(item => <Timeline.Item title={item.children} bullet={<ThemeIcon
-                                size={22}
                                 c={item.color}
                                 radius="xl"
+                                size={24}
                             >
                                 {item.dot}
                             </ThemeIcon>}></Timeline.Item>)}
@@ -286,7 +286,7 @@ const UserOrderHome = {
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
-                    <Grid>
+                    <Grid align="center">
                         <Grid.Col span={'content'}>
                             <Link to={'/profile/' + orderData.vendor.username}><Avatar src={orderData.vendor.profileImg} /></Link>
                         </Grid.Col>
@@ -294,11 +294,13 @@ const UserOrderHome = {
                             <Link to={'/profile/' + orderData.vendor.username}><Text fw={500}>{orderData.vendor.name}</Text></Link>
                             <Text size="sm">{orderData.vendor.jobType}</Text>
                         </Grid.Col>
-                        <Tooltip label={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
-                            <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
-                                Call
-                            </Button>
-                        </Tooltip>
+                        <Grid.Col span={'content'}>
+                            <Tooltip label={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
+                                <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
+                                    Call
+                                </Button>
+                            </Tooltip>
+                        </Grid.Col>
                     </Grid>
                     <Space h="md" />
                     <Divider />
