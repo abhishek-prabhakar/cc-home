@@ -51,6 +51,7 @@ model Vendor {
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt          DateTime?            @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   socialUrl          String?
+  bio                String?
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])

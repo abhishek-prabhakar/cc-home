@@ -1,7 +1,6 @@
 import { RightOutlined } from "@ant-design/icons";
 import { Button, Grid, Title, Tooltip } from "@mantine/core";
 import { Link } from "@remix-run/react";
-import { Typography } from 'antd';
 import { BannerItem } from "~/types";
 
 const bannerStyle: React.CSSProperties = {

@@ -1,22 +1,18 @@
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Badge, Button, Card, Grid, Group, Skeleton, Text, Title } from "@mantine/core";
 import { BookingStatus, User } from "@prisma/client";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
-import { Avatar, Button, Card, Col, Divider, Dropdown, List, MenuProps, Row, Skeleton, Space, Tag, Timeline, Typography } from "antd";
 import { Suspense } from "react";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { UserBooking, UserData } from "~/types";
 import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
-const { Title, Text } = Typography;
 
 type OrderItem = { id: string, status: BookingStatus, name: string, date: Date, services: string[] }
-type LoaderData = {
-    orders: OrderItem[]
-}
 
-export async function loader({ params, request }: LoaderArgs): Promise<any> {
+export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));
     const userId = session.get(USER_SESSION_KEY);
 
@@ -75,44 +71,44 @@ export async function loader({ params, request }: LoaderArgs): Promise<any> {
 
 const UserHome = {
     Index: () => {
-        return <Row>
-            <Col sm={24} xs={24} md={16}>
-                <Title level={3}>Manage Bookings</Title>
+        return <Grid>
+            <Grid.Col span={{ base: 12, md: 8 }}>
+                <Title order={3}>Manage Bookings</Title>
                 <UserHome.AllBookings />
-            </Col>
-        </Row>
+            </Grid.Col>
+        </Grid>
     },
     AllBookings: () => {
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loader>();
 
         return <div>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.orders}>
-                    {response => <Row >
-                        {response.map(booking => <Col span={24} key={booking.id}> <Card>
-                            <Row justify={'space-between'} align={'middle'} gutter={[20, 20]}>
-                                <Col>
-                                    <Space size={'middle'}>
-                                        <Text type="secondary" strong>Order ID: {booking.id}</Text>
-                                        <Tag color={StatusMarker.get(booking.status)}>{booking.status}</Tag>
-                                    </Space>
-                                    <Title level={5}>{booking.name}</Title>
+                    {response => <Grid >
+                        {response.map(booking => <Grid.Col span={12} key={booking.id}> <Card withBorder>
+                            <Grid justify={'space-between'} align={'middle'} gutter={20}>
+                                <Grid.Col>
+                                    <Group>
+                                        <Text c="dimmed" fw={500}>Order ID: {booking.id}</Text>
+                                        <Badge color={StatusMarker.get(booking.status)}>{booking.status}</Badge>
+                                    </Group>
+                                    <Title order={5}>{booking.name}</Title>
                                     Placed on: <b>{DateFormatter.short(booking.date)}</b>
                                     <p><Text><strong>Services:</strong> {booking.services.join(', ')}</Text></p>
-                                </Col>
-                                <Col>
+                                </Grid.Col>
+                                <Grid.Col>
                                     <Link to={'/user/order/' + booking.id}>
-                                        <Button type="default" shape="round" size={'middle'}>
+                                        <Button radius={'xl'} size={'middle'}>
                                             View
                                         </Button>
                                     </Link>
-                                </Col>
-                            </Row>
+                                </Grid.Col>
+                            </Grid>
                         </Card>
-                        </Col>
+                        </Grid.Col>
                         )}
-                        {!response.length && <Col span={12}>Sorry, You haven't scheduled any orders</Col>}
-                    </Row>}
+                        {!response.length && <Grid.Col span={12}>Sorry, You haven't scheduled any orders</Grid.Col>}
+                    </Grid>}
                 </Await>
             </Suspense>
         </div >
