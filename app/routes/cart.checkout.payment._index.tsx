@@ -113,7 +113,7 @@ export default function () {
                                 <Text size="sm" fw={500}><Currency value={data?.final} /></Text>
                             </Flex>
                             <Divider />
-                            <Button variant="filled" fullWidth disabled={!paymentMethod}>Place Order</Button>
+                            <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod}>Place Order</Button>
                         </Stack>
                     </Form>
                 </Card>

@@ -1,12 +1,19 @@
 import { ActionArgs, json, redirect } from "@remix-run/node";
 import { useForm } from "react-hook-form";
-import { cartCheckoutCookie } from "~/session.server";
+import { USER_SESSION_KEY, cartCheckoutCookie, getSession } from "~/session.server";
 import { CartInput } from "~/types";
 
 export async function action({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    const userId = session.get(USER_SESSION_KEY);
+    if (!userId) {
+        return redirect('/user/login');
+    }
+
+
     let currentCart: CartInput[] = [];
     const body = await request.formData();
     let redirectUrl;

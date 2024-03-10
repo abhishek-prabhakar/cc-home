@@ -1,7 +1,7 @@
 import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
-import { Await, Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
+import { Await, Form, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { IconNumber1, IconNumber2 } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { IconNumber3 } from "@tabler/icons-react";
@@ -9,10 +9,13 @@ import { IconNumber4 } from "@tabler/icons-react";
 import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import UserLogin from "~/components/UserLogin";
 import COMMON_DATA from "~/data/common.data";
 import { PATH } from "~/path.data";
 import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
+import { getUser } from "~/store/user.store";
 import { CartInput, CartItem } from "~/types";
 import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
@@ -322,6 +325,8 @@ const Page = {
         const submit = useSubmit();
         const fetcher = useFetcher<typeof cartSummary>();
         const [isStepsReady, setStepsReady] = useState(false);
+        const user = useSelector(getUser);
+        const location = useLocation();
 
         useEffect(() => {
             if (data?.services?.length && data?.date && data.timeHour) {
@@ -376,8 +381,6 @@ const Page = {
             <Await resolve={fetcher.data}>
                 {response => ['loading', 'submitting'].includes(fetcher.state) ? <Loader color="gray" /> : <Grid gutter={'xl'}>
                     <Grid.Col span={{ base: 12, md: 4 }}>
-                        <Text fw={700}>Order</Text>
-                        <Space h="sm" />
                         <Card shadow="sm" withBorder>
                             <Stack>
                                 {
@@ -394,7 +397,7 @@ const Page = {
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <Card shadow="sm" withBorder title="Continue">
-                            <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button>
+                            {user ? <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button> : <UserLogin redirectUrl={location.pathname} title="Login to continue"/>}
                         </Card>
                         <Space h="md" />
                         <Stack>
