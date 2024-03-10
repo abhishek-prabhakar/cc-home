@@ -18,6 +18,7 @@ export const CartService = {
             gst,
             final: total + tax,
             discount: 0,
+            coupon: null
         };
     },
     summary: function (cart: CartInput[]) {

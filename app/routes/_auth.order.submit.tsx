@@ -1,7 +1,7 @@
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
-import { USER_SESSION_KEY, getSession, userCartCookie } from "~/session.server";
+import { USER_SESSION_KEY, cartCheckoutCookie, getSession } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -28,7 +28,7 @@ export async function action({
     }
 
 
-    const cartData: CartInput[] = await userCartCookie.parse(cookieHeader);
+    const cartData: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 
     if (!cartData?.length) {
         return redirect('/cart/checkout');
@@ -89,7 +89,7 @@ export async function action({
 
     return redirect('/order/success?id=' + orderId, {
         headers: {
-            "Set-Cookie": await userCartCookie.serialize(null),
+            "Set-Cookie": await cartCheckoutCookie.serialize(null),
         },
     });
 }

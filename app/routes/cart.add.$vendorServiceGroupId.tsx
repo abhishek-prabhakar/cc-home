@@ -39,10 +39,8 @@ type FormParams = {
 
 async function cartSummary(input: CartInput[]) {
     const cartSummary = await CartService.summary(input);
-    const estimation = await CartService.calculate(cartSummary);
     return {
-        cartSummary,
-        estimation
+        cartSummary
     }
 }
 
@@ -323,7 +321,6 @@ const Page = {
     Summary: ({ data }: { data?: FormParams | null }) => {
         const submit = useSubmit();
         const fetcher = useFetcher<typeof cartSummary>();
-        const [getCoupon, setCoupon] = useState('');
         const [isStepsReady, setStepsReady] = useState(false);
 
         useEffect(() => {
@@ -355,8 +352,12 @@ const Page = {
             });
         }
 
-        function applyCoupon() {
-            getEstimation(getCoupon);
+        function expresCheckout() {
+            const input = getInputParams();
+            submit({ cart: JSON.stringify(input) }, {
+                action: '/order/checkout',
+                method: 'post',
+            });
         }
 
         function getInputParams() {
@@ -370,13 +371,6 @@ const Page = {
 
             return params;
         }
-
-        const CouponSection = <Group gap={'md'} align="end">
-            <Input.Wrapper flex={1} label="Coupon">
-                <Input value={getCoupon} onChange={v => setCoupon(v.target.value)} />
-            </Input.Wrapper>
-            <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
-        </Group>;
 
         return isStepsReady ? <Suspense fallback={<Skeleton />}>
             <Await resolve={fetcher.data}>
@@ -399,31 +393,8 @@ const Page = {
                         </Card>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
-                        <Text fw={700}>Payment Summary</Text>
-                        <Space h="sm" />
-                        <Card shadow="sm" withBorder>
-                            <Stack>
-                                {CouponSection}
-                                <Divider />
-                                <Flex justify={'space-between'}>
-                                    <Text size="sm" fw={500}>Subtotal</Text>
-                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.total} /></Text>
-                                </Flex>
-                                <Flex justify={'space-between'}>
-                                    <Text c="dimmed">GST ({response?.estimation?.gst}%)</Text>
-                                    <Text><Currency value={response?.estimation?.tax} /></Text>
-                                </Flex>
-                                <Flex justify={'space-between'}>
-                                    <Text size="sm" fw={500}>Discount</Text>
-                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.discount} /></Text>
-                                </Flex>
-                                <Flex justify={'space-between'}>
-                                    <Text size="sm" fw={500}>Total</Text>
-                                    <Text size="sm" fw={500}><Currency value={response?.estimation?.final} /></Text>
-                                </Flex>
-                                <Divider />
-                                <Button variant="filled" onClick={addToCart}>Proceed to payment</Button>
-                            </Stack>
+                        <Card shadow="sm" withBorder title="Continue">
+                            <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button>
                         </Card>
                         <Space h="md" />
                         <Stack>

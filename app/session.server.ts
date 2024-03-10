@@ -5,6 +5,9 @@ const cookieAge = 60 * 60 * 24 * 7 * 364;
 export const userCartCookie = createCookie("cart", {
     maxAge: cookieAge
 });
+export const cartCheckoutCookie = createCookie("checkout", {
+    maxAge: cookieAge
+});
 export const vendorSignupCookie = createCookie("vendor-signup", {
     maxAge: cookieAge
 });
