@@ -1,6 +1,6 @@
 import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input } from "@mantine/core";
 import { ActionArgs, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import { useState } from "react";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
@@ -55,6 +55,7 @@ export default function () {
     const [paymentMethod, setPayMethod] = useState<string | null>();
     const data = useLoaderData<typeof cartSummary>();
     const [getCoupon, setCoupon] = useState('');
+    const navigation = useNavigation();
 
     function updatePayMethod(id: string) {
         const item = PaymentMethodList.find(x => x.id === id);
@@ -113,7 +114,7 @@ export default function () {
                                 <Text size="sm" fw={500}><Currency value={data?.final} /></Text>
                             </Flex>
                             <Divider />
-                            <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod}>Place Order</Button>
+                            <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={['loading', 'submitting'].includes(navigation.state)}>Place Order</Button>
                         </Stack>
                     </Form>
                 </Card>

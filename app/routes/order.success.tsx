@@ -1,5 +1,5 @@
 import { CheckCircleOutlined, FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
-import { Button, Card, Container, Grid, Rating, Stack, Text, Title, rem } from "@mantine/core";
+import { Button, Card, Container, Grid, Rating, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
@@ -50,7 +50,7 @@ const OrderSuccess = {
                 <Grid.Col span={{ base: 12, md: 4, lg: 5 }}>
                     <Stack gap={'md'}>
                         <Card withBorder>
-                            <Stack>
+                            <Stack justify="center" align="center">
                                 <Text size="sm" c="dimmed">
                                     <CheckCircleOutlined style={{ fontSize: '50px' }} />
                                 </Text>
@@ -58,9 +58,9 @@ const OrderSuccess = {
                                     <Title order={2}>Your Order is Confirmed!</Title>
                                     <Text>We'll send you a confirmation email<br /> as soon as the vendor confirms the availability.</Text>
                                 </div>
-                                <br />
+                                <Space h="sm" />
                                 <Link to={'/user/order/' + data?.id}>
-                                    <Button variant="filled" radius={'xl'}>CHECK STATUS</Button>
+                                    <Button variant="filled" radius={'xl'}>Check Status</Button>
                                 </Link>
                             </Stack>
                         </Card>

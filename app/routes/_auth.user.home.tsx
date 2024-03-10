@@ -1,5 +1,5 @@
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Badge, Button, Card, Grid, Group, Skeleton, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Grid, Group, Skeleton, Space, Text, Title } from "@mantine/core";
 import { BookingStatus, User } from "@prisma/client";
 import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
@@ -87,16 +87,16 @@ const UserHome = {
                     {response => <Grid >
                         {response.map(booking => <Grid.Col span={12} key={booking.id}> <Card withBorder>
                             <Grid justify={'space-between'} align={'middle'} gutter={20}>
-                                <Grid.Col>
+                                <Grid.Col span="auto">
                                     <Group>
                                         <Text c="dimmed" fw={500}>Order ID: {booking.id}</Text>
-                                        <Badge color={StatusMarker.get(booking.status)}>{booking.status}</Badge>
+                                        <Badge color={StatusMarker.get(booking.status) || 'gray'}>{booking.status}</Badge>
                                     </Group>
-                                    <Title order={5}>{booking.name}</Title>
+                                    <Text>{booking.name}</Text>
+                                    <Space h="sm" />
                                     Placed on: <b>{DateFormatter.short(booking.date)}</b>
-                                    <p><Text><strong>Services:</strong> {booking.services.join(', ')}</Text></p>
                                 </Grid.Col>
-                                <Grid.Col>
+                                <Grid.Col span="content">
                                     <Link to={'/user/order/' + booking.id}>
                                         <Button radius={'xl'} size={'middle'}>
                                             View
