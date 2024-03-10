@@ -98,8 +98,8 @@ const AppNavigation = {
       toggleDrawer();
     }
 
-    function toggleDrawer() {
-      setDrawerState(!openDrawer);
+    function toggleDrawer(show = !openDrawer) {
+      setDrawerState(show);
     }
 
     return (
@@ -138,7 +138,7 @@ const AppNavigation = {
             </Await>
           </Suspense>
           <Stack gap={'lg'}>
-            <UserLogin onSuccess={() => toggleDrawer()} inlineMode={true} />
+            <UserLogin onSuccess={() => toggleDrawer(false)} inlineMode={true} />
             <div style={menuArtisantStyle}>
               <Stack
                 style={{ padding: 8 }}
