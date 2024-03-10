@@ -45,12 +45,11 @@ export async function action({
             },
         });
 
-        // await SmsService.sendSMS({
-        //     to: username,
-        //     message: otp + ' is your OTP to login to Celebria Collective - celebriacollective.com'
-        // });
+        await SmsService.sendSMS({
+            to: username,
+            message: otp + ' is your OTP to login to Celebria Collective - celebriacollective.com'
+        });
 
-        console.log(otp)
         success = true;
     } catch (r) {
         data = r;
