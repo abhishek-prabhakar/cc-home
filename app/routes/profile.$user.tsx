@@ -140,12 +140,15 @@ const ProfileLayout = {
                     <Title order={3} mb={rem(20)}>Save your money now.</Title>
                     <Stack>
                         <Text>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Secure creative professionals instantly with our 'Book Now, Pay Later' option. Pay 50% within 3 days of booking, and the rest after the completion of service.
                         </Text>
                         <Text>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Choose easy EMI or pay 100%.
                         </Text>
-                        <Image src="/assets/savings.png" width={'70%'} />
+                        <Text>
+                            Upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
+                        </Text>
+                        <Image src="/assets/savings.png" width={'50%'} />
                     </Stack>
                 </Card>
             </Grid.Col>

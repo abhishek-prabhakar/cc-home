@@ -11,7 +11,7 @@ import { getCategoryCollection, getCollections, getJumbotronList, getPopularServ
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
@@ -476,20 +476,20 @@ const Home = {
 
     const CatIconList = [{
       name: 'video',
-      icon: <IconVideo />
+      icon: <IconVideo size={30} />
     },
     {
       name: 'photo',
-      icon: <IconCamera />
+      icon: <IconCamera size={30} />
     },
     {
       name: 'makeup',
-      icon: <IconBrush />
+      icon: <IconBrush size={30} />
     },
     {
       name: 'design',
-      icon: <IconHanger />
-    }]
+      icon: <IconHanger size={30} />
+    }];
 
     return [
       <Suspense fallback={<Skeleton />}>

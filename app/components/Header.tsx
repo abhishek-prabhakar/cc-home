@@ -38,7 +38,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                     <Grid.Col span={{ base: 'content', md: 3 }}>
                         <Group gap={'sm'}>
                             <Box hiddenFrom="md">
-                                <AppNavigation.Drawer />
+                                <AppNavigation.Drawer user={user} />
                             </Box>
                             <div className="header-brand">
                                 <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>

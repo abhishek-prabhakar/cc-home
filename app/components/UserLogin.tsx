@@ -47,12 +47,8 @@ const UserLogin = {
         const fetcher = useFetcher();
 
         useEffect(() => {
-            if (fetcher.data?.success) {
-                onClose();
-            }
-
-            if (fetcher.data?.success === false){
-                alert('Invalid otp.')
+            if (fetcher.data?.success === false) {
+                alert('Invalid otp.');
             }
         }, [fetcher.data])
 

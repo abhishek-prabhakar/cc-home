@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { locationList } from "~/data/locations.data";
 import UserLogin from "./UserLogin";
 import {
@@ -6,12 +6,13 @@ import {
   Form,
   Link,
   useLoaderData,
+  useLocation,
   useNavigate,
 } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
-import { HeaderNavListItem, RootLoaderData } from "~/types";
+import { HeaderNavListItem, RootLoaderData, User } from "~/types";
 import Routes from "~/routes.data";
-import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Space, Stack, Text, Title } from "@mantine/core";
 import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
 import Skeleton from "./Skeleton";
 
@@ -88,15 +89,14 @@ const AppNavigation = {
       </Suspense>
     );
   },
-  Drawer: () => {
+  Drawer: ({ user }: { user?: User | null }) => {
     const data = useLoaderData<RootLoaderData>();
-    const navigate = useNavigate();
+    const location = useLocation();
     const [openDrawer, setDrawerState] = useState(false);
 
-
-    function navigateToPage() {
-      toggleDrawer();
-    }
+    useEffect(() => {
+      toggleDrawer(false);
+    }, [location.pathname]);
 
     function toggleDrawer(show = !openDrawer) {
       setDrawerState(show);
@@ -127,7 +127,7 @@ const AppNavigation = {
                           path: Routes.Services.replace(":id", item.id),
                           name: 'Browse all ',
                         }].concat(child.list)
-                          .map(menuItem => <Link to={menuItem.path} onClick={() => navigateToPage()}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
+                          .map(menuItem => <Link to={menuItem.path}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
                         }
                       </Stack>)
                       }
@@ -137,8 +137,14 @@ const AppNavigation = {
               )}
             </Await>
           </Suspense>
+          <Space h="sm" />
+            {user?.id ?
+              <>
+                <Link to={'/user/home'}><Button variant="white" fullWidth>My Bookings</Button></Link>
+                <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
+              </> :
+            <UserLogin onSuccess={() => toggleDrawer(false)} inlineMode={true} />}
           <Stack gap={'lg'}>
-            <UserLogin onSuccess={() => toggleDrawer(false)} inlineMode={true} />
             <div style={menuArtisantStyle}>
               <Stack
                 style={{ padding: 8 }}
