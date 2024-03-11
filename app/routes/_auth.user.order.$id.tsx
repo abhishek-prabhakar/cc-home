@@ -53,8 +53,6 @@ export async function action(args: ActionArgs) {
         return false;
     }
 
-    console.log(_action, id)
-
     switch (_action) {
         case 'cancel':
             await db.booking.update({
@@ -303,11 +301,11 @@ const UserOrderHome = {
                     </List>
 
                     <Modal opened={showModal} onClose={() => setModal(false)} title="Confirm cancellation" >
-                        <Form method="post" action="#">
+                        <Form method="post">
                             <Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Text>
                             <input type="hidden" value={orderData.id} name="id" />
                             <Grid justify={'end'} style={{ marginTop: '40px' }}>
-                                <Grid.Col><Button color="red" name="action" value={'cancel'} onClick={() => setModal(false)}>Confirm</Button></Grid.Col>
+                                <Grid.Col><Button type="submit" color="red" name="action" value={'cancel'} onClick={() => setModal(false)}>Confirm</Button></Grid.Col>
                             </Grid>
                         </Form>
                     </Modal>
