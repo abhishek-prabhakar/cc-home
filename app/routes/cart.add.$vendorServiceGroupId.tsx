@@ -409,8 +409,8 @@ const Page = {
                             >
                                 <Slider className="carousel-slider">{response?.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
 
-                                    <SimpleGrid cols={{ sm: 2, md: 4 }} style={{
-                                        maxWidth: '450px', margin: 'auto'
+                                    <SimpleGrid cols={{ xs: 2, sm: 2, md: 3 }} style={{
+                                        maxWidth: '350px', margin: 'auto'
                                     }} >
                                         {slot?.map(time => <Card withBorder p="sm">
                                             <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
