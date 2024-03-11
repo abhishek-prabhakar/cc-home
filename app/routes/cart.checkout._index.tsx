@@ -78,7 +78,7 @@ const Cart = {
                                 src={data.coverImg || ''}
                             />
                         </Card.Section>
-                        <Space />
+                        <Space h="sm" />
                         <Group justify="space-between">
                             <Group gap={'md'}>
                                 <Avatar src={data.vendorImg} />
@@ -86,16 +86,17 @@ const Cart = {
                             </Group>
                             <Badge size="xs">{data.vendorType}</Badge>
                         </Group>
-                        <Space />
+                        <Space h="md" />
                         <Text size="sm" fw={500}>{data.name}</Text>
-                        <Space />
+                        <Space h="sm" />
                         <Group>
                             <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
                             <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
                         </Group>
-                        <Space />
+                        <Space h="md" />
                         <Divider />
-                        <Flex justify={'center'} gap={'lg'} p="sm">
+                        <Space h="sm" />
+                        <Flex justify={'center'} gap={'lg'}>
                             <DeleteOutlined key="remove" />
                             <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />
                         </Flex>
