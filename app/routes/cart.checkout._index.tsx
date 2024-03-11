@@ -78,11 +78,7 @@ const Cart = {
                                 src={data.coverImg || ''}
                             />
                         </Card.Section>
-                        <Flex justify={'center'} gap={'lg'} p="lg">
-                            <DeleteOutlined key="remove" />
-                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />
-                        </Flex>
-                        <Divider />
+                        <Space />
                         <Group justify="space-between">
                             <Group gap={'md'}>
                                 <Avatar src={data.vendorImg} />
@@ -97,6 +93,12 @@ const Cart = {
                             <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
                             <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
                         </Group>
+                        <Space />
+                        <Divider />
+                        <Flex justify={'center'} gap={'lg'} p="sm">
+                            <DeleteOutlined key="remove" />
+                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />
+                        </Flex>
                     </Card>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 7 }}>
