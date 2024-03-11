@@ -25,7 +25,8 @@ export const ServiceQuery = {
                     select: {
                         id: true,
                         name: true,
-                        imageName: true
+                        imageName: true,
+                        minHour: true
                     }
                 },
                 vendorService: {
