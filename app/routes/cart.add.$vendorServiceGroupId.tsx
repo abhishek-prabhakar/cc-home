@@ -2,12 +2,13 @@ import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbo
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { IconNumber1, IconNumber2 } from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconNumber1, IconNumber2 } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { IconNumber3 } from "@tabler/icons-react";
 import { IconNumber4 } from "@tabler/icons-react";
 import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import UserLogin from "~/components/UserLogin";
@@ -48,8 +49,45 @@ async function cartSummary(input: CartInput[]) {
 }
 
 async function getTimeSlots() {
+    const midnight = [{
+        label: '12 AM',
+        value: 0,
+        available: true
+    }, {
+        label: '1 AM',
+        value: 1,
+        available: true
+    }, {
+        label: '2 AM',
+        value: 2,
+        available: true
+    }, {
+        label: '3 AM',
+        value: 3,
+        available: true
+    }, {
+        label: '4 AM',
+        value: 4,
+        available: true
+    }, {
+        label: '5 AM',
+        value: 5,
+        available: true
+    }];
 
-    const timeSlot = [{
+    const morning = [{
+        label: '6 AM',
+        value: 6,
+        available: true
+    }, {
+        label: '7 AM',
+        value: 7,
+        available: true
+    }, {
+        label: '8 AM',
+        value: 8,
+        available: true
+    }, {
         label: '9 AM',
         value: 9,
         available: true
@@ -61,14 +99,80 @@ async function getTimeSlots() {
         label: '11 AM',
         value: 11,
         available: true
-    },
-    {
-        label: '12 PM',
-        value: 12,
-        available: false
     }];
 
-    return timeSlot;
+    const noon = [
+        {
+            label: '12 PM',
+            value: 12,
+            available: true
+        },
+        {
+            label: '1 PM',
+            value: 13,
+            available: true
+        },
+        {
+            label: '2 PM',
+            value: 14,
+            available: true
+        },
+        {
+            label: '3 PM',
+            value: 15,
+            available: true
+        },
+        {
+            label: '4 PM',
+            value: 16,
+            available: true
+        },
+        {
+            label: '5 PM',
+            value: 17,
+            available: true
+        }];
+
+    const evening = [
+        {
+            label: '6 PM',
+            value: 18,
+            available: true
+        },
+        {
+            label: '7 PM',
+            value: 19,
+            available: true
+        },
+        {
+            label: '8 PM',
+            value: 20,
+            available: true
+        },
+        {
+            label: '9 PM',
+            value: 21,
+            available: true
+        },
+        {
+            label: '10 PM',
+            value: 22,
+            available: true
+        },
+        {
+            label: '11 PM',
+            value: 23,
+            available: true
+        }];
+
+
+
+    return [
+        midnight,
+        morning,
+        noon,
+        evening
+    ];
 }
 
 export async function action(args: ActionArgs) {
@@ -294,18 +398,34 @@ const Page = {
                 <Suspense fallback={<Skeleton />}>
                     <Await resolve={fetcher.data}>
                         {response => <>
-                            <Group gap={'sm'}>
-                                {response?.map(time => <Box><Card withBorder>
-                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
-                                </Card></Box>)}
-                                <Space h="md" />
-                                {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
-                                    <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
-                                    {data.serviceGroup.costExtraHour ? <>
-                                        An additional amount of <Currency value={data.serviceGroup.costExtraHour} /> per extra hour will be charged if applicable.</> : ''}
-                                </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
-                            </Group>
-
+                            <CarouselProvider
+                                naturalSlideWidth={300}
+                                naturalSlideHeight={400}
+                                totalSlides={response?.length || 0}
+                                visibleSlides={1}
+                                isIntrinsicHeight={true}
+                                step={1} dragStep={1}
+                                className="carousel-slider-wrapper"
+                            >
+                                <Slider className="carousel-slider">{response?.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
+                                    <Group px={'80px'}>
+                                        {slot?.map(time => <Box>
+                                            <Card withBorder p="sm">
+                                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
+                                            </Card>
+                                        </Box>)}
+                                    </Group>
+                                </Slide>)}
+                                </Slider>
+                                <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+                                <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
+                            </CarouselProvider>
+                            <Space h="md" />
+                            {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
+                                <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
+                                {data.serviceGroup.costExtraHour ? <>
+                                    An additional amount of <Currency value={data.serviceGroup.costExtraHour} /> per extra hour will be charged if applicable.</> : ''}
+                            </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
 
                         </>}
                     </Await>
@@ -329,7 +449,7 @@ const Page = {
         const location = useLocation();
 
         useEffect(() => {
-            if (data?.services?.length && data?.date && data.timeHour) {
+            if (data?.services?.length && data?.date && typeof data.timeHour === 'number') {
                 setStepsReady(true);
                 getEstimation();
             }
@@ -397,7 +517,7 @@ const Page = {
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <Card shadow="sm" withBorder title="Continue">
-                            {user ? <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button> : <UserLogin redirectUrl={location.pathname} title="Login to continue"/>}
+                            {user ? <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button> : <UserLogin redirectUrl={location.pathname} title="Login to continue" />}
                         </Card>
                         <Space h="md" />
                         <Stack>
