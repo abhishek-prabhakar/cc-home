@@ -163,6 +163,8 @@ function arrayRange(start: number, stop: number, step = 1) {
     return Array.from({ length: (stop - start) / step + 1 }, (_, index) => start + index * step);
 }
 
+const BUFFER_TIME_IN_HRS = 2;
+
 export async function action(args: ActionArgs) {
     const form = await args.request.formData();
     const actionType: ActionType = form.get('action')?.toString() as any;
@@ -182,7 +184,7 @@ export async function action(args: ActionArgs) {
             const bookings = await CartService.getVendorServiceBookingsByDate(vendorServiceGrpId, date);
 
             const used = bookings.reduce<number[]>((acc, item) => {
-                return acc.concat(arrayRange(item.timeHour, item.endTime));
+                return acc.concat(arrayRange(item.timeHour - BUFFER_TIME_IN_HRS, item.endTime + BUFFER_TIME_IN_HRS));
             }, []);
 
             return {
