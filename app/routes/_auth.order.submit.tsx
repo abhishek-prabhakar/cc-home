@@ -48,35 +48,49 @@ export async function action({
             const date = new Date();
             const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
 
+            const data = await db.booking.create({
+                data: {
+                    id: generateUuid(),
+                    userId: loggedInUser.id,
+                    orderId: orderId,
+                    status: BookingStatus.PENDING,
+                    total: summary.total,
+                    tax: summary.tax,
+                    discount: 0,
+                    coupon: null
+                }
+            });
+
 
             for (let i = 0; i < res.length; i++) {
                 const item = res[i];
-                const data = await db.booking.create({
+                const endDate = new Date(item.date);
+                endDate.setHours(item.timeHour);
+
+                const serviceData = await db.bookingService.create({
                     data: {
                         id: generateUuid(),
-                        userId: loggedInUser.id,
-                        orderId: orderId,
+                        bookingId: data.id,
                         vendorServiceGroupId: item.vendorServiceGroupId,
                         status: BookingStatus.PENDING,
-                        total: summary.total,
-                        tax: summary.tax,
-                        discount: 0,
-                        coupon: null
+                        cost: item.cost,
+                        date: item.date,
+                        timeHour: item.timeHour,
+                        duration: item.duration,
+                        endTime: item.timeHour + item.duration,
+                        endDate: endDate,
+                        location: ''
                     }
                 });
 
-                await db.bookingService.createMany({
+                await db.bookingAddons.createMany({
                     data: item.services.filter(x => !!x.id).map(x => ({
                         id: generateUuid(),
-                        bookingId: data.id,
+                        bookingServiceId: serviceData.id,
                         serviceId: x.id,
                         serviceName: x.name,
                         fareMode: x.fareMode,
                         status: BookingStatus.PENDING,
-                        date: item.date,
-                        timeHour: item.timeHour,
-                        duration: item.duration,
-                        location: '',
                         cost: x.cost
                     }))
                 });

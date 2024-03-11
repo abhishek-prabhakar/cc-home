@@ -111,6 +111,7 @@ export type CartItem = {
     date: Date | string,
     timeHour: number,
     duration: number,
+    cost: number,
     services: CartItemService[]
 };
 export type CartInputService = { id: string };

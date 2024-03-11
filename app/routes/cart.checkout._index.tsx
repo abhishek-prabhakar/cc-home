@@ -49,7 +49,7 @@ const Cart = {
                             {response => response?.length &&
                                 <Stack gap={'md'}>
                                     <Cart.Summary data={response} />
-                                    {user ? <Form method="post" action="/order/submit"><Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                    {user ? <Form method="post" action="/order/checkout"><Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                                 </Stack>
                             }
                         </Await>
