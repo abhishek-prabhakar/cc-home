@@ -48,7 +48,7 @@ async function cartSummary(input: CartInput[]) {
     }
 }
 
-function getTimeSlots() {
+function getTimeSlots(): SlotData[] {
     const midnight = [{
         label: '12 AM',
         value: 0
@@ -144,19 +144,35 @@ function getTimeSlots() {
 
 
     return [
-        midnight,
-        morning,
-        noon,
-        evening
+        {
+            name: 'Night',
+            slots: midnight
+        },
+        {
+            name: 'Morning',
+            slots: morning,
+        },
+        {
+            name: 'Afternoon',
+            slots: noon,
+        },
+        {
+            name: 'Evening',
+            slots: evening
+        }
     ];
 }
 
-type TimeSlotData = {
+type SlotData = {
+    name: string,
     slots: {
         label: string,
         value: number
-    }[][],
-    used: number[]
+    }[]
+};
+
+type TimeSlotData = {
+    slots: SlotData[]
 };
 
 function arrayRange(start: number, stop: number, step = 1) {
@@ -177,19 +193,21 @@ export async function action(args: ActionArgs) {
             break;
         case ActionType.TIME_SLOTS:
             const date = form.get('date')?.toString();
+            const minHour = parseInt(form.get('minHour')?.toString() || '') || BUFFER_TIME_IN_HRS;
             if (!vendorServiceGrpId || !date) {
                 return null;
             }
-            const slots = getTimeSlots();
+            let slots = getTimeSlots();
             const bookings = await CartService.getVendorServiceBookingsByDate(vendorServiceGrpId, date);
 
             const used = bookings.reduce<number[]>((acc, item) => {
-                return acc.concat(arrayRange(item.timeHour - BUFFER_TIME_IN_HRS, item.endTime + BUFFER_TIME_IN_HRS));
+                return acc.concat(arrayRange(item.timeHour - minHour, item.endTime + BUFFER_TIME_IN_HRS));
             }, []);
 
+            slots = slots.map(x => ({ name: x.name, slots: x.slots.filter(i => !used.includes(i.value)) })).filter(x => x.slots.length);
+
             return {
-                slots,
-                used
+                slots
             };
             break;
     }
@@ -372,7 +390,8 @@ const Page = {
 
             fetcher.submit({
                 date: date.toISOString(),
-                action: ActionType.TIME_SLOTS
+                action: ActionType.TIME_SLOTS,
+                minHour: data.serviceGroup.minHour
             }, {
                 method: 'post',
             });
@@ -413,16 +432,21 @@ const Page = {
                                 step={1} dragStep={1} currentSlide={1}
                                 className="carousel-slider-wrapper"
                             >
-                                <Slider className="carousel-slider">{response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
-
-                                    <SimpleGrid cols={{ xs: 2, sm: 2, md: 3 }} style={{
-                                        maxWidth: '350px', margin: 'auto'
-                                    }} >
-                                        {slot?.map(time => <Card withBorder p="sm">
-                                            <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={response.used.includes(time.value)} />
-                                        </Card>)}
-                                    </SimpleGrid>
-                                </Slide>)}
+                                <Slider className="carousel-slider">
+                                    {response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
+                                        <Text ta={'center'}>{slot?.name}</Text>
+                                        <Space h="sm" />
+                                        <SimpleGrid cols={{ xs: 2, sm: 2, md: 3 }} style={{
+                                            maxWidth: '350px', margin: 'auto'
+                                        }} >
+                                            {slot?.slots.map(time => <Card withBorder p="sm" key={'st' + time.value}>
+                                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
+                                            </Card>)}
+                                        </SimpleGrid>
+                                    </Slide>)}
+                                    {
+                                        !response.slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
+                                    }
                                 </Slider>
                                 <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
                                 <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
