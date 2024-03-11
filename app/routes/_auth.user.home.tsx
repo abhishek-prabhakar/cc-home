@@ -10,7 +10,7 @@ import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 
-type OrderItem = { id: string, status: BookingStatus, name: string, date: Date, services: string[] }
+type OrderItem = { id: string, status: BookingStatus, date: Date, services: string[] }
 
 export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));
@@ -34,28 +34,26 @@ export async function loader({ params, request }: LoaderArgs) {
                 orderId: true,
                 status: true,
                 created_at: true,
-                vendorServiceGroup: {
-                    select: {
-                        group: {
-                            select: {
-                                name: true
-                            }
-                        }
-                    }
-                },
                 bookingService: {
                     select: {
-                        serviceName: true
+                        vendorServiceGroup: {
+                            select: {
+                                group: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }).then(r => {
             const p = r.map(x => ({
                 id: x.orderId,
-                name: x.vendorServiceGroup.group.name,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.serviceName || 'Deleted service')
+                services: x.bookingService.map(i => i.vendorServiceGroup.group.name || 'Deleted service')
             }));
 
             resolve(p);
@@ -92,7 +90,6 @@ const UserHome = {
                                         <Text c="dimmed" fw={500}>Order ID: {booking.id}</Text>
                                         <Badge color={StatusMarker.get(booking.status) || 'gray'}>{booking.status}</Badge>
                                     </Group>
-                                    <Text>{booking.name}</Text>
                                     <Space h="sm" />
                                     Placed on: <b>{DateFormatter.short(booking.date)}</b>
                                 </Grid.Col>

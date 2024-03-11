@@ -34,7 +34,7 @@ export async function action({
         return redirect('/cart/checkout');
     }
 
-    const orderId = await new Promise<string>(function (resolve) {
+    const newOrder = await new Promise<string>(function (resolve) {
         CartService.summary(cartData).then(async res => {
             if (!res) {
                 return;
@@ -96,12 +96,12 @@ export async function action({
                 });
             }
 
-            resolve('');
+            resolve(orderId);
         });
 
     });
 
-    return redirect('/order/success?id=' + orderId, {
+    return redirect('/order/success?id=' + newOrder, {
         headers: {
             "Set-Cookie": await cartCheckoutCookie.serialize(null),
         },

@@ -18,7 +18,14 @@ type BookingService = {
     date: Date,
     timeHour: number,
     duration: number,
-    status: BookingStatus
+    status: BookingStatus,
+    vendor: {
+        username: string,
+        vendorType: {
+            name: string;
+        } | null;
+        profileImageName: string | null;
+    }
 }
 type UserBooking = {
     id: string,
@@ -29,16 +36,7 @@ type UserBooking = {
     tax: number,
     status: BookingStatus,
     date: Date,
-    serviceGroup: {
-        name: string
-    },
     services: BookingService[],
-    vendor: {
-        name: string,
-        username: string,
-        profileImg: string,
-        jobType: string
-    }
 }
 
 
@@ -102,26 +100,6 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 total: true,
                 tax: true,
                 status: true,
-                vendorServiceGroup: {
-                    select: {
-                        group: {
-                            select: {
-                                name: true
-                            }
-                        },
-                        vendor: {
-                            select: {
-                                username: true,
-                                profileImageName: true,
-                                vendorType: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 bookingService: {
                     select: {
                         id: true,
@@ -130,7 +108,26 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         date: true,
                         timeHour: true,
                         status: true,
-                        serviceName: true
+                        vendorServiceGroup: {
+                            select: {
+                                group: {
+                                    select: {
+                                        name: true
+                                    }
+                                },
+                                vendor: {
+                                    select: {
+                                        username: true,
+                                        profileImageName: true,
+                                        vendorType: {
+                                            select: {
+                                                name: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
                     }
                 }
             }
@@ -139,7 +136,6 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                 resolve(null);
             }
             else {
-                const vendor = r.vendorServiceGroup.vendor;
                 resolve({
                     id: r?.id,
                     orderId: r.orderId,
@@ -149,22 +145,14 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                     tax: r.tax,
                     discount: r.discount,
                     total: r.total,
-                    vendor: {
-                        username: vendor.username,
-                        name: vendor.username,
-                        jobType: vendor.vendorType?.name || '',
-                        profileImg: vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                    },
-                    serviceGroup: {
-                        name: r.vendorServiceGroup.group.name
-                    },
                     services: r.bookingService.map(x => ({
                         id: x.id,
                         date: x.date,
                         status: x.status,
                         timeHour: x.timeHour,
                         duration: x.duration,
-                        name: x.serviceName
+                        name: x.vendorServiceGroup.group.name,
+                        vendor: x.vendorServiceGroup.vendor
                     }))
                 })
             }
@@ -244,7 +232,6 @@ const UserOrderHome = {
                             <Group>
                                 <div>
                                     <Title order={5}>Order ID: {orderData.orderId}</Title>
-                                    {orderData.serviceGroup.name}
                                 </div>
                                 <Badge color={StatusMarker.get(orderData.status)}>{orderData.status}</Badge>
                             </Group>
@@ -286,22 +273,23 @@ const UserOrderHome = {
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
-                    <Grid align="center">
+                    {orderData.services.map(service => <Grid align="center">
                         <Grid.Col span={'content'}>
-                            <Link to={'/profile/' + orderData.vendor.username}><Avatar src={orderData.vendor.profileImg} /></Link>
+                            <Link to={'/profile/' + service.vendor.username}><Avatar src={service.vendor.profileImageName} /></Link>
                         </Grid.Col>
                         <Grid.Col span={'auto'}>
-                            <Link to={'/profile/' + orderData.vendor.username}><Text fw={500}>{orderData.vendor.name}</Text></Link>
-                            <Text size="sm">{orderData.vendor.jobType}</Text>
+                            <Link to={'/profile/' + service.vendor.username}><Text fw={500}>{service.vendor.username}</Text></Link>
+                            <Text size="sm">{service.vendor.vendorType?.name}</Text>
+                            <Badge>{service.name}</Badge>
                         </Grid.Col>
                         <Grid.Col span={'content'}>
-                            <Tooltip label={orderData.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
-                                <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={orderData.status !== BookingStatus.ACCEPTED}>
+                            <Tooltip label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
+                                <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={service.status !== BookingStatus.ACCEPTED}>
                                     Call
                                 </Button>
                             </Tooltip>
                         </Grid.Col>
-                    </Grid>
+                    </Grid>)}
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
