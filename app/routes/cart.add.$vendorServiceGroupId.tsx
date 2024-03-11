@@ -429,7 +429,7 @@ const Page = {
                                 totalSlides={response?.slots.length || 0}
                                 visibleSlides={1}
                                 isIntrinsicHeight={true}
-                                step={1} dragStep={1} currentSlide={response?.slots.length ? 1 : 0}
+                                step={1} dragStep={1} currentSlide={response?.slots.length - 1 ? 1 : 0}
                                 className="carousel-slider-wrapper"
                             >
                                 <Slider className="carousel-slider">
