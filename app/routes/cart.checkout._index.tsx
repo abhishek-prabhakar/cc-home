@@ -78,22 +78,26 @@ const Cart = {
                                 src={data.coverImg || ''}
                             />
                         </Card.Section>
-                        <Flex justify={'center'} gap={'lg'}>
-                            <DeleteOutlined key="remove" />,
-                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />,
+                        <Flex justify={'center'} gap={'lg'} p="lg">
+                            <DeleteOutlined key="remove" />
+                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />
                         </Flex>
+                        <Divider />
                         <Group justify="space-between">
-                            <Flex>
+                            <Group gap={'md'}>
                                 <Avatar src={data.vendorImg} />
                                 <Text size="sm">{data.name}</Text>
-                            </Flex>
-                            <Badge>{data.vendorType}</Badge>
+                            </Group>
+                            <Badge size="xs">{data.vendorType}</Badge>
                         </Group>
+                        <Space />
                         <Stack>
                             <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
                             <br />
-                            <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
-                            <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
+                            <Group>
+                                <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
+                                <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
+                            </Group>
                         </Stack>
                     </Card>
                 </Grid.Col>
@@ -139,24 +143,24 @@ const Cart = {
             {data.map(group => <div key={group.vendorServiceGroupId}>
                 <b>{group.name}</b>
                 {group.services.map(service => <Grid key={service.id} gutter={20} justify={'space-between'}>
-                    <Grid.Col><Text size="sm" fw={500}>{service.name}</Text></Grid.Col>
-                    <Grid.Col><Text size="sm">{service.cost} INR</Text></Grid.Col>
+                    <Grid.Col span="content"><Text size="sm" fw={500}>{service.name}</Text></Grid.Col>
+                    <Grid.Col span="content"><Text size="sm">{service.cost} INR</Text></Grid.Col>
                 </Grid>
                 )}
             </div>)}
             <Divider />
             <Grid gutter={20} justify={'space-between'}>
-                <Grid.Col><Text size="sm" fw={500}>Subtotal</Text></Grid.Col>
-                <Grid.Col><Text size="sm" fw={500}>{orderSummary?.total} INR</Text></Grid.Col>
+                <Grid.Col span="content"><Text size="sm" fw={500}>Subtotal</Text></Grid.Col>
+                <Grid.Col span="content"><Text size="sm" fw={500}>{orderSummary?.total} INR</Text></Grid.Col>
             </Grid>
             <Grid gutter={20} justify={'space-between'}>
-                <Grid.Col><Text c="dimmed">GST({orderSummary?.gst}%)</Text></Grid.Col>
-                <Grid.Col><Text >{orderSummary?.tax} INR</Text></Grid.Col>
+                <Grid.Col span="content"><Text c="dimmed">GST({orderSummary?.gst}%)</Text></Grid.Col>
+                <Grid.Col span="content"><Text >{orderSummary?.tax} INR</Text></Grid.Col>
             </Grid>
             <Divider />
             <Grid gutter={20} justify={'space-between'}>
-                <Grid.Col><Text size="sm" fw={500}>Total</Text></Grid.Col>
-                <Grid.Col><Text size="sm" fw={500}>{orderSummary?.final} INR</Text></Grid.Col>
+                <Grid.Col span="content"><Text size="sm" fw={500}>Total</Text></Grid.Col>
+                <Grid.Col span="content"><Text size="sm" fw={500}>{orderSummary?.final} INR</Text></Grid.Col>
             </Grid>
         </div>
     }
