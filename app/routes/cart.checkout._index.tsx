@@ -51,7 +51,7 @@ const Cart = {
                                 <Stack gap={'md'}>
                                     <Cart.Summary data={response} />
                                     {user ? <Form method="post" action="/order/checkout">
-                                        <input type="hidde" name="cart" value={data.cartInput} />
+                                        <input type="hidden" name="cart" value={data.cartInput} />
                                         <Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                                 </Stack>
                             }
