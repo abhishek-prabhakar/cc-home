@@ -86,19 +86,17 @@ const Cart = {
                         <Group justify="space-between">
                             <Group gap={'md'}>
                                 <Avatar src={data.vendorImg} />
-                                <Text size="sm">{data.name}</Text>
+                                <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
                             </Group>
                             <Badge size="xs">{data.vendorType}</Badge>
                         </Group>
                         <Space />
-                        <Stack>
-                            <Link to={`/profile/${data.vendorId}`}>{data.vendorName}</Link>
-                            <br />
-                            <Group>
-                                <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
-                                <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
-                            </Group>
-                        </Stack>
+                        <Text size="sm" fw={500}>{data.name}</Text>
+                        <Space />
+                        <Group>
+                            <Text size="sm" fw={500}>{DateFormatter.short(data.date)}</Text> -
+                            <Text size="sm" fw={500}>From {data.timeHour} to {data.timeHour + data.duration} ({data.duration} hours)</Text>
+                        </Group>
                     </Card>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 7 }}>
