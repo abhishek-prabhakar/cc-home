@@ -168,7 +168,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
 const orderStatusCheckList: {
     color?: string,
     children: string,
-    dot?: JSX.Element,
+    dot: JSX.Element,
     filter: BookingStatus[]
 }[] = [
         {
@@ -208,7 +208,7 @@ const orderStatusCheckList: {
             filter: [BookingStatus.COMPLETED]
         },
         {
-            color: 'gray',
+            color: 'green',
             dot: <IconCreditCardRefund />,
             children: 'Refund processed',
             filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
@@ -272,7 +272,7 @@ const UserOrderHome = {
                             >
                                 {item.dot}
                             </ThemeIcon>}></Timeline.Item>)}
-                            {![BookingStatus.CANCELLED, BookingStatus.REJECTED, BookingStatus.COMPLETED].some(x => x === orderData.status) ? <Timeline.Item title="Waiting for updates..."></Timeline.Item> : ''}
+                            {![BookingStatus.CANCELLED, BookingStatus.REJECTED, BookingStatus.COMPLETED].some(x => x === orderData.status) ? <Timeline.Item title="Waiting for updates..."></Timeline.Item> : <></>}
                         </Timeline>
                     </div>
                     <Space h="md" />
