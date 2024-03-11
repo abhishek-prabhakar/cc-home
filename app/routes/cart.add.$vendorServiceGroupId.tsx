@@ -452,6 +452,7 @@ const Page = {
                                 <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
                             </CarouselProvider>}
                             <Space h="md" />
+                            {['loading', 'submitting'].includes(fetcher.state) && <Text c="dimmed">Please wait...</Text>}
                             {response?.slots.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
                                 <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
                                 {data.serviceGroup.costExtraHour ? <>
