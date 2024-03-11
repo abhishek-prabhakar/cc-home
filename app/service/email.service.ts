@@ -59,7 +59,7 @@ async function notifyVendorNewOrder(input: {
     `;
     const text = 'Hello, You have a new booking on ' + input.date;
 
-    sendEmail({
+    await sendEmail({
         to: email?.email,
         subject,
         html,
