@@ -398,28 +398,29 @@ const Page = {
                 <Suspense fallback={<Skeleton />}>
                     <Await resolve={fetcher.data}>
                         {response => <>
-                            <CarouselProvider
+                            {response && <CarouselProvider
                                 naturalSlideWidth={300}
                                 naturalSlideHeight={400}
                                 totalSlides={response?.length || 0}
                                 visibleSlides={1}
                                 isIntrinsicHeight={true}
-                                step={1} dragStep={1}
+                                step={1} dragStep={1} currentSlide={1}
                                 className="carousel-slider-wrapper"
                             >
                                 <Slider className="carousel-slider">{response?.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
-                                    <Group px={'80px'}>
-                                        {slot?.map(time => <Box>
-                                            <Card withBorder p="sm">
-                                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
-                                            </Card>
-                                        </Box>)}
-                                    </Group>
+
+                                    <SimpleGrid cols={{ sm: 2, md: 4 }} style={{
+                                        maxWidth: '450px', margin: 'auto'
+                                    }} >
+                                        {slot?.map(time => <Card withBorder p="sm">
+                                            <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
+                                        </Card>)}
+                                    </SimpleGrid>
                                 </Slide>)}
                                 </Slider>
                                 <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
                                 <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
-                            </CarouselProvider>
+                            </CarouselProvider>}
                             <Space h="md" />
                             {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
                                 <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
