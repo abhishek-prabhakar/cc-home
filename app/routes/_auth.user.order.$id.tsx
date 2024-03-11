@@ -3,7 +3,9 @@ import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, S
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { IconAlertCircleFilled, IconCheck } from "@tabler/icons-react";
+import { IconChecks, IconProgress } from "@tabler/icons-react";
+import { IconCreditCardRefund } from "@tabler/icons-react";
+import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Suspense, useState } from "react";
 import { PATH } from "~/path.data";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
@@ -172,10 +174,12 @@ const orderStatusCheckList: {
         {
             color: 'red',
             children: 'Order Cancelled',
+            dot: <IconCircleX />,
             filter: [BookingStatus.CANCELLED]
         },
         {
             color: 'red',
+            dot: <IconCircleX />,
             children: 'Sorry, Your order couldn\'t confirm due to unservicable.',
             filter: [BookingStatus.REJECTED]
         },
@@ -187,11 +191,13 @@ const orderStatusCheckList: {
         },
         {
             color: 'green',
+            dot: <IconChecks />,
             children: 'Order Confirmed',
             filter: [BookingStatus.ACCEPTED, BookingStatus.IN_PROGRESS, BookingStatus.COMPLETED]
         },
         {
             color: 'yellow',
+            dot: <IconProgress />,
             children: 'Service is in progress',
             filter: [BookingStatus.IN_PROGRESS]
         },
@@ -203,6 +209,7 @@ const orderStatusCheckList: {
         },
         {
             color: 'gray',
+            dot: <IconCreditCardRefund />,
             children: 'Refund processed',
             filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
         },
