@@ -1,6 +1,7 @@
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
+import EmailService from "~/service/email.service";
 import { USER_SESSION_KEY, cartCheckoutCookie, getSession } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
@@ -93,6 +94,12 @@ export async function action({
                         status: BookingStatus.PENDING,
                         cost: x.cost
                     }))
+                });
+
+                await EmailService.notifyVendorNewOrder({
+                    username: item.vendorId,
+                    date: item.date.toString(),
+                    serviceName: item.name
                 });
             }
 
