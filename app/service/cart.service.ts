@@ -2,8 +2,38 @@ import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
 import { FareMode } from "@prisma/client";
+import { db } from "~/utils/database";
 
 const GST_PERCENTAGE = 3;
+
+async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: string) {
+    const vendor = await db.vendorServiceGroup.findFirst({
+        where: {
+            id: vendorServiceGrpId
+        },
+        select: {
+            vendorId: true
+        }
+    });
+
+    if (!vendor) {
+        return [];
+    }
+
+    return db.bookingService.findMany({
+        where: {
+            date,
+            vendorServiceGroup: {
+                vendorId: vendor.vendorId
+            }
+        },
+        select: {
+            timeHour: true,
+            endTime: true,
+            duration: true,
+        }
+    })
+}
 
 export const CartService = {
     getGst: GST_PERCENTAGE,
@@ -57,5 +87,6 @@ export const CartService = {
             resolve(results);
 
         });
-    }
+    },
+    getVendorServiceBookingsByDate
 }

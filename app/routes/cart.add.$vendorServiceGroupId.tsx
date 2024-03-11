@@ -48,121 +48,97 @@ async function cartSummary(input: CartInput[]) {
     }
 }
 
-async function getTimeSlots() {
+function getTimeSlots() {
     const midnight = [{
         label: '12 AM',
-        value: 0,
-        available: true
+        value: 0
     }, {
         label: '1 AM',
-        value: 1,
-        available: true
+        value: 1
     }, {
         label: '2 AM',
-        value: 2,
-        available: true
+        value: 2
     }, {
         label: '3 AM',
-        value: 3,
-        available: true
+        value: 3
     }, {
         label: '4 AM',
-        value: 4,
-        available: true
+        value: 4
     }, {
         label: '5 AM',
-        value: 5,
-        available: true
+        value: 5
     }];
 
     const morning = [{
         label: '6 AM',
-        value: 6,
-        available: true
+        value: 6
     }, {
         label: '7 AM',
-        value: 7,
-        available: true
+        value: 7
     }, {
         label: '8 AM',
-        value: 8,
-        available: true
+        value: 8
     }, {
         label: '9 AM',
-        value: 9,
-        available: true
+        value: 9
     }, {
         label: '10 AM',
-        value: 10,
-        available: true
+        value: 10
     }, {
         label: '11 AM',
-        value: 11,
-        available: true
+        value: 11
     }];
 
     const noon = [
         {
             label: '12 PM',
-            value: 12,
-            available: true
+            value: 12
         },
         {
             label: '1 PM',
-            value: 13,
-            available: true
+            value: 13
         },
         {
             label: '2 PM',
-            value: 14,
-            available: true
+            value: 14
         },
         {
             label: '3 PM',
             value: 15,
-            available: true
         },
         {
             label: '4 PM',
-            value: 16,
-            available: true
+            value: 16
         },
         {
             label: '5 PM',
-            value: 17,
-            available: true
+            value: 17
         }];
 
     const evening = [
         {
             label: '6 PM',
-            value: 18,
-            available: true
+            value: 18
         },
         {
             label: '7 PM',
-            value: 19,
-            available: true
+            value: 19
         },
         {
             label: '8 PM',
-            value: 20,
-            available: true
+            value: 20
         },
         {
             label: '9 PM',
-            value: 21,
-            available: true
+            value: 21
         },
         {
             label: '10 PM',
-            value: 22,
-            available: true
+            value: 22
         },
         {
             label: '11 PM',
-            value: 23,
-            available: true
+            value: 23
         }];
 
 
@@ -175,16 +151,44 @@ async function getTimeSlots() {
     ];
 }
 
+type TimeSlotData = {
+    slots: {
+        label: string,
+        value: number
+    }[][],
+    used: number[]
+};
+
+function arrayRange(start: number, stop: number, step = 1) {
+    return Array.from({ length: (stop - start) / step + 1 }, (_, index) => start + index * step);
+}
+
 export async function action(args: ActionArgs) {
     const form = await args.request.formData();
     const actionType: ActionType = form.get('action')?.toString() as any;
+    const vendorServiceGrpId = args.params.vendorServiceGroupId;
+
     switch (actionType) {
         case ActionType.ESTIMATION:
             const input: CartInput[] = JSON.parse(form.get('input')?.toString() || '') as any;
             return await cartSummary(input);
             break;
         case ActionType.TIME_SLOTS:
-            return await getTimeSlots();
+            const date = form.get('date')?.toString();
+            if (!vendorServiceGrpId || !date) {
+                return null;
+            }
+            const slots = getTimeSlots();
+            const bookings = await CartService.getVendorServiceBookingsByDate(vendorServiceGrpId, date);
+
+            const used = bookings.reduce<number[]>((acc, item) => {
+                return acc.concat(arrayRange(item.timeHour, item.endTime));
+            }, []);
+
+            return {
+                slots,
+                used
+            };
             break;
     }
 
@@ -354,7 +358,7 @@ const Page = {
         const [selectedDate, setSelectedDate] = useState<Date>();
         const [selectedTime, setTime] = useState<number | null>();
         const data = useLoaderData<typeof loader>();
-        const fetcher = useFetcher<typeof getTimeSlots>();
+        const fetcher = useFetcher<TimeSlotData>();
 
         const handleDaySelect = (date: Date) => {
             setSelectedDate(date);
@@ -398,22 +402,22 @@ const Page = {
                 <Suspense fallback={<Skeleton />}>
                     <Await resolve={fetcher.data}>
                         {response => <>
-                            {response && <CarouselProvider
+                            {response && fetcher.state === 'idle' && <CarouselProvider
                                 naturalSlideWidth={300}
                                 naturalSlideHeight={400}
-                                totalSlides={response?.length || 0}
+                                totalSlides={response?.slots.length || 0}
                                 visibleSlides={1}
                                 isIntrinsicHeight={true}
                                 step={1} dragStep={1} currentSlide={1}
                                 className="carousel-slider-wrapper"
                             >
-                                <Slider className="carousel-slider">{response?.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
+                                <Slider className="carousel-slider">{response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
 
                                     <SimpleGrid cols={{ xs: 2, sm: 2, md: 3 }} style={{
                                         maxWidth: '350px', margin: 'auto'
                                     }} >
                                         {slot?.map(time => <Card withBorder p="sm">
-                                            <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={!time.available} />
+                                            <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} disabled={response.used.includes(time.value)} />
                                         </Card>)}
                                     </SimpleGrid>
                                 </Slide>)}
@@ -422,7 +426,7 @@ const Page = {
                                 <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
                             </CarouselProvider>}
                             <Space h="md" />
-                            {response?.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
+                            {response?.slots.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
                                 <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
                                 {data.serviceGroup.costExtraHour ? <>
                                     An additional amount of <Currency value={data.serviceGroup.costExtraHour} /> per extra hour will be charged if applicable.</> : ''}

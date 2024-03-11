@@ -1,5 +1,5 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Skeleton, Space, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Skeleton, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
@@ -278,9 +278,13 @@ const UserOrderHome = {
                             <Link to={'/profile/' + service.vendor.username}><Avatar src={PATH.RESOURCE_URL + service.vendor.profileImageName} /></Link>
                         </Grid.Col>
                         <Grid.Col span={'auto'}>
-                            <Link to={'/profile/' + service.vendor.username}><Text fw={500}>{service.vendor.username}</Text></Link>
-                            <Text size="sm">{service.vendor.vendorType?.name}</Text>
-                            <Badge>{service.name}</Badge>
+                            <Stack>
+                                <Link to={'/profile/' + service.vendor.username}><Text fw={500}>{service.vendor.username}</Text></Link>
+                                <Badge size="xs">{service.name}</Badge>
+                                <Text>
+                                    Date: {service.date}, at {service.timeHour} ({service.duration} hours)
+                                </Text>
+                            </Stack>
                         </Grid.Col>
                         <Grid.Col span={'content'}>
                             <Tooltip label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
