@@ -193,7 +193,7 @@ export async function action(args: ActionArgs) {
             break;
         case ActionType.TIME_SLOTS:
             const date = form.get('date')?.toString();
-            const minHour = parseInt(form.get('minHour')?.toString() || '') || BUFFER_TIME_IN_HRS;
+            const minHour = parseInt(form.get('minHour')?.toString() || '') + BUFFER_TIME_IN_HRS;
             if (!vendorServiceGrpId || !date) {
                 return null;
             }
@@ -429,7 +429,7 @@ const Page = {
                                 totalSlides={response?.slots.length || 0}
                                 visibleSlides={1}
                                 isIntrinsicHeight={true}
-                                step={1} dragStep={1} currentSlide={1}
+                                step={1} dragStep={1} currentSlide={response?.slots.length ? 1 : 0}
                                 className="carousel-slider-wrapper"
                             >
                                 <Slider className="carousel-slider">
