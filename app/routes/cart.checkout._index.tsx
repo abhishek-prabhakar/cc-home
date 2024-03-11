@@ -36,7 +36,7 @@ const Cart = {
         return <Container size={'xl'} >
             <Title order={3}>Checkout</Title>
             <Space h={'md'} />
-            <Grid gutter={30}>
+            <Grid gutter={30} justify="space-between">
                 <Grid.Col span={{ base: 12, md: 4, lg: 8 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
@@ -44,7 +44,7 @@ const Cart = {
                         </Await>
                     </Suspense>
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
+                <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
                             {response => response?.length &&
@@ -52,7 +52,7 @@ const Cart = {
                                     <Cart.Summary data={response} />
                                     {user ? <Form method="post" action="/order/checkout">
                                         <input type="hidden" name="cart" value={data.cartInput} />
-                                        <Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                        <Button variant="filled" type="submit" fullWidth>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                                 </Stack>
                             }
                         </Await>
