@@ -21,7 +21,7 @@ export async function loader({ request }: LoaderArgs) {
     const cookie: CartInput[] = await userCartCookie.parse(cookieHeader);
 
     return defer({
-        cartInput: cookie,
+        cartInput: JSON.stringify(cookie),
         data: CartService.summary(cookie)
     });
 }
