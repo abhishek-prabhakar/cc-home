@@ -1,7 +1,7 @@
 import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
-import { FareMode } from "@prisma/client";
+import { BookingStatus, FareMode } from "@prisma/client";
 import { db } from "~/utils/database";
 
 const GST_PERCENTAGE = 3;
@@ -25,6 +25,9 @@ async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: 
             date,
             vendorServiceGroup: {
                 vendorId: vendor.vendorId
+            },
+            status: {
+                notIn: [BookingStatus.CANCELLED, BookingStatus.REJECTED]
             }
         },
         select: {
