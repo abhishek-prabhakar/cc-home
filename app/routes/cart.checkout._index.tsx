@@ -18,9 +18,10 @@ import { DateFormatter } from "~/utils/date.transform";
 
 export async function loader({ request }: LoaderArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    const cookie = await userCartCookie.parse(cookieHeader);
+    const cookie: CartInput[] = await userCartCookie.parse(cookieHeader);
 
     return defer({
+        cartInput: cookie,
         data: CartService.summary(cookie)
     });
 }
@@ -49,7 +50,9 @@ const Cart = {
                             {response => response?.length &&
                                 <Stack gap={'md'}>
                                     <Cart.Summary data={response} />
-                                    {user ? <Form method="post" action="/order/checkout"><Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                    {user ? <Form method="post" action="/order/checkout">
+                                        <input type="hidde" name="cart" value={data.cartInput} />
+                                        <Button variant="filled" type="submit" radius={'xl'}>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
                                 </Stack>
                             }
                         </Await>
