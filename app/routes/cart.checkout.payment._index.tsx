@@ -83,7 +83,7 @@ export default function () {
     const navigation = useNavigation();
 
     function updatePayMethod(id: BookingPaymentMode) {
-        const item = PaymentMethodList.find(x => x.id === id);
+        const item = data.paymentModes.find(x => x.id === id);
         if (item?.disabled) {
             return;
         }
