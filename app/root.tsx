@@ -193,9 +193,10 @@ export default function App() {
                 </Await>
               </Suspense>
             </Box>
-            <Space h="lg" />
-            <LoadingOverlay visible={navigation.state === 'loading'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-            <Outlet />
+            <div style={{ paddingTop: '40px', position: 'relative' }}>
+              <Outlet />
+              <LoadingOverlay visible={navigation.state === 'loading'} overlayProps={{ radius: "sm", blur: 2 }} />
+            </div>
             <Footer />
           </Provider>
           <ScrollRestoration />
