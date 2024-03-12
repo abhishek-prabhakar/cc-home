@@ -545,7 +545,7 @@ const Page = {
                 timeHour: x.timeHour || data.timeHour || 0,
                 duration: 1,
                 services: x.addonsIds.map(i => ({ id: i })),
-                location: data.venue || '',
+                location: x.venue || data.venue || '',
                 locationLat: 0,
                 locationLon: 0
             })) || [];

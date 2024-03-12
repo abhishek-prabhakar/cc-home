@@ -37,7 +37,6 @@ export async function action({
     if (!cartData?.length) {
         return redirect('/cart/checkout');
     }
-
     const newOrder = await new Promise<string>(function (resolve) {
         CartService.summary(cartData).then(async res => {
             if (!res) {
