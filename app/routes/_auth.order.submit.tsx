@@ -1,4 +1,4 @@
-import { BookingStatus } from "@prisma/client";
+import { BookingPaymentMode, BookingStatus } from "@prisma/client";
 import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
 import EmailService from "~/service/email.service";
@@ -13,6 +13,9 @@ export async function action({
     const cookieHeader = request.headers.get("Cookie");
     const session = await getSession(cookieHeader);
     const userId = session.get(USER_SESSION_KEY);
+    const form = await request.formData();
+    const paymentMode = form.get('paymentMode')?.toString() as BookingPaymentMode;
+
     if (!userId) {
         return redirect('/user/login');
     }
@@ -24,7 +27,7 @@ export async function action({
         }
     });
 
-    if (!loggedInUser) {
+    if (!loggedInUser || paymentMode) {
         return redirect('/user/login');
     }
 
@@ -58,7 +61,8 @@ export async function action({
                     total: summary.total,
                     tax: summary.tax,
                     discount: 0,
-                    coupon: null
+                    coupon: null,
+                    paymentMode
                 }
             });
 
@@ -80,7 +84,9 @@ export async function action({
                         duration: item.duration,
                         endTime: item.timeHour + item.duration,
                         endDate: endDate,
-                        location: ''
+                        location: '',
+                        locationLat: 0,
+                        locationLon: 0
                     }
                 });
 
