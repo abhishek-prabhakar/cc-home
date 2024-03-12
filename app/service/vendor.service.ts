@@ -177,6 +177,7 @@ export const VendorQuery = {
                             id: true,
                             name: true,
                             minHour: true,
+                            isEstimated: true,
                             serviceGroupItem: {
                                 orderBy: {
                                     position: 'asc'
@@ -273,6 +274,7 @@ export const VendorQuery = {
                         title: x.group.name,
                         minHour: x.group.minHour,
                         cost: x.cost,
+                        isEstimated: x.group.isEstimated,
                         included: included.map(i => ({
                             id: i.service.id,
                             title: i.service.name,

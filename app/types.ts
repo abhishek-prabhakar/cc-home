@@ -53,6 +53,7 @@ export type VendorService = {
     cost: number,
     image?: string,
     costExtraHour?: number,
+    isEstimated?: boolean,
     included: VendorServiceOption[],
     addons: VendorServiceOption[],
     selectableList?: AddonGroupItem[]

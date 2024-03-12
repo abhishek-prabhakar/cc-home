@@ -24,7 +24,6 @@ const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
 type ServiceGroup = { name: string, services: VendorService[] };
-type VendorAddonOption = VendorServiceOption & { hide?: boolean }
 
 export async function loader({ params, request }: LoaderArgs) {
     const id = params.user || '';
@@ -146,7 +145,7 @@ const ProfileLayout = {
                             Choose easy EMI or pay 100%.
                         </Text>
                         <Text>
-                            Upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
+                            Pay upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
                         </Text>
                         <Image src="/assets/savings.png" width={'50%'} />
                     </Stack>
