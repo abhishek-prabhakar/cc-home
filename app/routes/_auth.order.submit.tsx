@@ -84,9 +84,9 @@ export async function action({
                         duration: item.duration,
                         endTime: item.timeHour + item.duration,
                         endDate: endDate,
-                        location: '',
-                        locationLat: 0,
-                        locationLon: 0
+                        location: item.location,
+                        locationLat: item.locationLat,
+                        locationLon: item.locationLon
                     }
                 });
 

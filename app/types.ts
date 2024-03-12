@@ -114,6 +114,9 @@ export type CartItem = {
     duration: number,
     cost: number,
     isEstimated: boolean,
+    location: string,
+    locationLat: number,
+    locationLon: number,
     services: CartItemService[]
 };
 export type CartInputService = { id: string };
@@ -122,6 +125,9 @@ export type CartInput = {
     date: string,
     timeHour: number,
     duration: number,
+    location: string,
+    locationLat: number,
+    locationLon: number,
     services: CartInputService[]
 }
 
