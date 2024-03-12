@@ -1,7 +1,7 @@
 import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input } from "@mantine/core";
 import { BookingPaymentMode } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigation } from "@remix-run/react";
+import { Form, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
 import { useState } from "react";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
@@ -81,6 +81,7 @@ export default function () {
     const data = useLoaderData<typeof cartSummary>();
     const [getCoupon, setCoupon] = useState('');
     const navigation = useNavigation();
+    const location = useLocation();
 
     function updatePayMethod(id: BookingPaymentMode) {
         const item = data.paymentModes.find(x => x.id === id);
@@ -119,6 +120,7 @@ export default function () {
             <Grid.Col span={{ base: 12, md: 4 }}>
                 <Card shadow="sm" withBorder>
                     <Form method="post" action="/order/submit">
+                        <input type="hidden" name="source" value={new URLSearchParams(location.search).get('source') || ''} />
                         <input type="hidden" name="paymentMode" value={paymentMethod || ''} />
                         <Stack>
                             {CouponSection}

@@ -2,7 +2,7 @@ import { BookingPaymentMode, BookingStatus } from "@prisma/client";
 import { ActionArgs, defer, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
 import EmailService from "~/service/email.service";
-import { USER_SESSION_KEY, cartCheckoutCookie, getSession } from "~/session.server";
+import { USER_SESSION_KEY, cartCheckoutCookie, getSession, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -15,6 +15,7 @@ export async function action({
     const userId = session.get(USER_SESSION_KEY);
     const form = await request.formData();
     const paymentMode = form.get('paymentMode')?.toString() as BookingPaymentMode;
+    const source = form.get('source')?.toString();
 
     if (!userId) {
         return redirect('/user/login');
@@ -113,10 +114,16 @@ export async function action({
 
     });
 
+    const headers: [string, string][] = [
+        ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
+    ]
+
+    if (source === 'cart') {
+        headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
+    }
+
     return redirect('/order/success?id=' + newOrder, {
-        headers: {
-            "Set-Cookie": await cartCheckoutCookie.serialize(null),
-        },
+        headers
     });
 }
 
