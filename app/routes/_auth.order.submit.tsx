@@ -27,7 +27,7 @@ export async function action({
         }
     });
 
-    if (!loggedInUser || paymentMode) {
+    if (!loggedInUser || !paymentMode) {
         return redirect('/user/login');
     }
 
