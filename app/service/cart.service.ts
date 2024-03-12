@@ -34,6 +34,15 @@ async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: 
             timeHour: true,
             endTime: true,
             duration: true,
+            vendorServiceGroup: {
+                select: {
+                    group: {
+                        select: {
+                            commitFullDay: true
+                        }
+                    }
+                }
+            }
         }
     })
 }

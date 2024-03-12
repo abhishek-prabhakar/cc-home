@@ -201,7 +201,9 @@ export async function action(args: ActionArgs) {
             const bookings = await CartService.getVendorServiceBookingsByDate(vendorServiceGrpId, date);
 
             const used = bookings.reduce<number[]>((acc, item) => {
-                return acc.concat(arrayRange(item.timeHour - minHour, item.endTime + BUFFER_TIME_IN_HRS));
+                const startHr = item.vendorServiceGroup.group.commitFullDay ? 0 : item.timeHour - minHour;
+                const endHr = item.vendorServiceGroup.group.commitFullDay ? 24 : item.endTime + BUFFER_TIME_IN_HRS;
+                return acc.concat(arrayRange(startHr, endHr));
             }, []);
 
             slots = slots.map(x => ({ name: x.name, slots: x.slots.filter(i => !used.includes(i.value)) })).filter(x => x.slots.length);
