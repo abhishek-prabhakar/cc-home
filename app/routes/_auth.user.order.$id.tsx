@@ -13,38 +13,33 @@ import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 
-
-type BookingService = {
-    id: string,
-    name: string,
-    date: Date,
-    timeHour: number,
-    duration: number,
-    status: BookingStatus,
-    vendor: {
-        username: string,
-        vendorType: {
-            name: string;
-        } | null;
-        profileImageName: string | null;
-    }
-}
 type UserBooking = {
     id: string,
     orderId: string,
-    discount: number,
-    coupon: string | null,
-    total: number,
-    tax: number,
     status: BookingStatus,
     date: Date,
-    services: BookingService[],
+    coupon: string | null,
+    tax: number,
+    discount: number,
+    total: number,
+    services: {
+        id: string,
+        date: Date,
+        status: BookingStatus,
+        timeHour: number,
+        duration: number,
+        location: string,
+        name: string,
+        vendor: {
+            vendorType: {
+                name: string;
+            } | null;
+            username: string;
+            profileImageName: string | null;
+        }
+    }[]
 }
 
-
-type LoaderData = {
-    data: UserBooking
-}
 
 export async function action(args: ActionArgs) {
     const formData = args.request.formData();
@@ -80,12 +75,12 @@ export async function action(args: ActionArgs) {
     return true;
 }
 
-export async function loader({ request, params }: LoaderArgs): Promise<TypedDeferredData<any>> {
+export async function loader({ request, params }: LoaderArgs) {
     const orderId = params.id;
     const session = await getSession(request.headers.get("Cookie"));
     const userId = session.get(USER_SESSION_KEY);
 
-    const data = new Promise<UserBooking | null>(function (resolve) {
+    const data = new Promise<UserBooking>(function (resolve) {
         db.booking.findFirst({
             where: {
                 userId,
@@ -108,6 +103,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         date: true,
                         timeHour: true,
                         status: true,
+                        location: true,
                         vendorServiceGroup: {
                             select: {
                                 group: {
@@ -133,7 +129,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
             }
         }).then(r => {
             if (!r) {
-                resolve(null);
+                throw new Error("invalid order");
+
             }
             else {
                 resolve({
@@ -151,6 +148,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedDefe
                         status: x.status,
                         timeHour: x.timeHour,
                         duration: x.duration,
+                        location: x.location,
                         name: x.vendorServiceGroup.group.name,
                         vendor: x.vendorServiceGroup.vendor
                     }))
@@ -226,7 +224,7 @@ const UserOrderHome = {
         </Grid>
     },
     Order: () => {
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loader>();
         const [showModal, setModal] = useState(false);
 
         return <Suspense fallback={<Skeleton />}>
@@ -289,6 +287,9 @@ const UserOrderHome = {
                                 <Text>
                                     Date: {service.date}, at {service.timeHour} ({service.duration} hours)
                                 </Text>
+                                <Text>
+                                    Venue: {service.location}
+                                </Text>
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={'content'}>
@@ -324,3 +325,10 @@ const UserOrderHome = {
 }
 
 export default UserOrderHome.Index;
+
+
+export function ErrorBoundary() {
+    return <div>
+        Invalid data
+    </div>
+}

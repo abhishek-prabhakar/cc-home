@@ -180,6 +180,7 @@ export default function App() {
         <Meta />
         <Links />
         <ColorSchemeScript />
+        <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script>
       </head>
       <body>
         <MantineProvider theme={theme}>
