@@ -113,6 +113,7 @@ export type CartItem = {
     timeHour: number,
     duration: number,
     cost: number,
+    isEstimated: boolean,
     services: CartItemService[]
 };
 export type CartInputService = { id: string };

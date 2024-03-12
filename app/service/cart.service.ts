@@ -86,6 +86,7 @@ export const CartService = {
                         timeHour: item.timeHour,
                         duration: res.group.minHour,
                         cost: res.cost,
+                        isEstimated: res.group.isEstimated,
                         services: [{ name: 'Base charge', cost: res.cost, id: '', fareMode: 'FLAT' }, ...res.vendorService.map(x => ({
                             name: x.service.name,
                             cost: x.cost,
