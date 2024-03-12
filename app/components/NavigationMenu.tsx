@@ -127,7 +127,7 @@ const AppNavigation = {
                           path: Routes.Services.replace(":id", item.id),
                           name: 'Browse all ',
                         }].concat(child.list)
-                          .map(menuItem => <Link to={menuItem.path}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
+                          .map(menuItem => <Link to={menuItem.path} onClick={() => toggleDrawer(false)}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
                         }
                       </Stack>)
                       }
@@ -138,11 +138,11 @@ const AppNavigation = {
             </Await>
           </Suspense>
           <Space h="sm" />
-            {user?.id ?
-              <>
-                <Link to={'/user/home'}><Button variant="white" fullWidth>My Bookings</Button></Link>
-                <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
-              </> :
+          {user?.id ?
+            <>
+              <Link to={'/user/home'} onClick={() => toggleDrawer(false)}><Button variant="white" fullWidth>My Bookings</Button></Link>
+              <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
+            </> :
             <UserLogin onSuccess={() => toggleDrawer(false)} inlineMode={true} />}
           <Stack gap={'lg'}>
             <div style={menuArtisantStyle}>
