@@ -27,7 +27,7 @@ import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, Grid, MantineProvider, Container } from "@mantine/core";
+import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space } from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
@@ -193,17 +193,9 @@ export default function App() {
                 </Await>
               </Suspense>
             </Box>
-            <Box style={{ paddingTop: '40px' }}>
-              {navigation.state === 'idle' || navigation.state === 'submitting' ? <Outlet /> : <Container mih={500}>
-                <Grid gutter={80}>
-                  <Grid.Col span={{ base: 12, md: 8 }}>
-                    <Skeleton />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Skeleton />
-                  </Grid.Col>
-                </Grid></Container>}
-            </Box>
+            <Space h="lg" />
+            <LoadingOverlay visible={navigation.state === 'loading'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+            <Outlet />
             <Footer />
           </Provider>
           <ScrollRestoration />
