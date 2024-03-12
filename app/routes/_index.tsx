@@ -357,7 +357,7 @@ const Home = {
       <Grid.Col span={{ base: 12, md: 2 }}>
         <div className="home-section-card-wrapper">
           <Title order={4}>Popular Services</Title>
-          <Text c="dimmed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</Text>
+          <Text c="dimmed">Explore our in-demand services, loved by many.</Text>
         </div>
       </Grid.Col>
       <Grid.Col span={{ base: 12, md: 10 }}>

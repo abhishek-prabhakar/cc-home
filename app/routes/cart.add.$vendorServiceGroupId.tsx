@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
@@ -268,7 +268,7 @@ const Page = {
             title: 'Choose venue',
             icon: IconNumber3,
             success: formData?.venue ? true : false,
-            child: <Page.ChooseVenue />
+            child: <Page.ChooseVenue onChange={updateFormData} />
         }, {
             title: 'Confirm',
             icon: IconNumber4,
@@ -467,12 +467,31 @@ const Page = {
             </Grid.Col>
         </Grid>
     },
-    ChooseVenue: () => {
-        const mapRef = useRef(null)
-        const [mapReady, setMapReady] = useState(false)
+    ChooseVenue: ({ onChange }: { onChange: (p: FormParams) => void }) => {
+        const [address, setAddress] = useState({ address: '', pincode: '' });
 
+        function updateForm(data: { [key in ('address' | 'pincode')]?: string }) {
+            setAddress({ ...address, ...data });
 
-        return '...';
+            if (address.address && address.pincode) {
+                onChange({
+                    venue: address.address + ', ' + address.pincode
+                });
+            }
+        }
+
+        return <Stack maw={'400px'}>
+            <Textarea
+                label="Address"
+                placeholder="Enter complete address"
+                value={address.address}
+                onChange={(e => updateForm({ address: e.target.value }))}
+            />
+            <Input.Wrapper label="Pincode">
+                <Input minLength={6} maxLength={6} value={address.pincode}
+                    onChange={(e => updateForm({ pincode: e.target.value }))} />
+            </Input.Wrapper>
+        </Stack>;
 
     },
     Summary: ({ data }: { data?: FormParams | null }) => {
@@ -483,7 +502,7 @@ const Page = {
         const location = useLocation();
 
         useEffect(() => {
-            if (data?.services?.length && data?.date && typeof data.timeHour === 'number') {
+            if (data?.services?.length && data?.date && typeof data.timeHour === 'number' && data?.venue) {
                 setStepsReady(true);
                 getEstimation();
             }
