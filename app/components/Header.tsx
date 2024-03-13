@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Box, Button, Container, Divider, Flex, Grid, Group, Indicator, Menu, Popover, Stack, Title } from "@mantine/core";
+import { ActionIcon, Avatar, Box, Button, Container, Divider, Flex, Grid, Group, Indicator, Menu, Popover, Stack, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -73,7 +73,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                             <Box visibleFrom="md" >
                                 <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
                                     <Popover.Target>
-                                        <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>
+                                        {user?.id ? <Avatar onMouseEnter={open} radius="xl" /> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
                                     </Popover.Target>
                                     <Popover.Dropdown p={0}>
                                         <div style={userMenuStyle}>
@@ -81,7 +81,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                                 {user?.id ?
                                                     <Group align="center" justify={'space-between'}>
                                                         <Box>
-                                                            <Title order={5}>Hej!</Title>
+                                                            <Title order={5}>Hey!</Title>
                                                             <Link to={'/user/home'}>My Bookings</Link>
                                                         </Box>
                                                         <Box>
