@@ -438,13 +438,15 @@ const Page = {
                                     {response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
                                         <Text ta={'center'}>{slot?.name}</Text>
                                         <Space h="sm" />
-                                        <Grid justify="center">
-                                            {slot?.slots.map(time => <Grid.Col span={{ base: 5, md: 3 }}>
-                                                <Card withBorder p="sm" key={'st' + time.value}>
-                                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
-                                                </Card>
-                                            </Grid.Col>)}
-                                        </Grid>
+                                        <div style={{ margin: 'auto', maxWidth: '400px' }}>
+                                            <Grid justify="center" >
+                                                {slot?.slots.map(time => <Grid.Col span={{ base: 5, md: 4 }}>
+                                                    <Card withBorder p="sm" key={'st' + time.value}>
+                                                        <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
+                                                    </Card>
+                                                </Grid.Col>)}
+                                            </Grid>
+                                        </div>
                                     </Slide>)}
                                     {
                                         !response.slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
