@@ -12,7 +12,6 @@ const CONTAINER_SIZES: Record<string, string> = {
 
 const theme: Partial<MantineTheme> = {
     fontFamily: 'Inter, sans-serif',
-    primaryColor: '#0038FF',
     fontSizes: {
         xs: rem(10),
         sm: rem(12),
