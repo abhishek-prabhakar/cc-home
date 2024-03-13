@@ -357,7 +357,7 @@ const Page = {
 
                     {data.serviceGroup.addons.length ? <Stack gap="xs">
                         <Text fw={500}>Recommended Addons</Text>
-                        <SimpleGrid cols={{ base: 2, md: 3, lg: 3, xl: 4 }}
+                        <SimpleGrid cols={{ base: 2, md: 3, lg: 3, xl: 3 }}
                             spacing={{ base: 'sm', sm: 'xl' }}>
                             {data.serviceGroup.addons.map(item => <Card withBorder key={item.id} onClick={() => toggleAddon(item.id)} style={{ cursor: 'pointer' }}>
                                 <Stack gap={'xs'}>
@@ -438,13 +438,13 @@ const Page = {
                                     {response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
                                         <Text ta={'center'}>{slot?.name}</Text>
                                         <Space h="sm" />
-                                        <SimpleGrid cols={{ xs: 2, sm: 2, md: 3 }} style={{
-                                            maxWidth: '350px', margin: 'auto'
-                                        }} >
-                                            {slot?.slots.map(time => <Card withBorder p="sm" key={'st' + time.value}>
-                                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
-                                            </Card>)}
-                                        </SimpleGrid>
+                                        <Grid justify="center">
+                                            {slot?.slots.map(time => <Grid.Col span={{ base: 5, md: 3 }}>
+                                                <Card withBorder p="sm" key={'st' + time.value}>
+                                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
+                                                </Card>
+                                            </Grid.Col>)}
+                                        </Grid>
                                     </Slide>)}
                                     {
                                         !response.slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
