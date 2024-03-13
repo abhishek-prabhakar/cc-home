@@ -142,10 +142,10 @@ const ProfileLayout = {
                             Secure creative professionals instantly with our 'Book Now, Pay Later' option. Pay 50% within 3 days of booking, and the rest after the completion of service.
                         </Text>
                         <Text>
-                            Choose easy EMI or pay 100%.
+                            Choose easy EMI
                         </Text>
                         <Text>
-                            Pay upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
+                            Pay 100% upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
                         </Text>
                         <Image src="/assets/savings.png" width={'50%'} />
                     </Stack>

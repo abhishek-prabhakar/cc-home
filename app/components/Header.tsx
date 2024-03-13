@@ -73,7 +73,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                             <Box visibleFrom="md" >
                                 <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
                                     <Popover.Target>
-                                        {user?.id ? <Avatar onMouseEnter={open} radius="xl" /> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
+                                        {user?.id ? <Link to={'/user/home'}><Avatar onMouseEnter={open} radius="xl" /></Link> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
                                     </Popover.Target>
                                     <Popover.Dropdown p={0}>
                                         <div style={userMenuStyle}>
