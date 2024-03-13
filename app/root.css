@@ -488,3 +488,8 @@ a, a:active{
     border-image: conic-gradient(#833ab4, #3f5efb, #fc466b, #fd1d1d, #fcb045, #fc466b, #833ab4) 1;
     padding: 2px
 }
+
+
+.data-weekend[data-weekend=true]{
+    --_day-color: auto;
+}
