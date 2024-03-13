@@ -1,4 +1,4 @@
-import { Container, MantineProvider, MantineTheme, createTheme, rem } from '@mantine/core';
+import { Container, MantineColorsTuple, MantineProvider, MantineTheme, MantineThemeColors, createTheme, rem } from '@mantine/core';
 
 const CONTAINER_SIZES: Record<string, string> = {
     xxs: rem(300),
@@ -10,8 +10,16 @@ const CONTAINER_SIZES: Record<string, string> = {
     xxl: rem(900),
 };
 
-const theme: Partial<MantineTheme> = {
+const primaryBlue: MantineColorsTuple = [
+    '#a6baff', '#6d8eff', '#9cb1ff', '#7896ff', '#5c80ff', '#406aff', '#184bff', '#2353ff',
+    '#0038ff', '#0028b5'
+];
+
+const theme = createTheme({
     fontFamily: 'Inter, sans-serif',
+    colors: {
+        blue: primaryBlue
+    },
     fontSizes: {
         xs: rem(10),
         sm: rem(12),
@@ -33,7 +41,7 @@ const theme: Partial<MantineTheme> = {
             }
         }
     },
-};
+});
 
 
 export default theme;
