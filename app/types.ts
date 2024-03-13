@@ -28,7 +28,8 @@ export type VendorProfile = {
     coverImageName?: string | null;
     primaryColor?: string;
     avatar?: string;
-    bio?: string | null
+    bio?: string | null;
+    baseCharge: number;
 }
 
 export type VendorPortfolio = {

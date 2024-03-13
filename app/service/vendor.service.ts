@@ -118,6 +118,15 @@ export const VendorQuery = {
                         select: {
                             name: true
                         }
+                    },
+                    VendorServiceGroup: {
+                        take: 1,
+                        orderBy: {
+                            cost: 'asc'
+                        },
+                        select: {
+                            cost: true
+                        }
                     }
                 }
             }).then(r => {
@@ -132,7 +141,8 @@ export const VendorQuery = {
                         primaryColor: r.primaryColor,
                         avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
                         coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
-                        bio: r.bio
+                        bio: r.bio,
+                        baseCharge: r.VendorServiceGroup[0]?.cost || 0
                     });
                 } else {
                     resolve(null);

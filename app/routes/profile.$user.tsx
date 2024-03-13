@@ -105,7 +105,7 @@ const ProfileLayout = {
                             <Space h="md" />
                             <Divider />
                             <Space h="md" />
-                            <Text c="dimmed">Starting from <Currency /></Text>
+                            <Text c="dimmed">Starting from <Currency value={profile?.baseCharge} /></Text>
                         </Box>
                     </Grid.Col>
                 </Grid>
