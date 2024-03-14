@@ -168,3 +168,19 @@ export type Collection = {
     path: string,
     cost: number,
 }
+
+
+export type SearchResultItem = {
+    id: string,
+    name: string,
+    vendorType: {
+        keyName: string,
+        name: string
+    },
+    serviceGroupType: { name: string } | null,
+    serviceGroupItem: {
+        service: {
+            name: string;
+        };
+    }[];
+}

@@ -6,7 +6,7 @@ import { db } from "~/utils/database";
 import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
-import { BannerItem, Collection, HomeCategoryItem, Jumbotron } from "~/types";
+import { BannerItem, Collection, HomeCategoryItem, Jumbotron, SearchResultItem } from "~/types";
 import { getCategoryCollection, getCollections, getJumbotronList, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
@@ -15,6 +15,7 @@ import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
+import { FuseResult } from "fuse.js";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -205,20 +206,6 @@ const contentStyle: React.CSSProperties = {
   height: '400px',
 };
 
-type searchResult = {
-  id: string,
-  name: string,
-  vendorType: {
-    keyName: string,
-    name: string
-  },
-  serviceGroupType: { name: string } | null,
-  serviceGroupItem: {
-    service: {
-      name: string;
-    };
-  }[];
-}
 
 const Home = {
   Index: () => {
@@ -277,7 +264,7 @@ const Home = {
   },
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
-    const fetcher = useFetcher();
+    const fetcher = useFetcher<{ results: FuseResult<SearchResultItem>[] }>();
     const navigate = useNavigate();
     const [searchBusy, setSearchBusy] = useState(false);
 
@@ -323,9 +310,9 @@ const Home = {
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
-                          {response => response?.results && <div className="hero-search-results-panel">{response?.results?.map((item: searchResult) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.vendorType.keyName, item.id)}>
-                            {item.name} <Text c="dimmed" fs="italic">in {item.vendorType.name}</Text>
-                          </div>)}{!response?.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
+                          {response => response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
+                            {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType.name}</Text>
+                          </div>)}{!response.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
                         </Await>
                       </Suspense>
                     </div>
