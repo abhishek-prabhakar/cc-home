@@ -166,12 +166,8 @@ export const VendorQuery = {
                     }
                 }],
                 where: {
-                    vendorService: {
-                        some: {
-                            vendor: {
-                                username
-                            }
-                        }
+                    vendor: {
+                        username
                     }
                 },
                 select: {

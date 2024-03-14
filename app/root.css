@@ -490,6 +490,6 @@ a, a:active{
 }
 
 
-.mantine-Calendar-day[data-weekend=true]{
+.mantine-Calendar-day[data-weekend=true]:not([data-selected=true]){
     --_day-color: auto;
 }

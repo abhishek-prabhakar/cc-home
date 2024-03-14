@@ -1,7 +1,7 @@
 import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
-import { Await, Form, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
+import { Await, Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconNumber1, IconNumber2 } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { IconNumber3 } from "@tabler/icons-react";
@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import UserLogin from "~/components/UserLogin";
 import COMMON_DATA from "~/data/common.data";
 import { PATH } from "~/path.data";
+import Routes from "~/routes.data";
 import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { getUser } from "~/store/user.store";
@@ -288,8 +289,12 @@ const Page = {
                 </Grid.Col>
                 <Grid.Col span={{ sm: 12, md: 'content' }}>
                     <Flex align={'center'} gap={'md'}>
-                        <Title order={5}>{data.vendor.vendor.username}</Title>
-                        <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
+                        <Link to={Routes.VendorProfile.replace(':id', data.vendor.vendor.username)}>
+                            <Title order={5}>{data.vendor.vendor.username}</Title>
+                        </Link>
+                        <Link to={Routes.VendorProfile.replace(':id', data.vendor.vendor.username)}>
+                            <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
+                        </Link>
                     </Flex>
                 </Grid.Col>
             </Grid>

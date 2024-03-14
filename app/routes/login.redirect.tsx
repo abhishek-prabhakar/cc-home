@@ -21,7 +21,6 @@ export async function action({
     }
 
     session.set(USER_SESSION_KEY, userToken);
-    console.log(userToken)
     return redirect(redirectUrl, {
         headers: {
             "Set-Cookie": await commitSession(session),
@@ -38,7 +37,6 @@ export async function loader({
     );
 
     if (session.has(USER_SESSION_KEY)) {
-        console.log('/--->')
         return redirect("/");
     }
 

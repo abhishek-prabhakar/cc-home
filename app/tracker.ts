@@ -18,8 +18,6 @@ export function startTracker(config: TrackerConfig) {
     (async () => {
         //dynamic import 
         Tracker = (await import('@openreplay/tracker')).default
-        console.log("Starting tracker...")
-        console.log("Custom configuration received: ", config)
 
         const getUserId = (config?.userIdEnabled && config?.getUserId) ? config.getUserId : defaultGetUserId
 
@@ -27,8 +25,6 @@ export function startTracker(config: TrackerConfig) {
             projectKey: config?.projectKey
         }
 
-        console.log("Tracker configuration")
-        console.log(trackerConfig)
         tracker = new Tracker(trackerConfig);
 
         if (config?.userIdEnabled) {
