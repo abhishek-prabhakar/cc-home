@@ -12,9 +12,10 @@ import {
 import { redirect } from "@remix-run/node";
 import { HeaderNavListItem, RootLoaderData, User } from "~/types";
 import Routes from "~/routes.data";
-import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Space, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Modal, Space, Stack, Text, Title } from "@mantine/core";
 import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
 import Skeleton from "./Skeleton";
+import ComingSoonModal from "./ComingSoonModal";
 
 const menuArtisantStyle: React.CSSProperties = {
   borderRadius: "3px",
@@ -93,6 +94,8 @@ const AppNavigation = {
     const data = useLoaderData<RootLoaderData>();
     const location = useLocation();
     const [openDrawer, setDrawerState] = useState(false);
+    const [currentLocation, setCurrentLocation] = useState('Bangalore');
+    const [showComingSoonDialog, setComingSoonDialog] = useState(false);
 
     useEffect(() => {
       toggleDrawer(false);
@@ -100,6 +103,15 @@ const AppNavigation = {
 
     function toggleDrawer(show = !openDrawer) {
       setDrawerState(show);
+    }
+
+    function handleLocationMenuClick(key: string) {
+      const item = locationList.find(x => x.key === key);
+      if (item?.available) {
+        setCurrentLocation(item.label);
+      } else {
+        setComingSoonDialog(true);
+      }
     }
 
     return (
@@ -161,13 +173,16 @@ const AppNavigation = {
                 <Accordion.Control icon={<IconWorld />}>Location</Accordion.Control>
                 <Accordion.Panel>
                   <Stack>
-                    {locationList.map(item => <Text key={item.key}>{item.label}</Text>)}
+                    {locationList.map(item => <Button ta={'left'} onClick={() => handleLocationMenuClick(item.key)} key={item.key} size="sm" variant="subtle">{item.label}</Button>)}
                   </Stack>
                 </Accordion.Panel>
               </Accordion.Item>
             </Accordion>
           </Stack>
         </Drawer>
+        <Modal opened={showComingSoonDialog} onClose={() => setComingSoonDialog(false)} title="">
+          <ComingSoonModal />
+        </Modal>
       </>
     );
   },

@@ -9,6 +9,7 @@ import { setUser } from "~/store/user.store";
 import { ActionIcon, Avatar, Box, Button, Container, Divider, Flex, Grid, Group, Image, Indicator, Menu, Modal, Popover, Stack, Text, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
+import ComingSoonModal from "./ComingSoonModal";
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
 const userMenuStyle: React.CSSProperties = { width: '300px', background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
@@ -112,16 +113,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
             </Container>
         </div>
         <Modal opened={showComingSoonDialog} onClose={() => setComingSoonDialog(false)} title="">
-            <Grid>
-                <Grid.Col span={{ base: 12, md: 6 }}>
-                    <Image src="/assets/area-coming-soon.png" />
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 6 }}>
-                    <Title order={5}>Coming soon</Title>
-                    <Text>Sorry, we are currently not serviceable in this area</Text>
-                </Grid.Col>
-            </Grid>
-
+            <ComingSoonModal/>
         </Modal>
     </>
 }
