@@ -1,4 +1,4 @@
-import { Link, useNavigation } from "@remix-run/react";
+import { Link, useLocation, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import AppNavigation from "./NavigationMenu";
 import { locationList } from "~/data/locations.data";
@@ -6,7 +6,7 @@ import UserLogin from "./UserLogin";
 import { User } from "~/types";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/store/user.store";
-import { ActionIcon, Avatar, Box, Button, Container, Divider, Flex, Grid, Group, Indicator, Menu, Popover, Stack, Title } from "@mantine/core";
+import { ActionIcon, Avatar, Box, Button, Container, Divider, Flex, Grid, Group, Image, Indicator, Menu, Modal, Popover, Stack, Text, Title } from "@mantine/core";
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -18,8 +18,9 @@ const menuArtisantStyle: React.CSSProperties = {
 
 
 export function Header({ user, cartCount }: { user?: User | null, cartCount: number }) {
-    const navigation = useNavigation();
+    const location = useLocation();
     const [currentLocation, setCurrentLocation] = useState('Bangalore');
+    const [showComingSoonDialog, setComingSoonDialog] = useState(false);
     const dispatch = useDispatch();
     const [opened, { close, open }] = useDisclosure(false);
 
@@ -27,8 +28,13 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
         dispatch(setUser(user?.id));
     }, [user]);
 
-    function handleLocationMenuClick(data: any) {
-        setCurrentLocation(locationList[data.key].label);
+    function handleLocationMenuClick(key: string) {
+        const item = locationList.find(x => x.key === key);
+        if (item?.available) {
+            setCurrentLocation(item.label);
+        } else {
+            setComingSoonDialog(true);
+        }
     }
 
     return <>
@@ -52,7 +58,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                         </Flex>
                                     </Menu.Target>
                                     <Menu.Dropdown>
-                                        {locationList.map(item => <Menu.Item key={item.key} onClick={handleLocationMenuClick}>{item.label}</Menu.Item>)}
+                                        {locationList.map(item => <Menu.Item key={item.key} onClick={() => handleLocationMenuClick(item.key)}>{item.label}</Menu.Item>)}
                                     </Menu.Dropdown>
                                 </Menu >
                             </Box>
@@ -88,7 +94,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                                             <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
                                                         </Box>
                                                     </Group>
-                                                    : <UserLogin inlineMode={true} />}
+                                                    : <UserLogin inlineMode={true} redirectUrl={location.pathname} />}
                                             </div>
                                             <div style={menuArtisantStyle}>
                                                 <Stack style={{ padding: 8 }} >
@@ -105,5 +111,17 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                 </Grid>
             </Container>
         </div>
+        <Modal opened={showComingSoonDialog} onClose={() => setComingSoonDialog(false)} title="">
+            <Grid>
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <Image src="/assets/area-coming-soon.png" />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 6 }}>
+                    <Title order={5}>Coming soon</Title>
+                    <Text>Sorry, we are currently not serviceable in this area</Text>
+                </Grid.Col>
+            </Grid>
+
+        </Modal>
     </>
 }
