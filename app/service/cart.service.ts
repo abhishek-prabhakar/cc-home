@@ -61,7 +61,7 @@ export const CartService = {
             final: total + tax,
             discount: 0,
             coupon: null,
-            validCoupon: false
+            invalidCoupon: !!coupon
         };
     },
     summary: function (cart: CartInput[]) {

@@ -145,7 +145,7 @@ export default function () {
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
                             {response => <>
-                                <CouponSection invalid={!!response?.estimation.validCoupon} applyCoupon={fetchEstimation} />
+                                <CouponSection invalid={response?.estimation.invalidCoupon || false} applyCoupon={fetchEstimation} />
                                 <Space h="md" />
                                 <Divider />
                                 <Space h="md" />
