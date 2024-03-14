@@ -123,7 +123,7 @@ export default function () {
     function CouponSection({ invalid }: { invalid: boolean }) {
         return <Group gap={'md'} align="end">
             <Input.Wrapper flex={1} label="Coupon" error={invalid ? 'Coupon expired' : ''} >
-                <Input value={getCoupon} error={invalid} onChange={v => setCoupon(v.target.value)} />
+                <Input error={invalid} onChange={v => setCoupon(v.target.value)} />
             </Input.Wrapper>
             <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
         </Group>;
@@ -147,7 +147,7 @@ export default function () {
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
                             {response => <>
-                                <CouponSection invalid={!!response?.estimation.coupon && response?.estimation.coupon !== getCoupon} />
+                                <CouponSection invalid={!!response?.estimation.validCoupon} />
                                 <Space h="md" />
                                 <Divider />
                                 <Space h="md" />
