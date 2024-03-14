@@ -85,10 +85,21 @@ export async function loader({
     };
 };
 
+
+function CouponSection({ invalid, applyCoupon }: { invalid: boolean, applyCoupon: Function }) {
+    const [getCoupon, setCoupon] = useState('');
+
+    return <Group gap={'md'} align="end">
+        <Input.Wrapper flex={1} label="Coupon" error={invalid ? 'Coupon expired' : ''} >
+            <Input error={invalid} onChange={v => setCoupon(v.target.value)} />
+        </Input.Wrapper>
+        <Button variant="outline" size="xs" onClick={() => applyCoupon(getCoupon)}>Apply</Button>
+    </Group>;
+};
+
 export default function () {
     const [paymentMethod, setPayMethod] = useState<BookingPaymentMode | null>();
     const data = useLoaderData<typeof loader>();
-    const [getCoupon, setCoupon] = useState('');
     const navigation = useNavigation();
     const location = useLocation();
     const fetcher = useFetcher<typeof cartSummary>();
@@ -107,10 +118,6 @@ export default function () {
     }
 
 
-    function applyCoupon() {
-        fetchEstimation(getCoupon);
-    }
-
     function fetchEstimation(coupon = '') {
         fetcher.submit({
             coupon
@@ -119,15 +126,6 @@ export default function () {
         });
     }
 
-
-    function CouponSection({ invalid }: { invalid: boolean }) {
-        return <Group gap={'md'} align="end">
-            <Input.Wrapper flex={1} label="Coupon" error={invalid ? 'Coupon expired' : ''} >
-                <Input error={invalid} onChange={v => setCoupon(v.target.value)} />
-            </Input.Wrapper>
-            <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
-        </Group>;
-    };
 
     const Disablebadge = <Badge variant="outline" color="gray" size="xs">DISABLED</Badge>;
 
@@ -147,7 +145,7 @@ export default function () {
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
                             {response => <>
-                                <CouponSection invalid={!!response?.estimation.validCoupon} />
+                                <CouponSection invalid={!!response?.estimation.validCoupon} applyCoupon={fetchEstimation} />
                                 <Space h="md" />
                                 <Divider />
                                 <Space h="md" />
