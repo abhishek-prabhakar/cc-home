@@ -28,6 +28,7 @@ const UserLogin = {
                 }
                 setBusy(false);
             }).catch(e => {
+                alert('Something went wrong. Please try again.')
                 setBusy(false);
             })
         }

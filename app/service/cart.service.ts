@@ -49,7 +49,7 @@ async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: 
 
 export const CartService = {
     getGst: GST_PERCENTAGE,
-    calculate: function (cart: CartItem[]) {
+    calculate: function (cart: CartItem[], coupon?: string) {
         const gst = GST_PERCENTAGE;
         const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
         const tax = (gst * total) / 100;

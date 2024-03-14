@@ -1,8 +1,8 @@
-import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input } from "@mantine/core";
+import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input, Skeleton } from "@mantine/core";
 import { BookingPaymentMode } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
-import { useState } from "react";
+import { Await, Form, useFetcher, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
+import { Suspense, useEffect, useState } from "react";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
 import { CartInput } from "~/types";
@@ -41,25 +41,22 @@ const PaymentMethodList: PaymentType[] = [
 const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER];
 const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER];
 
-async function cartSummary(input: CartInput[]) {
-    let paymentModes: PaymentType[] = [...PaymentMethodList];
-    let estimatedPaymentModes: BookingPaymentMode[] = ACTIVE_PAYMENT_MODES;
-
+async function cartSummary(input: CartInput[], coupon?: string) {
     const cartSummary = await CartService.summary(input);
-    const containsEstimated = cartSummary.filter(item => item.isEstimated).length;
-    if (containsEstimated) {
-        estimatedPaymentModes = ESTIMATED_SERVICE_PAYMENT_MODES;
-    }
-
-    paymentModes.forEach(x => {
-        x.disabled = !ACTIVE_PAYMENT_MODES.includes(x.id) || !estimatedPaymentModes.includes(x.id);
-    });
-
-    const estimation = await CartService.calculate(cartSummary);
+    const estimation = await CartService.calculate(cartSummary, coupon);
     return {
-        estimation,
-        paymentModes
+        estimation
     };
+}
+
+export async function action({ request }: ActionArgs) {
+    const form = await request.formData();
+    const coupon = form.get('coupon')?.toString();
+
+    const cookieHeader = request.headers.get("Cookie");
+    const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
+
+    return cartSummary(currentCart, coupon);
 }
 
 
@@ -69,19 +66,36 @@ export async function loader({
     const cookieHeader = request.headers.get("Cookie");
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 
-    if (!currentCart?.length) {
-        redirect('/404');
+    let paymentModes: PaymentType[] = [...PaymentMethodList];
+    let estimatedPaymentModes: BookingPaymentMode[] = ACTIVE_PAYMENT_MODES;
+
+    const cartSummary = await CartService.summary(currentCart);
+    const containsEstimated = cartSummary.filter(item => item.isEstimated).length;
+    if (containsEstimated) {
+        estimatedPaymentModes = ESTIMATED_SERVICE_PAYMENT_MODES;
     }
 
-    return cartSummary(currentCart);
+    paymentModes.forEach(x => {
+        x.disabled = !ACTIVE_PAYMENT_MODES.includes(x.id) || !estimatedPaymentModes.includes(x.id);
+    });
+
+
+    return {
+        paymentModes
+    };
 };
 
 export default function () {
     const [paymentMethod, setPayMethod] = useState<BookingPaymentMode | null>();
-    const data = useLoaderData<typeof cartSummary>();
+    const data = useLoaderData<typeof loader>();
     const [getCoupon, setCoupon] = useState('');
     const navigation = useNavigation();
     const location = useLocation();
+    const fetcher = useFetcher<typeof cartSummary>();
+
+    useEffect(() => {
+        fetchEstimation();
+    }, []);
 
     function updatePayMethod(id: BookingPaymentMode) {
         const item = data.paymentModes.find(x => x.id === id);
@@ -89,20 +103,31 @@ export default function () {
             return;
         }
         setPayMethod(id);
+        fetchEstimation();
     }
 
 
     function applyCoupon() {
-        // getEstimation(getCoupon);
+        fetchEstimation(getCoupon);
+    }
+
+    function fetchEstimation(coupon = '') {
+        fetcher.submit({
+            coupon
+        }, {
+            method: 'POST'
+        });
     }
 
 
-    const CouponSection = <Group gap={'md'} align="end">
-        <Input.Wrapper flex={1} label="Coupon">
-            <Input value={getCoupon} onChange={v => setCoupon(v.target.value)} />
-        </Input.Wrapper>
-        <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
-    </Group>;
+    function CouponSection({ invalid }: { invalid: boolean }) {
+        return <Group gap={'md'} align="end">
+            <Input.Wrapper flex={1} label="Coupon" error={invalid ? 'Coupon expired' : ''} >
+                <Input value={getCoupon} error={invalid} onChange={v => setCoupon(v.target.value)} />
+            </Input.Wrapper>
+            <Button variant="outline" size="xs" onClick={applyCoupon}>Apply</Button>
+        </Group>;
+    };
 
     const Disablebadge = <Badge variant="outline" color="gray" size="xs">DISABLED</Badge>;
 
@@ -119,32 +144,41 @@ export default function () {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
                 <Card shadow="sm" withBorder>
-                    <Form method="post" action="/order/submit">
-                        <input type="hidden" name="source" value={new URLSearchParams(location.search).get('source') || ''} />
-                        <input type="hidden" name="paymentMode" value={paymentMethod || ''} />
-                        <Stack>
-                            {CouponSection}
-                            <Divider />
-                            <Flex justify={'space-between'}>
-                                <Text size="sm" fw={500}>Subtotal</Text>
-                                <Text size="sm" fw={500}><Currency value={data?.estimation.total} /></Text>
-                            </Flex>
-                            <Flex justify={'space-between'}>
-                                <Text c="dimmed">GST ({data?.estimation.gst}%)</Text>
-                                <Text><Currency value={data?.estimation.tax} /></Text>
-                            </Flex>
-                            <Flex justify={'space-between'}>
-                                <Text size="sm" fw={500}>Discount</Text>
-                                <Text size="sm" fw={500}><Currency value={data?.estimation.discount} /></Text>
-                            </Flex>
-                            <Flex justify={'space-between'}>
-                                <Text size="sm" fw={500}>Total</Text>
-                                <Text size="sm" fw={500}><Currency value={data?.estimation.final} /></Text>
-                            </Flex>
-                            <Divider />
-                            <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={['loading', 'submitting'].includes(navigation.state)}>Place Order</Button>
-                        </Stack>
-                    </Form>
+                    <Suspense fallback={<Skeleton />}>
+                        <Await resolve={fetcher.data}>
+                            {response => <>
+                                <CouponSection invalid={!!response?.estimation.coupon && response?.estimation.coupon !== getCoupon} />
+                                <Space h="md" />
+                                <Divider />
+                                <Space h="md" />
+                                <Form method="post" action="/order/submit">
+                                    <input type="hidden" name="source" value={new URLSearchParams(location.search).get('source') || ''} />
+                                    <input type="hidden" name="paymentMode" value={paymentMethod || ''} />
+                                    <Stack>
+                                        <Flex justify={'space-between'}>
+                                            <Text size="sm" fw={500}>Subtotal</Text>
+                                            <Text size="sm" fw={500}><Currency value={response?.estimation.total} /></Text>
+                                        </Flex>
+                                        <Flex justify={'space-between'}>
+                                            <Text c="dimmed">GST ({response?.estimation.gst}%)</Text>
+                                            <Text><Currency value={response?.estimation.tax} /></Text>
+                                        </Flex>
+                                        <Flex justify={'space-between'}>
+                                            <Text size="sm" fw={500}>Discount</Text>
+                                            <Text size="sm" fw={500}><Currency value={response?.estimation.discount} /></Text>
+                                        </Flex>
+                                        <Flex justify={'space-between'}>
+                                            <Text size="sm" fw={500}>Total</Text>
+                                            <Text size="sm" fw={500}><Currency value={response?.estimation.final} /></Text>
+                                        </Flex>
+                                        <Divider />
+                                        <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={['loading', 'submitting'].includes(navigation.state)}>Place Order</Button>
+                                    </Stack>
+                                </Form>
+                            </>
+                            }
+                        </Await>
+                    </Suspense>
                 </Card>
             </Grid.Col>
         </Grid>

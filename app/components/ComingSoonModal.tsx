@@ -1,7 +1,7 @@
 import { Grid, Image, Text, Title } from "@mantine/core";
 
 function ComingSoonModal() {
-    return <Grid>
+    return <Grid align="center">
         <Grid.Col span={{ base: 12, md: 6 }}>
             <Image src="/assets/area-coming-soon.png" />
         </Grid.Col>
