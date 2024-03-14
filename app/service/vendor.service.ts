@@ -121,6 +121,9 @@ export const VendorQuery = {
                     },
                     VendorServiceGroup: {
                         take: 1,
+                        where: {
+                            isActive: true
+                        },
                         orderBy: {
                             cost: 'asc'
                         },
@@ -166,6 +169,7 @@ export const VendorQuery = {
                     }
                 }],
                 where: {
+                    isActive: true,
                     vendor: {
                         username
                     }
@@ -317,7 +321,8 @@ export const VendorQuery = {
                     }
                 }],
                 where: {
-                    id
+                    id,
+                    isActive: true
                 },
                 select: {
                     id: true,
