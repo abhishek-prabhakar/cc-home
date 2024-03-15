@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Container, Grid, Group, Image, SimpleGrid, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Container, Grid, Group, Image, SimpleGrid, Stack, Space, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
@@ -36,11 +36,12 @@ const CollectionsHighlightPage = {
             <Grid gutter={40}>
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <CollectionsHighlightPage.RelatedServices />
-                    <div style={{ paddingBottom: '60px' }}></div>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                     <CollectionsHighlightPage.TopVendors />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 8 }} >
-                    <CollectionsHighlightPage.OtherServices />
+                    {/* <CollectionsHighlightPage.OtherServices /> */}
                 </Grid.Col>
             </Grid>
         </Container>
@@ -109,23 +110,23 @@ const CollectionsHighlightPage = {
         const data = useLoaderData<typeof loader>();
 
         return <div>
-            <Title order={4}>Top Rated</Title>
-            <div style={{ paddingBottom: '20px' }}></div>
+            <Title order={5}>Top Rated</Title>
+            <Space h="md" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
-                    {response => <SimpleGrid cols={{sm: 1,xs: 1, md: 4}}>
+                    {response => response?.length ? <SimpleGrid cols={{ sm: 1, xs: 1, md: 8 }}>
                         {response?.map(item => <Grid gutter={20} align={'center'} key={item.id}>
-                            <Grid.Col span={{ xs: 'content', md:12 }}>
+                            <Grid.Col span={{ xs: 'content', sm: 'content', md: 12 }}>
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}>
                                     <Avatar src={item.image} size={'lg'} />
                                 </Link>
                             </Grid.Col>
-                            <Grid.Col span={{ xs: 'auto', md: 12 }}>
-                                <Link to={Routes.VendorProfile.replace(':id', item.id)}><Title order={5}>{item.name}</Title></Link>
+                            <Grid.Col span={{ xs: 'auto', sm: 'auto', md: 12 }}>
+                                <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
                             </Grid.Col>
                         </Grid>)}
-                        {!response?.length && <Text>Sorry, we couldn't find any vendors under this category.</Text>}
-                    </SimpleGrid>}
+                    </SimpleGrid> : <Text c="dimmed">Sorry, we couldn't find any vendors under this category</Text>
+                    }
                 </Await>
             </Suspense>
         </div>

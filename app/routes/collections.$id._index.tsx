@@ -75,21 +75,25 @@ const CollectionsPage = {
                             <Grid key={item.keyName} gutter={40} style={{ padding: '40px 0' }}>
                                 {item.serviceGroup.map(service => <Grid.Col key={service.id} span={{ base: 12, md: 3 }}><Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
-                                        <Image src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} />
-                                        <div style={{ paddingBottom: '20px' }}></div>
-                                        <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
-                                            <Title order={5}>{service.name}</Title>
-                                        </Link>
-                                        <Text fw={500} c="dimmed" >Includes</Text>
-                                        <div>
-                                            {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
-                                                <Text fw={500} c="dimmed">{description.service.name}.</Text>
-                                            </div>)}
-                                        </div>
-                                        <div style={{ marginTop: '10px', height: '26px' }}>
-                                            {service.VendorServiceGroup.length ? <div style={{ borderTop: '1px solid #ddd', paddingTop: '4px' }}><Flex gap={'sm'} align={'center'}><Text size="sm">Starts from</Text><Badge color="yellow">₹{service.VendorServiceGroup[0].cost}</Badge></Flex></div>
-                                                : ''}
-                                        </div>
+                                        <Stack>
+                                            <Image src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} />
+                                            <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
+                                                <Title order={5}>{service.name}</Title>
+                                            </Link>
+                                            <Text fw={500} c="dimmed" >Includes</Text>
+                                            <div>
+                                                {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
+                                                    <Text fw={500} c="dimmed">{description.service.name}.</Text>
+                                                </div>)}
+                                            </div>
+                                            <Link to={Routes.ServiceGroup.replace(':id', item.keyName || '').replace(':subId', service.id)}>
+                                                <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
+                                            </Link>
+                                            <div style={{ height: '26px' }}>
+                                                {service.VendorServiceGroup.length ? <Flex gap={'sm'} align={'end'}><Text size="sm">Starts from</Text><Badge color="yellow">₹{service.VendorServiceGroup[0].cost}</Badge></Flex>
+                                                    : ''}
+                                            </div>
+                                        </Stack>
                                     </div>
                                 </Link>
                                 </Grid.Col>)}
