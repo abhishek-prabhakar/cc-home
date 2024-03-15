@@ -283,19 +283,24 @@ const PartnerSignup = {
             </Card>
           </Grid.Col>
         ))}
-        <PartnerSignup.SignupForm
-          type={activeCard}
+        <Modal
+          opened={!!activeCard}
           onClose={() => setActiveCard(null)}
-        />
+          title="Register as a professional"
+        >
+          {activeCard && <PartnerSignup.SignupForm
+            type={activeCard}
+            onClose={() => setActiveCard(null)}
+          />}
+        </Modal>
       </Grid>
     );
   },
-
   SignupForm: ({
     type,
     onClose,
   }: {
-    type: string | null;
+    type: string;
     onClose: () => void;
   }) => {
     const fetcher = useFetcher();
@@ -312,82 +317,63 @@ const PartnerSignup = {
       e.preventDefault();
 
       // get formData from currentTarget (form)
-      const formData = new FormData(e.currentTarget);
+      // const formData = new FormData(e.currentTarget);
 
       // submit formData using fetcher
-      fetcher.submit(formData, { method: "POST" });
+      // fetcher.submit(formData, { method: "POST" });
 
       setFormSubmitted(true);
     }
 
-    const SuccessMessage = () => {
-      return (
-        <Stack align="center" justify="center">
-          <Title order={3}>Thank you for your interest</Title>
-          <Text size="sm">Our representative will contact you soon.</Text>
-          <Button key="buy" onClick={customClose}>
-            Close
+
+    return formSubmitted ? <Stack align="center" justify="center">
+      <Title order={3}>Thank you for your interest</Title>
+      <Text size="sm">Our representative will contact you soon.</Text>
+      <Button key="buy" onClick={customClose}>
+        Close
+      </Button>
+    </Stack> : <fetcher.Form method="post" onSubmit={submitHandler}>
+      <Grid gutter={'md'}>
+        <Grid.Col>
+          <Title order={5}>I'm a</Title>
+          <Group defaultValue={type || ''}>
+            {VendorList.map((item) => (
+              <Radio key={item.id} value={item.id} name="type" label={item.name} />
+            ))}
+          </Group>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Input.Wrapper label="Full Name">
+            <Input
+              name="fullName"
+              placeholder="Enter your full name"
+              required
+            />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Input.Wrapper label="Contact Number">
+            <Input name="phone" leftSection="+91" maxLength={10} required />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Input.Wrapper label="Email">
+            <Input name="email" type="email" required />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Input.Wrapper label="Social media url">
+            <Input name="socialUrl" type="url" required />
+          </Input.Wrapper>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <input type="hidden" name="category" value={type || ''} />
+          <Button variant="filled" radius="xl" type="submit">
+            Submit
           </Button>
-        </Stack>
-      );
-    };
-
-    const RequestForm = () => {
-      return type ? (
-        <fetcher.Form onSubmit={submitHandler}>
-          <Grid gutter={10}>
-            <Grid.Col>
-              <Title order={5}>I'm a</Title>
-              <Group defaultValue={type}>
-                {VendorList.map((item) => (
-                  <Radio key={item.id} value={item.id} name="type">
-                    {item.name}
-                  </Radio>
-                ))}
-              </Group>
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Title order={5}>Full Name</Title>
-              <Input
-                name="fullName"
-                placeholder="Enter your full name"
-                required
-              />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Title order={5}>Contact Number</Title>
-              <Input name="phone" leftSection="+91" maxLength={10} required />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Title order={5}>Email</Title>
-              <Input name="email" type="email" required />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <Title order={5}>Social media url</Title>
-              <Input name="socialUrl" type="url" required />
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <input type="hidden" name="category" value={type} />
-              <Button variant="filled" radius="xl" type="submit">
-                Submit
-              </Button>
-            </Grid.Col>
-          </Grid>
-        </fetcher.Form>
-      ) : (
-        <></>
-      );
-    };
-
-    return (
-      <Modal
-        opened={!!type}
-        onClose={onClose}
-        title="Register as a professional"
-      >
-        {formSubmitted ? <SuccessMessage /> : <RequestForm />}
-      </Modal>
-    );
+        </Grid.Col>
+      </Grid>
+    </fetcher.Form>;
   },
 };
 

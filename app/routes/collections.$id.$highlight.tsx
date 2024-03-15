@@ -56,10 +56,10 @@ const CollectionsHighlightPage = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.data}>
                     {response => <div>
-                        <Title order={2}>Explore everything under {response?.name} </Title>
-                        <div style={{ paddingBottom: '20px' }}></div>
-                        <Title order={3}>Book {response?.vendorType}</Title>
-                        <div style={{ paddingBottom: '20px' }}></div>
+                        <Title order={3}>Explore everything under <span className="_color-primary">{response?.name}</span></Title>
+                        <div style={{ paddingBottom: '10px' }}></div>
+                        <Title order={5}>Book {response?.vendorType}</Title>
+                        <div style={{ paddingBottom: '40px' }}></div>
                         <Grid gutter={40}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                                 <Stack>
@@ -114,7 +114,7 @@ const CollectionsHighlightPage = {
 
         return <div>
             <Title order={5}>Top Rated</Title>
-            <Space h="md" />
+            <Space h="xl" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
                     {response => response?.length ? <Grid gutter="md">
