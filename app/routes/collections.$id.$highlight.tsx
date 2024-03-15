@@ -93,13 +93,13 @@ const CollectionsHighlightPage = {
             <div style={{ paddingBottom: '30px' }}></div>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.related}>
-                    {response => <Grid gutter={40}>
+                    {response => <Grid gutter={40} justify="start">
                         {response?.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                             <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}><Image src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
                             <div style={{ paddingBottom: '14px' }}></div>
                             <Text c="dimmed">{service.vendorType.name}</Text>
                             <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}>
-                                <Title order={5}>{service.name}</Title>
+                                <Text fw={500}>{service.name}</Text>
                             </Link>
                         </Grid.Col>)
                         }
