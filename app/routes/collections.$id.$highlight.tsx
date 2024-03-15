@@ -33,11 +33,11 @@ const CollectionsHighlightPage = {
         return <Container size={'xl'} >
             <CollectionsHighlightPage.Highlight />
             <div style={{ paddingBottom: '50px' }}></div>
-            <Grid gutter={40}>
+            <Grid gutter={'xl'} justify="space-between">
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <CollectionsHighlightPage.RelatedServices />
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4 }}>
+                <Grid.Col span={{ base: 12, md: 3 }}>
                     <CollectionsHighlightPage.TopVendors />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 8 }} >
@@ -114,7 +114,7 @@ const CollectionsHighlightPage = {
             <Space h="md" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
-                    {response => response?.length ? <SimpleGrid cols={{ sm: 1, xs: 1, md: 8 }}>
+                    {response => response?.length ? <SimpleGrid cols={{ sm: 1, xs: 1, md: 3 }}>
                         {response?.map(item => <Grid gutter={20} align={'center'} key={item.id}>
                             <Grid.Col span={{ xs: 'content', sm: 'content', md: 12 }}>
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}>
