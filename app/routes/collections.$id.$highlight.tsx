@@ -114,17 +114,13 @@ const CollectionsHighlightPage = {
             <Space h="md" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
-                    {response => response?.length ? <SimpleGrid cols={{ sm: 1, xs: 1, md: 3 }}>
-                        {response?.map(item => <Grid gutter={20} align={'center'} key={item.id}>
-                            <Grid.Col span={{ xs: 'content', sm: 'content', md: 12 }}>
-                                <Link to={Routes.VendorProfile.replace(':id', item.id)}>
-                                    <Avatar src={item.image} size={'lg'} />
-                                </Link>
-                            </Grid.Col>
-                            <Grid.Col span={{ xs: 'auto', sm: 'auto', md: 12 }}>
-                                <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
-                            </Grid.Col>
-                        </Grid>)}
+                    {response => response?.length ? <SimpleGrid cols={{ sm: 3, xs: 3, md: 3 }}>
+                        {response?.map(item => <Stack key={item.id} justify="center" align="center">
+                            <Link to={Routes.VendorProfile.replace(':id', item.id)}>
+                                <Avatar src={item.image} size={'lg'} />
+                            </Link>
+                            <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
+                        </Stack>)}
                     </SimpleGrid> : <Text c="dimmed">Sorry, we couldn't find any vendors under this category</Text>
                     }
                 </Await>
