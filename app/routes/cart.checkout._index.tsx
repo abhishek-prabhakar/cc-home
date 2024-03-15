@@ -47,14 +47,14 @@ const Cart = {
                 <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.data}>
-                            {response => response?.length &&
+                            {response => response?.length ?
                                 <Stack gap={'md'}>
                                     <Cart.Summary data={response} />
                                     {user ? <Form method="post" action="/order/checkout">
                                         <input type="hidden" name="source" value="cart" />
                                         <input type="hidden" name="cart" value={data.cartInput} />
                                         <Button variant="filled" type="submit" fullWidth>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
-                                </Stack>
+                                </Stack> : ''
                             }
                         </Await>
                     </Suspense>

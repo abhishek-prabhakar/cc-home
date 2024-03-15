@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Container, Grid, Group, Image, SimpleGrid, Stack, Space, Text, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Container, Grid, Group, Image, SimpleGrid, Stack, Space, Text, Title, Divider } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
@@ -32,7 +32,9 @@ const CollectionsHighlightPage = {
     Index: () => {
         return <Container size={'xl'} >
             <CollectionsHighlightPage.Highlight />
-            <div style={{ paddingBottom: '50px' }}></div>
+            <Space h="xl" />
+            <Divider />
+            <Space h="xl" />
             <Grid gutter={'xl'} justify="space-between">
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <CollectionsHighlightPage.RelatedServices />
@@ -114,14 +116,15 @@ const CollectionsHighlightPage = {
             <Space h="md" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
-                    {response => response?.length ? <SimpleGrid cols={{ sm: 3, xs: 3, md: 3 }}>
-                        {response?.map(item => <Stack key={item.id} justify="center" align="center">
-                            <Link to={Routes.VendorProfile.replace(':id', item.id)}>
-                                <Avatar src={item.image} size={'lg'} />
-                            </Link>
-                            <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
-                        </Stack>)}
-                    </SimpleGrid> : <Text c="dimmed">Sorry, we couldn't find any vendors under this category</Text>
+                    {response => response?.length ? <Grid gutter="md">
+                        {response?.map(item => <Grid.Col span={{ xs: 2, sm: 3, md: 3 }}>
+                            <Stack key={item.id} justify="center" align="center">
+                                <Link to={Routes.VendorProfile.replace(':id', item.id)}>
+                                    <Avatar src={item.image} size={'lg'} />
+                                </Link>
+                                <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
+                            </Stack></Grid.Col>)}
+                    </Grid> : <Text c="dimmed">Sorry, we couldn't find any vendors under this category</Text>
                     }
                 </Await>
             </Suspense>
