@@ -33,6 +33,7 @@ const CollectionsHighlightPage = {
         return <Container size={'xl'} >
             <CollectionsHighlightPage.Highlight />
             <Space h="xl" />
+            <Space h="xl" />
             <Divider />
             <Space h="xl" />
             <Grid gutter={'xl'} justify="space-between">
@@ -89,7 +90,7 @@ const CollectionsHighlightPage = {
     RelatedServices: () => {
         const data = useLoaderData<typeof loader>();
         return <div>
-            <Title order={3}>Frequently bought together</Title>
+            <Title order={5}>Frequently bought together</Title>
             <div style={{ paddingBottom: '30px' }}></div>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.related}>
@@ -97,7 +98,7 @@ const CollectionsHighlightPage = {
                         {response?.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                             <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}><Image src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
                             <div style={{ paddingBottom: '14px' }}></div>
-                            <Text c="dimmed">{service.vendorType.name}</Text>
+                            <Text c="dimmed" size="sm">{service.vendorType.name}</Text>
                             <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}>
                                 <Text fw={500}>{service.name}</Text>
                             </Link>
@@ -117,7 +118,7 @@ const CollectionsHighlightPage = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
                     {response => response?.length ? <Grid gutter="md">
-                        {response?.map(item => <Grid.Col span={{ xs: 2, sm: 3, md: 3 }}>
+                        {response?.map(item => <Grid.Col span={3}>
                             <Stack key={item.id} justify="center" align="center">
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}>
                                     <Avatar src={item.image} size={'lg'} />
