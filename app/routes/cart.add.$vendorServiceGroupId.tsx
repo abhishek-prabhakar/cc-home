@@ -44,8 +44,13 @@ type FormParams = {
 
 async function cartSummary(input: CartInput[]) {
     const cartSummary = await CartService.summary(input);
+    let total = 0;
+    cartSummary.forEach(x => {
+        total += x.services.reduce((sum, x) => sum + x.cost, 0);
+    })
     return {
-        cartSummary
+        cartSummary,
+        total
     }
 }
 
@@ -575,6 +580,10 @@ const Page = {
                                         </Flex>
                                         )}
                                     </div>)}
+                                <Flex justify={'space-between'}>
+                                    <Text size="sm" fw={500}>Total: </Text>
+                                    <Text size="sm" fw={500}><Currency value={response?.total} /></Text>
+                                </Flex>
                             </Stack>
                         </Card>
                     </Grid.Col>

@@ -1,4 +1,4 @@
-import { Avatar, Container, Grid, Image, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Badge, Button, Container, Grid, Group, Image, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
@@ -58,24 +58,30 @@ const CollectionsHighlightPage = {
                         <div style={{ paddingBottom: '20px' }}></div>
                         <Grid gutter={40}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
-                                <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}><Image src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
-                                <div style={{ paddingBottom: '20px' }}></div>
-                                <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
-                                    <Title order={5}>{service.name}</Title>
-                                </Link>
-                                <ul style={{ paddingLeft: '14px' }}>
-                                    <Text>Includes:</Text>
-                                    {service.description.map((description, key) => <li key={'d-' + key}>
-                                        <Text>{description}.</Text>
-                                    </li>)}
-                                </ul>
+                                <Stack>
+                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                        <Image src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
+
+                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                        <Title order={5}>{service.name}</Title>
+                                    </Link>
+                                    <Group gap={'xs'}>
+                                        <Text size="sm" fw="500" c="dimmed">Includes:</Text>
+                                        {service.description.map((description, key) => <Badge variant="light" color="gray" size="xs" key={'d-' + key}>
+                                            {description}
+                                        </Badge>)}
+                                    </Group>
+                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                        <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
+                                    </Link>
+                                </Stack>
                             </Grid.Col>)
                             }
                         </Grid>
                     </div>}
                 </Await>
             </Suspense>
-        </div>
+        </div >
     },
     RelatedServices: () => {
         const data = useLoaderData<typeof loader>();
@@ -107,19 +113,19 @@ const CollectionsHighlightPage = {
             <div style={{ paddingBottom: '20px' }}></div>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.topRatedVendors}>
-                    {response => <Stack gap={'lg'}>
+                    {response => <SimpleGrid cols={{sm: 1,xs: 1, md: 4}}>
                         {response?.map(item => <Grid gutter={20} align={'center'} key={item.id}>
-                            <Grid.Col span={{ md: 12 }}>
+                            <Grid.Col span={{ xs: 'content', md:12 }}>
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}>
                                     <Avatar src={item.image} size={'lg'} />
                                 </Link>
                             </Grid.Col>
-                            <Grid.Col>
+                            <Grid.Col span={{ xs: 'auto', md: 12 }}>
                                 <Link to={Routes.VendorProfile.replace(':id', item.id)}><Title order={5}>{item.name}</Title></Link>
                             </Grid.Col>
                         </Grid>)}
                         {!response?.length && <Text>Sorry, we couldn't find any vendors under this category.</Text>}
-                    </Stack>}
+                    </SimpleGrid>}
                 </Await>
             </Suspense>
         </div>
