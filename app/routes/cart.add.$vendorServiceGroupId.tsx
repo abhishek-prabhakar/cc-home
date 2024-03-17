@@ -1,8 +1,9 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, ThemeIcon, Title, rem } from "@mantine/core";
 import { Calendar, TimeInput } from "@mantine/dates";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { IconArrowNarrowLeft, IconArrowNarrowRight, IconNumber1, IconNumber2 } from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconCheck, IconNumber1, IconNumber2, IconSquareCheck } from "@tabler/icons-react";
+import { IconSquareCheckFilled } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { IconNumber3 } from "@tabler/icons-react";
 import { IconNumber4 } from "@tabler/icons-react";
@@ -13,10 +14,12 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import UserLogin from "~/components/UserLogin";
 import COMMON_DATA from "~/data/common.data";
+import TIME_SLOTS from "~/data/time-slots.data";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
+import { cartCheckoutCookie, userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
 import { CartInput, CartItem } from "~/types";
 import Currency from "~/utils/currency.transformer";
@@ -54,131 +57,8 @@ async function cartSummary(input: CartInput[]) {
     }
 }
 
-function getTimeSlots(): SlotData[] {
-    const midnight = [{
-        label: '12 AM',
-        value: 0
-    }, {
-        label: '1 AM',
-        value: 1
-    }, {
-        label: '2 AM',
-        value: 2
-    }, {
-        label: '3 AM',
-        value: 3
-    }, {
-        label: '4 AM',
-        value: 4
-    }, {
-        label: '5 AM',
-        value: 5
-    }];
-
-    const morning = [{
-        label: '6 AM',
-        value: 6
-    }, {
-        label: '7 AM',
-        value: 7
-    }, {
-        label: '8 AM',
-        value: 8
-    }, {
-        label: '9 AM',
-        value: 9
-    }, {
-        label: '10 AM',
-        value: 10
-    }, {
-        label: '11 AM',
-        value: 11
-    }];
-
-    const noon = [
-        {
-            label: '12 PM',
-            value: 12
-        },
-        {
-            label: '1 PM',
-            value: 13
-        },
-        {
-            label: '2 PM',
-            value: 14
-        },
-        {
-            label: '3 PM',
-            value: 15,
-        },
-        {
-            label: '4 PM',
-            value: 16
-        },
-        {
-            label: '5 PM',
-            value: 17
-        }];
-
-    const evening = [
-        {
-            label: '6 PM',
-            value: 18
-        },
-        {
-            label: '7 PM',
-            value: 19
-        },
-        {
-            label: '8 PM',
-            value: 20
-        },
-        {
-            label: '9 PM',
-            value: 21
-        },
-        {
-            label: '10 PM',
-            value: 22
-        },
-        {
-            label: '11 PM',
-            value: 23
-        }];
-
-
-
-    return [
-        {
-            name: 'Night',
-            slots: midnight
-        },
-        {
-            name: 'Morning',
-            slots: morning,
-        },
-        {
-            name: 'Afternoon',
-            slots: noon,
-        },
-        {
-            name: 'Evening',
-            slots: evening
-        }
-    ];
-}
-
-type SlotData = {
-    name: string,
-    slots: {
-        label: string,
-        value: number
-    }[]
-};
-
 type TimeSlotData = {
-    slots: SlotData[]
+    slots: typeof TIME_SLOTS
 };
 
 function arrayRange(start: number, stop: number, step = 1) {
@@ -203,7 +83,7 @@ export async function action(args: ActionArgs) {
             if (!vendorServiceGrpId || !date) {
                 return null;
             }
-            let slots = getTimeSlots();
+            let slots = TIME_SLOTS;
             const bookings = await CartService.getVendorServiceBookingsByDate(vendorServiceGrpId, date);
 
             const used = bookings.reduce<number[]>((acc, item) => {
@@ -225,6 +105,17 @@ export async function action(args: ActionArgs) {
 
 export async function loader(args: LoaderArgs) {
     const id = args.params.vendorServiceGroupId || '';
+    const cookieHeader = args.request.headers.get("Cookie");
+    const searchParams = new URL(args.request.url).searchParams;
+    const source = searchParams.get('source');
+
+    const currentCart: CartInput[] = source === 'cart' ? await userCartCookie.parse(cookieHeader) : await cartCheckoutCookie.parse(cookieHeader);
+
+    const savedData = currentCart.find(x => x.vendorServiceGroupId === id);
+
+    if (!id) {
+        throw new Error("Invalid service");
+    }
 
     const service = await VendorQuery.getVendorServiceGroup(id);
     const vendor = await db.vendorServiceGroup.findFirstOrThrow({
@@ -246,17 +137,17 @@ export async function loader(args: LoaderArgs) {
         }
     });
 
-
     return ({
         serviceGroup: service,
         vendor,
-        vendorServiceGroupId: id
+        vendorServiceGroupId: id,
+        savedData,
+        source
     })
 }
 
 const Page = {
     Index: () => {
-        const [activeStep, setActiveStep] = useState(1);
         const data = useLoaderData<typeof loader>();
         const [formData, setFormData] = useState<FormParams>();
 
@@ -279,7 +170,7 @@ const Page = {
             title: 'Confirm',
             icon: IconNumber4,
             success: false,
-            child: <Page.Summary data={formData} />
+            child: <Page.Summary data={formData} source={data.source} />
         }];
 
         function updateFormData(params: FormParams) {
@@ -330,10 +221,12 @@ const Page = {
         const [selectedAddons, setAddons] = useState<string[]>([]);
 
         useEffect(() => {
+            const preselectId = data.savedData?.services.map(x => x.id) || [];
+            setAddons(preselectId);
             onChange({
                 services: [{
                     vendorServiceGroupId: data.vendorServiceGroupId,
-                    addonsIds: []
+                    addonsIds: preselectId
                 }]
             });
         }, []);
@@ -359,7 +252,12 @@ const Page = {
             <Grid>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     <Stack align="center" justify="center">
-                        <Image src={data.serviceGroup.image} h={120} w={120} fit="cover" radius={'md'} />
+                        <Card radius={'sm'} p={2} pos={'relative'} withBorder>
+                            <div style={{ position: 'absolute', right: 0, top: 0 }}>
+                                <ThemeIcon color="green"><IconCheck /></ThemeIcon>
+                            </div>
+                            <Image src={data.serviceGroup.image} h={120} w={120} fit="cover" radius={'md'} />
+                        </Card>
                         <Text>{data.serviceGroup.title}</Text>
                     </Stack>
                 </Grid.Col>
@@ -391,6 +289,17 @@ const Page = {
         const [selectedTime, setTime] = useState<number | null>();
         const data = useLoaderData<typeof loader>();
         const fetcher = useFetcher<TimeSlotData>();
+
+        useEffect(() => {
+            const d = data.savedData?.date;
+            const t = data.savedData?.timeHour;
+            if (!d) {
+                return;
+            }
+            if (new Date(d) >= new Date()) {
+                handleDaySelect(new Date(d));
+            }
+        }, []);
 
         const handleDaySelect = (date: Date) => {
             setSelectedDate(date);
@@ -480,7 +389,14 @@ const Page = {
         </Grid>
     },
     ChooseVenue: ({ onChange }: { onChange: (p: FormParams) => void }) => {
+        const data = useLoaderData<typeof loader>();
         const [address, setAddress] = useState({ address: '', pincode: '' });
+
+        useEffect(() => {
+            updateForm({
+                address: data.savedData?.location
+            })
+        }, []);
 
         function updateForm(data: { [key in ('address' | 'pincode')]?: string }) {
             setAddress({ ...address, ...data });
@@ -506,7 +422,7 @@ const Page = {
         </Stack>;
 
     },
-    Summary: ({ data }: { data?: FormParams | null }) => {
+    Summary: ({ data, source }: { data?: FormParams | null, source?: string | null }) => {
         const submit = useSubmit();
         const fetcher = useFetcher<typeof cartSummary>();
         const [isStepsReady, setStepsReady] = useState(false);
@@ -588,14 +504,19 @@ const Page = {
                         </Card>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
-                        <Card shadow="sm" withBorder title="Continue">
-                            {user ? <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button> : <UserLogin redirectUrl={location.pathname} title="Login to continue" />}
-                        </Card>
-                        <Space h="md" />
-                        <Stack>
-                            <Text>Forgot something?</Text>
-                            <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
-                        </Stack>
+                        {source === 'cart' ? <Stack>
+                            <Text>Proceed to checkout</Text>
+                            <Button variant="outline" onClick={addToCart}>Update & Continue</Button>
+                        </Stack> :
+                            <><Card shadow="sm" withBorder title="Continue">
+                                {user ? <Button variant="filled" onClick={expresCheckout}>Proceed to payment</Button> : <UserLogin redirectUrl={location.pathname} title="Login to continue" />}
+                            </Card>
+                                <Space h="md" />
+                                <Stack>
+                                    <Text>Forgot something?</Text>
+                                    <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
+                                </Stack>
+                            </>}
                     </Grid.Col>
                 </Grid>
                 }

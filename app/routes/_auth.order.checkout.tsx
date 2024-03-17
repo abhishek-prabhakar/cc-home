@@ -19,6 +19,7 @@ export async function action({
     const body = await request.formData();
     const source = body.get('source')?.toString();
     const payment = Routes.get('CheckoutPayment') + '?source=' + source;
+    // if source is cart, then after placing the order the cart will be cleared.
 
     let redirectUrl;
     try {
