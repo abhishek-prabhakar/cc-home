@@ -1,7 +1,7 @@
 import { FundOutlined } from "@ant-design/icons";
-import { Button, Card, Container, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
+import { Button, Card, Container, Divider, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -49,7 +49,7 @@ export const meta: V2_MetaFunction = () => {
 
 const jumbotronStyle: React.CSSProperties = {
   background:
-    "url(https://livedemo00.template-help.com/wt_62267_v8/62267-default/images/slider-slide-2-1920x980.jpg) no-repeat center",
+    "url(/assets/patner-signup-banner.webp) no-repeat center",
   minHeight: "500px",
   padding: "100px 20px",
   borderRadius: "20px",
@@ -57,6 +57,7 @@ const jumbotronStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  backgroundSize: 'cover'
 };
 
 const VendorList = [
@@ -64,27 +65,27 @@ const VendorList = [
     background: "linear-gradient(180deg, #03DBCB, #047DA6)",
     id: "photographer",
     name: "Photographer",
-    title: "Photographer?",
+    title: "Photographer",
     description:
-      "Counting objects: 5, done. Delta compression using up to 4 threads.",
+      "Elevate your lens, amplify your earnings! Join Celebria Collective for exposure and lucrative opportunities",
     img: "/assets/vendor-card-1.svg",
   },
   {
     background: "linear-gradient(180deg, #681ACB, #4549E5)",
     id: "video",
     name: "Videographer",
-    title: "Videographer?",
+    title: "Videographer",
     description:
-      "Counting objects: 5, done. Delta compression using up to 4 threads.",
+      "Turn your lens into wealth! Join Celebria Collective for exposure and well-paid projects.",
     img: "/assets/vendor-card-2.svg",
   },
   {
     background: "linear-gradient(185deg, #AF6316,#C27B15)",
     id: "makep",
     name: "Makeup Artist",
-    title: "Makeup?",
+    title: "Makeup Artist",
     description:
-      "Counting objects: 5, done. Delta compression using up to 4 threads.",
+      "Stitch your success story! Join Celebria Collective for global exposure and lucrative collaborations.",
     img: "/assets/vendor-card-3.svg",
   },
 ];
@@ -124,8 +125,8 @@ const PartnerSignup = {
               <Title order={1} style={{ color: "white" }}>
                 Earn upto 3 times your current income and change your life.
               </Title>
-              <Title order={3}>
-                Become a part of a community with more than 50,000 service
+              <Title order={3} c={'gray'}>
+                Become a part of a community with more than 100 service
                 professionals
               </Title>
               <br />
@@ -150,16 +151,22 @@ const PartnerSignup = {
       <div style={{ padding: "50px 0" }}>
         <Grid justify={"center"} gutter={40}>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Title>50+</Title>
-            <Title order={4}>Members</Title>
+            <Stack justify="center">
+              <Title>100+</Title>
+              <Title order={4}>Members</Title>
+            </Stack>
           </Grid.Col>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Title>500+</Title>
-            <Title order={4}>Customers</Title>
+            <Stack justify="center">
+              <Title>1000+</Title>
+              <Title order={4}>Customers</Title>
+            </Stack>
           </Grid.Col>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Title>500+</Title>
-            <Title order={4}>Services</Title>
+            <Stack justify="center">
+              <Title>20,000+</Title>
+              <Title order={4}>Services</Title>
+            </Stack>
           </Grid.Col>
         </Grid>
       </div>
@@ -170,21 +177,13 @@ const PartnerSignup = {
     return (
       <Grid justify={"center"}>
         <Grid.Col span={6}>
-          <div className="line"></div>
+          <Divider />
         </Grid.Col>
         <Grid.Col span={12}></Grid.Col>
         <Grid.Col className="_text-center" span={{ base: 12, md: 10, lg: 8 }}>
-          <div style={{ padding: "50px 0" }}>
-            <Title order={2}>
-              {" "}
-              Lorem ipsum dolor sit amet
-            </Title>
+          <div style={{ padding: "40px 0" }}>
             <Text c="dimmed">
-              Celebria Collective is more than just a platform; it's a launchpad
-              for photographers, makeup artists, videographers, and fashion
-              designers looking to scale their business and amplify their
-              artistic influence. Ready to elevate your craft and take your
-              business to the next level?
+              Celebria Collective is more than just a platform; it's a launchpad for photographers, makeup artists, videographers, and fashion designers looking to scale their business and amplify their artistic influence. Ready to elevate your craft and take your business to the next level?
             </Text>
           </div>
         </Grid.Col>
@@ -221,10 +220,7 @@ const PartnerSignup = {
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit
                 </Title>
                 <Text c="dimmed">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  As a photographer with Celebria Collective, I've had the pleasure of working on several projects through their platform. Thanks to their professionalism and diverse range of brand collaborations, coupled with clear communication, a prompt billing process, and an unwavering focus on client satisfaction, Celebria Collective stands out as an exceptional platform for creative professionals seeking new opportunities. Highly recommended!
                 </Text>
               </Grid.Col>
             </Grid>
@@ -241,8 +237,8 @@ const PartnerSignup = {
       <Grid id="signup-form" gutter={40}>
         <Grid.Col span={12}>
           <div style={{ paddingTop: "50px", textAlign: "center" }}>
-            <Title order={1}>
-              Join us in the following categories
+            <Title order={2}>
+              Join us at Celebria Collective<br /> and transform artistry into opportunity!
             </Title>
           </div>
         </Grid.Col>
@@ -262,22 +258,23 @@ const PartnerSignup = {
                   style={{ padding: "50px", height: "300px" }}
                 />
               </Card.Section>
-              <div style={{ marginTop: "-10px" }}>
+              <div style={{ marginTop: "-10px", color: "white" }}>
                 <Stack gap={'lg'}>
-                  <Title style={{ color: "white" }} order={2}>
+                  <Title order={4}>
                     {vendor.title}
                   </Title>
-                  <Title style={{ color: "white" }} order={4}>
+                  <Text fw={500}>
                     {vendor.description}
-                  </Title>
-                  <Button
-                    radius={'xl'}
-                    variant="filled"
-                    size="large"
-                    onClick={() => setActiveCard(vendor.id)}
-                  >
-                    Signup
-                  </Button>
+                  </Text>
+                  <Link to="onboard">
+                    <Button
+                      radius={'xl'}
+                      variant="filled"
+                      size="large"
+                    >
+                      Signup
+                    </Button>
+                  </Link>
                 </Stack>
               </div>
             </Card>
