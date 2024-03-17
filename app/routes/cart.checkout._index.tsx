@@ -121,7 +121,7 @@ const Cart = {
                                 </ActionIcon>
                             </Form>
                             <Link to={Routes.get('CartAddEdit', { venderServiceGroupId: data.vendorServiceGroupId })}>
-                                <Button leftSection={<IconEdit />} variant="subtle">
+                                <Button leftSection={<IconEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />} variant="subtle">
                                     Modify
                                 </Button>
                             </Link>
