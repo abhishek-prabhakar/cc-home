@@ -125,7 +125,7 @@ const PartnerSignup = {
               <Title order={1} style={{ color: "white" }}>
                 Earn upto 3 times your current income and change your life.
               </Title>
-              <Title order={3} c={'gray'}>
+              <Title order={3} c={'white'}>
                 Become a part of a community with more than 100 service
                 professionals
               </Title>
@@ -151,19 +151,19 @@ const PartnerSignup = {
       <div style={{ padding: "50px 0" }}>
         <Grid justify={"center"} gutter={40}>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Stack justify="center">
+            <Stack justify="center" align="center">
               <Title>100+</Title>
               <Title order={4}>Members</Title>
             </Stack>
           </Grid.Col>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Stack justify="center">
+            <Stack justify="center" align="center">
               <Title>1000+</Title>
               <Title order={4}>Customers</Title>
             </Stack>
           </Grid.Col>
           <Grid.Col span={{ base: 4, md: 3 }}>
-            <Stack justify="center">
+            <Stack justify="center" align="center">
               <Title>20,000+</Title>
               <Title order={4}>Services</Title>
             </Stack>
@@ -238,7 +238,7 @@ const PartnerSignup = {
         <Grid.Col span={12}>
           <div style={{ paddingTop: "50px", textAlign: "center" }}>
             <Title order={2}>
-              Join us at Celebria Collective<br /> and transform artistry into opportunity!
+              Join us at Celebria Collective and<br />transform artistry into opportunity!
             </Title>
           </div>
         </Grid.Col>
@@ -259,7 +259,7 @@ const PartnerSignup = {
                 />
               </Card.Section>
               <div style={{ marginTop: "-10px", color: "white" }}>
-                <Stack gap={'lg'}>
+                <Stack gap={'lg'} align="center">
                   <Title order={4}>
                     {vendor.title}
                   </Title>
