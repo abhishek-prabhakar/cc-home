@@ -286,7 +286,7 @@ const Page = {
     },
     SelectDate: ({ onChange }: { onChange: (p: FormParams) => void }) => {
         const [selectedDate, setSelectedDate] = useState<Date>();
-        const [selectedTime, setTime] = useState<number | null>();
+        const [selectedTime, setSelectedTime] = useState<number>();
         const data = useLoaderData<typeof loader>();
         const fetcher = useFetcher<TimeSlotData>();
 
@@ -298,12 +298,12 @@ const Page = {
             }
             if (new Date(d) >= new Date()) {
                 handleDaySelect(new Date(d));
+                setSelectedTime(data.savedData?.timeHour);
             }
         }, []);
 
         const handleDaySelect = (date: Date) => {
             setSelectedDate(date);
-            setTime(null);
             onChange({
                 date: undefined,
                 timeHour: undefined
@@ -319,7 +319,6 @@ const Page = {
         };
 
         function setTimeHour(time: number) {
-            setTime(time);
             onChange({
                 date: selectedDate?.toISOString(),
                 timeHour: time
@@ -344,36 +343,7 @@ const Page = {
                 <Suspense fallback={<Skeleton />}>
                     <Await resolve={fetcher.data}>
                         {response => <>
-                            {response && fetcher.state === 'idle' && <CarouselProvider
-                                naturalSlideWidth={300}
-                                naturalSlideHeight={400}
-                                totalSlides={response?.slots.length || 0}
-                                visibleSlides={1}
-                                isIntrinsicHeight={true}
-                                step={1} dragStep={1} currentSlide={response?.slots.length - 1 ? 1 : 0}
-                                className="carousel-slider-wrapper"
-                            >
-                                <Slider className="carousel-slider">
-                                    {response?.slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
-                                        <Text ta={'center'}>{slot?.name}</Text>
-                                        <Space h="sm" />
-                                        <div style={{ margin: 'auto', maxWidth: '400px' }}>
-                                            <Grid justify="center" >
-                                                {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 4 }}>
-                                                    <Card withBorder p="sm" key={'st' + time.value}>
-                                                        <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
-                                                    </Card>
-                                                </Grid.Col>)}
-                                            </Grid>
-                                        </div>
-                                    </Slide>)}
-                                    {
-                                        !response.slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
-                                    }
-                                </Slider>
-                                <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
-                                <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
-                            </CarouselProvider>}
+                            {response && fetcher.state === 'idle' && <Page.TimePicker slots={response.slots} selected={selectedTime} onChange={setTimeHour} />}
                             <Space h="md" />
                             {['loading', 'submitting'].includes(fetcher.state) && <Text c="dimmed">Please wait...</Text>}
                             {response?.slots.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
@@ -387,6 +357,52 @@ const Page = {
                 </Suspense>
             </Grid.Col>
         </Grid>
+    },
+    TimePicker: ({ slots, onChange, selected }: { slots: typeof TIME_SLOTS, selected?: number, onChange: (d: number) => void }) => {
+        const [selectedTime, setTime] = useState<number | null>();
+
+        useEffect(() => {
+            const validTime = slots.find(x => x.slots.find(y => y.value === selected));
+            if (validTime) {
+                setTimeHour(selected || 0);
+            }
+        }, [])
+
+        function setTimeHour(v: number) {
+            setTime(v);
+            onChange(v);
+        }
+
+        return <CarouselProvider
+            naturalSlideWidth={300}
+            naturalSlideHeight={400}
+            totalSlides={slots.length || 0}
+            visibleSlides={1}
+            isIntrinsicHeight={true}
+            step={1} dragStep={1} currentSlide={slots.length - 1 ? 1 : 0}
+            className="carousel-slider-wrapper"
+        >
+            <Slider className="carousel-slider">
+                {slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
+                    <Text ta={'center'}>{slot?.name}</Text>
+                    <Space h="sm" />
+                    <div style={{ margin: 'auto', maxWidth: '400px' }}>
+                        <Grid justify="center" >
+                            {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 4 }}>
+                                <Card withBorder p="sm" key={'st' + time.value}>
+                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
+                                </Card>
+                            </Grid.Col>)}
+                        </Grid>
+                    </div>
+                </Slide>)}
+                {
+                    !slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
+                }
+            </Slider>
+            <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+            <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
+        </CarouselProvider>;
     },
     ChooseVenue: ({ onChange }: { onChange: (p: FormParams) => void }) => {
         const data = useLoaderData<typeof loader>();
@@ -510,7 +526,7 @@ const Page = {
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         {source === 'cart' ? <Stack>
-                            <Text>Proceed to checkout</Text>
+                            <Text fw={500}>Proceed to checkout</Text>
                             <Button variant="outline" onClick={addToCart}>Update & Continue</Button>
                         </Stack> :
                             <><Card shadow="sm" withBorder title="Continue">
