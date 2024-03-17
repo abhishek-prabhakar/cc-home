@@ -116,7 +116,7 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({
-        path: Routes.Services.replace(':id', x.keyName), title: x.name, id: x.id, serviceGroup: x.serviceGroup
+        path: Routes.get('Services', { id: x.keyName }), title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
     })
   });
@@ -287,7 +287,7 @@ const Home = {
     }
 
     function gotoSearchItemPage(type: string, id: string) {
-      navigate(Routes.ServiceGroup.replace(':id', type).replace(':subId', id))
+      navigate(Routes.get('ServiceGroup', { id: type, subId: id }))
     }
 
     return <div className=" homepage-hero-section">
@@ -556,10 +556,10 @@ const Home = {
                         : PATH.AVATAR_PLACEHOLDER}
                     /></Grid.Col>
                   <Grid.Col flex={'auto'}>
-                    <div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.VendorProfile.replace(':id', vendor.username)}><Text fw={500}>{vendor.username}</Text></Link></div></Grid.Col>
+                    <div className="nowrap" style={{ maxWidth: '80px' }}><Link to={Routes.get('VendorProfile', { id: vendor.username })}><Text fw={500}>{vendor.username}</Text></Link></div></Grid.Col>
                 </Grid>)}
                 {!category.vendor.length && 'Sorry, no data found.'}
-                <Text><Link to={Routes.Services.replace(':id', category.keyName)}>View all</Link></Text>
+                <Text><Link to={Routes.get('Services', { id: category.keyName })}>View all</Link></Text>
               </Stack>
             </div>
           </Grid.Col>)}

@@ -294,10 +294,10 @@ const Page = {
                 </Grid.Col>
                 <Grid.Col span={{ sm: 12, md: 'content' }}>
                     <Flex align={'center'} gap={'md'}>
-                        <Link to={Routes.VendorProfile.replace(':id', data.vendor.vendor.username)}>
+                        <Link to={Routes.get('VendorProfile', { id: data.vendor.vendor.username })}>
                             <Title order={5}>{data.vendor.vendor.username}</Title>
                         </Link>
-                        <Link to={Routes.VendorProfile.replace(':id', data.vendor.vendor.username)}>
+                        <Link to={Routes.get('VendorProfile', { id: data.vendor.vendor.username })}>
                             <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
                         </Link>
                     </Flex>

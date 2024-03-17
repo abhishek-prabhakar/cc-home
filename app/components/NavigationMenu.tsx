@@ -38,7 +38,7 @@ const AppNavigation = {
       return <Stack p={'sm'}>
         <Text>
           {" "}
-          <Link to={Routes.Services.replace(":id", navitem.id)}>
+          <Link to={Routes.get('Services', { id: navitem.id })}>
             Browse all {navitem.name}
           </Link>
         </Text>
@@ -136,7 +136,7 @@ const AppNavigation = {
                         <Title order={5}>{child.name}</Title>
                         {[{
                           id: item.id,
-                          path: Routes.Services.replace(":id", item.id),
+                          path: Routes.get('Services', { id: item.id }),
                           name: 'Browse all ',
                         }].concat(child.list)
                           .map(menuItem => <Link to={menuItem.path} onClick={() => toggleDrawer(false)}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)

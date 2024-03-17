@@ -1,5 +1,6 @@
 import { ActionArgs, json, redirect } from "@remix-run/node";
 import { useForm } from "react-hook-form";
+import Routes from "~/routes.data";
 import { userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 
@@ -11,17 +12,19 @@ export async function action({
     const body = await request.formData();
     let redirectUrl;
     try {
-        const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
-        if (newItem) {
-            currentCart = currentCart.concat(newItem);
+        const newItems: CartInput[] = JSON.parse(body.get('cart')?.toString() || '');
+        if (newItems?.length) {
+            const vendorIds = newItems.map(x => x.vendorServiceGroupId);
+            currentCart = currentCart.filter(x => !vendorIds.includes( x.vendorServiceGroupId));
+            currentCart = currentCart.concat(newItems);
         }
 
-        redirectUrl = new URL(body.get('redirectUrl')?.toString() || '/cart/checkout');
+        redirectUrl = new URL(body.get('redirectUrl')?.toString() || Routes.get('Cart'));
         redirectUrl.searchParams.set('cartStatus', 'true');
     } catch (e) {
         redirectUrl = null
     }
-    return redirect(redirectUrl ? redirectUrl.href : '/cart/checkout', {
+    return redirect(redirectUrl ? redirectUrl.href : Routes.get('Cart'), {
         headers: {
             "Set-Cookie": await userCartCookie.serialize(currentCart),
         },

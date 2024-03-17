@@ -1,20 +1,36 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Space, Stack, Text, Textarea, Title } from "@mantine/core";
-import { LoaderArgs, TypedDeferredData, defer, json } from "@remix-run/node";
+import { ActionIcon, Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Space, Stack, Text, Textarea, Title } from "@mantine/core";
+import { ActionArgs, LoaderArgs, TypedDeferredData, defer, json, redirect } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
+import { IconEdit } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ConfigureBooking from "~/components/ConfigureBooking";
 import Skeleton from "~/components/Skeleton";
 import UserLogin from "~/components/UserLogin";
-import { PATH } from "~/path.data";
+import Routes from "~/routes.data";
 import { CartService } from "~/service/cart.service";
-import { ServiceQuery } from "~/service/services.service";
-import { VendorQuery } from "~/service/vendor.service";
 import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartActiveService, CartInput, CartItem, CartItemService, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { CartActiveService, CartInput, CartItem, CartItemService } from "~/types";
 import { DateFormatter } from "~/utils/date.transform";
+
+export async function action({ request }: ActionArgs) {
+    const cookieHeader = request.headers.get("Cookie");
+    let data: CartInput[] = await userCartCookie.parse(cookieHeader);
+
+    const form = await request.formData();
+    const deleteId = form.get('delete')?.toString();
+    if (deleteId) {
+        data = data.filter(x => x.vendorServiceGroupId !== deleteId);
+    }
+
+    return redirect(Routes.get('Cart'), {
+        headers: {
+            "Set-Cookie": await userCartCookie.serialize(data),
+        },
+    });;
+}
 
 export async function loader({ request }: LoaderArgs) {
     const cookieHeader = request.headers.get("Cookie");
@@ -97,9 +113,18 @@ const Cart = {
                         <Space h="md" />
                         <Divider />
                         <Space h="sm" />
-                        <Flex justify={'center'} gap={'lg'}>
-                            <DeleteOutlined key="remove" />
-                            <EditOutlined key="edit" onClick={() => openEdtServiceDialog('', [])} />
+
+                        <Flex justify={'end'} gap={'xs'}>
+                            <Form method="post">
+                                <ActionIcon type="submit" name="delete" value={data.vendorServiceGroupId} variant="subtle" color="red" size="lg" aria-label="remove">
+                                    <IconTrash style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                                </ActionIcon>
+                            </Form>
+                            <Link to={Routes.get('CartAddEdit', { venderServiceGroupId: data.vendorServiceGroupId })}>
+                                <Button leftSection={<IconEdit />} variant="subtle">
+                                    Modify
+                                </Button>
+                            </Link>
                         </Flex>
                     </Card>
                 </Grid.Col>

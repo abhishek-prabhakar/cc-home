@@ -1,4 +1,4 @@
-import { Button, Grid, Input, Modal, Stack, Title } from "@mantine/core";
+import { Button, Grid, Input, Modal, PinInput, Stack, Title } from "@mantine/core";
 import { Form, useFetcher } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -44,34 +44,26 @@ const UserLogin = {
         </>
     },
     VerifyOtp: ({ username, redirectUrl, modalOpen, onClose, inlineMode }: { username: number | null | undefined, modalOpen: boolean, redirectUrl?: string, onClose: Function, inlineMode: boolean }) => {
-        const { control, getValues, handleSubmit } = useForm();
+        const [invalidInput, setInvalidInput] = useState(false);
         const fetcher = useFetcher();
 
         useEffect(() => {
             if (fetcher.data?.success === false) {
-                alert('Invalid otp.');
+                setInvalidInput(true);
             }
-        }, [fetcher.data])
-
-        const verifyOtp = () => {
-            fetcher.submit({
-                phone: username || 0,
-                otp: getValues().otp,
-                redirectUrl: redirectUrl || ''
-            }, {
-                method: 'post',
-                action: '/verify-otp'
-            });
-        }
-
+        }, [fetcher.data]);
 
         function FormBody() {
-            return <form onSubmit={e => e?.preventDefault()}><Stack gap={'md'}>
-                <Input.Wrapper label="Enter OTP">
-                    <Controller name="otp" control={control} render={({ field }) => <Input placeholder="- - - -" max={4} required  {...field} />} />
-                </Input.Wrapper>
-                <Button type="submit" variant="filled" loading={['submitting', 'loading'].includes(fetcher.state)} onClick={verifyOtp}>Continue</Button>
-            </Stack></form>;
+            return <fetcher.Form method="post" action="/verify-otp">
+                <Stack gap={'md'}>
+                    <Input.Wrapper label="Enter OTP">
+                        <PinInput name="otp" error={invalidInput} onChange={() => setInvalidInput(false)} />
+                    </Input.Wrapper>
+                    <input type="hidden" name="phone" value={username || 0} />
+                    <input type="hidden" name="redirectUrl" value={redirectUrl || ''} />
+                    <Button type="submit" variant="filled" loading={['submitting', 'loading'].includes(fetcher.state)}>Continue</Button>
+                </Stack>
+            </fetcher.Form>;
         }
 
         return inlineMode && modalOpen ? <FormBody /> : <Modal title="Verify OTP" opened={modalOpen} onClose={() => onClose()} centered>

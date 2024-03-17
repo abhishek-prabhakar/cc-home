@@ -18,7 +18,7 @@ export async function action({
     let currentCart: CartInput[] = [];
     const body = await request.formData();
     const source = body.get('source')?.toString();
-    const payment = Routes.CheckoutPayment + '?source=' + source;
+    const payment = Routes.get('CheckoutPayment') + '?source=' + source;
 
     let redirectUrl;
     try {

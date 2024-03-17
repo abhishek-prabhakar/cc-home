@@ -64,7 +64,7 @@ export async function action(args: ActionArgs) {
             socialUrl: vendor.socialUrl,
             categoryId: catId
         });
-        return redirect(Routes.VendorSignupForm.replace(':id', data.id), {
+        return redirect(Routes.get('VendorSignupForm', { id: data.id }), {
             headers: {
                 "Set-Cookie": await vendorSignupCookie.serialize(data.id),
             },

@@ -194,7 +194,7 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''}
 
-                                {activeService?.vendorServiceGroupId && <Link to={Routes.CartItem.replace(':id', activeService?.vendorServiceGroupId)} >
+                                {activeService?.vendorServiceGroupId && <Link to={Routes.get('CartItem', { id: activeService?.vendorServiceGroupId })} >
                                     <Button variant="filled" w={'100%'}>Book Now</Button>
                                 </Link>
                                 }
@@ -250,7 +250,7 @@ const ProfileLayout = {
         }, [location.pathname]);
 
         function gotoCart() {
-            navigate(Routes.Cart);
+            navigate(Routes.get('Cart'));
         }
 
         return <Modal title="Your cart has been updated." opened={showModal} onClose={() => setModal(false)} >

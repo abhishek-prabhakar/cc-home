@@ -1,7 +1,6 @@
 import { Badge, Container, Flex, Grid, Stack, Text, Title, Group, Space, Divider, ThemeIcon } from "@mantine/core";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
-import Routes from "~/routes.data";
 import { RootLoaderData } from "~/types";
 import Skeleton from "./Skeleton";
 import { IconBrandInstagram } from "@tabler/icons-react";

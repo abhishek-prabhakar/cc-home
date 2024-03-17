@@ -63,10 +63,10 @@ const CollectionsHighlightPage = {
                         <Grid gutter={40}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                                 <Stack>
-                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
                                         <Image src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
 
-                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
                                         <Title order={5}>{service.name}</Title>
                                     </Link>
                                     <Group gap={'xs'}>
@@ -75,7 +75,7 @@ const CollectionsHighlightPage = {
                                             {description}
                                         </Badge>)}
                                     </Group>
-                                    <Link to={Routes.ServiceGroup.replace(':id', data?.highlightId || '').replace(':subId', service.id)}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
                                         <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
                                     </Link>
                                 </Stack>
@@ -96,10 +96,10 @@ const CollectionsHighlightPage = {
                 <Await resolve={data?.related}>
                     {response => <Grid gutter={40} justify="start">
                         {response?.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
-                            <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}><Image src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
+                            <Link to={Routes.get('ServiceGroup', { id: service.vendorType.keyName, subId: service.id })}><Image src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
                             <div style={{ paddingBottom: '14px' }}></div>
                             <Text c="dimmed" size="sm">{service.vendorType.name}</Text>
-                            <Link to={Routes.ServiceGroup.replace(':id', service.vendorType.keyName || '').replace(':subId', service.id)}>
+                            <Link to={Routes.get('ServiceGroup', { id: service.vendorType.keyName, subId: service.id })}>
                                 <Text fw={500}>{service.name}</Text>
                             </Link>
                         </Grid.Col>)
@@ -120,10 +120,10 @@ const CollectionsHighlightPage = {
                     {response => response?.length ? <Grid gutter="md">
                         {response?.map(item => <Grid.Col span={3}>
                             <Stack key={item.id} justify="center" align="center">
-                                <Link to={Routes.VendorProfile.replace(':id', item.id)}>
+                                <Link to={Routes.get('VendorProfile', { id: item.id })}>
                                     <Avatar src={item.image} size={'lg'} />
                                 </Link>
-                                <Link to={Routes.VendorProfile.replace(':id', item.id)}><Text fw={500}>{item.name}</Text></Link>
+                                <Link to={Routes.get('VendorProfile', { id: item.id })}><Text fw={500}>{item.name}</Text></Link>
                             </Stack></Grid.Col>)}
                     </Grid> : <Text c="dimmed">Sorry, we couldn't find any vendors under this category</Text>
                     }

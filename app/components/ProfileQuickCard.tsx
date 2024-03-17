@@ -14,7 +14,7 @@ const itemDataThumbSetStyles: React.CSSProperties = {
 function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string }) {
 
   function url() {
-    return categoryId ? Routes.VendorProfileWithService.replace(':id', id).replace(':sGrpId', categoryId) : Routes.VendorProfile.replace(':id', id);
+    return categoryId ? Routes.get('VendorProfileWithService', { id: id, sGrpId: categoryId }) : Routes.get('VendorProfile', { id: id });
   }
 
   return <Grid gutter={0} align="end">

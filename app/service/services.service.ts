@@ -5,7 +5,10 @@ export const ServiceQuery = {
 
         return db.vendorServiceGroup.findFirst({
             where: {
-                id: vendorServiceGroupId
+                id: vendorServiceGroupId,
+                vendor: {
+                    isActive: true
+                }
             },
             select: {
                 id: true,

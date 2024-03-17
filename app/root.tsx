@@ -138,7 +138,7 @@ export async function loader({ request }: LoaderArgs) {
         list: x.serviceGroup.reduce<{ path: string, id: string, name: string }[]>((arr, item) => {
           if (item.serviceGroupType?.keyName) {
             arr.push({
-              path: Routes.CollectionsByVendor.replace(':vendorType', x.keyName).replace(':id', item.serviceGroupType.keyName),
+              path: Routes.get('CollectionsByVendor', { vendorType: x.keyName, id: item.serviceGroupType.keyName }),
               id: item.serviceGroupType.keyName,
               name: item.serviceGroupType.name
             });

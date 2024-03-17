@@ -100,7 +100,7 @@ function getCategoryCollection() {
                             isCollection: false,
                             name: item.name,
                             imageName: item.imageName,
-                            path: Routes.ServiceGroup.replace(':id', category.keyName).replace(':subId', item.id)
+                            path: Routes.get('ServiceGroup', { id: category.keyName, subId: item.id })
                         })
                         return items;
                     }
@@ -112,7 +112,7 @@ function getCategoryCollection() {
                             imageName: item.imageName,
                             isCollection: true,
                             collection: item.serviceGroupType?.keyName,
-                            path: Routes.CollectionsByVendor.replace(':id', item.serviceGroupType?.keyName || 'unknown').replace(':vendorType', category.keyName),
+                            path: Routes.get('CollectionsByVendor', { id: item.serviceGroupType?.keyName, vendorType: category.keyName }),
                             description: item.name
                         })
                     } else {
@@ -200,7 +200,7 @@ function getPopularServices() {
             resolve(r.map(x => ({
                 id: x.id,
                 title: x.name,
-                path: Routes.ServiceGroup.replace(':id', x.vendorType.keyName).replace(':subId', x.id),
+                path: Routes.get('ServiceGroup', { id: x.vendorType.keyName, subId: x.id }),
                 label: '',
                 image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
                 cost: 0
@@ -233,7 +233,7 @@ function getCollections() {
                 image: PATH.RESOURCE_URL + x.ServiceGroup.find(i => i.imageName)?.imageName,
                 title: x.name,
                 label: x.ServiceGroup.map(g => g.name).join(', '),
-                path: Routes.Collections.replace(':id', x.keyName),
+                path: Routes.get('Collections', { id: x.keyName }),
                 cost: 0
             })))
         })
