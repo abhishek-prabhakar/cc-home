@@ -174,7 +174,7 @@ const Page = {
         }];
 
         function updateFormData(params: FormParams) {
-            setFormData({ ...formData, ...params })
+            setFormData(d => ({ ...d, ...params }));
         }
 
         return <Container size={'md'} >
@@ -252,9 +252,9 @@ const Page = {
             <Grid>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     <Stack align="center" justify="center">
-                        <Card radius={'sm'} p={2} pos={'relative'} withBorder>
-                            <div style={{ position: 'absolute', right: 0, top: 0 }}>
-                                <ThemeIcon color="green"><IconCheck /></ThemeIcon>
+                        <Card radius={'md'} p={2} pos={'relative'} withBorder>
+                            <div style={{ position: 'absolute', right: '2px', top: '2px' }}>
+                                <ThemeIcon color="green" size="sm"><IconCheck /></ThemeIcon>
                             </div>
                             <Image src={data.serviceGroup.image} h={120} w={120} fit="cover" radius={'md'} />
                         </Card>
@@ -359,7 +359,7 @@ const Page = {
                                         <Space h="sm" />
                                         <div style={{ margin: 'auto', maxWidth: '400px' }}>
                                             <Grid justify="center" >
-                                                {slot?.slots.map(time => <Grid.Col span={{ base: 5, md: 4 }}>
+                                                {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 4 }}>
                                                     <Card withBorder p="sm" key={'st' + time.value}>
                                                         <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
                                                     </Card>
@@ -393,17 +393,22 @@ const Page = {
         const [address, setAddress] = useState({ address: '', pincode: '' });
 
         useEffect(() => {
-            updateForm({
-                address: data.savedData?.location
-            })
+            if (data.savedData?.location) {
+                const x = extractAddressAndZip(data.savedData?.location);
+                updateForm({
+                    address: x.address,
+                    pincode: x.zip
+                });
+            }
         }, []);
 
         function updateForm(data: { [key in ('address' | 'pincode')]?: string }) {
-            setAddress({ ...address, ...data });
+            const d = { ...address, ...data };
+            setAddress(d);
 
-            if (address.address && address.pincode) {
+            if (d?.address && d?.pincode) {
                 onChange({
-                    venue: address.address + ', ' + address.pincode
+                    venue: d.address + ', ' + d.pincode
                 });
             }
         }
@@ -522,6 +527,20 @@ const Page = {
                 }
             </Await>
         </Suspense> : <Group gap="sm"><Loader color="gray" type="dots" /><Text>Complete the above steps to estimate the cost.</Text></Group>
+    }
+}
+
+
+function extractAddressAndZip(inputString: string) {
+    const pieces = inputString.split(/[,\s]+/);
+    // Get the last element (characters after the last comma)
+    const lastPart = pieces[pieces.length - 1];
+    // Join the remaining elements (characters before the last comma)
+    const firstPart = pieces.slice(0, pieces.length - 1).join(", ");
+
+    return {
+        address: firstPart,
+        zip: lastPart
     }
 }
 
