@@ -319,6 +319,7 @@ const Page = {
         };
 
         function setTimeHour(time: number) {
+            setSelectedTime(time);
             onChange({
                 date: selectedDate?.toISOString(),
                 timeHour: time
