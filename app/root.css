@@ -119,10 +119,6 @@ a, a:active{
 ._danger{
     color:red;
 }
-
-._rounded{
-    border-radius: 20px;
-}
 ._text-center{
     text-align: center;
 }

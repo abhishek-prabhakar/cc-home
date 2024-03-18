@@ -1,5 +1,5 @@
 import { FundOutlined } from "@ant-design/icons";
-import { Blockquote, Button, Card, Container, Divider, Grid, Group, Image, Input, Modal, Overlay, Radio, Stack, Text, Title } from "@mantine/core";
+import { Blockquote, Button, Card, Container, Divider, Grid, Group, Image, Input, Modal, Overlay, Radio, Space, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { Link, useFetcher } from "@remix-run/react";
 import { IconQuote } from "@tabler/icons-react";
@@ -110,6 +110,7 @@ const PartnerSignup = {
           <PartnerSignup.Counter />
           <PartnerSignup.Intro />
           <PartnerSignup.Features />
+          <Space h="xl" />
           <PartnerSignup.Form />
         </Stack>
       </Container>
@@ -198,26 +199,21 @@ const PartnerSignup = {
 
   Features: () => {
     return (
-      <div
-        className="_rounded"
-        style={{ background: "#f8f8f8", padding: "20px" }}
-      >
-        <Grid justify={"center"} align={"center"} gutter={40}>
-          <Grid.Col span={{ base: 5, md: 3 }}>
-            <Image
-              src="/assets/partner-signup-profile.jpg"
-              className="_rounded"
-              width={"100%"}
-            />
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }}>
-            <Blockquote color="gray" cite="– Rahul" icon={<IconQuote />} mt="xl">
-              As a photographer with Celebria Collective, I've had the pleasure of working on several projects through their platform. Thanks to their professionalism and diverse range of brand collaborations, coupled with clear communication, a prompt billing process, and an unwavering focus on client satisfaction, Celebria Collective stands out as an exceptional platform for creative professionals seeking new opportunities. Highly recommended!
-            </Blockquote>
-          </Grid.Col>
-        </Grid>
-      </div>
-    );
+      <Grid justify={"center"} align={"center"} gutter={'sm'}>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Blockquote color="gray" cite="– Rahul" icon={<IconQuote />}>
+            As a photographer with Celebria Collective, I've had the pleasure of working on several projects through their platform. Thanks to their professionalism and diverse range of brand collaborations, coupled with clear communication, a prompt billing process, and an unwavering focus on client satisfaction, Celebria Collective stands out as an exceptional platform for creative professionals seeking new opportunities. Highly recommended!
+          </Blockquote>
+        </Grid.Col>
+        <Grid.Col span={{ base: 5, md: 3 }}>
+          <Image
+            src="/assets/partner-signup-profile.jpg"
+            width={"100%"}
+            radius={'sm'}
+            mah={'220px'}
+          />
+        </Grid.Col>
+      </Grid>);
   },
 
   Form: () => {
