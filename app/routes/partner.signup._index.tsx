@@ -1,7 +1,8 @@
 import { FundOutlined } from "@ant-design/icons";
-import { Button, Card, Container, Divider, Grid, Group, Image, Input, Modal, Radio, Stack, Text, Title } from "@mantine/core";
+import { Blockquote, Button, Card, Container, Divider, Grid, Group, Image, Input, Modal, Overlay, Radio, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { Link, useFetcher } from "@remix-run/react";
+import { IconQuote } from "@tabler/icons-react";
 import { FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
@@ -57,7 +58,8 @@ const jumbotronStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundSize: 'cover'
+  backgroundSize: 'cover',
+  position: 'relative'
 };
 
 const VendorList = [
@@ -119,29 +121,32 @@ const PartnerSignup = {
     }
     return (
       <div style={jumbotronStyle}>
-        <Grid justify={"center"}>
-          <Grid.Col>
-            <Stack align="center" justify="center">
-              <Title order={1} style={{ color: "white" }}>
-                Earn upto 3 times your current income and change your life.
-              </Title>
-              <Title order={3} c={'white'}>
-                Become a part of a community with more than 100 service
-                professionals
-              </Title>
-              <br />
-              <br />
-              <Button
-                variant="filled"
-                size="lg"
-                radius={'xl'}
-                onClick={buttonClick}
-              >
-                Join Us
-              </Button>
-            </Stack>
-          </Grid.Col>
-        </Grid>
+        <Overlay
+          gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
+          opacity={0.85}
+          p={'100px 20px'}
+          zIndex={'auto'}
+        >
+          <Stack align="center" justify="center" h={'100%'}>
+            <Title order={1} style={{ color: "white" }}>
+              Earn upto 3 times your current income and change your life.
+            </Title>
+            <Title order={3} c={'white'}>
+              Become a part of a community with more than 100 service
+              professionals
+            </Title>
+            <br />
+            <br />
+            <Button
+              variant="filled"
+              size="lg"
+              radius={'xl'}
+              onClick={buttonClick}
+            >
+              Join Us
+            </Button>
+          </Stack>
+        </Overlay>
       </div>
     );
   },
@@ -149,20 +154,20 @@ const PartnerSignup = {
   Counter: () => {
     return (
       <div style={{ padding: "50px 0" }}>
-        <Grid justify={"center"} gutter={40}>
-          <Grid.Col span={{ base: 4, md: 3 }}>
+        <Grid justify={"center"} gutter={'lg'}>
+          <Grid.Col span={{ base: 5, md: 3 }}>
             <Stack justify="center" align="center">
               <Title>100+</Title>
               <Title order={4}>Members</Title>
             </Stack>
           </Grid.Col>
-          <Grid.Col span={{ base: 4, md: 3 }}>
+          <Grid.Col span={{ base: 5, md: 3 }}>
             <Stack justify="center" align="center">
               <Title>1000+</Title>
               <Title order={4}>Customers</Title>
             </Stack>
           </Grid.Col>
-          <Grid.Col span={{ base: 4, md: 3 }}>
+          <Grid.Col span={{ base: 5, md: 3 }}>
             <Stack justify="center" align="center">
               <Title>20,000+</Title>
               <Title order={4}>Services</Title>
@@ -198,32 +203,17 @@ const PartnerSignup = {
         style={{ background: "#f8f8f8", padding: "20px" }}
       >
         <Grid justify={"center"} align={"center"} gutter={40}>
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 5, md: 3 }}>
             <Image
-              src="https://www.christianfarmers.org/media/nwmnklrp/farmers-market.jpg"
+              src="/assets/partner-signup-profile.jpg"
               className="_rounded"
               width={"100%"}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
-            <Title order={2}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
-            </Title>
-            <Grid>
-              <Grid.Col>
-                <Title style={{ color: "var( --ui-color-primary)" }}>
-                  <FundOutlined />
-                </Title>
-              </Grid.Col>
-              <Grid.Col flex={"auto"}>
-                <Title order={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                </Title>
-                <Text c="dimmed">
-                  As a photographer with Celebria Collective, I've had the pleasure of working on several projects through their platform. Thanks to their professionalism and diverse range of brand collaborations, coupled with clear communication, a prompt billing process, and an unwavering focus on client satisfaction, Celebria Collective stands out as an exceptional platform for creative professionals seeking new opportunities. Highly recommended!
-                </Text>
-              </Grid.Col>
-            </Grid>
+            <Blockquote color="gray" cite="– Rahul" icon={<IconQuote />} mt="xl">
+              As a photographer with Celebria Collective, I've had the pleasure of working on several projects through their platform. Thanks to their professionalism and diverse range of brand collaborations, coupled with clear communication, a prompt billing process, and an unwavering focus on client satisfaction, Celebria Collective stands out as an exceptional platform for creative professionals seeking new opportunities. Highly recommended!
+            </Blockquote>
           </Grid.Col>
         </Grid>
       </div>
@@ -263,7 +253,7 @@ const PartnerSignup = {
                   <Title order={4}>
                     {vendor.title}
                   </Title>
-                  <Text fw={500}>
+                  <Text ta={'center'} fw={500}>
                     {vendor.description}
                   </Text>
                   <Link to="onboard">
