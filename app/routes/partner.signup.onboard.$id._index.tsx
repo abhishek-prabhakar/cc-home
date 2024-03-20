@@ -391,16 +391,13 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
 
     if (data) {
         const selectedServiceGroups = data.VendorServiceGroup.map(x => x.group.id);
-        const categories = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
+        const availableServiceGroups = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
 
-        return { profile: data, categories, files }
+        return { profile: data, categories: availableServiceGroups, files }
     }
 
     return null;
 }
-
-type ServiceListItem = { id: string; name: string; };
-
 
 const OnBoardPage = {
     Index: () => {
@@ -417,8 +414,7 @@ const OnBoardPage = {
         }, [fetcher.data]);
 
         useEffect(() => {
-            const list = data.categories.find(x => x.id === activeType);
-            setServiceList(list?.serviceGroups || []);
+            setActiveGroup(data.profile.vendorType?.id || '')
         }, [data.categories])
 
         useEffect(() => {
@@ -473,7 +469,7 @@ const OnBoardPage = {
                     {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
                 </Grid.Col >
             </Grid>
-            <Modal title='Modify Profile' opened={showProfileDialog} onClose={() => setProfileDialog(false)} >
+            <Modal title='Modify Profile' opened={showProfileDialog} onClose={() => hideEditProfileDialog()} >
                 <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />
             </Modal>
         </Container>;
@@ -695,7 +691,7 @@ const OnBoardPage = {
                 }, {
                 method: 'post',
             });
-
+            onSuccess();
         }
 
         return <Grid gutter={20}>
