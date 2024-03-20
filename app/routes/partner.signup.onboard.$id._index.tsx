@@ -414,7 +414,8 @@ const OnBoardPage = {
         }, [fetcher.data]);
 
         useEffect(() => {
-            setActiveGroup(data.profile.vendorType?.id || '')
+            setActiveGroup(data.profile.vendorType?.id || '');
+            hideEditProfileDialog();
         }, [data.categories])
 
         useEffect(() => {
@@ -691,7 +692,6 @@ const OnBoardPage = {
                 }, {
                 method: 'post',
             });
-            onSuccess();
         }
 
         return <Grid gutter={20}>
