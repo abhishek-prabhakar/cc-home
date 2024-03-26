@@ -497,7 +497,7 @@ const OnBoardPage = {
             <Card withBorder shadow="xs" title="Choose your services">
                 <Stack>
                     <div><Text fw={500}>Add one or more services from below</Text></div>
-                    <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} />
+                    <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} allowDeselect={false} />
                     {/* {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>} */}
                     <div><Text fw={500}>Selected Services</Text></div>
                     <OnBoardPage.CostSection />

@@ -11,7 +11,7 @@ const itemDataThumbSetStyles: React.CSSProperties = {
   background: '#808080'
 };
 
-function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string }) {
+function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId, startsFrom }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string, startsFrom?: number }) {
 
   function url() {
     return categoryId ? Routes.get('VendorProfileWithService', { id: id, sGrpId: categoryId }) : Routes.get('VendorProfile', { id: id });
@@ -50,6 +50,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           ))}{" "}
         </Flex>
       )}
+      Starts from {startsFrom}.
     </Grid.Col>
     <Grid.Col span={{ base: 12, md: 'auto' }}>
       <Space h={'md'} />

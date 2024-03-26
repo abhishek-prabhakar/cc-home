@@ -1,5 +1,5 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
-import { Accordion, ActionIcon, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { IconCheck, IconPlus } from "@tabler/icons-react";
@@ -160,6 +160,14 @@ const ProfileLayout = {
                     </Box>
                 </Group>
                 <Grid gutter={'xl'}>
+                    <Grid.Col hiddenFrom="md">
+                        <Select label="Select a service"
+                            placeholder="Select"
+                            clearable={false}
+                            allowDeselect={false}
+                            onChange={x => setActiveService(x)}
+                            data={services.map(group => ({ group: group.name, items: group.services.map(x => ({ value: x.vendorServiceGroupId, label: x.title })) }))} />
+                    </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 6 }}>
                         <Card bg={'#F2F5FB'}>
                             <Stack>
@@ -201,8 +209,8 @@ const ProfileLayout = {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={{ base: 12, md: 6 }}>
-                        <Card bg={'linear-gradient(#358BD6, #0F73C9)'} c={'white'}>
+                    <Grid.Col span={{ base: 12, md: 6 }} hiddenFrom={'md'}>
+                        <Card>
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
@@ -218,8 +226,7 @@ const ProfileLayout = {
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             direction: 'rtl',
-                                            color: 'white'
-                                        }}><Text c="white">{group.name}</Text></Accordion.Control>
+                                        }}><Text c="blue">{group.name}</Text></Accordion.Control>
                                         <Accordion.Panel>
                                             <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
                                                 {group.services.map(item => <Accordion.Item key={item.vendorServiceGroupId} value={item.vendorServiceGroupId}>

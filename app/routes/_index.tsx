@@ -506,12 +506,12 @@ const Home = {
           </CarouselProvider>}
         </Await>
       </Suspense>,
-      <Modal title={modalData?.title} opened={!!modalData} onClose={handleCancel}>
+      <Modal title={'Browse '+ modalData?.title} opened={!!modalData} onClose={handleCancel} centered>
         <Grid gutter={20}>
           {modalData?.serviceGroup.map((item, index) => <>
 
             {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Grid.Col span={{ base: 12 }} key={item.id + 'col-' + index}><Title order={5}>Other services</Title></Grid.Col> : ''}
-            {item.isCollection ? <Grid.Col span={12} key={item.id}>
+            {item.isCollection && false ? <Grid.Col span={12} key={item.id}>
               <Link to={item.path}>
                 <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
                   <Image src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
