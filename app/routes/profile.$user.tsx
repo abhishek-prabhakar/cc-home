@@ -209,7 +209,7 @@ const ProfileLayout = {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={{ base: 12, md: 6 }} hiddenFrom={'md'}>
+                    <Grid.Col span={{ base: 12, md: 6 }} visibleFrom={'md'}>
                         <Card>
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
