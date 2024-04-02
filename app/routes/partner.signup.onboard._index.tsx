@@ -110,8 +110,8 @@ const Onboard = {
                                 <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
                             </Input.Wrapper>
                             <Box>
-                                <Text fw={500}>Portfolio*</Text>
-                                <Text c="dimmed">Add atleast ten of your best works.</Text>
+                                <Text fw={500}>Portfolio (optional)</Text>
+                                <Text c="dimmed">Add few of your best works.</Text>
                                 <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
                                 <br />
                                 <Flex style={{ marginTop: '10px' }}>
