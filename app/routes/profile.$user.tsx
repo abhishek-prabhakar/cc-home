@@ -39,11 +39,6 @@ export async function loader({ params, request }: LoaderArgs) {
     });
 }
 
-export function ErrorBoundary() {
-    return <div>
-        404!
-    </div>
-}
 
 const ProfileLayout = {
     Index: () => {
@@ -264,6 +259,12 @@ const ProfileLayout = {
             <Title order={5}>Forgot to add something?</Title>
         </Modal>;
     }
+}
+
+export function ErrorBoundary() {
+    return <div>
+        Oops, Something went wrong! Please reload the page.
+    </div>
 }
 
 export default ProfileLayout.Index;
