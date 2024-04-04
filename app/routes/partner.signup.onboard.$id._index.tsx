@@ -1,13 +1,14 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box } from "@mantine/core";
 import { FareMode } from "@prisma/client";
-import { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useRouteError, useSubmit } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileUploader from "~/components/FileUploader";
 import { ServiceQuery } from "~/service/services.service";
+import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
 import { FareModeLabel } from "~/utils/statusMarker.map";
 import generateUuid from "~/utils/uuid.generator";
@@ -284,9 +285,8 @@ export async function action(args: ActionArgs) {
 
 }
 
-export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
-    const applicationId = args.params.id;
-
+async function loadApplicationForm(applicationId?: string | null) {
+    if (!applicationId) { return null; }
     const data = await db.vendor.findFirst({
         where: {
             isActive: false,
@@ -394,11 +394,24 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
         const availableServiceGroups = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
 
         return { profile: data, categories: availableServiceGroups, files }
-    } else {
-        throw new Response("Coudn't find any application with this profile ", {
-            status: 500,
-        });
+    }
 
+    return null;
+}
+
+export async function loader(args: LoaderArgs) {
+    const applicationId = args.params.id;
+    const data = await loadApplicationForm(applicationId);
+    if (data) {
+        return data;
+    } else {
+        const cookieHeader = args.request.headers.get("Cookie");
+
+        return redirect('/partner/signup/onboard', {
+            headers: {
+                "Set-Cookie": await vendorSignupCookie.serialize(null),
+            },
+        });
     }
 
     return null;
@@ -667,7 +680,7 @@ const OnBoardPage = {
         </fetcher.Form>;
     },
     EditProfileForm: ({ onSuccess }: { onSuccess: Function }) => {
-        const data = useLoaderData<typeof loader>();
+        const data = useLoaderData<typeof loadApplicationForm>();
         const submit = useSubmit();
         const [profileData, setData] = useState<{ jobType?: string, username?: string }>({ jobType: data?.profile.vendorType?.id, username: data?.profile.username });
         const [showWarnMsg, setWarnMsg] = useState(false);
