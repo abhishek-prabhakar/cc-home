@@ -2,7 +2,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box } from "@mantine/core";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
+import { Form, Link, useFetcher, useLoaderData, useLocation, useRouteError, useSubmit } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -287,7 +287,7 @@ export async function action(args: ActionArgs) {
 export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
     const applicationId = args.params.id;
 
-    const data = await db.vendor.findFirstOrThrow({
+    const data = await db.vendor.findFirst({
         where: {
             isActive: false,
             id: applicationId
@@ -394,6 +394,11 @@ export async function loader(args: LoaderArgs): Promise<LoaderData | null> {
         const availableServiceGroups = vendorTypes.map(x => ({ id: x.id, name: x.name, serviceGroups: x.serviceGroup.filter(y => !selectedServiceGroups.includes(y.id)).map(y => ({ id: y.id, name: y.name, minHour: y.minHour, serviceGroupItem: y.serviceGroupItem })) }));
 
         return { profile: data, categories: availableServiceGroups, files }
+    } else {
+        throw new Response("Coudn't find any application with this profile ", {
+            status: 500,
+        });
+
     }
 
     return null;
@@ -724,6 +729,17 @@ const OnBoardPage = {
             </Grid.Col >
         </Grid>
     }
+}
+
+
+export function ErrorBoundary() {
+    const error: any = useRouteError();
+
+    return <Container size={'xl'}>
+        <Alert variant="light" color="red" title="Could not load the page" >
+            {error?.data || 'Oops, Something went wrong!'}
+        </Alert>
+    </Container>
 }
 
 

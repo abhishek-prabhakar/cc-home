@@ -11,6 +11,7 @@ import {
   useFetcher,
   useLoaderData,
   useNavigation,
+  useRouteError,
 } from "@remix-run/react";
 import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
@@ -27,7 +28,7 @@ import { Suspense, useEffect, useState } from "react";
 import UserService from "./service/user.service";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space } from "@mantine/core";
+import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space, Alert } from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
@@ -210,7 +211,11 @@ export default function App() {
 
 
 export function ErrorBoundary() {
-  return <div>
-    Oops, Something went wrong!
-  </div>
+  const error: any = useRouteError();
+
+  return <Container size={'xl'}>
+    <Alert variant="light" color="red" title="Could not load the page" >
+      {error?.data || 'Oops, Something went wrong!'}
+    </Alert>
+  </Container>
 }
