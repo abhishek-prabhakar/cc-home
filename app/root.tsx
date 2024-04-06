@@ -183,7 +183,7 @@ export default function App() {
         <meta name="msapplication-TileImage" content="https://celebriacollective.com/assets/brand-logo-1.png" />
         <meta property="og:site_name" content="Celebria Collective" />
         <meta property="og:title" content="Celebria Collective" />
-        <meta property="og:description" content="TBook photographer, videographer and makeup artists" />
+        <meta property="og:description" content="Book photographers, videographers and makeup artists" />
         <meta property="og:image" content="https://celebriacollective.com/assets/brand-logo-1.png" />
 
         <meta property="og:type" content="website" />

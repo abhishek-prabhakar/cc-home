@@ -268,7 +268,7 @@ const Home = {
     const navigate = useNavigate();
     const [searchBusy, setSearchBusy] = useState(false);
 
-    const typewriterWords = ['work done', 'photographers', 'videographer', 'makeup artists', 'stylist'];
+    const typewriterWords = ['work done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
 
     useEffect(() => {
       setSearchBusy(fetcher.state === 'loading');
@@ -506,7 +506,7 @@ const Home = {
           </CarouselProvider>}
         </Await>
       </Suspense>,
-      <Modal title={'Browse '+ modalData?.title} opened={!!modalData} onClose={handleCancel} centered>
+      <Modal title={'Browse ' + modalData?.title} opened={!!modalData} onClose={handleCancel} centered>
         <Grid gutter={20}>
           {modalData?.serviceGroup.map((item, index) => <>
 
