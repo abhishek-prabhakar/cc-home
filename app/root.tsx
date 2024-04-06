@@ -180,17 +180,19 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <meta name="msapplication-TileImage" content="https://celebriacollective.com/assets/brand-logo-1.png" />
-        <meta property="og:site_name" content="Celebria Collective" />
-        <meta property="og:title" content="Celebria Collective" />
-        <meta property="og:description" content="Book photographers, videographers and makeup artists" />
-        <meta property="og:image" content="https://celebriacollective.com/assets/brand-logo-1.png" />
-
+        <meta name="msapplication-TileImage" content="https://celebriacollective.com/assets/og-img.jpg" />
         <meta property="og:type" content="website" />
-        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:url" content="https://www.celebriacollective.com/" />
+        <meta property="og:title" content="Celebria Collective" />
+        <meta property="og:description" content="Book a service with us! Find photographers, videographers and makeup artists" />
+        <meta property="og:image" content="https://celebriacollective.com/assets/og-img.jpg" />
 
-        <meta property="og:image:width" content="100" />
-        <meta property="og:image:height" content="100" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://www.celebriacollective.com/" />
+        <meta property="twitter:title" content="Celebria Collective" />
+        <meta property="twitter:description" content="Book a service with us! Find photographers, videographers and makeup artists" />
+        <meta property="twitter:image" content="https://celebriacollective.com/assets/og-img.jpg" />
+
         <ColorSchemeScript />
         <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script>
       </head>
