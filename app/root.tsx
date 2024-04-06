@@ -189,8 +189,8 @@ export default function App() {
         <meta property="og:type" content="website" />
         <meta property="og:image:type" content="image/jpeg" />
 
-        <meta property="og:image:width" content="300" />
-        <meta property="og:image:height" content="300" />
+        <meta property="og:image:width" content="100" />
+        <meta property="og:image:height" content="100" />
         <ColorSchemeScript />
         <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script>
       </head>
