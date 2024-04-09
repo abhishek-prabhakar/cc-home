@@ -226,9 +226,11 @@ export default function App() {
 export function ErrorBoundary() {
   const error: any = useRouteError();
 
-  return <Container size={'xl'}>
-    <Alert variant="light" color="red" title="Could not load the page" >
-      {error?.data || 'Oops, Something went wrong!'}
-    </Alert>
-  </Container>
+  return <MantineProvider>
+    <Container size={'xl'}>
+      <Alert variant="light" color="red" title="Could not load the page" >
+        {error?.data || 'Oops, Something went wrong!'}
+      </Alert>
+    </Container>
+  </MantineProvider>
 }
