@@ -17,9 +17,9 @@ const Uploader = (props: DefaultProps) => {
     useItemFinishListener((item, options) => {
         const data = item.uploadResponse.data;
         if (data) {
-            if (props?.onUpload) {
-                props.onUpload(data.fileName);
-            }
+            (data.names as string[])?.forEach(fid => {
+                if (props?.onUpload) { props.onUpload(fid) }
+            });
         }
         setBusy(false);
     });

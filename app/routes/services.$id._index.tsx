@@ -15,16 +15,12 @@ import React, { Suspense, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { forkJoin, of, switchMap } from "rxjs";
 import Banner from "~/components/Banner";
+import ListSortBar, { SORT_BY } from "~/components/ListSortBar";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { db } from "~/utils/database";
 
-const sortPanelStyles: React.CSSProperties = {
-  background: "var(--ui-color-accent)",
-  padding: "10px 20px",
-  borderRadius: "4px",
-};
 
 
 export const meta: V2_MetaFunction = () => {
@@ -42,6 +38,7 @@ type Vendor = {
   tag?: string;
   profileImg: string;
   services: string[];
+  startsFrom?: number;
 };
 
 type Filter = {
@@ -73,6 +70,8 @@ export async function loader({
   const url = new URL(request.url);
   const searchParams = url.searchParams;
   const page = parseInt(searchParams.get("page") || "") || 0;
+  const sort = searchParams.get('sort');
+
   let categoryIds = searchParams
     .get("category")
     ?.toString()
@@ -93,6 +92,14 @@ export async function loader({
       description: true,
     },
   });
+
+  if (sort) {
+    switch (sort) {
+      case SORT_BY.HIGHEST_PRICE:
+
+        break
+    }
+  }
 
   const result = new Promise<Result>(function (resolve) {
     db.vendorType
@@ -137,6 +144,15 @@ export async function loader({
               id: true,
               username: true,
               profileImageName: true,
+              VendorServiceGroup: {
+                select: {
+                  cost: true
+                },
+                take: 1,
+                orderBy: {
+                  cost: 'asc'
+                }
+              },
               services: {
                 select: {
                   service: {
@@ -167,6 +183,18 @@ export async function loader({
                 take: 4
               },
             },
+            // include:{
+            //   VendorServiceGroup:{
+            //     orderBy:{
+            //       cost: 'asc'
+            //     }
+            //   }
+            // },
+            orderBy: {
+              VendorServiceGroup: {
+                _count: 'desc'
+              }
+            },
             where: {
               categoryId: res.id,
               isActive: true,
@@ -193,6 +221,7 @@ export async function loader({
               ),
               rating,
               tag,
+              startsFrom: x.VendorServiceGroup[0]?.cost || 0,
               profileImg: x.profileImageName
                 ? PATH.RESOURCE_URL + x.profileImageName
                 : PATH.AVATAR_PLACEHOLDER,
@@ -316,27 +345,20 @@ const budgetMarks = {
   },
 };
 
-const SortResultsPanel = () => {
-  return (
-    <div style={sortPanelStyles}>
-      <Flex align={'center'} gap={'sm'}>
-        <Text c="dimmed" size="sm">Sort By:</Text>
-        <Select
-          defaultValue="0"
-          data={[
-            { value: "0", label: "Price" },
-            { value: "1", label: "Rating" },
-          ]}
-        />
-      </Flex>
-    </div>
-  );
-};
+
 
 const Photography = {
   Index: () => {
     const data = useLoaderData<loaderData>();
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    function sortItems(x: string | null) {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set('sort', x || '');
+
+      navigate(`${location.pathname}?${searchParams.toString()}`);
+    }
     return (
       <Container size={'xl'} >
         <Stack gap={'lg'}>
@@ -349,7 +371,7 @@ const Photography = {
                   <Title order={3}>{data.meta.name} in Banglore</Title>
                   <Text size="sm">{data.meta.description}</Text>
                 </Stack>
-                <SortResultsPanel />
+                <ListSortBar onSort={sortItems} />
                 <Suspense
                   fallback={<Skeleton />}
                 >
@@ -398,9 +420,7 @@ const Photography = {
       const params = new URLSearchParams(location.search);
       params.set("category", list.join(","));
       params.set("page", "0");
-      navigate(`${location.pathname}?${params.toString()}`, {
-        preventScrollReset: true,
-      });
+      navigate(`${location.pathname}?${params.toString()}`);
     }
 
     function getSelectedCatgoryCount(
@@ -536,7 +556,7 @@ const Photography = {
         }
       >
         <Stack gap={'xl'}>
-          {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} />)}
+          {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} startsFrom={item.startsFrom} />)}
         </Stack>
       </InfiniteScroll>
     );
