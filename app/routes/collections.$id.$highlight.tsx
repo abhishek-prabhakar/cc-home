@@ -63,10 +63,10 @@ const CollectionsHighlightPage = {
                         <Grid gutter={40}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                                 <Stack>
-                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })}>
                                         <Image src={service.imageName} style={{ borderRadius: '12px', boxShadow: '0 20px 40px #d3d3d3' }} /></Link>
 
-                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })}>
                                         <Title order={5}>{service.name}</Title>
                                     </Link>
                                     <Group gap={'xs'}>
@@ -75,7 +75,7 @@ const CollectionsHighlightPage = {
                                             {description}
                                         </Badge>)}
                                     </Group>
-                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId, subId: service.id })}>
+                                    <Link to={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })}>
                                         <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
                                     </Link>
                                 </Stack>

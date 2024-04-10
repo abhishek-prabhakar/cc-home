@@ -189,6 +189,7 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                 }
             },
             where: {
+                isActive: true,
                 serviceGroup: {
                     some: {
                         serviceGroupType: {

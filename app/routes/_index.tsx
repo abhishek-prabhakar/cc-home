@@ -102,6 +102,9 @@ export async function loader({ params }: LoaderArgs) {
       orderBy: {
         name: 'asc'
       },
+      where: {
+        isActive: true
+      },
       select: {
         id: true,
         name: true,

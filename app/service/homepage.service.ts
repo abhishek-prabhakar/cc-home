@@ -66,6 +66,9 @@ function getCategoryCollection() {
             orderBy: {
                 name: 'asc'
             },
+            where: {
+                isActive: true
+            },
             select: {
                 id: true,
                 name: true,
@@ -112,7 +115,7 @@ function getCategoryCollection() {
                             imageName: item.imageName,
                             isCollection: true,
                             collection: item.serviceGroupType?.keyName,
-                            path: Routes.get('CollectionsByVendor', { id: item.serviceGroupType?.keyName, vendorType: category.keyName }),
+                            path: Routes.get('CollectionsByVendor', { id: item.serviceGroupType?.keyName || '', vendorType: category.keyName }),
                             description: item.name
                         })
                     } else {
@@ -150,6 +153,9 @@ function topVendorsByCategory() {
     }[]>(async function (resolve) {
         const r = await db.vendorType.findMany({
             take: 4,
+            where: {
+                isActive: true
+            },
             select: {
                 id: true,
                 name: true,

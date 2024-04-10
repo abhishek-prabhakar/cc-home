@@ -59,6 +59,9 @@ export const ServiceQuery = {
             orderBy: {
                 name: 'asc'
             },
+            where: {
+                isActive: true
+            },
             select: {
                 id: true,
                 name: true,

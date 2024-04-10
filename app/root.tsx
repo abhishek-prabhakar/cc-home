@@ -104,6 +104,9 @@ export async function loader({ request }: LoaderArgs) {
       orderBy: {
         name: 'asc'
       },
+      where: {
+        isActive: true
+      },
       select: {
         keyName: true,
         name: true,

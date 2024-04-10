@@ -80,6 +80,7 @@ export async function loader({
     const metaInfo = await db.vendorType.findFirstOrThrow({
         where: {
             keyName: pageId,
+            isActive: true
         },
         select: {
             id: true,
