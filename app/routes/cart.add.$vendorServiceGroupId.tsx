@@ -111,7 +111,7 @@ export async function loader(args: LoaderArgs) {
 
     const currentCart: CartInput[] = source === 'cart' ? await userCartCookie.parse(cookieHeader) : await cartCheckoutCookie.parse(cookieHeader);
 
-    const savedData = currentCart.find(x => x.vendorServiceGroupId === id);
+    const savedData = currentCart?.find(x => x.vendorServiceGroupId === id);
 
     if (!id) {
         throw new Error("Invalid service");
