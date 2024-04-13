@@ -1,4 +1,4 @@
-import { Grid, Space, Stack, Title } from "@mantine/core";
+import { Grid, Image, Space, Stack, Title } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Masonry from "react-masonry-css";
@@ -25,7 +25,7 @@ export default function Portfolio() {
                 {data?.map((image, key) =>
                     image.fileType === 'youtube' ?
                         <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}><VideoPreviewItem ytId={image.fileName} /></div> : <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
-                            <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
+                            <Image radius={'md'} className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
                         </PhotoView>)}
             </Masonry>
         </PhotoProvider>

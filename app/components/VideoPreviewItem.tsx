@@ -34,7 +34,7 @@ function VideoPreviewItem({ ytId }: { ytId: string }) {
                 loaderProps={{
                     children: <ActionIcon variant="filled" color="pink" size="lg" ><IconPlayerPlay /></ActionIcon>
                 }} bg={'none'} />
-            <Image src={PATH.YOUTUBE_THUMBNAIL.replace(':id', ytId)} h={'100%'} />
+            <Image radius={'md'} src={PATH.YOUTUBE_THUMBNAIL.replace(':id', ytId)} h={'100%'} />
         </Box>
     </PhotoView>
 }
