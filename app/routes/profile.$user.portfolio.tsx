@@ -3,6 +3,7 @@ import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Masonry from "react-masonry-css";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import VideoPreviewItem from "~/components/VideoPreviewItem";
 import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
 
@@ -21,9 +22,11 @@ export default function Portfolio() {
         <Space h="md" />
         <PhotoProvider>
             <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>
-                {data?.map((image, key) => <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
-                    <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
-                </PhotoView>)}
+                {data?.map((image, key) =>
+                    image.fileType === 'youtube' ?
+                        <div style={{ height: '240px', marginBottom: '30px' }}><VideoPreviewItem key={'thumb' + key} ytId={image.fileName} /></div> : <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
+                            <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
+                        </PhotoView>)}
             </Masonry>
         </PhotoProvider>
     </div>

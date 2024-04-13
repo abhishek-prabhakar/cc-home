@@ -7,12 +7,13 @@ import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
-import { Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
+import { PortfolioItem, Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
 import { db } from "~/utils/database";
 import Stories from 'react-insta-stories';
 
 import { CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { VendorQuery } from "~/service/vendor.service";
+import VideoPreviewItem from "~/components/VideoPreviewItem";
 
 type ProfileService = { name: string, description: string };
 type Story = {
@@ -54,8 +55,11 @@ export async function loader({ params }: LoaderArgs) {
 
     const profile = await VendorQuery.getVendorByUsername(username || '');
 
-    const portfolio = new Promise<string[]>(function (resolve) {
+    const portfolio = new Promise<PortfolioItem[]>(function (resolve) {
         db.vendorPortfolio.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            },
             select: {
                 fileName: true,
                 fileType: true
@@ -67,7 +71,7 @@ export async function loader({ params }: LoaderArgs) {
             },
             take: 9
         }).then(r => {
-            resolve(r.map(x => x.fileName ? PATH.RESOURCE_URL + x.fileName : ''))
+            resolve(r.map(x => ({ type: x.fileType, value: x.fileName })))
         });
 
     });
@@ -295,9 +299,14 @@ const ProfileHome = {
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.portfolio}>
                             {portfolio => <>
-                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>{portfolio?.map((image, key) => <PhotoView key={'thumb' + key} src={image}>
-                                    <Image radius={'md'} src={image} className="cursor-pointer" />
-                                </PhotoView>)}
+                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>{portfolio?.map((image, key) =>
+                                    image.type === 'youtube' ?
+                                        <div style={{ height: '240px', marginBottom: '30px' }}>
+                                            <VideoPreviewItem key={'thumb' + key} ytId={image.value} />
+                                        </div> :
+                                        <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
+                                            <Image radius={'md'} src={PATH.RESOURCE_URL + image.value} className="cursor-pointer" />
+                                        </PhotoView>)}
                                 </Masonry>
                                 {!portfolio.length ? 'Sorry, This profile doesnt contains any works to display' : ''}
                             </>

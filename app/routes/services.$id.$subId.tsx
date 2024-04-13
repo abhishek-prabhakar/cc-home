@@ -21,6 +21,7 @@ import { PATH } from "~/path.data";
 import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
+import { PortfolioItem } from "~/types";
 
 const sortPanelStyles: React.CSSProperties = {
     background: "var(--ui-color-accent)",
@@ -38,7 +39,7 @@ export const meta: V2_MetaFunction = () => {
 type Vendor = {
     id: string;
     name: string;
-    portfolio: string[];
+    portfolio: PortfolioItem[];
     rating: number;
     tag?: string;
     profileImg: string;
@@ -148,6 +149,9 @@ export async function loader({
                                 take: 5,
                             },
                             vendorPortfolio: {
+                                orderBy: {
+                                    createdAt: 'desc'
+                                },
                                 select: {
                                     fileName: true,
                                     fileType: true,
@@ -180,7 +184,7 @@ export async function loader({
                             id: x.username,
                             name: x.username,
                             portfolio: x.vendorPortfolio.map((x) =>
-                                x.fileName ? PATH.RESOURCE_URL + x.fileName : ""
+                                ({ type: x.fileType, value: x.fileName })
                             ),
                             rating,
                             tag,

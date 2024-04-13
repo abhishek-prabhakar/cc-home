@@ -19,6 +19,7 @@ import ListSortBar, { SORT_BY } from "~/components/ListSortBar";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
+import { PortfolioItem } from "~/types";
 import { db } from "~/utils/database";
 
 
@@ -33,7 +34,7 @@ export const meta: V2_MetaFunction = () => {
 type Vendor = {
   id: string;
   name: string;
-  portfolio: string[];
+  portfolio: PortfolioItem[];
   rating: number;
   tag?: string;
   profileImg: string;
@@ -172,6 +173,9 @@ export async function loader({
                 take: 5,
               },
               vendorPortfolio: {
+                orderBy: {
+                  createdAt: 'desc'
+                },
                 select: {
                   fileName: true,
                   fileType: true,
@@ -218,7 +222,7 @@ export async function loader({
               id: x.username,
               name: x.username,
               portfolio: x.vendorPortfolio.map((x) =>
-                x.fileName ? PATH.RESOURCE_URL + x.fileName : ""
+                ({ type: x.fileType, value: x.fileName })
               ),
               rating,
               tag,

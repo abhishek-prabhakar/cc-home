@@ -184,3 +184,8 @@ export type SearchResultItem = {
         };
     }[];
 }
+
+export type PortfolioItem = {
+    type: string,
+    value: string
+}

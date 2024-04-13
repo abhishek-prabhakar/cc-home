@@ -2,6 +2,10 @@ import { Avatar, Badge, Box, Button, Flex, Grid, Group, Image, Rating, Space, Te
 import { Link } from "@remix-run/react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import Routes from "~/routes.data";
+import VideoPreviewItem from "./VideoPreviewItem";
+import { PortfolioItem } from "~/types";
+import { PATH } from "~/path.data";
+import Currency from "~/utils/currency.transformer";
 
 const itemDataThumbSetStyles: React.CSSProperties = {
   width: "100%",
@@ -11,7 +15,7 @@ const itemDataThumbSetStyles: React.CSSProperties = {
   background: '#808080'
 };
 
-function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId, startsFrom }: { id: string, name: string, rating: number, services: string[], portfolio: string[], tag?: string, profileImg: string, categoryId?: string, startsFrom?: number }) {
+function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfolio, categoryId, startsFrom }: { id: string, name: string, rating: number, services: string[], portfolio: PortfolioItem[], tag?: string, profileImg: string, categoryId?: string, startsFrom?: number }) {
 
   function url() {
     return categoryId ? Routes.get('VendorProfileWithService', { id: id, sGrpId: categoryId }) : Routes.get('VendorProfile', { id: id });
@@ -50,21 +54,23 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           ))}{" "}
         </Flex>
       )}
-      Starts from {startsFrom}.
+      <Space h={'sm'} />
+      Starts from <Currency value={startsFrom} />.
     </Grid.Col>
     <Grid.Col span={{ base: 12, md: 'auto' }}>
       <Space h={'md'} />
       <PhotoProvider>
         <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
           {portfolio?.map((imageItem, i) => <Box style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
-            <PhotoView src={imageItem}>
-              <Image
-                className="cursor-pointer"
-                style={itemDataThumbSetStyles}
-                src={imageItem}
-                alt={'reload to display image'}
-              />
-            </PhotoView>
+            {imageItem.type === 'youtube' ? <VideoPreviewItem ytId={imageItem.value} /> :
+              <PhotoView src={PATH.RESOURCE_URL + imageItem.value}>
+                <Image
+                  className="cursor-pointer"
+                  style={itemDataThumbSetStyles}
+                  src={PATH.RESOURCE_URL + imageItem.value}
+                  alt={'reload to display image'}
+                />
+              </PhotoView>}
           </Box>)}
           {!portfolio?.length ? [
             <Box key="empty-box-1" w={'95px'} h={'95px'} opacity={0.1}><div style={itemDataThumbSetStyles}></div></Box>,

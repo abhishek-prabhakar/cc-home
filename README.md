@@ -11,6 +11,9 @@
 - [Remix Docs](https://remix.run/docs)
 - [Netlify Functions](https://www.netlify.com/products/functions/)
 
+## IMPORTANT
+- Never run prisma migrate or any query to update the database schema from this repo. It will end up wiping out data.
+
 ## Netlify Setup
 
 1. Install the [Netlify CLI](https://www.netlify.com/products/dev/):

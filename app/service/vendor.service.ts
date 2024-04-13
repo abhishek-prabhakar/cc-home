@@ -27,7 +27,8 @@ function Stories(username?: string) {
         where: {
             vendor: {
                 username
-            }
+            },
+            fileType: 'img'
         },
         orderBy: {
             createdAt: 'desc'
@@ -65,6 +66,7 @@ function portfolioByUsername(username?: string) {
             }
         },
         select: {
+            fileType: true,
             fileName: true
         },
         orderBy: {
