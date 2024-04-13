@@ -24,7 +24,7 @@ export default function Portfolio() {
             <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>
                 {data?.map((image, key) =>
                     image.fileType === 'youtube' ?
-                        <div style={{ height: '240px', marginBottom: '30px' }}><VideoPreviewItem key={'thumb' + key} ytId={image.fileName} /></div> : <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
+                        <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}><VideoPreviewItem ytId={image.fileName} /></div> : <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
                             <img className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
                         </PhotoView>)}
             </Masonry>

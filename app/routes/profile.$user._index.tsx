@@ -301,8 +301,8 @@ const ProfileHome = {
                             {portfolio => <>
                                 <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>{portfolio?.map((image, key) =>
                                     image.type === 'youtube' ?
-                                        <div style={{ height: '240px', marginBottom: '30px' }}>
-                                            <VideoPreviewItem key={'thumb' + key} ytId={image.value} />
+                                        <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}>
+                                            <VideoPreviewItem ytId={image.value} />
                                         </div> :
                                         <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
                                             <Image radius={'md'} src={PATH.RESOURCE_URL + image.value} className="cursor-pointer" />
