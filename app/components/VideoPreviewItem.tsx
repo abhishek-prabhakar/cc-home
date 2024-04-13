@@ -8,6 +8,8 @@ const elementSize = 400;
 
 function VideoPreviewItem({ ytId }: { ytId: string }) {
     return <PhotoView
+        width={elementSize}
+        height={elementSize}
         render={({ scale, attrs }) => {
             const width: any = attrs.style?.width || 0;
             const offset = (width - elementSize) / elementSize;
