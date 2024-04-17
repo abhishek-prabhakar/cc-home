@@ -1,5 +1,7 @@
 import { ActionIcon, Box, Image, LoadingOverlay } from "@mantine/core";
+import { useIntersection } from "@mantine/hooks";
 import { IconPlayerPlay } from "@tabler/icons-react";
+import { useRef } from "react";
 import { PhotoView } from "react-photo-view";
 import YouTube from "react-youtube";
 import { PATH } from "~/path.data";
@@ -7,6 +9,12 @@ import { PATH } from "~/path.data";
 const elementSize = 400;
 
 function VideoPreviewItem({ ytId }: { ytId: string }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { ref, entry } = useIntersection({
+        root: containerRef.current,
+        threshold: 1,
+    });
+
     return <PhotoView
         width={elementSize}
         height={elementSize}
@@ -16,11 +24,13 @@ function VideoPreviewItem({ ytId }: { ytId: string }) {
             const childScale = scale === 1 ? scale + offset : 1 + offset;
 
             return (
-                <div {...attrs}>
+                <div {...attrs} ref={containerRef} >
                     <div style={{ transform: `scale(${childScale})`, width: elementSize, transformOrigin: '0 0' }}>
-                        <YouTube
-                            videoId={ytId}
-                        />
+                        {
+                            entry?.isIntersecting ? <YouTube
+                                videoId={ytId}
+                            /> : ''
+                        }
                     </div>
                 </div>
             );
