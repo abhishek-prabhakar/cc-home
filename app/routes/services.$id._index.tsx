@@ -37,22 +37,6 @@ type Filter = {
   name: string;
   category: { id: string; name: string }[];
 };
-type MetaData = {
-  name: string;
-  id: string;
-  description: string;
-};
-type Result = {
-  data: VendorResultListItem[];
-  loadMore: boolean;
-};
-
-type loaderData = {
-  page: number;
-  result: Result;
-  filters: Filter[];
-  meta: MetaData;
-};
 
 export async function loader({
   request,
@@ -220,7 +204,7 @@ const budgetMarks = {
 
 const Photography = {
   Index: () => {
-    const data = useLoaderData<loaderData>();
+    const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -263,7 +247,7 @@ const Photography = {
     );
   },
   Filters: () => {
-    const data = useLoaderData<loaderData>();
+    const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
     const location = useLocation();
     const [getCategory, setCategory] = useState<string[]>([]);
@@ -389,7 +373,7 @@ const Photography = {
     vendors: VendorResultListItem[];
     loadMore: boolean;
   }) => {
-    const data = useLoaderData<loaderData>();
+    const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
     const location = useLocation();
     const [result, setResult] = useState<VendorResultListItem[]>([]);

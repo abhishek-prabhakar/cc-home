@@ -38,26 +38,6 @@ export const meta: V2_MetaFunction = () => {
     ];
 };
 
-type Filter = {
-    name: string;
-    category: { id: string; name: string }[];
-};
-type MetaData = {
-    name: string;
-    id: string;
-    description: string;
-};
-type Result = {
-    data: VendorResultListItem[];
-    loadMore: boolean;
-};
-type loaderData = {
-    page: number;
-    result: Result;
-    filters: Filter[];
-    meta: MetaData;
-};
-
 export async function loader({
     request,
     params,
