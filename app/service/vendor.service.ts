@@ -109,7 +109,7 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
                             VendorServiceGroup: {
                                 some: {
                                     groupId: {
-                                        in: serviceGrpIds,
+                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
                                     },
                                 },
                             },
@@ -142,7 +142,7 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
                                 where: {
                                     serviceGroup: {
                                         groupId: {
-                                            in: serviceGrpIds,
+                                            in: serviceGrpIds.length ? serviceGrpIds : undefined,
                                         },
                                     },
                                 },
@@ -182,7 +182,7 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
                             VendorServiceGroup: {
                                 some: {
                                     groupId: {
-                                        in: serviceGrpIds,
+                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
                                     },
                                 },
                             },

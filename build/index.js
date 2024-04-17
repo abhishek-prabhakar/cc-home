@@ -723,10 +723,10 @@ var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime"), menuArtisantStyl
     }, this);
   },
   Drawer: ({ user }) => {
-    let data = (0, import_react7.useLoaderData)(), location = (0, import_react7.useLocation)(), [openDrawer, setDrawerState] = (0, import_react6.useState)(!1), [currentLocation, setCurrentLocation] = (0, import_react6.useState)("Bangalore"), [showComingSoonDialog, setComingSoonDialog] = (0, import_react6.useState)(!1);
+    let data = (0, import_react7.useLoaderData)(), location2 = (0, import_react7.useLocation)(), [openDrawer, setDrawerState] = (0, import_react6.useState)(!1), [currentLocation, setCurrentLocation] = (0, import_react6.useState)("Bangalore"), [showComingSoonDialog, setComingSoonDialog] = (0, import_react6.useState)(!1);
     (0, import_react6.useEffect)(() => {
       toggleDrawer(!1);
-    }, [location.pathname]);
+    }, [location2.pathname]);
     function toggleDrawer(show = !openDrawer) {
       setDrawerState(show);
     }
@@ -965,7 +965,7 @@ var import_jsx_dev_runtime8 = require("react/jsx-dev-runtime"), logoStyle = { fo
   backgroundSize: "cover"
 };
 function Header({ user, cartCount }) {
-  let location = (0, import_react8.useLocation)(), [currentLocation, setCurrentLocation] = (0, import_react9.useState)("Bangalore"), [showComingSoonDialog, setComingSoonDialog] = (0, import_react9.useState)(!1), dispatch = (0, import_react_redux.useDispatch)(), [opened, { close, open }] = (0, import_hooks.useDisclosure)(!1);
+  let location2 = (0, import_react8.useLocation)(), [currentLocation, setCurrentLocation] = (0, import_react9.useState)("Bangalore"), [showComingSoonDialog, setComingSoonDialog] = (0, import_react9.useState)(!1), dispatch = (0, import_react_redux.useDispatch)(), [opened, { close, open }] = (0, import_hooks.useDisclosure)(!1);
   (0, import_react9.useEffect)(() => {
     dispatch(setUser(user == null ? void 0 : user.id));
   }, [user]);
@@ -1122,7 +1122,7 @@ function Header({ user, cartCount }) {
               fileName: "app/components/Header.tsx",
               lineNumber: 89,
               columnNumber: 53
-            }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)(UserLogin_default, { inlineMode: !0, redirectUrl: location.pathname }, void 0, !1, {
+            }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime8.jsxDEV)(UserLogin_default, { inlineMode: !0, redirectUrl: location2.pathname }, void 0, !1, {
               fileName: "app/components/Header.tsx",
               lineNumber: 98,
               columnNumber: 55
@@ -1656,7 +1656,7 @@ __export(partner_signup_onboard_id_success_exports, {
 var import_core9 = require("@mantine/core"), import_node4 = require("@remix-run/node"), import_react12 = require("@remix-run/react"), import_icons_react5 = require("@tabler/icons-react");
 
 // app/service/vendor.service.ts
-var import_client2 = require("@prisma/client");
+var import_client2 = require("@prisma/client"), import_rxjs = require("rxjs");
 
 // app/path.data.ts
 var PATH = {
@@ -1741,11 +1741,140 @@ function portfolioByUsername(username) {
     }
   });
 }
-var VendorQuery = {
-  Stories,
-  portfolioByAlbumId,
-  portfolioByUsername,
-  Signup: (props) => db.vendor.create({
+function getFilteredVendors(params) {
+  return new Promise(function(resolve) {
+    db.vendorType.findFirstOrThrow({
+      where: {
+        keyName: params.vendorType
+      },
+      select: {
+        id: !0,
+        serviceGroup: {
+          where: {
+            id: {
+              in: params.serviceGroupIds
+            }
+          },
+          select: {
+            id: !0
+          }
+        }
+      }
+    }).then((res) => {
+      let serviceGrpIds = res.serviceGroup.map((x) => x.id);
+      (0, import_rxjs.forkJoin)({
+        count: db.vendor.count({
+          where: {
+            isActive: !0,
+            categoryId: res.id,
+            VendorServiceGroup: {
+              some: {
+                groupId: {
+                  in: serviceGrpIds.length ? serviceGrpIds : void 0
+                }
+              }
+            }
+          }
+        }),
+        data: db.vendor.findMany({
+          skip: params.page * params.limit,
+          take: params.limit,
+          select: {
+            id: !0,
+            username: !0,
+            profileImageName: !0,
+            VendorServiceGroup: {
+              select: {
+                cost: !0
+              },
+              take: 1,
+              orderBy: {
+                cost: "asc"
+              }
+            },
+            services: {
+              select: {
+                service: {
+                  select: {
+                    name: !0
+                  }
+                }
+              },
+              where: {
+                serviceGroup: {
+                  groupId: {
+                    in: serviceGrpIds.length ? serviceGrpIds : void 0
+                  }
+                }
+              },
+              take: 5
+            },
+            vendorPortfolio: {
+              orderBy: {
+                createdAt: "desc"
+              },
+              select: {
+                fileName: !0,
+                fileType: !0
+              },
+              where: {
+                serviceGroupId: {
+                  in: serviceGrpIds.length ? serviceGrpIds : void 0
+                }
+              },
+              take: 4
+            }
+          },
+          // include:{
+          //   VendorServiceGroup:{
+          //     orderBy:{
+          //       cost: 'asc'
+          //     }
+          //   }
+          // },
+          orderBy: {
+            VendorServiceGroup: {
+              _count: "desc"
+            }
+          },
+          where: {
+            categoryId: res.id,
+            isActive: !0,
+            VendorServiceGroup: {
+              some: {
+                groupId: {
+                  in: serviceGrpIds.length ? serviceGrpIds : void 0
+                }
+              }
+            }
+          }
+        })
+      }).subscribe((r) => {
+        let tag = "Popular", loadMore = params.page * params.limit + params.limit <= r.count;
+        resolve({
+          data: r.data.map((x) => {
+            var _a;
+            return {
+              id: x.username,
+              name: x.username,
+              portfolio: x.vendorPortfolio.map(
+                (x2) => ({ type: x2.fileType, value: x2.fileName })
+              ),
+              rating: 4,
+              tag,
+              startsFrom: ((_a = x.VendorServiceGroup[0]) == null ? void 0 : _a.cost) || 0,
+              profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER,
+              services: x.services.map((x2) => x2.service.name)
+            };
+          }),
+          loadMore
+        });
+      });
+    });
+  });
+}
+function signup(props) {
+  return db.vendor.create({
     data: {
       id: generateUuid(),
       name: props.fullName,
@@ -1757,8 +1886,10 @@ var VendorQuery = {
       socialUrl: props.socialUrl,
       categoryId: props.categoryId
     }
-  }),
-  getVendorByUsername: (username) => new Promise(function(resolve, reject) {
+  });
+}
+function getVendorByUsername(username) {
+  return new Promise(function(resolve, reject) {
     db.vendor.findFirstOrThrow({
       where: {
         username,
@@ -1806,8 +1937,10 @@ var VendorQuery = {
         baseCharge: ((_b = r.VendorServiceGroup[0]) == null ? void 0 : _b.cost) || 0
       } : null);
     }).catch((e) => reject(!1));
-  }),
-  getServices: (username) => new Promise(function(resolve) {
+  });
+}
+function getServices(username) {
+  return new Promise(function(resolve) {
     db.vendorServiceGroup.findMany({
       orderBy: [{
         group: {
@@ -1947,8 +2080,10 @@ var VendorQuery = {
         });
       }), resolve(Object.values(groupedItems));
     });
-  }),
-  getVendorServiceGroup: (id) => new Promise(function(resolve) {
+  });
+}
+function getVendorServiceGroup(id) {
+  return new Promise(function(resolve) {
     db.vendorServiceGroup.findFirstOrThrow({
       orderBy: [{
         group: {
@@ -2061,8 +2196,10 @@ var VendorQuery = {
       };
       resolve(groupData);
     });
-  }),
-  topRatedVendorsByType: (vendorType) => new Promise(function(resolve) {
+  });
+}
+function topRatedVendorsByType(vendorType) {
+  return new Promise(function(resolve) {
     db.vendor.findMany({
       take: 6,
       where: {
@@ -2082,7 +2219,18 @@ var VendorQuery = {
         image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
       })));
     });
-  })
+  });
+}
+var VendorQuery = {
+  Stories,
+  portfolioByAlbumId,
+  portfolioByUsername,
+  getFilteredVendors,
+  Signup: signup,
+  getVendorByUsername,
+  getServices,
+  getVendorServiceGroup,
+  topRatedVendorsByType
 };
 
 // app/utils/username.transformer.ts
@@ -4547,7 +4695,7 @@ var Page = {
     }, this);
   },
   Summary: ({ data, source }) => {
-    let submit = (0, import_react16.useSubmit)(), fetcher = (0, import_react16.useFetcher)(), [isStepsReady, setStepsReady] = (0, import_react17.useState)(!1), user = (0, import_react_redux3.useSelector)(getUser), location = (0, import_react16.useLocation)();
+    let submit = (0, import_react16.useSubmit)(), fetcher = (0, import_react16.useFetcher)(), [isStepsReady, setStepsReady] = (0, import_react17.useState)(!1), user = (0, import_react_redux3.useSelector)(getUser), location2 = (0, import_react16.useLocation)();
     (0, import_react17.useEffect)(() => {
       var _a;
       (_a = data == null ? void 0 : data.services) != null && _a.length && (data != null && data.date) && typeof data.timeHour == "number" && (data != null && data.venue) ? (setStepsReady(!0), getEstimation()) : setStepsReady(!1);
@@ -4685,7 +4833,7 @@ var Page = {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
           lineNumber: 534,
           columnNumber: 41
-        }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime14.jsxDEV)(UserLogin_default, { redirectUrl: location.pathname, title: "Login to continue" }, void 0, !1, {
+        }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime14.jsxDEV)(UserLogin_default, { redirectUrl: location2.pathname, title: "Login to continue" }, void 0, !1, {
           fileName: "app/routes/cart.add.$vendorServiceGroupId.tsx",
           lineNumber: 534,
           columnNumber: 121
@@ -4821,7 +4969,7 @@ async function loader5(args) {
 }
 var Onboard = {
   Index: () => {
-    let location = (0, import_react18.useLocation)(), [files, setFiles] = (0, import_react19.useState)([]);
+    let location2 = (0, import_react18.useLocation)(), [files, setFiles] = (0, import_react19.useState)([]);
     function previewFile(file) {
       setFiles(files.concat(file));
     }
@@ -4920,7 +5068,7 @@ var Onboard = {
         lineNumber: 126,
         columnNumber: 29
       }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime15.jsxDEV)(import_core14.Box, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime15.jsxDEV)(import_core14.Button, { variant: "filled", radius: "xl", loading: location.state === "submitting", type: "submit", name: "actionType", value: "signup", children: "Sign up as vendor" }, void 0, !1, {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime15.jsxDEV)(import_core14.Box, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime15.jsxDEV)(import_core14.Button, { variant: "filled", radius: "xl", loading: location2.state === "submitting", type: "submit", name: "actionType", value: "signup", children: "Sign up as vendor" }, void 0, !1, {
         fileName: "app/routes/partner.signup.onboard._index.tsx",
         lineNumber: 131,
         columnNumber: 33
@@ -5027,7 +5175,7 @@ function CouponSection({ invalid, applyCoupon }) {
   }, this);
 }
 function cart_checkout_payment_index_default() {
-  let [paymentMethod, setPayMethod] = (0, import_react21.useState)(), data = (0, import_react20.useLoaderData)(), navigation = (0, import_react20.useNavigation)(), location = (0, import_react20.useLocation)(), fetcher = (0, import_react20.useFetcher)();
+  let [paymentMethod, setPayMethod] = (0, import_react21.useState)(), data = (0, import_react20.useLoaderData)(), navigation = (0, import_react20.useNavigation)(), location2 = (0, import_react20.useLocation)(), fetcher = (0, import_react20.useFetcher)();
   (0, import_react21.useEffect)(() => {
     fetchEstimation();
   }, []);
@@ -5109,7 +5257,7 @@ function cart_checkout_payment_index_default() {
           columnNumber: 33
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)(import_react20.Form, { method: "post", action: "/order/submit", children: [
-          /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("input", { type: "hidden", name: "source", value: new URLSearchParams(location.search).get("source") || "" }, void 0, !1, {
+          /* @__PURE__ */ (0, import_jsx_dev_runtime16.jsxDEV)("input", { type: "hidden", name: "source", value: new URLSearchParams(location2.search).get("source") || "" }, void 0, !1, {
             fileName: "app/routes/cart.checkout.payment._index.tsx",
             lineNumber: 153,
             columnNumber: 37
@@ -5798,16 +5946,19 @@ __export(profile_user_portfolio_exports, {
 var import_core18 = require("@mantine/core"), import_react24 = require("@remix-run/react"), import_react_masonry_css = __toESM(require("react-masonry-css")), import_react_photo_view3 = require("react-photo-view");
 
 // app/components/VideoPreviewItem.tsx
-var import_core17 = require("@mantine/core"), import_icons_react11 = require("@tabler/icons-react"), import_react_photo_view2 = require("react-photo-view"), import_react_youtube = __toESM(require("react-youtube"));
-var import_jsx_dev_runtime18 = require("react/jsx-dev-runtime"), elementSize = 400;
+var import_core17 = require("@mantine/core"), import_hooks2 = require("@mantine/hooks"), import_icons_react11 = require("@tabler/icons-react"), import_react_photo_view2 = require("react-photo-view"), import_react_youtube = __toESM(require("react-youtube"));
+var import_jsx_dev_runtime18 = require("react/jsx-dev-runtime"), elementSize = 640;
 function VideoPreviewItem({ ytId }) {
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(
+  let { ref, inViewport } = (0, import_hooks2.useInViewport)();
+  return console.log(inViewport, ytId), /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(
     import_react_photo_view2.PhotoView,
     {
+      width: elementSize,
+      height: elementSize,
       render: ({ scale, attrs }) => {
         var _a;
         let offset = ((((_a = attrs.style) == null ? void 0 : _a.width) || 0) - elementSize) / elementSize, childScale = scale === 1 ? scale + offset : 1 + offset;
-        return /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)("div", { ...attrs, children: /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)("div", { style: { transform: `scale(${childScale})`, width: elementSize, transformOrigin: "0 0" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(
+        return /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)("div", { ...attrs, children: /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)("div", { style: { transform: `scale(${childScale})`, width: elementSize, transformOrigin: "0 0" }, ref, children: inViewport ? /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(
           import_react_youtube.default,
           {
             videoId: ytId
@@ -5816,17 +5967,17 @@ function VideoPreviewItem({ ytId }) {
           !1,
           {
             fileName: "app/components/VideoPreviewItem.tsx",
-            lineNumber: 19,
-            columnNumber: 25
+            lineNumber: 28,
+            columnNumber: 42
           },
           this
-        ) }, void 0, !1, {
+        ) : "" }, void 0, !1, {
           fileName: "app/components/VideoPreviewItem.tsx",
-          lineNumber: 18,
+          lineNumber: 26,
           columnNumber: 21
         }, this) }, void 0, !1, {
           fileName: "app/components/VideoPreviewItem.tsx",
-          lineNumber: 17,
+          lineNumber: 25,
           columnNumber: 17
         }, this);
       },
@@ -5841,11 +5992,11 @@ function VideoPreviewItem({ ytId }) {
             loaderProps: {
               children: /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(import_core17.ActionIcon, { variant: "filled", color: "pink", size: "lg", children: /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(import_icons_react11.IconPlayerPlay, {}, void 0, !1, {
                 fileName: "app/components/VideoPreviewItem.tsx",
-                lineNumber: 33,
+                lineNumber: 43,
                 columnNumber: 84
               }, this) }, void 0, !1, {
                 fileName: "app/components/VideoPreviewItem.tsx",
-                lineNumber: 33,
+                lineNumber: 43,
                 columnNumber: 31
               }, this)
             },
@@ -5855,19 +6006,19 @@ function VideoPreviewItem({ ytId }) {
           !1,
           {
             fileName: "app/components/VideoPreviewItem.tsx",
-            lineNumber: 28,
+            lineNumber: 38,
             columnNumber: 13
           },
           this
         ),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(import_core17.Image, { src: PATH.YOUTUBE_THUMBNAIL.replace(":id", ytId), h: "100%" }, void 0, !1, {
+        /* @__PURE__ */ (0, import_jsx_dev_runtime18.jsxDEV)(import_core17.Image, { radius: "md", src: PATH.YOUTUBE_THUMBNAIL.replace(":id", ytId), h: "100%" }, void 0, !1, {
           fileName: "app/components/VideoPreviewItem.tsx",
-          lineNumber: 35,
+          lineNumber: 45,
           columnNumber: 13
         }, this)
       ] }, void 0, !0, {
         fileName: "app/components/VideoPreviewItem.tsx",
-        lineNumber: 27,
+        lineNumber: 37,
         columnNumber: 9
       }, this)
     },
@@ -5875,7 +6026,7 @@ function VideoPreviewItem({ ytId }) {
     !1,
     {
       fileName: "app/components/VideoPreviewItem.tsx",
-      lineNumber: 10,
+      lineNumber: 16,
       columnNumber: 12
     },
     this
@@ -5902,22 +6053,22 @@ function Portfolio() {
       lineNumber: 22,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_photo_view3.PhotoProvider, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_masonry_css.default, { className: "masonry-grid", columnClassName: "masonry-grid_column", breakpointCols: 3, children: data == null ? void 0 : data.map((image, key) => image.fileType === "youtube" ? /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("div", { style: { height: "240px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(VideoPreviewItem_default, { ytId: image.fileName }, "thumb" + key, !1, {
+    /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_photo_view3.PhotoProvider, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_masonry_css.default, { className: "masonry-grid", columnClassName: "masonry-grid_column", breakpointCols: 3, children: data == null ? void 0 : data.map((image, key) => image.fileType === "youtube" ? /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("div", { style: { height: "240px", marginBottom: "30px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(VideoPreviewItem_default, { ytId: image.fileName }, void 0, !1, {
       fileName: "app/routes/profile.$user.portfolio.tsx",
       lineNumber: 27,
-      columnNumber: 58
-    }, this) }, void 0, !1, {
+      columnNumber: 100
+    }, this) }, "thumb" + key, !1, {
       fileName: "app/routes/profile.$user.portfolio.tsx",
       lineNumber: 27,
       columnNumber: 25
-    }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_photo_view3.PhotoView, { src: PATH.RESOURCE_URL + image.fileName, children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)("img", { className: "cursor-pointer", src: PATH.RESOURCE_URL + image.fileName }, void 0, !1, {
+    }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_react_photo_view3.PhotoView, { src: PATH.RESOURCE_URL + image.fileName, children: /* @__PURE__ */ (0, import_jsx_dev_runtime19.jsxDEV)(import_core18.Image, { radius: "md", className: "cursor-pointer", src: PATH.RESOURCE_URL + image.fileName }, void 0, !1, {
       fileName: "app/routes/profile.$user.portfolio.tsx",
       lineNumber: 28,
       columnNumber: 29
     }, this) }, "thumb" + key, !1, {
       fileName: "app/routes/profile.$user.portfolio.tsx",
       lineNumber: 27,
-      columnNumber: 129
+      columnNumber: 151
     }, this)) }, void 0, !1, {
       fileName: "app/routes/profile.$user.portfolio.tsx",
       lineNumber: 24,
@@ -7961,17 +8112,21 @@ var ProfileHome = {
           lineNumber: 299,
           columnNumber: 41
         }, this), children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_react33.Await, { resolve: data.portfolio, children: (portfolio) => /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_jsx_dev_runtime24.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_react_masonry_css2.default, { className: "masonry-grid", columnClassName: "masonry-grid_column", breakpointCols: 3, children: portfolio == null ? void 0 : portfolio.map((image, key) => image.type === "youtube" ? /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(VideoPreviewItem_default, { ytId: image.value }, "thumb" + key, !1, {
+          /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_react_masonry_css2.default, { className: "masonry-grid", columnClassName: "masonry-grid_column", breakpointCols: 3, children: portfolio == null ? void 0 : portfolio.map((image, key) => image.type === "youtube" ? /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)("div", { style: { height: "240px", marginBottom: "30px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(VideoPreviewItem_default, { ytId: image.value }, void 0, !1, {
             fileName: "app/routes/profile.$user._index.tsx",
-            lineNumber: 304,
-            columnNumber: 41
-          }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_react_photo_view4.PhotoView, { src: PATH.RESOURCE_URL + image.value, children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_core23.Image, { radius: "md", src: PATH.RESOURCE_URL + image, className: "cursor-pointer" }, void 0, !1, {
-            fileName: "app/routes/profile.$user._index.tsx",
-            lineNumber: 306,
+            lineNumber: 305,
             columnNumber: 45
           }, this) }, "thumb" + key, !1, {
             fileName: "app/routes/profile.$user._index.tsx",
-            lineNumber: 305,
+            lineNumber: 304,
+            columnNumber: 41
+          }, this) : /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_react_photo_view4.PhotoView, { src: PATH.RESOURCE_URL + image.value, children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_core23.Image, { radius: "md", src: PATH.RESOURCE_URL + image.value, className: "cursor-pointer" }, void 0, !1, {
+            fileName: "app/routes/profile.$user._index.tsx",
+            lineNumber: 308,
+            columnNumber: 45
+          }, this) }, "thumb" + key, !1, {
+            fileName: "app/routes/profile.$user._index.tsx",
+            lineNumber: 307,
             columnNumber: 41
           }, this)) }, void 0, !1, {
             fileName: "app/routes/profile.$user._index.tsx",
@@ -7998,11 +8153,11 @@ var ProfileHome = {
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)("div", { style: viewAllProjectsStyles, children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_core23.Button, { variant: "outline", size: "xs", radius: "xl", onClick: () => navigate("portfolio"), children: "See all works" }, void 0, !1, {
           fileName: "app/routes/profile.$user._index.tsx",
-          lineNumber: 316,
+          lineNumber: 318,
           columnNumber: 21
         }, this) }, void 0, !1, {
           fileName: "app/routes/profile.$user._index.tsx",
-          lineNumber: 315,
+          lineNumber: 317,
           columnNumber: 17
         }, this)
       ] }, void 0, !0, {
@@ -8018,11 +8173,11 @@ var ProfileHome = {
   },
   Testimonials: () => /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)("div", { className: "container", children: /* @__PURE__ */ (0, import_jsx_dev_runtime24.jsxDEV)(import_core23.Title, { order: 2, style: { textAlign: "center" }, children: "Testimonials" }, void 0, !1, {
     fileName: "app/routes/profile.$user._index.tsx",
-    lineNumber: 325,
+    lineNumber: 327,
     columnNumber: 13
   }, this) }, void 0, !1, {
     fileName: "app/routes/profile.$user._index.tsx",
-    lineNumber: 324,
+    lineNumber: 326,
     columnNumber: 16
   }, this)
 }, profile_user_index_default = ProfileHome.Index;
@@ -8613,8 +8768,7 @@ __export(services_id_subId_exports, {
   meta: () => meta2
 });
 var import_node13 = require("@remix-run/node"), import_react38 = require("@remix-run/react"), import_react39 = require("react");
-var import_react_infinite_scroll_component = __toESM(require("react-infinite-scroll-component")), import_rxjs = require("rxjs");
-var import_core26 = require("@mantine/core");
+var import_react_infinite_scroll_component = __toESM(require("react-infinite-scroll-component")), import_core27 = require("@mantine/core");
 
 // app/components/ProfileQuickCard.tsx
 var import_core25 = require("@mantine/core"), import_react37 = require("@remix-run/react"), import_react_photo_view5 = require("react-photo-view");
@@ -8851,381 +9005,8 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
 }
 var ProfileQuickCard_default = ProfileQuickCard;
 
-// app/routes/services.$id.$subId.tsx
-var import_jsx_dev_runtime27 = require("react/jsx-dev-runtime"), sortPanelStyles = {
-  background: "var(--ui-color-accent)",
-  padding: "10px 20px",
-  borderRadius: "4px"
-}, meta2 = () => [
-  { title: "Celebria Collective" },
-  { name: "description", content: "Find your Pefect vendor" }
-];
-async function loader14({
-  request,
-  params
-}) {
-  let pageId = params.id, categoryId = params.subId, searchParams = new URL(request.url).searchParams, page = parseInt(searchParams.get("page") || "") || 0, limit = 20, metaInfo = await db.vendorType.findFirstOrThrow({
-    where: {
-      keyName: pageId,
-      isActive: !0
-    },
-    select: {
-      id: !0,
-      name: !0,
-      description: !0
-    }
-  }), result = new Promise(function(resolve) {
-    db.vendorType.findFirstOrThrow({
-      where: {
-        keyName: pageId
-      },
-      select: {
-        id: !0,
-        serviceGroup: {
-          where: {
-            id: categoryId
-          },
-          select: {
-            id: !0
-          }
-        }
-      }
-    }).then((res) => {
-      let serviceGrpIds = res.serviceGroup.map((x) => x.id);
-      (0, import_rxjs.forkJoin)({
-        count: db.vendor.count({
-          where: {
-            isActive: !0,
-            categoryId: res.id,
-            VendorServiceGroup: {
-              some: {
-                groupId: {
-                  in: serviceGrpIds
-                }
-              }
-            }
-          }
-        }),
-        data: db.vendor.findMany({
-          skip: page * limit,
-          take: limit,
-          select: {
-            id: !0,
-            username: !0,
-            profileImageName: !0,
-            services: {
-              select: {
-                service: {
-                  select: {
-                    name: !0
-                  }
-                }
-              },
-              where: {
-                serviceGroup: {
-                  groupId: {
-                    in: serviceGrpIds
-                  }
-                }
-              },
-              take: 5
-            },
-            vendorPortfolio: {
-              orderBy: {
-                createdAt: "desc"
-              },
-              select: {
-                fileName: !0,
-                fileType: !0
-              },
-              where: {
-                serviceGroupId: categoryId
-              },
-              take: 4
-            }
-          },
-          where: {
-            categoryId: res.id,
-            isActive: !0,
-            VendorServiceGroup: {
-              some: {
-                groupId: {
-                  in: serviceGrpIds
-                }
-              }
-            }
-          }
-        })
-      }).subscribe((r) => {
-        let tag = "Popular", loadMore = page * limit + limit <= r.count;
-        resolve({
-          data: r.data.map((x) => ({
-            id: x.username,
-            name: x.username,
-            portfolio: x.vendorPortfolio.map(
-              (x2) => ({ type: x2.fileType, value: x2.fileName })
-            ),
-            rating: 4,
-            tag,
-            profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER,
-            services: x.services.map((x2) => x2.service.name)
-          })),
-          loadMore
-        });
-      });
-    });
-  }), data = new Promise(function(resolve) {
-    db.serviceGroup.findFirst({
-      where: {
-        id: categoryId
-      },
-      select: {
-        name: !0
-      }
-    }).then((r) => resolve(r));
-  });
-  return (0, import_node13.defer)({
-    data,
-    result,
-    page,
-    meta: { ...metaInfo, categoryId }
-  });
-}
-var SortResultsPanel = () => /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("div", { style: sortPanelStyles, children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Group, { align: "center", children: [
-  /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Text, { children: "Sort By: " }, void 0, !1, {
-    fileName: "app/routes/services.$id.$subId.tsx",
-    lineNumber: 228,
-    columnNumber: 17
-  }, this),
-  /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(
-    import_core26.Select,
-    {
-      defaultValue: "0",
-      data: [
-        { value: "0", label: "Price" },
-        { value: "1", label: "Rating" }
-      ]
-    },
-    void 0,
-    !1,
-    {
-      fileName: "app/routes/services.$id.$subId.tsx",
-      lineNumber: 229,
-      columnNumber: 17
-    },
-    this
-  )
-] }, void 0, !0, {
-  fileName: "app/routes/services.$id.$subId.tsx",
-  lineNumber: 227,
-  columnNumber: 13
-}, this) }, void 0, !1, {
-  fileName: "app/routes/services.$id.$subId.tsx",
-  lineNumber: 226,
-  columnNumber: 9
-}, this), Photography = {
-  Index: () => {
-    let data = (0, import_react38.useLoaderData)();
-    return /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Container, { size: "xl", children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Stack, { gap: "lg", children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Grid, { gutter: 40, children: [
-      /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Grid.Col, { span: { base: 12, md: 8, lg: 9 }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Stack, { gap: "lg", children: [
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Text, { c: "dimmed", children: [
-          /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Badge, { color: "magenta", children: data.meta.name }, void 0, !1, {
-            fileName: "app/routes/services.$id.$subId.tsx",
-            lineNumber: 251,
-            columnNumber: 50
-          }, this),
-          " in Banglore"
-        ] }, void 0, !0, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 251,
-          columnNumber: 33
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_react39.Suspense, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_react38.Await, { resolve: data.data, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Title, { order: 3, children: response == null ? void 0 : response.name }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 254,
-          columnNumber: 54
-        }, this) }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 253,
-          columnNumber: 37
-        }, this) }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 252,
-          columnNumber: 33
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("p", { children: data.meta.description }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 257,
-          columnNumber: 33
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(SortResultsPanel, {}, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 259,
-          columnNumber: 33
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(
-          import_react39.Suspense,
-          {
-            fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(Skeleton_default, {}, void 0, !1, {
-              fileName: "app/routes/services.$id.$subId.tsx",
-              lineNumber: 261,
-              columnNumber: 47
-            }, this),
-            children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_react38.Await, { resolve: data == null ? void 0 : data.result, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(
-              Photography.Results,
-              {
-                categoryId: data.meta.categoryId,
-                vendors: response.data,
-                loadMore: response.loadMore
-              },
-              void 0,
-              !1,
-              {
-                fileName: "app/routes/services.$id.$subId.tsx",
-                lineNumber: 265,
-                columnNumber: 45
-              },
-              this
-            ) }, void 0, !1, {
-              fileName: "app/routes/services.$id.$subId.tsx",
-              lineNumber: 263,
-              columnNumber: 37
-            }, this)
-          },
-          void 0,
-          !1,
-          {
-            fileName: "app/routes/services.$id.$subId.tsx",
-            lineNumber: 260,
-            columnNumber: 33
-          },
-          this
-        )
-      ] }, void 0, !0, {
-        fileName: "app/routes/services.$id.$subId.tsx",
-        lineNumber: 250,
-        columnNumber: 29
-      }, this) }, void 0, !1, {
-        fileName: "app/routes/services.$id.$subId.tsx",
-        lineNumber: 249,
-        columnNumber: 25
-      }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Grid.Col, { span: { base: 12, md: 4, lg: 3 }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Card, { style: { borderColor: "#c6c3c3", borderRadius: "20px" }, children: [
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Title, { order: 3, children: [
-          "Hiring",
-          /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("br", {}, void 0, !1, {
-            fileName: "app/routes/services.$id.$subId.tsx",
-            lineNumber: 277,
-            columnNumber: 56
-          }, this),
-          "Without the",
-          /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("br", {}, void 0, !1, {
-            fileName: "app/routes/services.$id.$subId.tsx",
-            lineNumber: 277,
-            columnNumber: 73
-          }, this),
-          "Headache"
-        ] }, void 0, !0, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 277,
-          columnNumber: 33
-        }, this),
-        /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("img", { style: { maxWidth: "100%" }, src: "/assets/web-thumb1.jpg" }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 279,
-          columnNumber: 33
-        }, this)
-      ] }, void 0, !0, {
-        fileName: "app/routes/services.$id.$subId.tsx",
-        lineNumber: 276,
-        columnNumber: 29
-      }, this) }, void 0, !1, {
-        fileName: "app/routes/services.$id.$subId.tsx",
-        lineNumber: 275,
-        columnNumber: 25
-      }, this)
-    ] }, void 0, !0, {
-      fileName: "app/routes/services.$id.$subId.tsx",
-      lineNumber: 248,
-      columnNumber: 21
-    }, this) }, void 0, !1, {
-      fileName: "app/routes/services.$id.$subId.tsx",
-      lineNumber: 247,
-      columnNumber: 17
-    }, this) }, void 0, !1, {
-      fileName: "app/routes/services.$id.$subId.tsx",
-      lineNumber: 246,
-      columnNumber: 13
-    }, this);
-  },
-  Results: ({
-    vendors,
-    loadMore,
-    categoryId
-  }) => {
-    let data = (0, import_react38.useLoaderData)(), navigate = (0, import_react38.useNavigate)(), location = (0, import_react38.useLocation)(), [result, setResult] = (0, import_react39.useState)([]);
-    (0, import_react39.useEffect)(() => {
-      vendors && setResult(data.page === 0 ? vendors : result.concat(vendors));
-    }, [vendors]);
-    function loadNextPage() {
-      let searchParams = new URLSearchParams();
-      searchParams.set("page", "" + (data.page + 1)), navigate(location.pathname + "?" + searchParams.toString(), {
-        preventScrollReset: !0
-      });
-    }
-    return /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(
-      import_react_infinite_scroll_component.default,
-      {
-        dataLength: result.length,
-        next: loadNextPage,
-        hasMore: loadMore,
-        loader: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("div", { style: { padding: "40px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(Skeleton_default, {}, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 323,
-          columnNumber: 21
-        }, this) }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 322,
-          columnNumber: 17
-        }, this),
-        endMessage: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("div", { style: { textAlign: "center", padding: "40px" }, children: "End of results." }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 327,
-          columnNumber: 17
-        }, this),
-        children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Stack, { gap: "xl", children: result == null ? void 0 : result.map((item) => /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(ProfileQuickCard_default, { id: item.id, name: item.name, portfolio: item.portfolio, profileImg: item.profileImg, services: item.services, tag: item.tag, rating: item.rating, categoryId }, item.id, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 333,
-          columnNumber: 38
-        }, this)) }, void 0, !1, {
-          fileName: "app/routes/services.$id.$subId.tsx",
-          lineNumber: 332,
-          columnNumber: 13
-        }, this)
-      },
-      void 0,
-      !1,
-      {
-        fileName: "app/routes/services.$id.$subId.tsx",
-        lineNumber: 317,
-        columnNumber: 16
-      },
-      this
-    );
-  }
-}, services_id_subId_default = Photography.Index;
-
-// app/routes/services.$id._index.tsx
-var services_id_index_exports = {};
-__export(services_id_index_exports, {
-  default: () => services_id_index_default,
-  loader: () => loader15,
-  meta: () => meta3
-});
-var import_core28 = require("@mantine/core"), import_node14 = require("@remix-run/node"), import_react40 = require("@remix-run/react"), import_react41 = require("react"), import_react_infinite_scroll_component2 = __toESM(require("react-infinite-scroll-component")), import_rxjs2 = require("rxjs");
-
 // app/components/ListSortBar.tsx
-var import_core27 = require("@mantine/core"), import_jsx_dev_runtime28 = require("react/jsx-dev-runtime"), sortPanelStyles2 = {
+var import_core26 = require("@mantine/core"), import_jsx_dev_runtime27 = require("react/jsx-dev-runtime"), sortPanelStyles = {
   background: "var(--ui-color-accent)",
   padding: "10px 20px",
   borderRadius: "4px"
@@ -9239,14 +9020,14 @@ function ListSortBar({ onSort }) {
   function setValue(v) {
     onSort(v);
   }
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("div", { style: sortPanelStyles2, children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Group, { align: "center", gap: "sm", children: [
-    /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Text, { c: "dimmed", size: "sm", children: "Sort By:" }, void 0, !1, {
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)("div", { style: sortPanelStyles, children: /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Group, { align: "center", gap: "sm", children: [
+    /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(import_core26.Text, { c: "dimmed", size: "sm", children: "Sort By:" }, void 0, !1, {
       fileName: "app/components/ListSortBar.tsx",
       lineNumber: 31,
       columnNumber: 13
     }, this),
-    /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(
-      import_core27.Select,
+    /* @__PURE__ */ (0, import_jsx_dev_runtime27.jsxDEV)(
+      import_core26.Select,
       {
         defaultValue: "0",
         onChange: (x) => setValue(x),
@@ -9274,7 +9055,252 @@ function ListSortBar({ onSort }) {
 }
 var ListSortBar_default = ListSortBar;
 
+// app/routes/services.$id.$subId.tsx
+var import_jsx_dev_runtime28 = require("react/jsx-dev-runtime");
+var meta2 = () => [
+  { title: "Celebria Collective" },
+  { name: "description", content: "Find your Pefect vendor" }
+];
+async function loader14({
+  request,
+  params
+}) {
+  let pageId = params.id, categoryId = params.subId, searchParams = new URL(request.url).searchParams, page = parseInt(searchParams.get("page") || "") || 0, limit = 20, metaInfo = await db.vendorType.findFirstOrThrow({
+    where: {
+      keyName: pageId,
+      isActive: !0
+    },
+    select: {
+      id: !0,
+      name: !0,
+      description: !0
+    }
+  }), result = VendorQuery.getFilteredVendors({
+    page,
+    limit,
+    serviceGroupIds: categoryId ? [categoryId] : [],
+    vendorType: pageId || ""
+  }), data = new Promise(function(resolve) {
+    db.serviceGroup.findFirst({
+      where: {
+        id: categoryId
+      },
+      select: {
+        name: !0
+      }
+    }).then((r) => resolve(r));
+  });
+  return (0, import_node13.defer)({
+    data,
+    result,
+    page,
+    meta: { ...metaInfo, categoryId }
+  });
+}
+var Photography = {
+  Index: () => {
+    let data = (0, import_react38.useLoaderData)(), navigate = (0, import_react38.useNavigate)();
+    function sortItems(x) {
+      let searchParams = new URLSearchParams(location.search);
+      searchParams.set("sort", x || ""), navigate(`${location.pathname}?${searchParams.toString()}`);
+    }
+    return /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Container, { size: "xl", children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Stack, { gap: "lg", children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Grid, { gutter: 40, children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Grid.Col, { span: { base: 12, md: 8, lg: 9 }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Stack, { gap: "lg", children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Text, { c: "dimmed", children: [
+          /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Badge, { color: "magenta", children: data.meta.name }, void 0, !1, {
+            fileName: "app/routes/services.$id.$subId.tsx",
+            lineNumber: 113,
+            columnNumber: 50
+          }, this),
+          " in Banglore"
+        ] }, void 0, !0, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 113,
+          columnNumber: 33
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_react39.Suspense, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_react38.Await, { resolve: data.data, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Title, { order: 3, children: response == null ? void 0 : response.name }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 116,
+          columnNumber: 54
+        }, this) }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 115,
+          columnNumber: 37
+        }, this) }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 114,
+          columnNumber: 33
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("p", { children: data.meta.description }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 119,
+          columnNumber: 33
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(ListSortBar_default, { onSort: sortItems }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 121,
+          columnNumber: 33
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(
+          import_react39.Suspense,
+          {
+            fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(Skeleton_default, {}, void 0, !1, {
+              fileName: "app/routes/services.$id.$subId.tsx",
+              lineNumber: 123,
+              columnNumber: 47
+            }, this),
+            children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_react38.Await, { resolve: data == null ? void 0 : data.result, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(
+              Photography.Results,
+              {
+                categoryId: data.meta.categoryId,
+                vendors: response.data,
+                loadMore: response.loadMore
+              },
+              void 0,
+              !1,
+              {
+                fileName: "app/routes/services.$id.$subId.tsx",
+                lineNumber: 127,
+                columnNumber: 45
+              },
+              this
+            ) }, void 0, !1, {
+              fileName: "app/routes/services.$id.$subId.tsx",
+              lineNumber: 125,
+              columnNumber: 37
+            }, this)
+          },
+          void 0,
+          !1,
+          {
+            fileName: "app/routes/services.$id.$subId.tsx",
+            lineNumber: 122,
+            columnNumber: 33
+          },
+          this
+        )
+      ] }, void 0, !0, {
+        fileName: "app/routes/services.$id.$subId.tsx",
+        lineNumber: 112,
+        columnNumber: 29
+      }, this) }, void 0, !1, {
+        fileName: "app/routes/services.$id.$subId.tsx",
+        lineNumber: 111,
+        columnNumber: 25
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Grid.Col, { span: { base: 12, md: 4, lg: 3 }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Card, { style: { borderColor: "#c6c3c3", borderRadius: "20px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Title, { order: 3, children: [
+          "Hiring",
+          /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("br", {}, void 0, !1, {
+            fileName: "app/routes/services.$id.$subId.tsx",
+            lineNumber: 139,
+            columnNumber: 56
+          }, this),
+          "Without the",
+          /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("br", {}, void 0, !1, {
+            fileName: "app/routes/services.$id.$subId.tsx",
+            lineNumber: 139,
+            columnNumber: 73
+          }, this),
+          "Headache"
+        ] }, void 0, !0, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 139,
+          columnNumber: 33
+        }, this),
+        /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("img", { style: { maxWidth: "100%" }, src: "/assets/web-thumb1.jpg" }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 141,
+          columnNumber: 33
+        }, this)
+      ] }, void 0, !0, {
+        fileName: "app/routes/services.$id.$subId.tsx",
+        lineNumber: 138,
+        columnNumber: 29
+      }, this) }, void 0, !1, {
+        fileName: "app/routes/services.$id.$subId.tsx",
+        lineNumber: 137,
+        columnNumber: 25
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/routes/services.$id.$subId.tsx",
+      lineNumber: 110,
+      columnNumber: 21
+    }, this) }, void 0, !1, {
+      fileName: "app/routes/services.$id.$subId.tsx",
+      lineNumber: 109,
+      columnNumber: 17
+    }, this) }, void 0, !1, {
+      fileName: "app/routes/services.$id.$subId.tsx",
+      lineNumber: 108,
+      columnNumber: 13
+    }, this);
+  },
+  Results: ({
+    vendors,
+    loadMore,
+    categoryId
+  }) => {
+    let data = (0, import_react38.useLoaderData)(), navigate = (0, import_react38.useNavigate)(), location2 = (0, import_react38.useLocation)(), [result, setResult] = (0, import_react39.useState)([]);
+    (0, import_react39.useEffect)(() => {
+      vendors && setResult(data.page === 0 ? vendors : result.concat(vendors));
+    }, [vendors]);
+    function loadNextPage() {
+      let searchParams = new URLSearchParams();
+      searchParams.set("page", "" + (data.page + 1)), navigate(location2.pathname + "?" + searchParams.toString(), {
+        preventScrollReset: !0
+      });
+    }
+    return /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(
+      import_react_infinite_scroll_component.default,
+      {
+        dataLength: result.length,
+        next: loadNextPage,
+        hasMore: loadMore,
+        loader: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("div", { style: { padding: "40px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(Skeleton_default, {}, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 185,
+          columnNumber: 21
+        }, this) }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 184,
+          columnNumber: 17
+        }, this),
+        endMessage: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)("div", { style: { textAlign: "center", padding: "40px" }, children: "End of results." }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 189,
+          columnNumber: 17
+        }, this),
+        children: /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(import_core27.Stack, { gap: "xl", children: result == null ? void 0 : result.map((item) => /* @__PURE__ */ (0, import_jsx_dev_runtime28.jsxDEV)(ProfileQuickCard_default, { id: item.id, name: item.name, portfolio: item.portfolio, profileImg: item.profileImg, services: item.services, tag: item.tag, rating: item.rating, categoryId, startsFrom: item.startsFrom }, item.id, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 195,
+          columnNumber: 38
+        }, this)) }, void 0, !1, {
+          fileName: "app/routes/services.$id.$subId.tsx",
+          lineNumber: 194,
+          columnNumber: 13
+        }, this)
+      },
+      void 0,
+      !1,
+      {
+        fileName: "app/routes/services.$id.$subId.tsx",
+        lineNumber: 179,
+        columnNumber: 16
+      },
+      this
+    );
+  }
+}, services_id_subId_default = Photography.Index;
+
 // app/routes/services.$id._index.tsx
+var services_id_index_exports = {};
+__export(services_id_index_exports, {
+  default: () => services_id_index_default,
+  loader: () => loader15,
+  meta: () => meta3
+});
+var import_core28 = require("@mantine/core"), import_node14 = require("@remix-run/node"), import_react40 = require("@remix-run/react"), import_react41 = require("react"), import_react_infinite_scroll_component2 = __toESM(require("react-infinite-scroll-component")), import_rxjs2 = require("rxjs");
 var import_jsx_dev_runtime29 = require("react/jsx-dev-runtime"), meta3 = () => [
   { title: "Celebria Collective" },
   { name: "description", content: "Find your Pefect vendor" }
@@ -9302,135 +9328,11 @@ async function loader15({
       case "HIGHEST_PRICE" /* HIGHEST_PRICE */:
         break;
     }
-  let result = new Promise(function(resolve) {
-    db.vendorType.findFirstOrThrow({
-      where: {
-        keyName: pageId
-      },
-      select: {
-        id: !0,
-        serviceGroup: {
-          where: {
-            id: {
-              in: categoryIds
-            }
-          },
-          select: {
-            id: !0
-          }
-        }
-      }
-    }).then((res) => {
-      let serviceGrpIds = res.serviceGroup.map((x) => x.id);
-      (0, import_rxjs2.forkJoin)({
-        count: db.vendor.count({
-          where: {
-            isActive: !0,
-            categoryId: res.id,
-            VendorServiceGroup: {
-              some: {
-                groupId: {
-                  in: serviceGrpIds
-                }
-              }
-            }
-          }
-        }),
-        data: db.vendor.findMany({
-          skip: page * limit,
-          take: limit,
-          select: {
-            id: !0,
-            username: !0,
-            profileImageName: !0,
-            VendorServiceGroup: {
-              select: {
-                cost: !0
-              },
-              take: 1,
-              orderBy: {
-                cost: "asc"
-              }
-            },
-            services: {
-              select: {
-                service: {
-                  select: {
-                    name: !0
-                  }
-                }
-              },
-              where: {
-                serviceGroup: {
-                  groupId: {
-                    in: serviceGrpIds
-                  }
-                }
-              },
-              take: 5
-            },
-            vendorPortfolio: {
-              orderBy: {
-                createdAt: "desc"
-              },
-              select: {
-                fileName: !0,
-                fileType: !0
-              },
-              where: {
-                serviceGroupId: {
-                  in: categoryIds ? serviceGrpIds : void 0
-                }
-              },
-              take: 4
-            }
-          },
-          // include:{
-          //   VendorServiceGroup:{
-          //     orderBy:{
-          //       cost: 'asc'
-          //     }
-          //   }
-          // },
-          orderBy: {
-            VendorServiceGroup: {
-              _count: "desc"
-            }
-          },
-          where: {
-            categoryId: res.id,
-            isActive: !0,
-            VendorServiceGroup: {
-              some: {
-                groupId: {
-                  in: serviceGrpIds
-                }
-              }
-            }
-          }
-        })
-      }).subscribe((r) => {
-        let tag = "Popular", loadMore = page * limit + limit <= r.count;
-        resolve({
-          data: r.data.map((x) => {
-            var _a2;
-            return {
-              id: x.username,
-              name: x.username,
-              portfolio: x.vendorPortfolio.map(
-                (x2) => ({ type: x2.fileType, value: x2.fileName })
-              ),
-              rating: 4,
-              tag,
-              startsFrom: ((_a2 = x.VendorServiceGroup[0]) == null ? void 0 : _a2.cost) || 0,
-              profileImg: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER,
-              services: x.services.map((x2) => x2.service.name)
-            };
-          }),
-          loadMore
-        });
-      });
-    });
+  let result = VendorQuery.getFilteredVendors({
+    page,
+    limit,
+    serviceGroupIds: categoryIds || [],
+    vendorType: pageId || ""
   }), filters = new Promise(function(resolve) {
     (0, import_rxjs2.of)(!0).pipe(
       (0, import_rxjs2.switchMap)(
@@ -9500,15 +9402,15 @@ async function loader15({
 }
 var Photography2 = {
   Index: () => {
-    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location = (0, import_react40.useLocation)();
+    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location2 = (0, import_react40.useLocation)();
     function sortItems(x) {
-      let searchParams = new URLSearchParams(location.search);
-      searchParams.set("sort", x || ""), navigate(`${location.pathname}?${searchParams.toString()}`);
+      let searchParams = new URLSearchParams(location2.search);
+      searchParams.set("sort", x || ""), navigate(`${location2.pathname}?${searchParams.toString()}`);
     }
     return /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Container, { size: "xl", children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Stack, { gap: "lg", children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Grid, { gutter: 40, children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(Photography2.Filters, {}, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 373,
+        lineNumber: 222,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Grid.Col, { span: { base: 12, md: 8, lg: 9 }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Stack, { gap: "lg", children: [
@@ -9518,22 +9420,22 @@ var Photography2 = {
             " in Banglore"
           ] }, void 0, !0, {
             fileName: "app/routes/services.$id._index.tsx",
-            lineNumber: 377,
+            lineNumber: 226,
             columnNumber: 19
           }, this),
           /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Text, { size: "sm", children: data.meta.description }, void 0, !1, {
             fileName: "app/routes/services.$id._index.tsx",
-            lineNumber: 378,
+            lineNumber: 227,
             columnNumber: 19
           }, this)
         ] }, void 0, !0, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 376,
+          lineNumber: 225,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(ListSortBar_default, { onSort: sortItems }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 380,
+          lineNumber: 229,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(
@@ -9541,7 +9443,7 @@ var Photography2 = {
           {
             fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(Skeleton_default, {}, void 0, !1, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 382,
+              lineNumber: 231,
               columnNumber: 29
             }, this),
             children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_react40.Await, { resolve: data == null ? void 0 : data.result, children: (response) => /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(
@@ -9554,13 +9456,13 @@ var Photography2 = {
               !1,
               {
                 fileName: "app/routes/services.$id._index.tsx",
-                lineNumber: 386,
+                lineNumber: 235,
                 columnNumber: 23
               },
               this
             ) }, void 0, !1, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 384,
+              lineNumber: 233,
               columnNumber: 19
             }, this)
           },
@@ -9568,39 +9470,39 @@ var Photography2 = {
           !1,
           {
             fileName: "app/routes/services.$id._index.tsx",
-            lineNumber: 381,
+            lineNumber: 230,
             columnNumber: 17
           },
           this
         )
       ] }, void 0, !0, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 375,
+        lineNumber: 224,
         columnNumber: 15
       }, this) }, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 374,
+        lineNumber: 223,
         columnNumber: 13
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/services.$id._index.tsx",
-      lineNumber: 372,
+      lineNumber: 221,
       columnNumber: 11
     }, this) }, void 0, !1, {
       fileName: "app/routes/services.$id._index.tsx",
-      lineNumber: 370,
+      lineNumber: 219,
       columnNumber: 9
     }, this) }, void 0, !1, {
       fileName: "app/routes/services.$id._index.tsx",
-      lineNumber: 369,
+      lineNumber: 218,
       columnNumber: 7
     }, this);
   },
   Filters: () => {
-    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location = (0, import_react40.useLocation)(), [getCategory, setCategory] = (0, import_react41.useState)([]);
+    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location2 = (0, import_react40.useLocation)(), [getCategory, setCategory] = (0, import_react41.useState)([]);
     (0, import_react41.useEffect)(() => {
       var _a;
-      let params = new URLSearchParams(location.search);
+      let params = new URLSearchParams(location2.search);
       setCategory(
         ((_a = params.get("category")) == null ? void 0 : _a.split(",").filter((x) => !!x)) || []
       );
@@ -9608,8 +9510,8 @@ var Photography2 = {
     function toggleCategoryItem(checked, value) {
       let list2;
       checked ? list2 = [...getCategory, value] : list2 = [...getCategory.filter((x) => x !== value)], setCategory(list2);
-      let params = new URLSearchParams(location.search);
-      params.set("category", list2.join(",")), params.set("page", "0"), navigate(`${location.pathname}?${params.toString()}`);
+      let params = new URLSearchParams(location2.search);
+      params.set("category", list2.join(",")), params.set("page", "0"), navigate(`${location2.pathname}?${params.toString()}`);
     }
     function getSelectedCatgoryCount(categoryList) {
       let categoryIdList = categoryList.map((value) => value.id);
@@ -9628,7 +9530,7 @@ var Photography2 = {
             /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Accordion.Control, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Group, { justify: "space-between", align: "center", children: [
               /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Text, { fw: 500, children: filter.name }, void 0, !1, {
                 fileName: "app/routes/services.$id._index.tsx",
-                lineNumber: 454,
+                lineNumber: 303,
                 columnNumber: 17
               }, this),
               " ",
@@ -9642,18 +9544,18 @@ var Photography2 = {
                 !1,
                 {
                   fileName: "app/routes/services.$id._index.tsx",
-                  lineNumber: 456,
+                  lineNumber: 305,
                   columnNumber: 19
                 },
                 this
               ) : null
             ] }, void 0, !0, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 453,
+              lineNumber: 302,
               columnNumber: 15
             }, this) }, void 0, !1, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 452,
+              lineNumber: 301,
               columnNumber: 13
             }, this),
             /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Accordion.Panel, { children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Stack, { children: [
@@ -9673,28 +9575,28 @@ var Photography2 = {
                 !1,
                 {
                   fileName: "app/routes/services.$id._index.tsx",
-                  lineNumber: 464,
+                  lineNumber: 313,
                   columnNumber: 19
                 },
                 this
               )),
               !((_a = filter.category) != null && _a.length) && /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { children: "Unavailable right now." }, void 0, !1, {
                 fileName: "app/routes/services.$id._index.tsx",
-                lineNumber: 475,
+                lineNumber: 324,
                 columnNumber: 46
               }, this)
             ] }, void 0, !0, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 462,
+              lineNumber: 311,
               columnNumber: 15
             }, this) }, void 0, !1, {
               fileName: "app/routes/services.$id._index.tsx",
-              lineNumber: 461,
+              lineNumber: 310,
               columnNumber: 13
             }, this)
           ] }, void 0, !0, {
             fileName: "app/routes/services.$id._index.tsx",
-            lineNumber: 451,
+            lineNumber: 300,
             columnNumber: 18
           }, this);
         }
@@ -9703,52 +9605,52 @@ var Photography2 = {
     return /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_jsx_dev_runtime29.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Grid.Col, { span: { base: 12 }, hiddenFrom: "md", children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { className: "filters-section-wrapper", children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { className: "section-title", children: "Filter:" }, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 500,
+        lineNumber: 349,
         columnNumber: 13
       }, this) }, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 499,
+        lineNumber: 348,
         columnNumber: 11
       }, this) }, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 498,
+        lineNumber: 347,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Grid.Col, { span: { md: 4, lg: 3 }, visibleFrom: "md", children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { className: "filters-section-wrapper _sticky-top", children: [
         /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { className: "section-title", children: "Filter:" }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 505,
+          lineNumber: 354,
           columnNumber: 13
         }, this),
         /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_react41.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(Skeleton_default, {}, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 506,
+          lineNumber: 355,
           columnNumber: 33
         }, this), children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_react40.Await, { resolve: data.filters, children: (filters) => /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Accordion, { children: filterItems(filters) }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 509,
+          lineNumber: 358,
           columnNumber: 19
         }, this) }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 507,
+          lineNumber: 356,
           columnNumber: 15
         }, this) }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 506,
+          lineNumber: 355,
           columnNumber: 13
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 504,
+        lineNumber: 353,
         columnNumber: 11
       }, this) }, void 0, !1, {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 503,
+        lineNumber: 352,
         columnNumber: 9
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/services.$id._index.tsx",
-      lineNumber: 497,
+      lineNumber: 346,
       columnNumber: 7
     }, this);
   },
@@ -9756,13 +9658,13 @@ var Photography2 = {
     vendors,
     loadMore
   }) => {
-    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location = (0, import_react40.useLocation)(), [result, setResult] = (0, import_react41.useState)([]);
+    let data = (0, import_react40.useLoaderData)(), navigate = (0, import_react40.useNavigate)(), location2 = (0, import_react40.useLocation)(), [result, setResult] = (0, import_react41.useState)([]);
     (0, import_react41.useEffect)(() => {
       vendors && setResult(data.page === 0 ? vendors : result.concat(vendors));
     }, [vendors]);
     function loadNextPage() {
       let searchParams = new URLSearchParams();
-      searchParams.set("page", "" + (data.page + 1)), navigate(location.pathname + "?" + searchParams.toString(), {
+      searchParams.set("page", "" + (data.page + 1)), navigate(location2.pathname + "?" + searchParams.toString(), {
         preventScrollReset: !0
       });
     }
@@ -9774,25 +9676,25 @@ var Photography2 = {
         hasMore: loadMore,
         loader: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { style: { padding: "40px" }, children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(Skeleton_default, {}, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 555,
+          lineNumber: 404,
           columnNumber: 13
         }, this) }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 554,
+          lineNumber: 403,
           columnNumber: 11
         }, this),
         endMessage: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)("div", { style: { textAlign: "center", padding: "40px" }, children: "End of results." }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 559,
+          lineNumber: 408,
           columnNumber: 11
         }, this),
         children: /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(import_core28.Stack, { gap: "xl", children: result == null ? void 0 : result.map((item) => /* @__PURE__ */ (0, import_jsx_dev_runtime29.jsxDEV)(ProfileQuickCard_default, { id: item.id, name: item.name, portfolio: item.portfolio, profileImg: item.profileImg, services: item.services, tag: item.tag, rating: item.rating, startsFrom: item.startsFrom }, item.id, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 565,
+          lineNumber: 414,
           columnNumber: 32
         }, this)) }, void 0, !1, {
           fileName: "app/routes/services.$id._index.tsx",
-          lineNumber: 564,
+          lineNumber: 413,
           columnNumber: 9
         }, this)
       },
@@ -9800,7 +9702,7 @@ var Photography2 = {
       !1,
       {
         fileName: "app/routes/services.$id._index.tsx",
-        lineNumber: 549,
+        lineNumber: 398,
         columnNumber: 7
       },
       this
@@ -10970,10 +10872,10 @@ var ProfileLayout = {
     }, this);
   },
   CartSuggestion: () => {
-    let location = (0, import_react46.useLocation)(), navigate = (0, import_react46.useNavigate)(), [showModal, setModal] = (0, import_react47.useState)(!1);
+    let location2 = (0, import_react46.useLocation)(), navigate = (0, import_react46.useNavigate)(), [showModal, setModal] = (0, import_react47.useState)(!1);
     (0, import_react47.useEffect)(() => {
-      new URLSearchParams(location.search).get("cartStatus") && setModal(!0);
-    }, [location.pathname]);
+      new URLSearchParams(location2.search).get("cartStatus") && setModal(!0);
+    }, [location2.pathname]);
     function gotoCart() {
       navigate(routes_data_default.get("Cart"));
     }
@@ -12448,7 +12350,7 @@ function UserLayout() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-PZVIPVNM.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-BG3DPKW7.js", imports: ["/build/_shared/chunk-GIJQAKHY.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-BJ3PDQNI.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-WMG5LUSL.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.checkout": { id: "routes/_auth.order.checkout", parentId: "routes/_auth", path: "order/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.checkout-I2TT65D2.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-NOISZSEA.js", imports: ["/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-XKTWGGYA.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-VHFS7UE4.js", imports: ["/build/_shared/chunk-DRZA6AH3.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-HY45DSJK.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-BW7IKRZB.js", imports: ["/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AQ7DUK66.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-IBHGA5VQ.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout._index": { id: "routes/cart.checkout._index", parentId: "root", path: "cart/checkout", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout._index-7FQTKWWY.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout.payment._index": { id: "routes/cart.checkout.payment._index", parentId: "root", path: "cart/checkout/payment", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout.payment._index-D6QH7SS3.js", imports: ["/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-AQ7DUK66.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-PXGCSPWB.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-EGZOGY2V.js", imports: ["/build/_shared/chunk-H7MRCSTN.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-GH3EZPPI.js", imports: ["/build/_shared/chunk-DRZA6AH3.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup": { id: "routes/partner.signup", parentId: "root", path: "partner/signup", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup-USHIYGCD.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "routes/partner.signup", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-T5BC7CZB.js", imports: ["/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "routes/partner.signup", path: "onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-PRFCES4W.js", imports: ["/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-KDSTMVEF.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "routes/partner.signup", path: "onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-CP6SG2AQ.js", imports: ["/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "routes/partner.signup", path: "onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-HYSYJS4R.js", imports: ["/build/_shared/chunk-KDSTMVEF.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-LFLGXNZF.js", imports: ["/build/_shared/chunk-AQ7DUK66.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-KLNQ363T.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-2UPZRATZ.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-BJ3PDQNI.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-FVG6HNOP.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-2UPZRATZ.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-KHKSWZOL.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-OPXNNVWU.js", imports: ["/build/_shared/chunk-5OEYLTZT.js", "/build/_shared/chunk-2UPZRATZ.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AQ7DUK66.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-OHKKQ4WZ.js", imports: ["/build/_shared/chunk-5OEYLTZT.js", "/build/_shared/chunk-2UPZRATZ.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AQ7DUK66.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "7258132b", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1713026477634 }, url: "/build/manifest-7258132B.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-PZVIPVNM.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-ZGNIDWYI.js", imports: ["/build/_shared/chunk-HSX3SWR4.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-A7RI5AEF.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-WMG5LUSL.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.checkout": { id: "routes/_auth.order.checkout", parentId: "routes/_auth", path: "order/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.checkout-I2TT65D2.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-NOISZSEA.js", imports: ["/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-OAL5DNX3.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-KIDWVQAD.js", imports: ["/build/_shared/chunk-7FSPBVAI.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-XE5IAS4A.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-TITCHISA.js", imports: ["/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-IOHA5CNQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-IBHGA5VQ.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout._index": { id: "routes/cart.checkout._index", parentId: "root", path: "cart/checkout", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout._index-IQMM6FZG.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout.payment._index": { id: "routes/cart.checkout.payment._index", parentId: "root", path: "cart/checkout/payment", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout.payment._index-BZT5XAGU.js", imports: ["/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-IOHA5CNQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-EADFUSGT.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-L37VM7WV.js", imports: ["/build/_shared/chunk-H7MRCSTN.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-E6JY7TED.js", imports: ["/build/_shared/chunk-7FSPBVAI.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup": { id: "routes/partner.signup", parentId: "root", path: "partner/signup", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup-USHIYGCD.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "routes/partner.signup", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-6ADQFG5E.js", imports: ["/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "routes/partner.signup", path: "onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-DYIROX5P.js", imports: ["/build/_shared/chunk-FANUBITT.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-KBHHKCH2.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-AZGDCTIT.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "routes/partner.signup", path: "onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-NMKBZTPG.js", imports: ["/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "routes/partner.signup", path: "onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-MNOARHYS.js", imports: ["/build/_shared/chunk-KBHHKCH2.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-ADDAL4DH.js", imports: ["/build/_shared/chunk-IOHA5CNQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-5PB7MJGA.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-MIWVICCT.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-A7RI5AEF.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-7PYRVSJX.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-MIWVICCT.js", "/build/_shared/chunk-O74KGN6E.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-3B7U7YXG.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-XZ5TAZ7M.js", imports: ["/build/_shared/chunk-IBFLAWLA.js", "/build/_shared/chunk-MIWVICCT.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-IOHA5CNQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-4CYW4RUL.js", imports: ["/build/_shared/chunk-IBFLAWLA.js", "/build/_shared/chunk-MIWVICCT.js", "/build/_shared/chunk-H7MRCSTN.js", "/build/_shared/chunk-IOHA5CNQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "693973b6", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1713388082046 }, url: "/build/manifest-693973B6.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_dev: !0, unstable_postcss: !1, unstable_tailwind: !1, v2_errorBoundary: !0, v2_headers: !0, v2_meta: !0, v2_normalizeFormMethod: !0, v2_routeConvention: !0 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
