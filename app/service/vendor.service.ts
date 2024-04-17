@@ -129,6 +129,11 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
                                 take: 1,
                                 orderBy: {
                                     cost: 'asc'
+                                },
+                                where: {
+                                    groupId: {
+                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
+                                    },
                                 }
                             },
                             services: {
