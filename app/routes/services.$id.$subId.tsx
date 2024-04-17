@@ -21,7 +21,9 @@ import { PATH } from "~/path.data";
 import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
-import { PortfolioItem } from "~/types";
+import { PortfolioItem, VendorResultListItem } from "~/types";
+import ListSortBar from "~/components/ListSortBar";
+import { VendorQuery } from "~/service/vendor.service";
 
 const sortPanelStyles: React.CSSProperties = {
     background: "var(--ui-color-accent)",
@@ -36,16 +38,6 @@ export const meta: V2_MetaFunction = () => {
     ];
 };
 
-type Vendor = {
-    id: string;
-    name: string;
-    portfolio: PortfolioItem[];
-    rating: number;
-    tag?: string;
-    profileImg: string;
-    services: string[];
-};
-
 type Filter = {
     name: string;
     category: { id: string; name: string }[];
@@ -56,7 +48,7 @@ type MetaData = {
     description: string;
 };
 type Result = {
-    data: Vendor[];
+    data: VendorResultListItem[];
     loadMore: boolean;
 };
 type loaderData = {
@@ -90,113 +82,11 @@ export async function loader({
         },
     });
 
-    const result = new Promise<Result>(function (resolve) {
-        db.vendorType
-            .findFirstOrThrow({
-                where: {
-                    keyName: pageId,
-                },
-                select: {
-                    id: true,
-                    serviceGroup: {
-                        where: {
-                            id: categoryId,
-                        },
-                        select: {
-                            id: true,
-                        },
-                    },
-                },
-            })
-            .then((res) => {
-                const serviceGrpIds = res.serviceGroup.map((x) => x.id);
-                forkJoin({
-                    count: db.vendor.count({
-                        where: {
-                            isActive: true,
-                            categoryId: res.id,
-                            VendorServiceGroup: {
-                                some: {
-                                    groupId: {
-                                        in: serviceGrpIds,
-                                    },
-                                },
-                            },
-                        },
-                    }),
-                    data: db.vendor.findMany({
-                        skip: page * limit,
-                        take: limit,
-                        select: {
-                            id: true,
-                            username: true,
-                            profileImageName: true,
-                            services: {
-                                select: {
-                                    service: {
-                                        select: {
-                                            name: true,
-                                        },
-                                    },
-                                },
-                                where: {
-                                    serviceGroup: {
-                                        groupId: {
-                                            in: serviceGrpIds,
-                                        },
-                                    },
-                                },
-                                take: 5,
-                            },
-                            vendorPortfolio: {
-                                orderBy: {
-                                    createdAt: 'desc'
-                                },
-                                select: {
-                                    fileName: true,
-                                    fileType: true,
-                                },
-                                where: {
-                                    serviceGroupId: categoryId,
-                                },
-                                take: 4
-                            },
-                        },
-                        where: {
-                            categoryId: res.id,
-                            isActive: true,
-                            VendorServiceGroup: {
-                                some: {
-                                    groupId: {
-                                        in: serviceGrpIds,
-                                    },
-                                },
-                            },
-                        },
-                    }),
-                }).subscribe((r) => {
-                    const rating = 4;
-                    const tag = "Popular";
-
-                    const loadMore = page * limit + limit <= r.count;
-                    resolve({
-                        data: r.data.map((x) => ({
-                            id: x.username,
-                            name: x.username,
-                            portfolio: x.vendorPortfolio.map((x) =>
-                                ({ type: x.fileType, value: x.fileName })
-                            ),
-                            rating,
-                            tag,
-                            profileImg: x.profileImageName
-                                ? PATH.RESOURCE_URL + x.profileImageName
-                                : PATH.AVATAR_PLACEHOLDER,
-                            services: x.services.map((x) => x.service.name),
-                        })),
-                        loadMore,
-                    });
-                });
-            });
+    const result = VendorQuery.getFilteredVendors({
+        page,
+        limit,
+        serviceGroupIds: categoryId ? [categoryId] : [],
+        vendorType: pageId || ''
     });
 
     const data = new Promise<{
@@ -221,26 +111,18 @@ export async function loader({
     });
 }
 
-const SortResultsPanel = () => {
-    return (
-        <div style={sortPanelStyles}>
-            <Group align="center">
-                <Text>Sort By: </Text>
-                <Select
-                    defaultValue="0"
-                    data={[
-                        { value: "0", label: "Price" },
-                        { value: "1", label: "Rating" },
-                    ]}
-                />
-            </Group>
-        </div>
-    );
-};
 
 const Photography = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
+        const navigate = useNavigate();
+
+        function sortItems(x: string | null) {
+            const searchParams = new URLSearchParams(location.search);
+            searchParams.set('sort', x || '');
+
+            navigate(`${location.pathname}?${searchParams.toString()}`);
+        }
 
         return (
             <Container size={'xl'}>
@@ -256,7 +138,7 @@ const Photography = {
                                 </Suspense>
                                 <p>{data.meta.description}</p>
 
-                                <SortResultsPanel />
+                                <ListSortBar onSort={sortItems} />
                                 <Suspense
                                     fallback={<Skeleton />}
                                 >
@@ -290,13 +172,13 @@ const Photography = {
         categoryId
     }: {
         categoryId?: string;
-        vendors: Vendor[];
+        vendors: VendorResultListItem[];
         loadMore: boolean;
     }) => {
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
         const location = useLocation();
-        const [result, setResult] = useState<Vendor[]>([]);
+        const [result, setResult] = useState<VendorResultListItem[]>([]);
 
         useEffect(() => {
             if (!vendors) {
@@ -330,7 +212,7 @@ const Photography = {
             }
         >
             <Stack gap={'xl'}>
-                {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} />)}
+                {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} startsFrom={item.startsFrom} />)}
             </Stack>
         </InfiniteScroll>;
     },

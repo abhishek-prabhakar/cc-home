@@ -1,6 +1,7 @@
 import { UserSource } from "@prisma/client";
+import { forkJoin } from "rxjs";
 import { PATH } from "~/path.data";
-import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { AddonGroupItem, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
@@ -75,315 +76,322 @@ function portfolioByUsername(username?: string) {
     });
 }
 
-export const VendorQuery = {
-    Stories,
-    portfolioByAlbumId,
-    portfolioByUsername,
-    Signup: (props: {
-        fullName: string,
-        mobileNumber: string,
-        email: string,
-        username: string
-        socialUrl?: string | null,
-        categoryId?: string | null
-    }) => {
-        return db.vendor.create({
-            data: {
-                id: generateUuid(),
-                name: props.fullName,
-                mobileNumber: props.mobileNumber,
-                email: props.email,
-                username: props.username,
-                source: UserSource.MANUAL,
-                isActive: false,
-                socialUrl: props.socialUrl,
-                categoryId: props.categoryId
-            }
-        });
-    },
-    getVendorByUsername: (username: string) => {
-        return new Promise<VendorProfile | null>(function (resolve, reject) {
-            db.vendor.findFirstOrThrow({
-                where: {
-                    username,
-                    isActive: true
-                },
-                select: {
-                    id: true,
-                    username: true,
-                    name: true,
-                    primaryColor: true,
-                    coverImageName: true,
-                    profileImageName: true,
-                    bio: true,
-                    vendorType: {
-                        select: {
-                            name: true
-                        }
-                    },
-                    VendorServiceGroup: {
-                        take: 1,
-                        where: {
-                            isActive: true
-                        },
-                        orderBy: {
-                            cost: 'asc'
-                        },
-                        select: {
-                            cost: true
-                        }
-                    }
-                }
-            }).then(r => {
-                if (r) {
-                    resolve({
-                        id: r.id,
-                        username: r.username,
-                        fullName: r.username,
-                        location: '',
-                        gender: '',
-                        type: r.vendorType?.name || '',
-                        primaryColor: r.primaryColor,
-                        avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                        coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
-                        bio: r.bio,
-                        baseCharge: r.VendorServiceGroup[0]?.cost || 0
-                    });
-                } else {
-                    resolve(null);
-                }
-            }).catch(e => reject(false));
-        });
-    },
-    getServices: (username: string) => {
-        return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve) {
 
-            db.vendorServiceGroup.findMany({
-                orderBy: [{
-                    group: {
-                        name: 'asc'
-                    }
-                }, {
-                    group: {
-                        serviceGroupType: {
-                            name: 'asc'
-                        }
-                    }
-                }],
+function getFilteredVendors(params: { vendorType: string, serviceGroupIds: string[], page: number, limit: number }) {
+
+    const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean }>(function (resolve) {
+        db.vendorType
+            .findFirstOrThrow({
                 where: {
-                    isActive: true,
-                    vendor: {
-                        username
-                    }
+                    keyName: params.vendorType,
                 },
                 select: {
                     id: true,
-                    cost: true,
-                    group: {
+                    serviceGroup: {
+                        where: {
+                            id: {
+                                in: params.serviceGroupIds,
+                            },
+                        },
                         select: {
-                            serviceGroupType: {
+                            id: true,
+                        },
+                    },
+                },
+            })
+            .then((res) => {
+                const serviceGrpIds = res.serviceGroup.map((x) => x.id);
+                forkJoin({
+                    count: db.vendor.count({
+                        where: {
+                            isActive: true,
+                            categoryId: res.id,
+                            VendorServiceGroup: {
+                                some: {
+                                    groupId: {
+                                        in: serviceGrpIds,
+                                    },
+                                },
+                            },
+                        },
+                    }),
+                    data: db.vendor.findMany({
+                        skip: params.page * params.limit,
+                        take: params.limit,
+                        select: {
+                            id: true,
+                            username: true,
+                            profileImageName: true,
+                            VendorServiceGroup: {
                                 select: {
-                                    name: true
+                                    cost: true
+                                },
+                                take: 1,
+                                orderBy: {
+                                    cost: 'asc'
                                 }
                             },
-                            id: true,
-                            name: true,
-                            minHour: true,
-                            isEstimated: true,
-                            serviceGroupItem: {
-                                orderBy: {
-                                    position: 'asc'
+                            services: {
+                                select: {
+                                    service: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
                                 },
                                 where: {
-                                    service: {
-                                        vendorService: {
-                                            some: {
-                                                vendor: {
-                                                    username
-                                                }
+                                    serviceGroup: {
+                                        groupId: {
+                                            in: serviceGrpIds,
+                                        },
+                                    },
+                                },
+                                take: 5,
+                            },
+                            vendorPortfolio: {
+                                orderBy: {
+                                    createdAt: 'desc'
+                                },
+                                select: {
+                                    fileName: true,
+                                    fileType: true,
+                                },
+                                where: {
+                                    serviceGroupId: {
+                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
+                                    },
+                                },
+                                take: 4
+                            },
+                        },
+                        // include:{
+                        //   VendorServiceGroup:{
+                        //     orderBy:{
+                        //       cost: 'asc'
+                        //     }
+                        //   }
+                        // },
+                        orderBy: {
+                            VendorServiceGroup: {
+                                _count: 'desc'
+                            }
+                        },
+                        where: {
+                            categoryId: res.id,
+                            isActive: true,
+                            VendorServiceGroup: {
+                                some: {
+                                    groupId: {
+                                        in: serviceGrpIds,
+                                    },
+                                },
+                            },
+                        },
+                    }),
+                }).subscribe((r) => {
+                    const rating = 4;
+                    const tag = "Popular";
+
+                    const loadMore = params.page * params.limit + params.limit <= r.count;
+                    resolve({
+                        data: r.data.map((x) => ({
+                            id: x.username,
+                            name: x.username,
+                            portfolio: x.vendorPortfolio.map((x) =>
+                                ({ type: x.fileType, value: x.fileName })
+                            ),
+                            rating,
+                            tag,
+                            startsFrom: x.VendorServiceGroup[0]?.cost || 0,
+                            profileImg: x.profileImageName
+                                ? PATH.RESOURCE_URL + x.profileImageName
+                                : PATH.AVATAR_PLACEHOLDER,
+                            services: x.services.map((x) => x.service.name),
+                        })),
+                        loadMore,
+                    });
+                });
+            });
+    });
+
+    return result
+}
+
+function signup(props: {
+    fullName: string,
+    mobileNumber: string,
+    email: string,
+    username: string
+    socialUrl?: string | null,
+    categoryId?: string | null
+}) {
+    return db.vendor.create({
+        data: {
+            id: generateUuid(),
+            name: props.fullName,
+            mobileNumber: props.mobileNumber,
+            email: props.email,
+            username: props.username,
+            source: UserSource.MANUAL,
+            isActive: false,
+            socialUrl: props.socialUrl,
+            categoryId: props.categoryId
+        }
+    });
+}
+
+function getVendorByUsername(username: string) {
+    return new Promise<VendorProfile | null>(function (resolve, reject) {
+        db.vendor.findFirstOrThrow({
+            where: {
+                username,
+                isActive: true
+            },
+            select: {
+                id: true,
+                username: true,
+                name: true,
+                primaryColor: true,
+                coverImageName: true,
+                profileImageName: true,
+                bio: true,
+                vendorType: {
+                    select: {
+                        name: true
+                    }
+                },
+                VendorServiceGroup: {
+                    take: 1,
+                    where: {
+                        isActive: true
+                    },
+                    orderBy: {
+                        cost: 'asc'
+                    },
+                    select: {
+                        cost: true
+                    }
+                }
+            }
+        }).then(r => {
+            if (r) {
+                resolve({
+                    id: r.id,
+                    username: r.username,
+                    fullName: r.username,
+                    location: '',
+                    gender: '',
+                    type: r.vendorType?.name || '',
+                    primaryColor: r.primaryColor,
+                    avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                    coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
+                    bio: r.bio,
+                    baseCharge: r.VendorServiceGroup[0]?.cost || 0
+                });
+            } else {
+                resolve(null);
+            }
+        }).catch(e => reject(false));
+    });
+}
+
+function getServices(username: string) {
+    return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve) {
+
+        db.vendorServiceGroup.findMany({
+            orderBy: [{
+                group: {
+                    name: 'asc'
+                }
+            }, {
+                group: {
+                    serviceGroupType: {
+                        name: 'asc'
+                    }
+                }
+            }],
+            where: {
+                isActive: true,
+                vendor: {
+                    username
+                }
+            },
+            select: {
+                id: true,
+                cost: true,
+                group: {
+                    select: {
+                        serviceGroupType: {
+                            select: {
+                                name: true
+                            }
+                        },
+                        id: true,
+                        name: true,
+                        minHour: true,
+                        isEstimated: true,
+                        serviceGroupItem: {
+                            orderBy: {
+                                position: 'asc'
+                            },
+                            where: {
+                                service: {
+                                    vendorService: {
+                                        some: {
+                                            vendor: {
+                                                username
                                             }
                                         }
                                     }
+                                }
+                            },
+                            select: {
+                                serviceId: true,
+                                isOptional: true,
+                                addonGroup: {
+                                    select: {
+                                        name: true,
+                                        id: true
+                                    }
                                 },
-                                select: {
-                                    serviceId: true,
-                                    isOptional: true,
-                                    addonGroup: {
-                                        select: {
-                                            name: true,
-                                            id: true
-                                        }
-                                    },
-                                    service: {
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                        }
+                                service: {
+                                    select: {
+                                        id: true,
+                                        name: true,
                                     }
                                 }
                             }
-                        },
+                        }
                     },
-                    vendorService: {
-                        select: {
-                            service: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    fareMode: true
-                                }
-                            },
-                            cost: true,
-                            duration: true,
-                        }
-                    }
                 },
-            }).then(r => {
-                const groupedItems: { [key in string]: { name: string, services: VendorService[] } } = {};
-
-                r.forEach(x => {
-                    const grouptype = x.group.serviceGroupType?.name || 'Others';
-                    if (!groupedItems[grouptype]) {
-                        groupedItems[grouptype] = { name: grouptype, services: [] };
-                    }
-
-                    const includedIds = x.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
-                    const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
-                    let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
-
-                    const selectableList = x.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
-                        if (!item.addonGroup) {
-                            return acc;
-                        }
-                        const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
-                        if (!addongGrp) {
-                            acc.push({
-                                id: item.addonGroup?.id,
-                                title: item.addonGroup?.name,
-                                services: [{
-                                    id: item.service.id,
-                                    title: item.service.name,
-                                    duration: 0,
-                                }]
-                            });
-                        } else {
-                            const addonItem = optional.find(x => x.service.id === item.serviceId);
-                            addongGrp.services.push({
-                                id: item.service.id,
-                                title: item.service.name,
-                                duration: 0,
-                                cost: addonItem?.cost,
-                                fareMode: addonItem?.service.fareMode
-                            });
-                        }
-                        optional = optional.filter(x => x.service.id !== item.serviceId);
-                        return acc;
-                    }, []);
-
-                    groupedItems[grouptype].services.push({
-                        vendorServiceGroupId: x.id,
-                        groupId: x.group.id,
-                        title: x.group.name,
-                        minHour: x.group.minHour,
-                        cost: x.cost,
-                        isEstimated: x.group.isEstimated,
-                        included: included.map(i => ({
-                            id: i.service.id,
-                            title: i.service.name,
-                            duration: i.duration,
-                        })),
-                        addons: optional.map(i => ({
-                            id: i.service.id,
-                            title: i.service.name,
-                            duration: i.duration,
-                            cost: i.cost,
-                            fareMode: i.service.fareMode
-                        })),
-                        selectableList
-                    });
-                });
-
-                resolve(Object.values(groupedItems));
-            });
-        });
-    },
-    getVendorServiceGroup: (id: string) => {
-        return new Promise<VendorService>(function (resolve) {
-
-            db.vendorServiceGroup.findFirstOrThrow({
-                orderBy: [{
-                    group: {
-                        name: 'asc'
-                    }
-                }, {
-                    group: {
-                        serviceGroupType: {
-                            name: 'asc'
-                        }
-                    }
-                }],
-                where: {
-                    id,
-                    isActive: true
-                },
-                select: {
-                    id: true,
-                    cost: true,
-                    costExtraHour: true,
-                    group: {
-                        select: {
-                            serviceGroupType: {
-                                select: {
-                                    name: true
-                                }
-                            },
-                            id: true,
-                            name: true,
-                            minHour: true,
-                            imageName: true,
-                            serviceGroupItem: {
-                                orderBy: {
-                                    position: 'asc'
-                                },
-                                select: {
-                                    serviceId: true,
-                                    isOptional: true,
-                                    addonGroup: {
-                                        select: {
-                                            name: true,
-                                            id: true
-                                        }
-                                    },
-                                    service: {
-                                        select: {
-                                            id: true,
-                                            name: true,
-                                        }
-                                    }
-                                }
+                vendorService: {
+                    select: {
+                        service: {
+                            select: {
+                                id: true,
+                                name: true,
+                                fareMode: true
                             }
                         },
-                    },
-                    vendorService: {
-                        select: {
-                            service: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                }
-                            },
-                            cost: true,
-                            duration: true,
-                        }
+                        cost: true,
+                        duration: true,
                     }
-                },
-            }).then(r => {
+                }
+            },
+        }).then(r => {
+            const groupedItems: { [key in string]: { name: string, services: VendorService[] } } = {};
 
-                const includedIds = r.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
-                const included = r.vendorService.filter(i => includedIds.includes(i.service.id));
-                let optional = r.vendorService.filter(i => !includedIds.includes(i.service.id))
+            r.forEach(x => {
+                const grouptype = x.group.serviceGroupType?.name || 'Others';
+                if (!groupedItems[grouptype]) {
+                    groupedItems[grouptype] = { name: grouptype, services: [] };
+                }
 
-                const selectableList = r.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
+                const includedIds = x.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
+                const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
+                let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
+
+                const selectableList = x.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
                     if (!item.addonGroup) {
                         return acc;
                     }
@@ -395,71 +403,217 @@ export const VendorQuery = {
                             services: [{
                                 id: item.service.id,
                                 title: item.service.name,
-                                duration: 0
+                                duration: 0,
                             }]
                         });
                     } else {
+                        const addonItem = optional.find(x => x.service.id === item.serviceId);
                         addongGrp.services.push({
                             id: item.service.id,
                             title: item.service.name,
-                            duration: 0
+                            duration: 0,
+                            cost: addonItem?.cost,
+                            fareMode: addonItem?.service.fareMode
                         });
                     }
                     optional = optional.filter(x => x.service.id !== item.serviceId);
                     return acc;
                 }, []);
 
-                const groupData: VendorService = {
-                    vendorServiceGroupId: r.id,
-                    groupId: r.group.id,
-                    title: r.group.name,
-                    image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
-                    minHour: r.group.minHour,
-                    cost: r.cost,
-                    costExtraHour: r.costExtraHour,
+                groupedItems[grouptype].services.push({
+                    vendorServiceGroupId: x.id,
+                    groupId: x.group.id,
+                    title: x.group.name,
+                    minHour: x.group.minHour,
+                    cost: x.cost,
+                    isEstimated: x.group.isEstimated,
                     included: included.map(i => ({
                         id: i.service.id,
                         title: i.service.name,
-                        duration: i.duration
+                        duration: i.duration,
                     })),
                     addons: optional.map(i => ({
                         id: i.service.id,
                         title: i.service.name,
                         duration: i.duration,
-                        cost: i.cost
+                        cost: i.cost,
+                        fareMode: i.service.fareMode
                     })),
                     selectableList
-                };
+                });
+            });
 
-                resolve(groupData);
-            });
+            resolve(Object.values(groupedItems));
         });
-    },
-    topRatedVendorsByType: (vendorType: string) => {
-        return new Promise<{
-            id: string,
-            name: string,
-            image: string
-        }[]>(function (resolve) {
-            db.vendor.findMany({
-                take: 6,
-                where: {
-                    isActive: true,
-                    vendorType: {
-                        keyName: vendorType
-                    }
-                },
-                select: {
-                    username: true,
-                    profileImageName: true
+    });
+}
+
+function getVendorServiceGroup(id: string) {
+    return new Promise<VendorService>(function (resolve) {
+
+        db.vendorServiceGroup.findFirstOrThrow({
+            orderBy: [{
+                group: {
+                    name: 'asc'
                 }
-            }).then(r => {
-                resolve(r.map(x => ({
-                    id: x.username,
-                    name: x.username,
-                    image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
-                })))
-            });
-        })
-    }
+            }, {
+                group: {
+                    serviceGroupType: {
+                        name: 'asc'
+                    }
+                }
+            }],
+            where: {
+                id,
+                isActive: true
+            },
+            select: {
+                id: true,
+                cost: true,
+                costExtraHour: true,
+                group: {
+                    select: {
+                        serviceGroupType: {
+                            select: {
+                                name: true
+                            }
+                        },
+                        id: true,
+                        name: true,
+                        minHour: true,
+                        imageName: true,
+                        serviceGroupItem: {
+                            orderBy: {
+                                position: 'asc'
+                            },
+                            select: {
+                                serviceId: true,
+                                isOptional: true,
+                                addonGroup: {
+                                    select: {
+                                        name: true,
+                                        id: true
+                                    }
+                                },
+                                service: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+                vendorService: {
+                    select: {
+                        service: {
+                            select: {
+                                id: true,
+                                name: true,
+                            }
+                        },
+                        cost: true,
+                        duration: true,
+                    }
+                }
+            },
+        }).then(r => {
+
+            const includedIds = r.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
+            const included = r.vendorService.filter(i => includedIds.includes(i.service.id));
+            let optional = r.vendorService.filter(i => !includedIds.includes(i.service.id))
+
+            const selectableList = r.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
+                if (!item.addonGroup) {
+                    return acc;
+                }
+                const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
+                if (!addongGrp) {
+                    acc.push({
+                        id: item.addonGroup?.id,
+                        title: item.addonGroup?.name,
+                        services: [{
+                            id: item.service.id,
+                            title: item.service.name,
+                            duration: 0
+                        }]
+                    });
+                } else {
+                    addongGrp.services.push({
+                        id: item.service.id,
+                        title: item.service.name,
+                        duration: 0
+                    });
+                }
+                optional = optional.filter(x => x.service.id !== item.serviceId);
+                return acc;
+            }, []);
+
+            const groupData: VendorService = {
+                vendorServiceGroupId: r.id,
+                groupId: r.group.id,
+                title: r.group.name,
+                image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
+                minHour: r.group.minHour,
+                cost: r.cost,
+                costExtraHour: r.costExtraHour,
+                included: included.map(i => ({
+                    id: i.service.id,
+                    title: i.service.name,
+                    duration: i.duration
+                })),
+                addons: optional.map(i => ({
+                    id: i.service.id,
+                    title: i.service.name,
+                    duration: i.duration,
+                    cost: i.cost
+                })),
+                selectableList
+            };
+
+            resolve(groupData);
+        });
+    });
+}
+
+
+function topRatedVendorsByType(vendorType: string) {
+    return new Promise<{
+        id: string,
+        name: string,
+        image: string
+    }[]>(function (resolve) {
+        db.vendor.findMany({
+            take: 6,
+            where: {
+                isActive: true,
+                vendorType: {
+                    keyName: vendorType
+                }
+            },
+            select: {
+                username: true,
+                profileImageName: true
+            }
+        }).then(r => {
+            resolve(r.map(x => ({
+                id: x.username,
+                name: x.username,
+                image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
+            })))
+        });
+    })
+}
+
+export const VendorQuery = {
+    Stories,
+    portfolioByAlbumId,
+    portfolioByUsername,
+    getFilteredVendors,
+    Signup: signup,
+    getVendorByUsername,
+    getServices,
+    getVendorServiceGroup,
+    topRatedVendorsByType
 }

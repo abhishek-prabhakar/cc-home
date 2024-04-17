@@ -19,7 +19,8 @@ import ListSortBar, { SORT_BY } from "~/components/ListSortBar";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
-import { PortfolioItem } from "~/types";
+import { VendorQuery } from "~/service/vendor.service";
+import { PortfolioItem, VendorResultListItem } from "~/types";
 import { db } from "~/utils/database";
 
 
@@ -31,16 +32,6 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-type Vendor = {
-  id: string;
-  name: string;
-  portfolio: PortfolioItem[];
-  rating: number;
-  tag?: string;
-  profileImg: string;
-  services: string[];
-  startsFrom?: number;
-};
 
 type Filter = {
   name: string;
@@ -52,9 +43,10 @@ type MetaData = {
   description: string;
 };
 type Result = {
-  data: Vendor[];
+  data: VendorResultListItem[];
   loadMore: boolean;
 };
+
 type loaderData = {
   page: number;
   result: Result;
@@ -103,139 +95,12 @@ export async function loader({
     }
   }
 
-  const result = new Promise<Result>(function (resolve) {
-    db.vendorType
-      .findFirstOrThrow({
-        where: {
-          keyName: pageId,
-        },
-        select: {
-          id: true,
-          serviceGroup: {
-            where: {
-              id: {
-                in: categoryIds,
-              },
-            },
-            select: {
-              id: true,
-            },
-          },
-        },
-      })
-      .then((res) => {
-        const serviceGrpIds = res.serviceGroup.map((x) => x.id);
-        forkJoin({
-          count: db.vendor.count({
-            where: {
-              isActive: true,
-              categoryId: res.id,
-              VendorServiceGroup: {
-                some: {
-                  groupId: {
-                    in: serviceGrpIds,
-                  },
-                },
-              },
-            },
-          }),
-          data: db.vendor.findMany({
-            skip: page * limit,
-            take: limit,
-            select: {
-              id: true,
-              username: true,
-              profileImageName: true,
-              VendorServiceGroup: {
-                select: {
-                  cost: true
-                },
-                take: 1,
-                orderBy: {
-                  cost: 'asc'
-                }
-              },
-              services: {
-                select: {
-                  service: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                },
-                where: {
-                  serviceGroup: {
-                    groupId: {
-                      in: serviceGrpIds,
-                    },
-                  },
-                },
-                take: 5,
-              },
-              vendorPortfolio: {
-                orderBy: {
-                  createdAt: 'desc'
-                },
-                select: {
-                  fileName: true,
-                  fileType: true,
-                },
-                where: {
-                  serviceGroupId: {
-                    in: categoryIds ? serviceGrpIds : undefined,
-                  },
-                },
-                take: 4
-              },
-            },
-            // include:{
-            //   VendorServiceGroup:{
-            //     orderBy:{
-            //       cost: 'asc'
-            //     }
-            //   }
-            // },
-            orderBy: {
-              VendorServiceGroup: {
-                _count: 'desc'
-              }
-            },
-            where: {
-              categoryId: res.id,
-              isActive: true,
-              VendorServiceGroup: {
-                some: {
-                  groupId: {
-                    in: serviceGrpIds,
-                  },
-                },
-              },
-            },
-          }),
-        }).subscribe((r) => {
-          const rating = 4;
-          const tag = "Popular";
 
-          const loadMore = page * limit + limit <= r.count;
-          resolve({
-            data: r.data.map((x) => ({
-              id: x.username,
-              name: x.username,
-              portfolio: x.vendorPortfolio.map((x) =>
-                ({ type: x.fileType, value: x.fileName })
-              ),
-              rating,
-              tag,
-              startsFrom: x.VendorServiceGroup[0]?.cost || 0,
-              profileImg: x.profileImageName
-                ? PATH.RESOURCE_URL + x.profileImageName
-                : PATH.AVATAR_PLACEHOLDER,
-              services: x.services.map((x) => x.service.name),
-            })),
-            loadMore,
-          });
-        });
-      });
+  const result = VendorQuery.getFilteredVendors({
+    page,
+    limit,
+    serviceGroupIds: categoryIds || [],
+    vendorType: pageId || ''
   });
 
   const filters = new Promise<Filter[]>(function (resolve) {
@@ -521,13 +386,13 @@ const Photography = {
     vendors,
     loadMore,
   }: {
-    vendors: Vendor[];
+    vendors: VendorResultListItem[];
     loadMore: boolean;
   }) => {
     const data = useLoaderData<loaderData>();
     const navigate = useNavigate();
     const location = useLocation();
-    const [result, setResult] = useState<Vendor[]>([]);
+    const [result, setResult] = useState<VendorResultListItem[]>([]);
 
     useEffect(() => {
       if (!vendors) {
