@@ -25,12 +25,6 @@ import { PortfolioItem, VendorResultListItem } from "~/types";
 import ListSortBar from "~/components/ListSortBar";
 import { VendorQuery } from "~/service/vendor.service";
 
-const sortPanelStyles: React.CSSProperties = {
-    background: "var(--ui-color-accent)",
-    padding: "10px 20px",
-    borderRadius: "4px",
-};
-
 export const meta: V2_MetaFunction = () => {
     return [
         { title: "Celebria Collective" },
@@ -69,18 +63,13 @@ export async function loader({
         vendorType: pageId || ''
     });
 
-    const data = new Promise<{
-        name: string;
-    } | null
-    >(function (resolve) {
-        db.serviceGroup.findFirst({
-            where: {
-                id: categoryId
-            },
-            select: {
-                name: true
-            }
-        }).then(r => resolve(r));
+    const data = db.serviceGroup.findFirst({
+        where: {
+            id: categoryId
+        },
+        select: {
+            name: true
+        }
     });
 
     return defer({
