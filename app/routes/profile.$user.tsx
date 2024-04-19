@@ -29,27 +29,38 @@ export async function loader({ params, request }: LoaderArgs) {
     const id = params.user || '';
 
     const searchParams = new URL(request.url).searchParams;
+    const preselectedServiceGrpId = searchParams.get('service')?.toString();
+
     const vendorDetails = VendorQuery.getVendorByUsername(id);
     const serviceList = VendorQuery.getServices(id);
 
     return defer({
         profile: vendorDetails,
         services: serviceList,
-        serviceGroupId: searchParams.get('service')
+        serviceGroupId: preselectedServiceGrpId
     });
 }
 
 
 const ProfileLayout = {
     Index: () => {
+        const [activeGroupData, setActiveGroupData] = useState<VendorService | null>()
         const data = useLoaderData<typeof loader>();
+
+        function setPreselectedGrpData(d?: VendorService | null) {
+            if (d) {
+                setActiveGroupData(d)
+            } else {
+                setActiveGroupData(null)
+            }
+        }
 
         return <Container size={'xl'} >
             <Grid gutter={'xl'}>
                 <Grid.Col span={{ base: 12, md: 3 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.profile}>
-                            {profile => <ProfileLayout.Cover profile={profile} />}
+                            {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} />}
                         </Await>
                     </Suspense>
                 </Grid.Col>
@@ -60,13 +71,13 @@ const ProfileLayout = {
             <Divider my="xl" />
             <Suspense fallback={<div className="container"><Skeleton /></div>}>
                 <Await resolve={data.services}>
-                    {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} />}
+                    {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} preSelectedGroup={setPreselectedGrpData} />}
                 </Await>
             </Suspense>
             <ProfileLayout.CartSuggestion />
         </Container>
     },
-    Cover: ({ profile }: { profile: VendorProfile | null }) => {
+    Cover: ({ profile, activeGroupData }: { profile: VendorProfile | null, activeGroupData?: VendorService | null }) => {
 
         return <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Card.Section>
@@ -100,14 +111,21 @@ const ProfileLayout = {
                             <Space h="md" />
                             <Divider />
                             <Space h="md" />
-                            <Text c="dimmed">Starting from <Currency value={profile?.baseCharge} /></Text>
+                            {activeGroupData ?
+                                <>
+                                    <Text c="dimmed">{activeGroupData.title} services starting from <Currency value={profile?.baseCharge} /></Text>
+                                    <Divider />
+                                    <Space h="md" />
+                                    <Text c="dimmed">Other services starting from <Currency value={profile?.baseCharge} /></Text>
+                                </>
+                                : <Text c="dimmed">Starting from <Currency value={profile?.baseCharge} /></Text>}
                         </Box>
                     </Grid.Col>
                 </Grid>
             </Card.Section>
         </Card>;
     },
-    Pricing: ({ services, preSelectedGroupId }: { services: ServiceGroup[], preSelectedGroupId: string | null }) => {
+    Pricing: ({ services, preSelectedGroupId, preSelectedGroup }: { services: ServiceGroup[], preSelectedGroupId: string | null, preSelectedGroup: (d?: VendorService | null) => void }) => {
         const [activeService, setActive] = useState<VendorService>();
         const [flatList, setFlatList] = useState<VendorService[]>([]);
 
@@ -115,7 +133,9 @@ const ProfileLayout = {
             const list = services.reduce<VendorService[]>((acc, x) => acc.concat(x.services), []);
             setFlatList(list);
             if (preSelectedGroupId) {
-                setActive(list.find(x => x.groupId === preSelectedGroupId));
+                const grpData = list.find(x => x.groupId === preSelectedGroupId);
+                setActive(grpData);
+                preSelectedGroup(grpData)
             } else {
                 setActive(list[0]);
             }
