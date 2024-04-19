@@ -22,7 +22,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
   }
 
   return <Grid gutter={0} align="end">
-    <Grid.Col span={{ base: 12, md: 6 }}>
+    <Grid.Col span={{ base: 12, md: 5 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
           <Link to={url()}>
@@ -34,17 +34,13 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           </Link>
         </Grid.Col>
         <Grid.Col span={{ base: 'auto', md: 12 }}>
-          <Group justify="space-between" align="center">
-            <Group gap={'sm'} align="center">
-              <Title order={4}>{name}</Title>
-              {tag && <Badge color="green" size="xs">{tag}</Badge>}
-            </Group>
-            <Group gap={'sm'}>
-              <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
-              <Text c="dimmed">
-                ({rating} reviews)
-              </Text>
-            </Group>
+          <Group gap={'sm'} align="center">
+            <Title order={4}>{name}</Title>
+            {tag && <Badge color="green" size="xs">{tag}</Badge>}
+            <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
+            <Text c="dimmed">
+              ({rating} reviews)
+            </Text>
           </Group>
         </Grid.Col>
       </Grid>
