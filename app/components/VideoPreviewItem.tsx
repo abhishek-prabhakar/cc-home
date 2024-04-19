@@ -29,7 +29,7 @@ function VideoPreviewItem({ ytId }: { ytId: string }) {
             );
         }}
     >
-        <Box pos="relative" className="cursor-pointer" h={'100%'}>
+        <div className="cursor-pointer" style={{ zIndex: 0, position: 'relative', height: '100%' }}>
             <LoadingOverlay visible={true}
                 overlayProps={{
                     backgroundOpacity: 0
@@ -38,7 +38,7 @@ function VideoPreviewItem({ ytId }: { ytId: string }) {
                     children: <ActionIcon variant="filled" color="pink" size="lg" ><IconPlayerPlay /></ActionIcon>
                 }} bg={'none'} />
             <Image radius={'md'} src={PATH.YOUTUBE_THUMBNAIL.replace(':id', ytId)} h={'100%'} />
-        </Box>
+        </div>
     </PhotoView>
 }
 
