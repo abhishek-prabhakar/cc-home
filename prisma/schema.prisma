@@ -132,6 +132,10 @@ model BookingService {
   vendorServiceGroupId String
   locationLat          Int
   locationLon          Int
+  discount             Int                @default(0)
+  offerApplied         String?
+  originalCost         Int                @default(0)
+  rating               Int                @default(0)
   vendorServiceGroup   VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id])
   Booking              Booking            @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   BookingAddons        BookingAddons[]

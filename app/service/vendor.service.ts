@@ -115,6 +115,11 @@ function getFilteredVendors(params: {
                     },
                     select: {
                         cost: true,
+                        BookingService: {
+                            select: {
+                                rating: true
+                            }
+                        },
                         vendor: {
                             select: {
                                 id: true,
@@ -184,7 +189,6 @@ function getFilteredVendors(params: {
                     }),
                     data: query,
                 }).subscribe((r) => {
-                    const rating = 4;
                     const loadMore = params.page * params.limit + params.limit <= r.count.length;
                     resolve({
                         data: r.data.map((x) => ({
@@ -193,7 +197,7 @@ function getFilteredVendors(params: {
                             portfolio: x.vendor.vendorPortfolio.map((x) =>
                                 ({ type: x.fileType, value: x.fileName })
                             ),
-                            rating,
+                            rating: x.BookingService.reduce((s, i) => s + i.rating, 0),
                             tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
                             startsFrom: x.cost || 0,
                             profileImg: x.vendor.profileImageName

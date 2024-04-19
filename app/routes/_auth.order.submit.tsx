@@ -79,6 +79,7 @@ export async function action({
                         vendorServiceGroupId: item.vendorServiceGroupId,
                         status: BookingStatus.PENDING,
                         cost: item.cost,
+                        originalCost: item.cost,
                         date: item.date,
                         timeHour: item.timeHour,
                         duration: item.duration,

@@ -39,9 +39,9 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
             {tag && <Badge color="green" size="xs">{tag}</Badge>}
           </Group>
           <Group gap={'sm'}>
-            <Rating defaultValue={rating} fractions={3} readOnly size="sm" />
+            <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
             <Text c="dimmed">
-              (23 Reviews)
+              ({rating} Reviews)
             </Text>
           </Group>
         </Grid.Col>
