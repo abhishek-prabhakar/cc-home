@@ -82,7 +82,7 @@ export async function loader({
     sortBy
   });
 
-  const filters = new Promise<Filter[]>(function (resolve) {
+  const filters = new Promise<Filter[]>(function (resolve, reject) {
     of(true)
       .pipe(
         switchMap((_) =>
@@ -146,6 +146,8 @@ export async function loader({
             }))
             .concat([{ name: "Other services", category: res.unsorted }])
         );
+      }, e => {
+        reject('error');
       });
   });
 

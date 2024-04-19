@@ -83,7 +83,7 @@ function getFilteredVendors(params: {
     }
 }) {
 
-    const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean }>(function (resolve) {
+    const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean }>(function (resolve, reject) {
         db.vendorType
             .findFirstOrThrow({
                 where: {
@@ -167,8 +167,11 @@ function getFilteredVendors(params: {
                 });
 
                 forkJoin({
-                    count: db.vendorServiceGroup.count({
+                    count: db.vendorServiceGroup.findMany({
                         distinct: ['vendorId'],
+                        select: {
+                            id: true
+                        },
                         where: {
                             vendor: {
                                 isActive: true,
@@ -182,8 +185,7 @@ function getFilteredVendors(params: {
                     data: query,
                 }).subscribe((r) => {
                     const rating = 4;
-
-                    const loadMore = params.page * params.limit + params.limit <= r.count;
+                    const loadMore = params.page * params.limit + params.limit <= r.count.length;
                     resolve({
                         data: r.data.map((x) => ({
                             id: x.vendor.username,
@@ -201,6 +203,8 @@ function getFilteredVendors(params: {
                         })),
                         loadMore,
                     });
+                }, e => {
+                    reject('conenction failed')
                 });
             });
     });

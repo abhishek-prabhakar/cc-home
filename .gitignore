@@ -3,4 +3,5 @@ node_modules
 /.cache
 /.netlify
 /public/build
+/build
 .env
