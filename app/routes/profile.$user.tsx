@@ -113,7 +113,7 @@ const ProfileLayout = {
                             <Space h="md" />
                             {activeGroupData ?
                                 <>
-                                    <Text c="dimmed">{activeGroupData.title} services starting from <Currency value={activeGroupData?.cost} /></Text>
+                                    <Text c="dimmed">{activeGroupData.title} starting from <Currency value={activeGroupData?.cost} /></Text>
                                     <Space h="md" />
                                     <Divider />
                                     <Space h="md" />
