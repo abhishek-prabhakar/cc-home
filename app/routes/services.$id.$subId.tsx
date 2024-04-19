@@ -63,7 +63,7 @@ export async function loader({
         vendorType: pageId || ''
     });
 
-    const data = db.serviceGroup.findFirst({
+    const data = await db.serviceGroup.findFirst({
         where: {
             id: categoryId
         },
@@ -101,9 +101,7 @@ const Photography = {
                             <Stack gap={'lg'}>
                                 <Text c="dimmed"><Badge color="magenta">{data.meta.name}</Badge> in Banglore</Text>
                                 <Suspense>
-                                    <Await resolve={data.data}>
-                                        {response => <Title order={3}>{response?.name}</Title>}
-                                    </Await>
+                                    <Title order={3}>{data.data?.name}</Title>
                                 </Suspense>
                                 <p>{data.meta.description}</p>
 
