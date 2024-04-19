@@ -1,5 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'
 
+export const OPENREPLY_KEY = 'rTOIL6yXtT3QWBpBcTSB';
+
 function defaultGetUserId() {
     return uuidV4()
 }

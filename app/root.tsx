@@ -34,7 +34,7 @@ import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
 import Tracker from '@openreplay/tracker/cjs';
-import { startTracker } from "./tracker";
+import { OPENREPLY_KEY, startTracker } from "./tracker";
 import { CartService } from "./service/cart.service";
 
 export const links: LinksFunction = () => [
@@ -158,7 +158,7 @@ export async function loader({ request }: LoaderArgs) {
     pages,
     cartCount: userCart?.length || 0,
     ENV: {
-      openReplyprojectKey: process.env.NODE_ENV === "production" ? 'rTOIL6yXtT3QWBpBcTSB' : null
+      openReplyprojectKey: process.env.NODE_ENV === "production" ? OPENREPLY_KEY : null
     }
   });
 }
