@@ -77,7 +77,11 @@ function portfolioByUsername(username?: string) {
 }
 
 
-function getFilteredVendors(params: { vendorType: string, serviceGroupIds: string[], page: number, limit: number }) {
+function getFilteredVendors(params: {
+    vendorType: string, serviceGroupIds: string[], page: number, limit: number, sortBy: {
+        cost?: 'asc' | 'desc'
+    }
+}) {
 
     const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean }>(function (resolve) {
         db.vendorType
@@ -101,98 +105,80 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
             })
             .then((res) => {
                 const serviceGrpIds = res.serviceGroup.map((x) => x.id);
-                forkJoin({
-                    count: db.vendor.count({
-                        where: {
-                            isActive: true,
-                            categoryId: res.id,
-                            VendorServiceGroup: {
-                                some: {
-                                    groupId: {
-                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
-                                    },
-                                },
-                            },
-                        },
-                    }),
-                    data: db.vendor.findMany({
-                        skip: params.page * params.limit,
-                        take: params.limit,
-                        select: {
-                            id: true,
-                            username: true,
-                            profileImageName: true,
-                            VendorServiceGroup: {
-                                select: {
-                                    cost: true
-                                },
-                                take: 1,
-                                orderBy: {
-                                    cost: 'asc'
-                                },
-                                where: {
-                                    groupId: {
-                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
-                                    },
-                                }
-                            },
-                            services: {
-                                select: {
-                                    service: {
-                                        select: {
-                                            name: true,
+
+                const query = db.vendorServiceGroup.findMany({
+                    skip: params.page * params.limit,
+                    take: params.limit,
+                    distinct: ['vendorId'],
+                    orderBy: {
+                        cost: params.sortBy.cost
+                    },
+                    select: {
+                        cost: true,
+                        vendor: {
+                            select: {
+                                id: true,
+                                username: true,
+                                profileImageName: true,
+                                services: {
+                                    select: {
+                                        service: {
+                                            select: {
+                                                name: true,
+                                            },
                                         },
                                     },
+                                    where: {
+                                        serviceGroup: {
+                                            groupId: {
+                                                in: serviceGrpIds.length ? serviceGrpIds : undefined,
+                                            },
+                                        },
+                                    },
+                                    take: 5,
                                 },
-                                where: {
-                                    serviceGroup: {
-                                        groupId: {
+                                vendorPortfolio: {
+                                    orderBy: {
+                                        createdAt: 'desc'
+                                    },
+                                    select: {
+                                        fileName: true,
+                                        fileType: true,
+                                    },
+                                    where: {
+                                        serviceGroupId: {
                                             in: serviceGrpIds.length ? serviceGrpIds : undefined,
                                         },
                                     },
+                                    take: 4
                                 },
-                                take: 5,
-                            },
-                            vendorPortfolio: {
-                                orderBy: {
-                                    createdAt: 'desc'
-                                },
-                                select: {
-                                    fileName: true,
-                                    fileType: true,
-                                },
-                                where: {
-                                    serviceGroupId: {
-                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
-                                    },
-                                },
-                                take: 4
-                            },
-                        },
-                        // include:{
-                        //   VendorServiceGroup:{
-                        //     orderBy:{
-                        //       cost: 'asc'
-                        //     }
-                        //   }
-                        // },
-                        orderBy: {
-                            VendorServiceGroup: {
-                                _count: 'desc'
                             }
-                        },
-                        where: {
-                            categoryId: res.id,
+                        }
+                    },
+                    where: {
+                        vendor: {
                             isActive: true,
-                            VendorServiceGroup: {
-                                some: {
-                                    groupId: {
-                                        in: serviceGrpIds.length ? serviceGrpIds : undefined,
-                                    },
-                                },
+                            categoryId: res.id,
+                        },
+                        groupId: {
+                            in: serviceGrpIds.length ? serviceGrpIds : undefined,
+                        }
+                    }
+                })
+
+                forkJoin({
+                    count: db.vendorServiceGroup.count({
+                        where: {
+                            vendor: {
+                                isActive: true,
+                                categoryId: res.id,
+                            },
+                            groupId: {
+                                in: serviceGrpIds.length ? serviceGrpIds : undefined,
                             },
                         },
                     }),
+                    data: query,
                 }).subscribe((r) => {
                     const rating = 4;
                     const tag = "Popular";
@@ -200,18 +186,18 @@ function getFilteredVendors(params: { vendorType: string, serviceGroupIds: strin
                     const loadMore = params.page * params.limit + params.limit <= r.count;
                     resolve({
                         data: r.data.map((x) => ({
-                            id: x.username,
-                            name: x.username,
-                            portfolio: x.vendorPortfolio.map((x) =>
+                            id: x.vendor.username,
+                            name: x.vendor.username,
+                            portfolio: x.vendor.vendorPortfolio.map((x) =>
                                 ({ type: x.fileType, value: x.fileName })
                             ),
                             rating,
                             tag,
-                            startsFrom: x.VendorServiceGroup[0]?.cost || 0,
-                            profileImg: x.profileImageName
-                                ? PATH.RESOURCE_URL + x.profileImageName
+                            startsFrom: x.cost || 0,
+                            profileImg: x.vendor.profileImageName
+                                ? PATH.RESOURCE_URL + x.vendor.profileImageName
                                 : PATH.AVATAR_PLACEHOLDER,
-                            services: x.services.map((x) => x.service.name),
+                            services: x.vendor.services.map((x) => x.service.name),
                         })),
                         loadMore,
                     });

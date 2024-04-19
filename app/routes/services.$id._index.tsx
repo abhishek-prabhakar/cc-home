@@ -22,6 +22,7 @@ import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { PortfolioItem, VendorResultListItem } from "~/types";
 import { db } from "~/utils/database";
+import sortFieldMapper from "~/utils/sortField.map";
 
 
 
@@ -47,7 +48,7 @@ export async function loader({
   const url = new URL(request.url);
   const searchParams = url.searchParams;
   const page = parseInt(searchParams.get("page") || "") || 0;
-  const sort = searchParams.get('sort');
+  const sortField = searchParams.get('sort') as SORT_BY;
 
   let categoryIds = searchParams
     .get("category")
@@ -71,20 +72,14 @@ export async function loader({
     },
   });
 
-  if (sort) {
-    switch (sort) {
-      case SORT_BY.HIGHEST_PRICE:
-
-        break
-    }
-  }
-
+  const sortBy = sortFieldMapper(sortField);
 
   const result = VendorQuery.getFilteredVendors({
     page,
     limit,
     serviceGroupIds: categoryIds || [],
-    vendorType: pageId || ''
+    vendorType: pageId || '',
+    sortBy
   });
 
   const filters = new Promise<Filter[]>(function (resolve) {

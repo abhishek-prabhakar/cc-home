@@ -189,3 +189,15 @@ export type PortfolioItem = {
     type: string,
     value: string
 }
+
+
+export type VendorResultListItem = {
+    id: string;
+    name: string;
+    portfolio: PortfolioItem[];
+    rating: number;
+    tag?: string;
+    profileImg: string;
+    services: string[];
+    startsFrom?: number;
+};

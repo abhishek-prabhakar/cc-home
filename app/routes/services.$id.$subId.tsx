@@ -22,8 +22,9 @@ import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from 
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PortfolioItem, VendorResultListItem } from "~/types";
-import ListSortBar from "~/components/ListSortBar";
+import ListSortBar, { SORT_BY } from "~/components/ListSortBar";
 import { VendorQuery } from "~/service/vendor.service";
+import sortFieldMapper from "~/utils/sortField.map";
 
 export const meta: V2_MetaFunction = () => {
     return [
@@ -42,6 +43,7 @@ export async function loader({
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get("page") || "") || 0;
+    const sortField: SORT_BY = searchParams.get("sort")?.toString() as SORT_BY;
     const limit = 20;
 
     const metaInfo = await db.vendorType.findFirstOrThrow({
@@ -56,11 +58,14 @@ export async function loader({
         },
     });
 
+    const sortBy = sortFieldMapper(sortField);
+
     const result = VendorQuery.getFilteredVendors({
         page,
         limit,
         serviceGroupIds: categoryId ? [categoryId] : [],
-        vendorType: pageId || ''
+        vendorType: pageId || '',
+        sortBy
     });
 
     const data = await db.serviceGroup.findFirst({
