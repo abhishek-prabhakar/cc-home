@@ -168,6 +168,7 @@ function getFilteredVendors(params: {
 
                 forkJoin({
                     count: db.vendorServiceGroup.count({
+                        distinct: ['vendorId'],
                         where: {
                             vendor: {
                                 isActive: true,
