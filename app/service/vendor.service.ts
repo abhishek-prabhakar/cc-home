@@ -164,7 +164,7 @@ function getFilteredVendors(params: {
                             in: serviceGrpIds.length ? serviceGrpIds : undefined,
                         }
                     }
-                })
+                });
 
                 forkJoin({
                     count: db.vendorServiceGroup.count({
@@ -181,7 +181,6 @@ function getFilteredVendors(params: {
                     data: query,
                 }).subscribe((r) => {
                     const rating = 4;
-                    const tag = "Popular";
 
                     const loadMore = params.page * params.limit + params.limit <= r.count;
                     resolve({
@@ -192,7 +191,7 @@ function getFilteredVendors(params: {
                                 ({ type: x.fileType, value: x.fileName })
                             ),
                             rating,
-                            tag,
+                            tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
                             startsFrom: x.cost || 0,
                             profileImg: x.vendor.profileImageName
                                 ? PATH.RESOURCE_URL + x.vendor.profileImageName
