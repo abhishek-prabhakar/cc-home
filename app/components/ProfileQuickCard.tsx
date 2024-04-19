@@ -34,15 +34,17 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           </Link>
         </Grid.Col>
         <Grid.Col span={{ base: 'auto', md: 12 }}>
-          <Group gap={'sm'} align="center">
-            <Title order={4}>{name}</Title>
-            {tag && <Badge color="green" size="xs">{tag}</Badge>}
-          </Group>
-          <Group gap={'sm'}>
-            <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
-            <Text c="dimmed">
-              ({rating} Reviews)
-            </Text>
+          <Group justify="space-between" align="center">
+            <Group gap={'sm'} align="center">
+              <Title order={4}>{name}</Title>
+              {tag && <Badge color="green" size="xs">{tag}</Badge>}
+            </Group>
+            <Group gap={'sm'}>
+              <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
+              <Text c="dimmed">
+                ({rating} reviews)
+              </Text>
+            </Group>
           </Group>
         </Grid.Col>
       </Grid>
