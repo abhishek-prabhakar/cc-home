@@ -19,73 +19,14 @@ export function loader(args: LoaderArgs) {
         return defer({ results: [] });
     }
 
-    // const groups = new Promise(function (resolve) {
-    //     db.serviceGroup.findMany({
-    //         take: 15,
-    //         where: {
-    //             OR: [
-    //                 {
-    //                     name: {
-    //                         contains: query,
-    //                     }
-    //                 },
-    //                 {
-    //                     serviceGroupItem: {
-    //                         some: {
-    //                             service: {
-    //                                 name: {
-    //                                     contains: query
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 },
-    //                 {
-    //                     serviceGroupType: {
-    //                         name: {
-    //                             contains: query
-    //                         }
-    //                     }
-    //                 }
-    //             ]
-    //         },
-    //         select: {
-    //             id: true,
-    //             name: true,
-    //             vendorType: {
-    //                 select: {
-    //                     name: true,
-    //                     keyName: true
-    //                 }
-    //             },
-    //             serviceGroupType: {
-    //                 select: {
-    //                     name: true
-    //                 }
-    //             },
-    //             serviceGroupItem: {
-    //                 where: {
-    //                     service: {
-    //                         name: {
-    //                             contains: query
-    //                         }
-    //                     }
-    //                 },
-    //                 select: {
-    //                     service: {
-    //                         select: {
-    //                             name: true
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }).then(r => resolve(r));
-    // });
-
     const groups = new Promise<FuseResult<SearchResultItem>[]>(function (resolve) {
         db.serviceGroup.findMany({
             take: 15,
+            where: {
+                vendorType: {
+                    isActive: true
+                }
+            },
             select: {
                 id: true,
                 name: true,
@@ -93,11 +34,11 @@ export function loader(args: LoaderArgs) {
                     select: {
                         name: true,
                         keyName: true
-                    }
+                    },
                 },
                 serviceGroupType: {
                     select: {
-                        name: true
+                        name: true,
                     }
                 },
                 serviceGroupItem: {

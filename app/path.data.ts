@@ -5,6 +5,4 @@ export const PATH = {
     YOUTUBE_THUMBNAIL: 'https://img.youtube.com/vi/:id/maxresdefault.jpg',
     FILE_UPLOAD: 'https://asset.hotmommy.in/asset/upload',
     GUEST_FILE_UPLOAD: "https://asset.hotmommy.in/guest/upload",
-    // FILE_UPLOAD: "http://localhost:3003/upload/",
-    // GUEST_FILE_UPLOAD: "http://localhost:3003/guest/upload/",
 }
