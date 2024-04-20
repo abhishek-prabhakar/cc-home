@@ -225,6 +225,9 @@ export default function App() {
   );
 }
 
+export function HydrateFallback() {
+  return <p>Loading...</p>;
+}
 
 export function ErrorBoundary() {
   const error: any = useRouteError();
