@@ -210,7 +210,9 @@ function getFilteredVendors(params: {
                 }, e => {
                     reject('conenction failed')
                 });
-            });
+            }).catch(e => {
+                reject('Connection failed');
+            });;
     });
 
     return result
@@ -295,7 +297,7 @@ function getVendorByUsername(username: string) {
 }
 
 function getServices(username: string) {
-    return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve) {
+    return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve, reject) {
 
         db.vendorServiceGroup.findMany({
             orderBy: [{
@@ -443,12 +445,14 @@ function getServices(username: string) {
             });
 
             resolve(Object.values(groupedItems));
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
     });
 }
 
 function getVendorServiceGroup(id: string) {
-    return new Promise<VendorService>(function (resolve) {
+    return new Promise<VendorService>(function (resolve, reject) {
 
         db.vendorServiceGroup.findFirstOrThrow({
             orderBy: [{
@@ -572,7 +576,9 @@ function getVendorServiceGroup(id: string) {
             };
 
             resolve(groupData);
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
     });
 }
 
@@ -582,7 +588,7 @@ function topRatedVendorsByType(vendorType: string) {
         id: string,
         name: string,
         image: string
-    }[]>(function (resolve) {
+    }[]>(function (resolve, reject) {
         db.vendor.findMany({
             take: 6,
             where: {
@@ -601,7 +607,9 @@ function topRatedVendorsByType(vendorType: string) {
                 name: x.username,
                 image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
             })))
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
     })
 }
 

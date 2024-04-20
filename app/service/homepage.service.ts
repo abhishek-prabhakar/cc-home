@@ -5,7 +5,7 @@ import { db } from "~/utils/database";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 
 function getJumbotronList() {
-    return new Promise<Jumbotron[]>(function (resolve) {
+    return new Promise<Jumbotron[]>(function (resolve, reject) {
         db.websiteSlider.findMany({
             orderBy: {
                 createdAt: 'desc'
@@ -53,14 +53,16 @@ function getJumbotronList() {
                 }
             })
             );
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
 
     });
 
 }
 
 function getCategoryCollection() {
-    return new Promise<HomeCategoryItem[]>(function (resolve) {
+    return new Promise<HomeCategoryItem[]>(function (resolve, reject) {
 
         db.vendorType.findMany({
             orderBy: {
@@ -133,7 +135,9 @@ function getCategoryCollection() {
             }));
 
             resolve(response)
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
     });
 }
 
@@ -183,7 +187,7 @@ function topVendorsByCategory() {
 
 
 function getPopularServices() {
-    return new Promise<Collection[]>(function (resolve) {
+    return new Promise<Collection[]>(function (resolve, reject) {
         db.serviceGroup.findMany({
             take: 8,
             select: {
@@ -211,14 +215,16 @@ function getPopularServices() {
                 image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
                 cost: 0
             })))
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
     });
 
 }
 
 
 function getCollections() {
-    return new Promise<Collection[]>(function (resolve) {
+    return new Promise<Collection[]>(function (resolve, reject) {
         db.serviceGroupType.findMany({
             take: 4,
             select: {
@@ -242,7 +248,9 @@ function getCollections() {
                 path: Routes.get('Collections', { id: x.keyName }),
                 cost: 0
             })))
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
 
     });
 }

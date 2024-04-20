@@ -57,7 +57,9 @@ export async function loader({ params, request }: LoaderArgs) {
             }));
 
             resolve(p);
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
 
     });
 

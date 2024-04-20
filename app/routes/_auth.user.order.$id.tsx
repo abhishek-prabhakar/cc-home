@@ -80,7 +80,7 @@ export async function loader({ request, params }: LoaderArgs) {
     const session = await getSession(request.headers.get("Cookie"));
     const userId = session.get(USER_SESSION_KEY);
 
-    const data = new Promise<UserBooking>(function (resolve) {
+    const data = new Promise<UserBooking>(function (resolve, reject) {
         db.booking.findFirst({
             where: {
                 userId,
@@ -154,6 +154,8 @@ export async function loader({ request, params }: LoaderArgs) {
                     }))
                 })
             }
+        }, e => {
+            reject('Connection failed');
         })
     });
 

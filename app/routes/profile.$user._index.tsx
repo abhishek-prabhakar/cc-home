@@ -55,7 +55,7 @@ export async function loader({ params }: LoaderArgs) {
 
     const profile = await VendorQuery.getVendorByUsername(username || '');
 
-    const portfolio = new Promise<PortfolioItem[]>(function (resolve) {
+    const portfolio = new Promise<PortfolioItem[]>(function (resolve, reject) {
         db.vendorPortfolio.findMany({
             orderBy: {
                 createdAt: 'desc'
@@ -72,11 +72,13 @@ export async function loader({ params }: LoaderArgs) {
             take: 9
         }).then(r => {
             resolve(r.map(x => ({ type: x.fileType, value: x.fileName })))
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
 
     });
 
-    const services = new Promise<ProfileService[]>(function (resolve) {
+    const services = new Promise<ProfileService[]>(function (resolve, reject) {
         db.vendorServiceGroup.findMany({
             take: 3,
             select: {
@@ -95,7 +97,9 @@ export async function loader({ params }: LoaderArgs) {
             }
         }).then(r => {
             resolve(r.map(x => ({ name: x.group.name, description: 'Starts from: ₹' + x.cost })));
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
     });
 
     const stories = new Promise<{

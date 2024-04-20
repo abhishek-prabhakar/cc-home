@@ -38,7 +38,7 @@ export async function action({
     if (!cartData?.length) {
         return redirect('/cart/checkout');
     }
-    const newOrder = await new Promise<string>(function (resolve) {
+    const newOrder = await new Promise<string>(function (resolve, reject) {
         CartService.summary(cartData).then(async res => {
             if (!res) {
                 return;
@@ -111,6 +111,8 @@ export async function action({
             }
 
             resolve(orderId);
+        }, e => {
+            reject('Connection failed')
         });
 
     });

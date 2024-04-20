@@ -59,7 +59,7 @@ export async function loader({ params }: LoaderArgs) {
   const id = params.user;
   const jumbotronList = getJumbotronList()
 
-  const quickLinks = new Promise<Collection[]>(function (resolve) {
+  const quickLinks = new Promise<Collection[]>(function (resolve, reject) {
     db.serviceGroup.findMany({
       take: 4,
       select: {
@@ -93,10 +93,12 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
+    }, e => {
+      reject('Connection failed');
     })
   });
 
-  const morePages = new Promise<Page[]>(function (resolve) {
+  const morePages = new Promise<Page[]>(function (resolve, reject) {
     db.vendorType.findMany({
       take: 3,
       orderBy: {
@@ -121,6 +123,8 @@ export async function loader({ params }: LoaderArgs) {
       resolve(r.map(x => ({
         path: Routes.get('Services', { id: x.keyName }), title: x.name, id: x.id, serviceGroup: x.serviceGroup
       })))
+    }, e => {
+      reject('Connection failed');
     })
   });
 

@@ -11,7 +11,7 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
             imageName: string,
             description: string[]
         }[]
-    } | null>(function (resovle) {
+    } | null>(function (resovle, reject) {
         db.serviceGroupType.findFirst({
             where: {
                 keyName: type,
@@ -68,7 +68,9 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                 })),
                 vendorType: r?.ServiceGroup[0].vendorType.name
             });
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
 
     });
 }
@@ -81,7 +83,7 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
         vendorType: {
             keyName: string, name: string
         },
-    }[]>(function (resovle) {
+    }[]>(function (resovle, reject) {
         db.serviceGroupType.findFirst({
             where: {
                 keyName: type,
@@ -121,7 +123,9 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
                 imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG,
                 vendorType: service.vendorType
             })));
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
 
     });
 }
@@ -144,7 +148,7 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                 cost: number;
             }[];
         }[];
-    }[]>(function (resolve) {
+    }[]>(function (resolve, reject) {
         if (!keyName) {
             resolve([]);
             return;
@@ -200,7 +204,9 @@ function getServicesGroupsByCollection(keyName?: string | null) {
             }
         }).then(r => {
             resolve(r)
-        })
+        }).catch(e => {
+            reject('Connection failed');
+        });
     });
 }
 
@@ -208,7 +214,7 @@ function getCollectionInfo(keyName: string) {
     return new Promise<{
         name: string,
         description: string | null
-    }>(function (resolve) {
+    }>(function (resolve, reject) {
         db.serviceGroupType.findFirstOrThrow({
             where: {
                 keyName
@@ -219,7 +225,9 @@ function getCollectionInfo(keyName: string) {
             }
         }).then(r => {
             resolve(r)
-        });
+        }).catch(e => {
+            reject('Connection failed');
+        });;
     })
 }
 

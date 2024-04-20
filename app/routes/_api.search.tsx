@@ -19,7 +19,7 @@ export function loader(args: LoaderArgs) {
         return defer({ results: [] });
     }
 
-    const groups = new Promise<FuseResult<SearchResultItem>[]>(function (resolve) {
+    const groups = new Promise<FuseResult<SearchResultItem>[]>(function (resolve, reject) {
         db.serviceGroup.findMany({
             take: 15,
             where: {
@@ -54,6 +54,8 @@ export function loader(args: LoaderArgs) {
         }).then(r => {
             const fuse = new Fuse(r, fuseOptions);
             resolve(fuse.search(query));
+        }, e => {
+            reject('Invalid search')
         });
     });
 
