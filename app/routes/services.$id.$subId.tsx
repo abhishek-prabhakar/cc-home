@@ -109,10 +109,10 @@ const Photography = {
                     <Grid gutter={40}>
                         <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
                             <Stack gap={'lg'}>
-                                <Text c="dimmed"><Badge color="magenta">{data.meta.name}</Badge> in Banglore</Text>
-                                <Suspense>
-                                    <Title order={3}>{data.data?.name}</Title>
-                                </Suspense>
+                                <Group>
+                                    <Badge color="magenta">{data.meta.name}</Badge><Text c="dimmed">in Banglore</Text>
+                                </Group>
+                                <Title order={3}>{data.data?.name}</Title>
                                 <p>{data.meta.description}</p>
 
                                 <ListSortBar onSort={sortItems} />
