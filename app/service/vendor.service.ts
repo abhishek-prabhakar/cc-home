@@ -210,6 +210,8 @@ function getFilteredVendors(params: {
                 }, e => {
                     reject('conenction failed')
                 });
+            }, e => {
+                reject('Connection failed');
             }).catch(e => {
                 reject('Connection failed');
             });;

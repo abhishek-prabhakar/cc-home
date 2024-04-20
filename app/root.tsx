@@ -72,7 +72,7 @@ export async function loader({ request }: LoaderArgs) {
   const userId = session.get(USER_SESSION_KEY);
   const userCart = await userCartCookie.parse(cookie);
 
-  const user = new Promise<User | null>(async function (resolve) {
+  const user = new Promise<User | null>(async function (resolve, reject) {
     if (!userId) {
       resolve(null);
       return;
@@ -99,7 +99,7 @@ export async function loader({ request }: LoaderArgs) {
 
 
 
-  const pages = new Promise<HeaderNavListItem[]>(async function (resolve) {
+  const pages = new Promise<HeaderNavListItem[]>(async function (resolve, reject) {
     const list = await db.vendorType.findMany({
       orderBy: {
         name: 'asc'

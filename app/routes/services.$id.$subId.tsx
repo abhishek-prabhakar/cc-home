@@ -68,7 +68,7 @@ export async function loader({
         sortBy
     });
 
-    const data = await db.serviceGroup.findFirst({
+    const data = await db.serviceGroup.findFirstOrThrow({
         where: {
             id: categoryId
         },
