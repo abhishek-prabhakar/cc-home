@@ -198,3 +198,8 @@ const Photography = {
 };
 
 export default Photography.Index;
+
+
+export function ErrorBoundary() {
+    return <div>Something went wrong</div>
+}
