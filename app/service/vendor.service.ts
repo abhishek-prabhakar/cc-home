@@ -103,7 +103,7 @@ function getFilteredVendors(params: {
                     },
                 },
             })
-            .then((res) => {
+            .then(async (res) => {
                 const serviceGrpIds = res.serviceGroup.map((x) => x.id);
 
                 const query = db.vendorServiceGroup.findMany({
@@ -171,44 +171,44 @@ function getFilteredVendors(params: {
                     }
                 });
 
-                forkJoin({
-                    count: db.vendorServiceGroup.findMany({
-                        distinct: ['vendorId'],
-                        select: {
-                            id: true
+                const totalCount = db.vendorServiceGroup.findMany({
+                    distinct: ['vendorId'],
+                    select: {
+                        id: true
+                    },
+                    where: {
+                        vendor: {
+                            isActive: true,
+                            categoryId: res.id,
                         },
-                        where: {
-                            vendor: {
-                                isActive: true,
-                                categoryId: res.id,
-                            },
-                            groupId: {
-                                in: serviceGrpIds.length ? serviceGrpIds : undefined,
-                            },
+                        groupId: {
+                            in: serviceGrpIds.length ? serviceGrpIds : undefined,
                         },
-                    }),
-                    data: query,
-                }).subscribe((r) => {
-                    const loadMore = params.page * params.limit + params.limit <= r.count.length;
-                    resolve({
-                        data: r.data.map((x) => ({
-                            id: x.vendor.username,
-                            name: x.vendor.username,
-                            portfolio: x.vendor.vendorPortfolio.map((x) =>
-                                ({ type: x.fileType, value: x.fileName })
-                            ),
-                            rating: x.BookingService.reduce((s, i) => s + i.rating, 0),
-                            tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
-                            startsFrom: x.cost || 0,
-                            profileImg: x.vendor.profileImageName
-                                ? PATH.RESOURCE_URL + x.vendor.profileImageName
-                                : PATH.AVATAR_PLACEHOLDER,
-                            services: x.vendor.services.map((x) => x.service.name),
-                        })),
-                        loadMore,
-                    });
-                }, e => {
-                    reject('conenction failed')
+                    },
+                });
+
+                const [resultData, countData] = await db.$transaction([
+                    query,
+                    totalCount
+                ]);
+
+                const loadMore = params.page * params.limit + params.limit <= countData.length;
+                resolve({
+                    data: resultData.map((x) => ({
+                        id: x.vendor.username,
+                        name: x.vendor.username,
+                        portfolio: x.vendor.vendorPortfolio.map((x) =>
+                            ({ type: x.fileType, value: x.fileName })
+                        ),
+                        rating: x.BookingService.reduce((s, i) => s + i.rating, 0),
+                        tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
+                        startsFrom: x.cost || 0,
+                        profileImg: x.vendor.profileImageName
+                            ? PATH.RESOURCE_URL + x.vendor.profileImageName
+                            : PATH.AVATAR_PLACEHOLDER,
+                        services: x.vendor.services.map((x) => x.service.name),
+                    })),
+                    loadMore,
                 });
             }, e => {
                 reject('Connection failed');

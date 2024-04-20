@@ -16,8 +16,6 @@ import Banner from "~/components/Banner";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { forkJoin } from "rxjs";
-import { PATH } from "~/path.data";
 import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
@@ -102,7 +100,7 @@ const Photography = {
 
         useEffect(() => {
             if (data.debug) {
-                data.result.then(re => console.log(re)).catch(er => console.log(er))
+                data.result.then(re => console.log(re)).catch(er => console.log('--->', er))
             }
         }, [])
 
