@@ -197,7 +197,7 @@ const ProfileHome = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.stories}>
                     {
-                        album => album.length ? <>
+                        album => album?.length ? <>
                             <Text fw={500}>Stories</Text>
                             <Space h="sm" />
                             <CarouselProvider
