@@ -41,7 +41,6 @@ export async function loader({
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get("page") || "") || 0;
-    const debug = searchParams.get("debug");
     const sortField: SORT_BY = searchParams.get("sort")?.toString() as SORT_BY;
     const limit = 20;
 
@@ -80,8 +79,7 @@ export async function loader({
         data,
         result,
         page,
-        meta: { ...metaInfo, categoryId },
-        debug
+        meta: { ...metaInfo, categoryId }
     });
 }
 
@@ -90,7 +88,6 @@ const Photography = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
-        const [pageReady, setPageReady] = useState(false);
 
         function sortItems(x: string | null) {
             const searchParams = new URLSearchParams(location.search);
@@ -98,10 +95,6 @@ const Photography = {
 
             navigate(`${location.pathname}?${searchParams.toString()}`);
         }
-
-        useEffect(() => {
-            setPageReady(true);
-        }, [])
 
         return (
             <Container size={'xl'}>
@@ -116,7 +109,7 @@ const Photography = {
                                 <p>{data.meta.description}</p>
 
                                 <ListSortBar onSort={sortItems} />
-                                {pageReady ? <Suspense
+                                <Suspense
                                     fallback={<Skeleton />}
                                 >
                                     <Await resolve={data?.result}>
@@ -128,7 +121,7 @@ const Photography = {
                                             />
                                         )}
                                     </Await>
-                                </Suspense> : '...'}
+                                </Suspense>
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
