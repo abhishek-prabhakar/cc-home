@@ -43,6 +43,7 @@ export async function loader({
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     const page = parseInt(searchParams.get("page") || "") || 0;
+    const debug = searchParams.get("debug");
     const sortField: SORT_BY = searchParams.get("sort")?.toString() as SORT_BY;
     const limit = 20;
 
@@ -65,7 +66,7 @@ export async function loader({
         limit,
         serviceGroupIds: categoryId ? [categoryId] : [],
         vendorType: pageId || '',
-        sortBy
+        sortBy,
     });
 
     const data = await db.serviceGroup.findFirstOrThrow({
@@ -82,6 +83,7 @@ export async function loader({
         result,
         page,
         meta: { ...metaInfo, categoryId },
+        debug
     });
 }
 
@@ -98,6 +100,12 @@ const Photography = {
             navigate(`${location.pathname}?${searchParams.toString()}`);
         }
 
+        useEffect(() => {
+            if (data.debug) {
+                data.result.then(re => console.log(re)).catch(er => console.log(er))
+            }
+        }, [])
+
         return (
             <Container size={'xl'}>
                 <Stack gap={'lg'}>
@@ -111,19 +119,20 @@ const Photography = {
                                 <p>{data.meta.description}</p>
 
                                 <ListSortBar onSort={sortItems} />
-                                <Suspense
-                                    fallback={<Skeleton />}
-                                >
-                                    <Await resolve={data?.result}>
-                                        {(response) => (
-                                            <Photography.Results
-                                                categoryId={data.meta.categoryId}
-                                                vendors={response.data}
-                                                loadMore={response.loadMore}
-                                            />
-                                        )}
-                                    </Await>
-                                </Suspense>
+                                {data.debug ? 'nope' :
+                                    <Suspense
+                                        fallback={<Skeleton />}
+                                    >
+                                        <Await resolve={data?.result}>
+                                            {(response) => (
+                                                <Photography.Results
+                                                    categoryId={data.meta.categoryId}
+                                                    vendors={response.data}
+                                                    loadMore={response.loadMore}
+                                                />
+                                            )}
+                                        </Await>
+                                    </Suspense>}
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
