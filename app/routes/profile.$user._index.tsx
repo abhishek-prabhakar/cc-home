@@ -135,8 +135,6 @@ const ProfileHome = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
         return <>
-            <Text fw={500}>Stories</Text>
-            <Space h="sm" />
             <ProfileHome.Stories />
             <Space h="xl" />
             <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -199,56 +197,44 @@ const ProfileHome = {
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.stories}>
                     {
-                        album => <CarouselProvider
-                            naturalSlideWidth={300}
-                            naturalSlideHeight={400}
-                            totalSlides={album.length}
-                            visibleSlides={sliderCount()}
-                            isIntrinsicHeight={true}
-                            step={sliderCount()} dragStep={sliderCount()}
-                            className="carousel-slider-wrapper"
-                        >
+                        album => album.length ? <>
+                            <Text fw={500}>Stories</Text>
+                            <Space h="sm" />
+                            <CarouselProvider
+                                naturalSlideWidth={300}
+                                naturalSlideHeight={400}
+                                totalSlides={album.length}
+                                visibleSlides={sliderCount()}
+                                isIntrinsicHeight={true}
+                                step={sliderCount()} dragStep={sliderCount()}
+                                className="carousel-slider-wrapper"
+                            >
 
-                            <Slider>
-                                {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
-                                    <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
-                                        <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
-                                            <div style={{ position: 'relative', cursor: 'pointer' }}>
-                                                <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
-                                                <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
-                                                <Overlay
-                                                    gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
-                                                    opacity={0.85}
-                                                    p={isMobile ? 'xs' : 'md'}
-                                                >
-                                                    <Flex align={'end'} h="100%">
-                                                        <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>
-                                                    </Flex>
-                                                </Overlay>
+                                <Slider>
+                                    {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
+                                        <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
+                                            <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
+                                                <div style={{ position: 'relative', cursor: 'pointer' }}>
+                                                    <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                    <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                    <Overlay
+                                                        gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
+                                                        opacity={0.85}
+                                                        p={isMobile ? 'xs' : 'md'}
+                                                    >
+                                                        <Flex align={'end'} h="100%">
+                                                            <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>
+                                                        </Flex>
+                                                    </Overlay>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </Slide>)}
-                            </Slider>
-                        </CarouselProvider>}
+                                    </Slide>)}
+                                </Slider>
+                            </CarouselProvider>
+                        </> : ''}
                 </Await>
             </Suspense>
-            {/* <PhotoProvider> 
-                 <PhotoView  width={500} height={500} render={({ scale, attrs }) => {
-                const width: any = attrs.style?.width || 0;
-                const offset = (width - elementSize) / elementSize;
-                const childScale = scale === 1 ? scale + offset : 1 + offset;
-
-                return <div {...attrs}><div style={{ transform: `scale(${childScale})`, width: elementSize, transformOrigin: '0 0' }}>
-                    <Stories
-                        stories={stories}
-                        defaultInterval={1500}
-                        width={'inherit'}
-                        height={'inherit'}
-                    /></div></div>
-            }}/>
-            </PhotoProvider> */}
-
             <Modal.Root opened={!!stories.length} onClose={() => setStories([])} p={0} centered>
                 <Modal.Overlay />
                 <Modal.Content p={0}>
