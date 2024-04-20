@@ -90,6 +90,7 @@ const Photography = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
+        const [pageReady, setPageReady] = useState(false);
 
         function sortItems(x: string | null) {
             const searchParams = new URLSearchParams(location.search);
@@ -99,9 +100,7 @@ const Photography = {
         }
 
         useEffect(() => {
-            if (data.debug) {
-                data.result.then(re => console.log(re)).catch(er => console.log('--->', er))
-            }
+            setPageReady(true);
         }, [])
 
         return (
@@ -117,20 +116,19 @@ const Photography = {
                                 <p>{data.meta.description}</p>
 
                                 <ListSortBar onSort={sortItems} />
-                                {data.debug ? 'nope' :
-                                    <Suspense
-                                        fallback={<Skeleton />}
-                                    >
-                                        <Await resolve={data?.result}>
-                                            {(response) => (
-                                                <Photography.Results
-                                                    categoryId={data.meta.categoryId}
-                                                    vendors={response.data}
-                                                    loadMore={response.loadMore}
-                                                />
-                                            )}
-                                        </Await>
-                                    </Suspense>}
+                                {pageReady ? <Suspense
+                                    fallback={<Skeleton />}
+                                >
+                                    <Await resolve={data?.result}>
+                                        {(response) => (
+                                            <Photography.Results
+                                                categoryId={data.meta.categoryId}
+                                                vendors={response.data}
+                                                loadMore={response.loadMore}
+                                            />
+                                        )}
+                                    </Await>
+                                </Suspense> : '...'}
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
