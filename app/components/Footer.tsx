@@ -12,7 +12,7 @@ export function Footer() {
     return <div style={{ background: '#fbfbfb', marginTop: '100px' }}>
         <Container size={'lg'} pt={'xl'}>
             <Space h="xl" />
-            <Link to="/" ><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
+            <Link to="/" ><img src="/assets/brand-logo.png" width={'124px'} /></Link>
             <Space h="lg" />
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.pages}>

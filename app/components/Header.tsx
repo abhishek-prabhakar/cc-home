@@ -48,7 +48,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                 <AppNavigation.Drawer user={user} />
                             </Box>
                             <div className="header-brand">
-                                <Link to="/" style={logoStyle}><img src="/assets/brand-logo-1.png" width={'124px'} /></Link>
+                                <Link to="/" style={logoStyle}><img src="/assets/brand-logo.png" width={'124px'} /></Link>
                             </div>
                             <Box visibleFrom="md">
                                 <Menu>
@@ -113,7 +113,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
             </Container>
         </div>
         <Modal opened={showComingSoonDialog} onClose={() => setComingSoonDialog(false)} title="">
-            <ComingSoonModal/>
+            <ComingSoonModal />
         </Modal>
     </>
 }
