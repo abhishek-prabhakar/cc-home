@@ -627,6 +627,10 @@ async function getLinkedProfiles(username: string) {
     });
     return db.vendor.findMany({
         where: {
+            isActive: true,
+            vendorType: {
+                isActive: true
+            },
             OR: [{
                 email: currentVendor.email
             }, {
