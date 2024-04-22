@@ -79,7 +79,7 @@ const ProfileLayout = {
                         <Title order={4} c={'gray'}>Services I'm offering,</Title>
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.otherProfiles}>
-                                {profiles => <SegmentedControl size="md" radius="xl" style={{ zIndex: 0 }} color="pink" data={profiles.map(item => ({
+                                {profiles => <SegmentedControl value={data.username} size="md" radius="xl" style={{ zIndex: 0 }} color="pink" data={profiles.map(item => ({
                                     value: item.username, label: <Center style={{ gap: 10 }}>{item.username === data.username ? <IconCircleArrowDownFilled style={{ width: rem(16), height: rem(16) }} /> : <IconPoint />} <span>{item.vendorType?.vendorIdentifier}</span></Center>
                                 }))} onChange={switchProfile} />}
                             </Await>
