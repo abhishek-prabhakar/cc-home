@@ -190,6 +190,7 @@ export async function action(args: ActionArgs) {
                         groupId: groupId?.toString(),
                         vendorId,
                         cost: parseInt(groupCost?.toString() || '0'),
+                        costByVendor: parseInt(groupCost?.toString() || '0'),
                         costExtraHour: parseInt(grpExtraHourCost || '0')
                     },
                 });
@@ -227,6 +228,7 @@ export async function action(args: ActionArgs) {
                 await db.vendorServiceGroup.update({
                     data: {
                         cost: parseInt(groupCost || '0'),
+                        costByVendor: parseInt(groupCost || '0'),
                         costExtraHour: parseInt(grpExtraHourCost || '0')
                     },
                     where: {

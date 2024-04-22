@@ -63,16 +63,18 @@ model Vendor {
 }
 
 model VendorServiceGroup {
-  id             String           @id
-  vendorId       String
-  groupId        String
-  cost           Int
-  costExtraHour  Int              @default(0)
-  isActive       Boolean          @default(true)
-  group          ServiceGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  vendor         Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorService  VendorService[]
-  BookingService BookingService[]
+  id                String                               @id
+  vendorId          String
+  groupId           String
+  cost              Int
+  costExtraHour     Int                                  @default(0)
+  isActive          Boolean                              @default(true)
+  costByVendor      Int                                  @default(0)
+  serviceChargeType VendorServiceGroup_serviceChargeType @default(FLAT)
+  group             ServiceGroup                         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  vendor            Vendor                               @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorService     VendorService[]
+  BookingService    BookingService[]
 }
 
 model VendorPortfolio {
@@ -382,4 +384,9 @@ enum BannerLocation {
   HOME_2
   HOME_3
   SERVICE_RESULT_1
+}
+
+enum VendorServiceGroup_serviceChargeType {
+  FLAT
+  PERCENTAGE
 }
