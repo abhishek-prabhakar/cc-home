@@ -1,8 +1,8 @@
 import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
-import { Accordion, ActionIcon, Badge, Box, Button, Card, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
-import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconAsterisk, IconCheck, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,6 +17,8 @@ import { IconDiscountCheckFilled } from "@tabler/icons-react";
 import { IconMapPin } from "@tabler/icons-react";
 import { IconHeart } from "@tabler/icons-react";
 import Currency from "~/utils/currency.transformer";
+import { IconPoint } from "@tabler/icons-react";
+import { IconCircleArrowDownFilled } from "@tabler/icons-react";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -33,11 +35,14 @@ export async function loader({ params, request }: LoaderArgs) {
 
     const vendorDetails = VendorQuery.getVendorByUsername(id);
     const serviceList = VendorQuery.getServices(id);
+    const getLinkedProfiles = VendorQuery.getLinkedProfiles(id);
 
     return defer({
+        username: id,
         profile: vendorDetails,
         services: serviceList,
-        serviceGroupId: preselectedServiceGrpId
+        serviceGroupId: preselectedServiceGrpId,
+        otherProfiles: getLinkedProfiles
     });
 }
 
@@ -46,6 +51,7 @@ const ProfileLayout = {
     Index: () => {
         const [activeGroupData, setActiveGroupData] = useState<VendorService | null>()
         const data = useLoaderData<typeof loader>();
+        const navigate = useNavigate();
 
         function setPreselectedGrpData(d?: VendorService | null) {
             if (d) {
@@ -53,6 +59,10 @@ const ProfileLayout = {
             } else {
                 setActiveGroupData(null)
             }
+        }
+
+        function switchProfile(value: string) {
+            navigate(Routes.get('VendorProfile', { id: value }));
         }
 
         return <Container size={'xl'} >
@@ -65,6 +75,17 @@ const ProfileLayout = {
                     </Suspense>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 9 }}>
+                    <Stack justify="center" align="center">
+                        <Title order={4} c={'gray'}>Services I'm offering,</Title>
+                        <Suspense fallback={<Skeleton />}>
+                            <Await resolve={data.otherProfiles}>
+                                {profiles => <SegmentedControl size="md" radius="md" style={{ zIndex: 0 }} color="pink" data={profiles.map(item => ({
+                                    value: item.username, label: <Center style={{ gap: 10 }}>{item.username === data.username ? <IconCircleArrowDownFilled style={{ width: rem(16), height: rem(16) }} /> : <IconPoint />} <span>{item.vendorType?.vendorIdentifier}</span></Center>
+                                }))} onChange={switchProfile} />}
+                            </Await>
+                        </Suspense>
+                    </Stack>
+                    <Space h={'md'} />
                     <Outlet />
                 </Grid.Col>
             </Grid>

@@ -336,7 +336,7 @@ const PartnerSignup = {
         </Grid.Col>
         <Grid.Col span={12}>
           <Input.Wrapper label="Contact Number">
-            <Input name="phone" leftSection="+91" maxLength={10} required />
+            <Input name="phone" leftSection="+91" maxLength={10} minLength={10} required />
           </Input.Wrapper>
         </Grid.Col>
         <Grid.Col span={12}>

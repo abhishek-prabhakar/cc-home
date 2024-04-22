@@ -71,6 +71,7 @@ model VendorServiceGroup {
   isActive          Boolean                              @default(true)
   costByVendor      Int                                  @default(0)
   serviceChargeType VendorServiceGroup_serviceChargeType @default(FLAT)
+  serviceCharge     Int                                  @default(0)
   group             ServiceGroup                         @relation(fields: [groupId], references: [id], onDelete: Cascade)
   vendor            Vendor                               @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorService     VendorService[]
@@ -269,15 +270,16 @@ model ServiceGroupAddonGroup {
 }
 
 model VendorType {
-  id            String          @id
-  name          String
-  description   String
-  keyName       String          @unique
-  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
-  isActive      Boolean         @default(false)
-  serviceGroup  ServiceGroup[]
-  vendor        Vendor[]
-  JumbotronData JumbotronData[]
+  id               String          @id
+  name             String
+  description      String
+  keyName          String          @unique
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  isActive         Boolean         @default(false)
+  vendorIdentifier String?
+  serviceGroup     ServiceGroup[]
+  vendor           Vendor[]
+  JumbotronData    JumbotronData[]
 
   @@map("vendorType")
 }

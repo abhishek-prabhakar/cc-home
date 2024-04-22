@@ -107,7 +107,7 @@ const Onboard = {
                                 <Input name="email" placeholder="Enter your email for communication purpose." required type="email" />
                             </Input.Wrapper>
                             <Input.Wrapper label="Phone*">
-                                <Input name="phone" placeholder="Enter your contact number for communication purpose." required />
+                                <Input name="phone" leftSection="+91" placeholder="Enter your contact number for communication purpose." required maxLength={10} minLength={10} />
                             </Input.Wrapper>
                             <Box>
                                 <Text fw={500}>Portfolio (optional)</Text>

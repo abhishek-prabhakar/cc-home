@@ -614,6 +614,36 @@ function topRatedVendorsByType(vendorType: string) {
     })
 }
 
+
+async function getLinkedProfiles(username: string) {
+    const currentVendor = await db.vendor.findFirstOrThrow({
+        where: {
+            username
+        },
+        select: {
+            email: true,
+            mobileNumber: true
+        }
+    });
+    return db.vendor.findMany({
+        where: {
+            OR: [{
+                email: currentVendor.email
+            }, {
+                mobileNumber: currentVendor.mobileNumber
+            }]
+        },
+        select: {
+            username: true,
+            vendorType: {
+                select: {
+                    vendorIdentifier: true
+                }
+            }
+        }
+    })
+}
+
 export const VendorQuery = {
     Stories,
     portfolioByAlbumId,
@@ -623,5 +653,6 @@ export const VendorQuery = {
     getVendorByUsername,
     getServices,
     getVendorServiceGroup,
+    getLinkedProfiles,
     topRatedVendorsByType
 }
