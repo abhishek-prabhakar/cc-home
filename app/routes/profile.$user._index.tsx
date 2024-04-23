@@ -1,7 +1,7 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, Overlay, ScrollArea, Space, Stack, Text, Title, px, rem } from "@mantine/core";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
-import { Await, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { Await, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
@@ -52,8 +52,6 @@ export async function loader({ params }: LoaderArgs) {
     if (!username) {
         new Error("404");
     };
-
-    const profile = await VendorQuery.getVendorByUsername(username || '');
 
     const portfolio = new Promise<PortfolioItem[]>(function (resolve, reject) {
         db.vendorPortfolio.findMany({
@@ -116,7 +114,6 @@ export async function loader({ params }: LoaderArgs) {
     });
 
     return defer({
-        profile,
         username: username,
         portfolio: portfolio,
         services,
@@ -134,6 +131,8 @@ const elementSize = 400;
 const ProfileHome = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
+        const outletContext = useOutletContext<VendorProfile>();
+
         return <>
             <ProfileHome.Stories />
             <Space h="xl" />
@@ -153,7 +152,7 @@ const ProfileHome = {
                             borderColor: '#2a2a2a'
                         }} />
                         <Space h="md" />
-                        <Text>{data.profile?.bio}</Text>
+                        <Text>{outletContext?.bio}</Text>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <ProfileHome.Services />

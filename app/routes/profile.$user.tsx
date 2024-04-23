@@ -52,6 +52,7 @@ const ProfileLayout = {
         const [activeGroupData, setActiveGroupData] = useState<VendorService | null>()
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
+        const [profileData, setProfileData] = useState<VendorProfile | null>();
 
         function setPreselectedGrpData(d?: VendorService | null) {
             if (d) {
@@ -70,7 +71,7 @@ const ProfileLayout = {
                 <Grid.Col span={{ base: 12, md: 3 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.profile}>
-                            {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} />}
+                            {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} onLoad={setProfileData} />}
                         </Await>
                     </Suspense>
                 </Grid.Col>
@@ -86,7 +87,7 @@ const ProfileLayout = {
                         </Suspense>
                     </Stack>
                     <Space h={'md'} />
-                    <Outlet />
+                    <Outlet context={profileData} />
                 </Grid.Col>
             </Grid>
             <Divider my="xl" />
@@ -98,7 +99,11 @@ const ProfileLayout = {
             <ProfileLayout.CartSuggestion />
         </Container>
     },
-    Cover: ({ profile, activeGroupData }: { profile: VendorProfile | null, activeGroupData?: VendorService | null }) => {
+    Cover: ({ profile, activeGroupData, onLoad }: { profile: VendorProfile | null, activeGroupData?: VendorService | null, onLoad: (d: VendorProfile | null) => void }) => {
+
+        useEffect(() => {
+            onLoad(profile)
+        }, [])
 
         return <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Card.Section>
