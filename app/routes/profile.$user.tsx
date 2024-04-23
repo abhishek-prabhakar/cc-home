@@ -2,7 +2,7 @@ import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, 
 import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
-import { IconAsterisk, IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconArrowDown, IconAsterisk, IconCheck, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -81,7 +81,7 @@ const ProfileLayout = {
                         <Suspense fallback={<Skeleton />}>
                             <Await resolve={data.otherProfiles}>
                                 {profiles => <SegmentedControl value={data.username} size="md" radius="xl" style={{ zIndex: 0 }} color="pink" data={profiles.map(item => ({
-                                    value: item.username, label: <Center style={{ gap: 10 }}>{item.username === data.username ? <IconCircleArrowDownFilled style={{ width: rem(16), height: rem(16) }} /> : <IconPoint />} <span>{item.vendorType?.vendorIdentifier}</span></Center>
+                                    value: item.username, label: <Center style={{ gap: 10 }}>{item.username === data.username ? <IconArrowDown style={{ width: rem(16), height: rem(16) }} /> : <IconPoint />} <span>{item.vendorType?.vendorIdentifier}</span></Center>
                                 }))} onChange={switchProfile} />}
                             </Await>
                         </Suspense>
