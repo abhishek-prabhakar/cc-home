@@ -257,7 +257,7 @@ const ProfileLayout = {
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
-                                <Accordion unstyled defaultValue={String(services.findIndex(x => x.services.find(i => i.groupId === preSelectedGroupId)))}>
+                                <Accordion unstyled defaultValue={String(services.findIndex(x => x.services.find(i => i.groupId === preSelectedGroupId)) || 0)}>
                                     {services.map((group, index) => <Accordion.Item value={'' + index} key={'' + index}>
                                         <Accordion.Control style={{
                                             width: '100%',
