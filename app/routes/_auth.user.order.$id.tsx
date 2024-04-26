@@ -296,9 +296,11 @@ const UserOrderHome = {
                         </Grid.Col>
                         <Grid.Col span={'content'}>
                             <Tooltip label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
-                                <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={service.status !== BookingStatus.ACCEPTED}>
+                                {service.status !== BookingStatus.ACCEPTED ? <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={true}>
                                     Call
-                                </Button>
+                                </Button> : <a href="tel:+916363369715"><Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'}>
+                                    Call
+                                </Button></a>}
                             </Tooltip>
                         </Grid.Col>
                     </Grid>)}

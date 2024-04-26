@@ -648,6 +648,31 @@ async function getLinkedProfiles(username: string) {
     })
 }
 
+function getVendorBasicInfo(username: string) {
+    return db.vendor.findFirstOrThrow({
+        where: {
+            username
+        },
+        select: {
+            profileImageName: true,
+            username: true,
+            location: true,
+            VendorServiceGroup: {
+                take: 1,
+                where: {
+                    isActive: true
+                },
+                orderBy: {
+                    cost: 'asc'
+                },
+                select: {
+                    cost: true
+                }
+            }
+        }
+    })
+}
+
 export const VendorQuery = {
     Stories,
     portfolioByAlbumId,
@@ -655,6 +680,7 @@ export const VendorQuery = {
     getFilteredVendors,
     Signup: signup,
     getVendorByUsername,
+    getVendorBasicInfo,
     getServices,
     getVendorServiceGroup,
     getLinkedProfiles,
