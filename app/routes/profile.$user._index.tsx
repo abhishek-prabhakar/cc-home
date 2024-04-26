@@ -47,11 +47,14 @@ export async function action(args: ActionArgs) {
     return;
 }
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params, request }: LoaderArgs) {
     const username = params.user;
     if (!username) {
         new Error("404");
     };
+
+    const searchParams = new URL(request.url).searchParams;
+    const preselectedServiceGrpId = searchParams.get('service')?.toString();
 
     const portfolio = new Promise<PortfolioItem[]>(function (resolve, reject) {
         db.vendorPortfolio.findMany({
@@ -65,7 +68,10 @@ export async function loader({ params }: LoaderArgs) {
             where: {
                 vendor: {
                     username
-                }
+                },
+                serviceGroupId: {
+                    in: preselectedServiceGrpId ? [preselectedServiceGrpId] : undefined,
+                },
             },
             take: 9
         }).then(r => {
