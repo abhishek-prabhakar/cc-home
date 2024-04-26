@@ -1,3 +1,4 @@
+import EMAIL_DATA from "~/data/email.data";
 import { db } from "~/utils/database";
 
 const nodemailer = require("nodemailer");
@@ -42,7 +43,8 @@ async function sendEmail(input: SendEmailInput) {
 async function notifyVendorNewOrder(input: {
     username: string,
     date: string,
-    serviceName: string
+    serviceName: string,
+    orderId: string
 }) {
     const email = await getVendorEmailByUsername(input.username);
     if (!email?.email) {
@@ -54,6 +56,8 @@ async function notifyVendorNewOrder(input: {
     <br/>
     Date: <b>${input.date}</b>
     <br/><br/>
+    Order ID:${input.orderId}
+    <br/><br/>
     Please login to your account for more information. 
     <a href="http://www.celebriacollective.com">celebriacollective.com</a>
     `;
@@ -61,6 +65,13 @@ async function notifyVendorNewOrder(input: {
 
     await sendEmail({
         to: email?.email,
+        subject,
+        html,
+        text
+    });
+
+    await sendEmail({
+        to: EMAIL_DATA.ADMIN_EMAIL,
         subject,
         html,
         text

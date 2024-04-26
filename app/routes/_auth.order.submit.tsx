@@ -106,7 +106,8 @@ export async function action({
                 await EmailService.notifyVendorNewOrder({
                     username: item.vendorId,
                     date: item.date.toString(),
-                    serviceName: item.name
+                    serviceName: item.name,
+                    orderId: orderId
                 });
             }
 
