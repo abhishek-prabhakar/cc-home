@@ -207,6 +207,7 @@ const ProfileLayout = {
                             placeholder="Select"
                             clearable={false}
                             allowDeselect={false}
+                            defaultValue={preSelectedGroupId}
                             onChange={x => setActiveService(x)}
                             data={services.map(group => ({ group: group.name, items: group.services.map(x => ({ value: x.vendorServiceGroupId, label: x.title })) }))} />
                     </Grid.Col>

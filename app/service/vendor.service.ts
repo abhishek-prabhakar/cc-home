@@ -86,6 +86,7 @@ function getFilteredVendors(params: {
         db.vendorType
             .findFirstOrThrow({
                 where: {
+                    isActive: true,
                     keyName: params.vendorType,
                 },
                 select: {
@@ -160,6 +161,7 @@ function getFilteredVendors(params: {
                         }
                     },
                     where: {
+                        isActive: true,
                         vendor: {
                             isActive: true,
                             categoryId: res.id,
