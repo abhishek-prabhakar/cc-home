@@ -2,7 +2,7 @@ import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, 
 import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
-import { IconArrowDown, IconAsterisk, IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -162,7 +162,7 @@ const ProfileLayout = {
             if (preSelectedGroupId) {
                 const grpData = list.find(x => x.groupId === preSelectedGroupId);
                 setActive(grpData);
-                preSelectedGroup(grpData)
+                preSelectedGroup(grpData);
             } else {
                 setActive(list[0]);
             }
@@ -257,7 +257,7 @@ const ProfileLayout = {
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
-                                <Accordion unstyled defaultValue={'0'}>
+                                <Accordion unstyled defaultValue={String(services.findIndex(x => x.services.find(i => i.groupId === preSelectedGroupId)))}>
                                     {services.map((group, index) => <Accordion.Item value={'' + index} key={'' + index}>
                                         <Accordion.Control style={{
                                             width: '100%',
@@ -273,7 +273,7 @@ const ProfileLayout = {
                                         <Accordion.Panel>
                                             <Accordion classNames={classes} value={activeService?.vendorServiceGroupId} disableChevronRotation chevron={null} onChange={x => setActiveService(x)}>
                                                 {group.services.map(item => <Accordion.Item key={item.vendorServiceGroupId} value={item.vendorServiceGroupId}>
-                                                    <Accordion.Control icon={activeService?.vendorServiceGroupId === item.vendorServiceGroupId ? <IconCheck /> : <IconPlus size={12} />} color="inherit">{item.title}</Accordion.Control>
+                                                    <Accordion.Control icon={activeService?.vendorServiceGroupId === item.vendorServiceGroupId ? <IconArrowLeft /> : <IconCircle size={12} />} color="inherit">{item.title}</Accordion.Control>
                                                 </Accordion.Item>)}
                                             </Accordion>
                                         </Accordion.Panel>
