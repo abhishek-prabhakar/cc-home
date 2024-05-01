@@ -30,7 +30,7 @@ export default function () {
                         <ThemeIcon color="blue" size={24} variant="white">
                             <IconBrandWhatsapp style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }>chat on whatsapp</List.Item>
+                    }><a href="https://wa.me/6363369715">chat on whatsapp</a></List.Item>
                 </List>
             </Grid.Col>
         </Grid>
