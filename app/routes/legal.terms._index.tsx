@@ -1,8 +1,8 @@
-import { Space } from "@mantine/core";
+import { Container, Space } from "@mantine/core";
 
 export default function () {
 
-    return <div>
+    return <Container size={'xl'}>
         <p>Terms &amp; Conditions</p>
         <Space h="md" />
         <p>Last updated on Feb 19th 2024</p>
@@ -97,7 +97,6 @@ export default function () {
                 </p>
             </li>
         </ul>
-
-    </div>
+    </Container>
 
 }

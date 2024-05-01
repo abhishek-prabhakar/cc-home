@@ -1,8 +1,8 @@
-import { Space } from "@mantine/core";
+import { Container, Space } from "@mantine/core";
 
 export default function () {
 
-    return <div>
+    return <Container size={'xl'}>
 
         <p>Cancellation &amp; Refund Policy</p>
         <Space h="md" />
@@ -61,7 +61,6 @@ export default function () {
                 </p>
             </li>
         </ul>
-
-    </div>
+    </Container>
 
 }
