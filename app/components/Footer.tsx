@@ -43,7 +43,7 @@ export function Footer() {
             <Space h="md" />
             <Divider />
             <Space h="xl" />
-            <Text ta="center">© Celebria Collective 2024. All Rights Reserved.</Text>
+            <Text ta="center">© Celebria Collective {new Date()?.getFullYear()}. All Rights Reserved.</Text>
             <Space h="md" />
             <Group justify="center" gap="lg">
                 <Link to="about/contact-us"><Text c="dimmed" ta="center">Contact Us</Text></Link>
