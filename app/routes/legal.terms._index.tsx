@@ -1,9 +1,9 @@
-import { Container, Space } from "@mantine/core";
+import { Container, Space, Title } from "@mantine/core";
 
 export default function () {
 
-    return <Container size={'xl'}>
-        <p>Terms &amp; Conditions</p>
+    return <Container>
+        <Title order={3}>Terms &amp; Conditions</Title>
         <Space h="md" />
         <p>Last updated on Feb 19th 2024</p>
         <p>
