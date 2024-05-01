@@ -46,8 +46,9 @@ export function Footer() {
             <Text ta="center">© Celebria Collective 2024. All Rights Reserved.</Text>
             <Space h="md" />
             <Group justify="center" gap="lg">
-                <Link to="legal/terms"><Text c="dimmed" ta="center">Terms And Conditions</Text></Link>
-                <Link to="legal/refund-policy"><Text c="dimmed" ta="center">Cancellation & Refund Policy</Text></Link>
+                <Link to="about/contact-us"><Text c="dimmed" ta="center">Contact Us</Text></Link>
+                <Link to="about/terms"><Text c="dimmed" ta="center">Terms And Conditions</Text></Link>
+                <Link to="about/refund-policy"><Text c="dimmed" ta="center">Cancellation & Refund Policy</Text></Link>
             </Group>
             <Space h="xl" />
         </Container>
