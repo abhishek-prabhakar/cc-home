@@ -177,17 +177,8 @@ const Cart = {
             </div>)}
             <Divider />
             <Grid gutter={20} justify={'space-between'}>
-                <Grid.Col span="content"><Text size="sm" fw={500}>Subtotal</Text></Grid.Col>
-                <Grid.Col span="content"><Text size="sm" fw={500}>{orderSummary?.total} INR</Text></Grid.Col>
-            </Grid>
-            <Grid gutter={20} justify={'space-between'}>
-                <Grid.Col span="content"><Text c="dimmed">GST({orderSummary?.gst}%)</Text></Grid.Col>
-                <Grid.Col span="content"><Text >{orderSummary?.tax} INR</Text></Grid.Col>
-            </Grid>
-            <Divider />
-            <Grid gutter={20} justify={'space-between'}>
                 <Grid.Col span="content"><Text size="sm" fw={500}>Total</Text></Grid.Col>
-                <Grid.Col span="content"><Text size="sm" fw={500}>{orderSummary?.final} INR</Text></Grid.Col>
+                <Grid.Col span="content"><Text size="sm" fw={500}>{orderSummary?.total} INR</Text></Grid.Col>
             </Grid>
         </div>
     }
