@@ -346,6 +346,27 @@ model WebsiteBanner {
   @@map("websiteBanner")
 }
 
+model ActiveChargesAndPromotions {
+  id             String                                @id
+  type           ActiveChargesAndPromotions_type       @unique
+  chargeType     ActiveChargesAndPromotions_chargeType
+  chargeValue    Int                                   @default(0)
+  serviceGroupId String?
+  created_at     DateTime                              @default(now()) @db.Timestamp(6)
+}
+
+model Coupons {
+  id               String             @id
+  code             String             @unique
+  chargeType       Coupons_chargeType
+  chargeValue      Int                @default(0)
+  maxDiscountValue Int?
+  serviceGroupId   String?
+  singleUse        Boolean            @default(false)
+  expireAt         DateTime?          @db.Timestamp(6)
+  created_at       DateTime           @default(now()) @db.Timestamp(6)
+}
+
 enum UserSource {
   ORGANIC
   MANUAL
@@ -389,6 +410,21 @@ enum BannerLocation {
 }
 
 enum VendorServiceGroup_serviceChargeType {
+  FLAT
+  PERCENTAGE
+}
+
+enum ActiveChargesAndPromotions_type {
+  SERVICE_CHARGE
+  DISCOUNT
+}
+
+enum ActiveChargesAndPromotions_chargeType {
+  FLAT
+  PERCENTAGE
+}
+
+enum Coupons_chargeType {
   FLAT
   PERCENTAGE
 }

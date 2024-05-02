@@ -461,12 +461,11 @@ const Page = {
             }
         }, [data]);
 
-        function getEstimation(coupon?: string | null) {
+        function getEstimation() {
             const params = getInputParams();
             fetcher.submit({
                 action: ActionType.ESTIMATION,
-                input: JSON.stringify(params),
-                coupon: coupon || ''
+                input: JSON.stringify(params)
             }, {
                 method: 'post'
             });

@@ -1,10 +1,10 @@
 import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
-import { BookingStatus, FareMode } from "@prisma/client";
+import { BookingStatus, Coupons_chargeType, FareMode } from "@prisma/client";
 import { db } from "~/utils/database";
 
-const GST_PERCENTAGE = 3;
+const GST_PERCENTAGE = 18;
 
 async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: string) {
     const vendor = await db.vendorServiceGroup.findFirst({
@@ -89,9 +89,48 @@ function cartSummary(cart: CartInput[]) {
     });
 }
 
-function cartCalculateCost(cart: CartItem[], coupon?: string) {
+async function calculateCouponDiscount(coupon: string, total: number): Promise<{ code?: string; value: number; discount: number; }> {
+    const couponData = await db.coupons.findFirst({
+        where: {
+            code: coupon
+        }
+    });
+
+    let discount = 0;
+    let value = total;
+
+    switch (couponData?.chargeType) {
+        case Coupons_chargeType.FLAT:
+            discount = couponData.chargeValue;
+            break;
+        case Coupons_chargeType.PERCENTAGE:
+            discount = (couponData.chargeValue * value) / 100;
+            if (couponData.maxDiscountValue && discount > couponData.maxDiscountValue) {
+                discount = couponData.maxDiscountValue;
+            }
+            break;
+    }
+
+
+    return {
+        code: couponData?.code,
+        value: value - discount,
+        discount
+    }
+}
+
+async function cartCalculateCost(cart: CartItem[], coupon?: string) {
     const gst = GST_PERCENTAGE;
-    const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
+    let total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
+    let couponData;
+    let discount = 0;
+
+    if (coupon) {
+        couponData = await calculateCouponDiscount(coupon, total);
+        discount = couponData.discount;
+        total = total - discount;
+    }
+
     const tax = (gst * total) / 100;
 
     return {
@@ -99,9 +138,9 @@ function cartCalculateCost(cart: CartItem[], coupon?: string) {
         tax,
         gst,
         final: total + tax,
-        discount: 0,
-        coupon: null,
-        invalidCoupon: !!coupon
+        discount,
+        coupon: couponData?.code,
+        invalidCoupon: coupon && !couponData
     };
 }
 
