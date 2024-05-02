@@ -16,6 +16,8 @@ export async function action({
     const form = await request.formData();
     const paymentMode = form.get('paymentMode')?.toString() as BookingPaymentMode;
     const source = form.get('source')?.toString();
+    const coupon = form.get('coupon')?.toString();
+
 
     if (!userId) {
         return redirect('/user/login');
@@ -38,85 +40,80 @@ export async function action({
     if (!cartData?.length) {
         return redirect('/cart/checkout');
     }
-    const newOrder = await new Promise<string>(function (resolve, reject) {
-        CartService.summary(cartData).then(async res => {
-            if (!res) {
-                return;
+
+    const cartInput = await CartService.summary(cartData);
+
+    if (!cartInput) {
+        return;
+    }
+
+    function extractTwoDigit(number: number) {
+        return number % 100;
+    }
+
+    const summary = await CartService.calculate(cartInput, coupon);
+    const date = new Date();
+    const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
+
+    const data = await db.booking.create({
+        data: {
+            id: generateUuid(),
+            userId: loggedInUser.id,
+            orderId: orderId,
+            status: BookingStatus.PENDING,
+            total: summary.total,
+            tax: summary.tax,
+            discount: summary.discount,
+            coupon: summary.coupon,
+            paymentMode
+        }
+    });
+
+
+    for (let i = 0; i < cartInput.length; i++) {
+        const item = cartInput[i];
+        const endDate = new Date(item.date);
+        endDate.setHours(item.timeHour);
+
+        const serviceData = await db.bookingService.create({
+            data: {
+                id: generateUuid(),
+                bookingId: data.id,
+                vendorServiceGroupId: item.vendorServiceGroupId,
+                status: BookingStatus.PENDING,
+                cost: item.cost,
+                originalCost: item.cost,
+                date: item.date,
+                timeHour: item.timeHour,
+                duration: item.duration,
+                endTime: item.timeHour + item.duration,
+                endDate: endDate,
+                location: item.location,
+                locationLat: item.locationLat,
+                locationLon: item.locationLon
             }
-
-            function extractTwoDigit(number: number) {
-                return number % 100;
-            }
-
-            const summary = CartService.calculate(res);
-            const date = new Date();
-            const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
-
-            const data = await db.booking.create({
-                data: {
-                    id: generateUuid(),
-                    userId: loggedInUser.id,
-                    orderId: orderId,
-                    status: BookingStatus.PENDING,
-                    total: summary.total,
-                    tax: summary.tax,
-                    discount: 0,
-                    coupon: null,
-                    paymentMode
-                }
-            });
-
-
-            for (let i = 0; i < res.length; i++) {
-                const item = res[i];
-                const endDate = new Date(item.date);
-                endDate.setHours(item.timeHour);
-
-                const serviceData = await db.bookingService.create({
-                    data: {
-                        id: generateUuid(),
-                        bookingId: data.id,
-                        vendorServiceGroupId: item.vendorServiceGroupId,
-                        status: BookingStatus.PENDING,
-                        cost: item.cost,
-                        originalCost: item.cost,
-                        date: item.date,
-                        timeHour: item.timeHour,
-                        duration: item.duration,
-                        endTime: item.timeHour + item.duration,
-                        endDate: endDate,
-                        location: item.location,
-                        locationLat: item.locationLat,
-                        locationLon: item.locationLon
-                    }
-                });
-
-                await db.bookingAddons.createMany({
-                    data: item.services.filter(x => !!x.id).map(x => ({
-                        id: generateUuid(),
-                        bookingServiceId: serviceData.id,
-                        serviceId: x.id,
-                        serviceName: x.name,
-                        fareMode: x.fareMode,
-                        status: BookingStatus.PENDING,
-                        cost: x.cost
-                    }))
-                });
-
-                await EmailService.notifyVendorNewOrder({
-                    username: item.vendorId,
-                    date: item.date.toString(),
-                    serviceName: item.name,
-                    orderId: orderId
-                });
-            }
-
-            resolve(orderId);
-        }, e => {
-            reject('Connection failed')
         });
 
-    });
+        await db.bookingAddons.createMany({
+            data: item.services.filter(x => !!x.id).map(x => ({
+                id: generateUuid(),
+                bookingServiceId: serviceData.id,
+                serviceId: x.id,
+                serviceName: x.name,
+                fareMode: x.fareMode,
+                status: BookingStatus.PENDING,
+                cost: x.cost
+            }))
+        });
+
+        await EmailService.notifyVendorNewOrder({
+            username: item.vendorId,
+            date: item.date.toString(),
+            serviceName: item.name,
+            orderId: orderId
+        });
+    }
+
 
     const headers: [string, string][] = [
         ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
@@ -126,7 +123,7 @@ export async function action({
         headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
     }
 
-    return redirect('/order/success?id=' + newOrder, {
+    return redirect('/order/success?id=' + orderId, {
         headers
     });
 }

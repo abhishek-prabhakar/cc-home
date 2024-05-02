@@ -152,6 +152,7 @@ export default function () {
                                 <Form method="post" action="/order/submit">
                                     <input type="hidden" name="source" value={new URLSearchParams(location.search).get('source') || ''} />
                                     <input type="hidden" name="paymentMode" value={paymentMethod || ''} />
+                                    <input type="hidden" name="coupon" value={response?.estimation.coupon || ''} />
                                     <Stack>
                                         <Flex justify={'space-between'}>
                                             <Text size="sm" fw={500}>Subtotal</Text>
