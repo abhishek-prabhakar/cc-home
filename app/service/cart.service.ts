@@ -140,7 +140,7 @@ async function cartCalculateCost(cart: CartItem[], coupon?: string) {
         final: total + tax,
         discount,
         coupon: couponData?.code,
-        invalidCoupon: coupon && !couponData
+        invalidCoupon: coupon && !couponData ? true : false
     };
 }
 
