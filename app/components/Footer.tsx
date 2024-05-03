@@ -52,8 +52,8 @@ export function Footer() {
                 <Link to="about/refund-policy"><Text c="dimmed" ta="center">Cancellation & Refund Policy</Text></Link>
             </Group>
             <Space h="md" />
-            <Text c="dimmed" ta="center">Celebria Collective Private Limited, 02 -
-                VASANTHA TOWERS, COCONUT garden layout, Krishnarajapuram, Bangalore North, Bangalore, Karnataka - 560036</Text>
+            <Text c="dimmed" ta="center">Celebria Collective Private Limited,<br />02 -
+                VASANTHA TOWERS, COCONUT garden layout,<br />Krishnarajapuram, Bangalore North, Bangalore, Karnataka - 560036</Text>
             <Space h="xl" />
         </Container>
     </div>;
