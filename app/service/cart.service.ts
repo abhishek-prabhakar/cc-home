@@ -128,16 +128,16 @@ async function cartCalculateCost(cart: CartItem[], coupon?: string) {
     if (coupon) {
         couponData = await calculateCouponDiscount(coupon, total);
         discount = couponData.discount;
-        total = total - discount;
     }
 
-    const tax = (gst * total) / 100;
+    const finalTotal = total - discount;
+    const tax = (gst * finalTotal) / 100;
 
     return {
         total,
         tax,
         gst,
-        final: total + tax,
+        final: finalTotal + tax,
         discount,
         coupon: couponData?.code,
         invalidCoupon: coupon && !couponData ? true : false
