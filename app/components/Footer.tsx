@@ -47,9 +47,13 @@ export function Footer() {
             <Space h="md" />
             <Group justify="center" gap="lg">
                 <Link to="about/contact-us"><Text c="dimmed" ta="center">Contact Us</Text></Link>
+                <Link to="about/privacy-policy"><Text c="dimmed" ta="center">Privacy Policy</Text></Link>
                 <Link to="about/terms"><Text c="dimmed" ta="center">Terms And Conditions</Text></Link>
                 <Link to="about/refund-policy"><Text c="dimmed" ta="center">Cancellation & Refund Policy</Text></Link>
             </Group>
+            <Space h="md" />
+            <Text c="dimmed" ta="center">Celebria Collective Private Limited, 02 -
+                VASANTHA TOWERS, COCONUT garden layout, Krishnarajapuram, Bangalore North, Bangalore, Karnataka - 560036</Text>
             <Space h="xl" />
         </Container>
     </div>;
