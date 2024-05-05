@@ -1,11 +1,25 @@
 import { BookingPaymentMode, BookingStatus } from "@prisma/client";
-import { ActionArgs, defer, redirect } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, defer, redirect } from "@remix-run/node";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { useEffect } from "react";
+import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { CartService } from "~/service/cart.service";
 import EmailService from "~/service/email.service";
+import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, cartCheckoutCookie, getSession, userCartCookie } from "~/session.server";
 import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
+
+function genOrderId(user: number) {
+    function extractTwoDigit(number: number) {
+        return number % 100;
+    }
+    const date = new Date();
+    const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+user) + extractTwoDigit(Date.now());
+
+    return orderId;
+}
 
 export async function action({
     request,
@@ -18,6 +32,7 @@ export async function action({
     const source = form.get('source')?.toString();
     const coupon = form.get('coupon')?.toString();
 
+    let REDIRECT_SUCCESS = '/order/success';
 
     if (!userId) {
         return redirect('/user/login');
@@ -47,13 +62,18 @@ export async function action({
         return;
     }
 
-    function extractTwoDigit(number: number) {
-        return number % 100;
-    }
-
     const summary = await CartService.calculate(cartInput, coupon);
-    const date = new Date();
-    const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+loggedInUser.username) + extractTwoDigit(Date.now());
+    const orderId = genOrderId(+loggedInUser.username);
+
+    let rpOrderRef: string = '';
+    if (paymentMode === BookingPaymentMode.FULL) {
+        const rpOrder = await PaymentService.createOrder({
+            amount: summary.final * 100,
+            orderId
+        });
+        rpOrderRef = rpOrder.id;
+        REDIRECT_SUCCESS = '/order/submit'
+    }
 
     const data = await db.booking.create({
         data: {
@@ -61,11 +81,12 @@ export async function action({
             userId: loggedInUser.id,
             orderId: orderId,
             status: BookingStatus.PENDING,
-            total: summary.total,
+            total: summary.final,
             tax: summary.tax,
             discount: summary.discount,
             coupon: summary.coupon,
-            paymentMode
+            paymentMode,
+            paymentRef: rpOrderRef
         }
     });
 
@@ -123,11 +144,95 @@ export async function action({
         headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
     }
 
-    return redirect('/order/success?id=' + orderId, {
+    return redirect(REDIRECT_SUCCESS + '?id=' + orderId, {
         headers
     });
 }
 
+export async function loader({ request }: LoaderArgs) {
+    const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    const searchParams = new URL(request.url).searchParams;
+    const orderId = searchParams.get('id') || undefined;
+    const userId = session.get(USER_SESSION_KEY);
+
+    const orderData = await db.booking.findFirstOrThrow({
+        where: {
+            orderId,
+            userId: userId
+        },
+        select: {
+            orderId: true,
+            paymentRef: true,
+            user: {
+                select: {
+                    username: true,
+                    email: true
+                }
+            }
+        }
+    });
+
+    if (!orderData.paymentRef) {
+        throw new Error('error');
+        return null;
+    }
+
+    const data = await PaymentService.getOrder(orderData.paymentRef);
+    return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
+}
+
 export default () => {
+    const loaderData = useLoaderData<typeof loader>();
+    const [Razorpay, isLoaded] = useRazorpay();
+    const submit = useSubmit();
+
+    useEffect(() => {
+        if (!isLoaded || !loaderData) {
+            return;
+        }
+        const options: RazorpayOptions = {
+            key: loaderData.key,
+            amount: '' + loaderData?.rpData.amount,
+            currency: "INR",
+            name: "Celebria Collective",
+            description: loaderData.orderData.orderId,
+            image: "https://example.com/your_logo",
+            order_id: loaderData?.rpData.id,
+            handler: (res) => {
+                submitPaymentResponse(res);
+            },
+            prefill: {
+                email: loaderData.orderData.user.email || '',
+                contact: loaderData.orderData.user.username,
+            },
+            notes: {
+                address: "Razorpay Corporate Office",
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const rzpay = new Razorpay(options);
+        rzpay.open();
+    }, [isLoaded]);
+
+
+    function submitPaymentResponse(data: { razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string }) {
+        if (!loaderData?.orderData.orderId) {
+            return;
+        }
+        submit({
+            orderId: loaderData?.orderData.orderId,
+            razorpayPaymentId: data.razorpay_payment_id,
+            razorpaySignature: data.razorpay_signature
+        }, {
+            method: 'post',
+            action: '/order/verify'
+        });
+    }
+
+
     return 'Processing your order. Please wait...'
 }

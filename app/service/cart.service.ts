@@ -121,7 +121,7 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
 
 async function cartCalculateCost(cart: CartItem[], coupon?: string) {
     const gst = GST_PERCENTAGE;
-    let total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
+    const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
     let couponData;
     let discount = 0;
 

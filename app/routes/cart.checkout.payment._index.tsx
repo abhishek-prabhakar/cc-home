@@ -1,7 +1,7 @@
 import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input, Skeleton } from "@mantine/core";
 import { BookingPaymentMode } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
-import { Await, Form, useFetcher, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
+import { Await, Form, useActionData, useFetcher, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
@@ -38,8 +38,8 @@ const PaymentMethodList: PaymentType[] = [
     }
 ];
 
-const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER];
-const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER];
+const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
+const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
 
 async function cartSummary(input: CartInput[], coupon?: string) {
     const cartSummary = await CartService.summary(input);
@@ -55,6 +55,10 @@ export async function action({ request }: ActionArgs) {
 
     const cookieHeader = request.headers.get("Cookie");
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
+
+    if (!currentCart.length) {
+        throw new Error('Invalid cart');
+    }
 
     return cartSummary(currentCart, coupon);
 }
