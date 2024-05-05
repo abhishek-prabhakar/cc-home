@@ -11,6 +11,7 @@ import { CartInput } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
+
 function genOrderId(user: number) {
     function extractTwoDigit(number: number) {
         return number % 100;
@@ -164,6 +165,7 @@ export async function loader({ request }: LoaderArgs) {
         select: {
             orderId: true,
             paymentRef: true,
+            total: true,
             user: {
                 select: {
                     username: true,
@@ -179,6 +181,9 @@ export async function loader({ request }: LoaderArgs) {
     }
 
     const data = await PaymentService.getOrder(orderData.paymentRef);
+    if (data.amount_paid === orderData.total * 100) {
+        return null;
+    }
     return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
 }
 
@@ -210,7 +215,7 @@ export default () => {
                 address: "Razorpay Corporate Office",
             },
             theme: {
-                color: "#3399cc",
+                color: "#F5393A",
             },
         };
 
