@@ -63,7 +63,7 @@ export async function action({
         return;
     }
 
-    const summary = await CartService.calculate(cartInput, coupon);
+    const summary = await CartService.calculate(cartInput, coupon, paymentMode);
     const orderId = genOrderId(+loggedInUser.username);
 
     let rpOrderRef: string = '';
