@@ -124,9 +124,9 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
 function calculateFullPaymentPromo(value: number) {
     const discount = (FULL_PAYMENT_DISCOUNT * value) / 100;
     if (discount > FULL_PAYMENT_MAX) {
-        return value - FULL_PAYMENT_MAX;
+        return FULL_PAYMENT_MAX;
     } else {
-        return value - discount;
+        return discount;
     }
 }
 
