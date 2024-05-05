@@ -41,9 +41,9 @@ const PaymentMethodList: PaymentType[] = [
 const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
 const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
 
-async function cartSummary(input: CartInput[], coupon?: string) {
+async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode) {
     const cartSummary = await CartService.summary(input);
-    const estimation = await CartService.calculate(cartSummary, coupon);
+    const estimation = await CartService.calculate(cartSummary, coupon, paymentMode);
     return {
         estimation
     };
@@ -52,6 +52,7 @@ async function cartSummary(input: CartInput[], coupon?: string) {
 export async function action({ request }: ActionArgs) {
     const form = await request.formData();
     const coupon = form.get('coupon')?.toString();
+    const paymentMode = form.get('paymentMode')?.toString() as BookingPaymentMode;
 
     const cookieHeader = request.headers.get("Cookie");
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
@@ -60,7 +61,7 @@ export async function action({ request }: ActionArgs) {
         throw new Error('Invalid cart');
     }
 
-    return cartSummary(currentCart, coupon);
+    return cartSummary(currentCart, coupon, paymentMode);
 }
 
 
@@ -118,13 +119,14 @@ export default function () {
             return;
         }
         setPayMethod(id);
-        fetchEstimation();
+        fetchEstimation('', id);
     }
 
 
-    function fetchEstimation(coupon = '') {
+    function fetchEstimation(coupon = '', paymentMode = paymentMethod || '') {
         fetcher.submit({
-            coupon
+            coupon,
+            paymentMode
         }, {
             method: 'POST'
         });
@@ -169,6 +171,10 @@ export default function () {
                                             <Text size="sm" fw={500}>Discount</Text>
                                             <Text size="sm" fw={500}><Currency value={0} /></Text>
                                         </Flex>}
+                                        {response?.estimation.additionalPromo ? <Flex justify={'space-between'}>
+                                            <Text size="sm" fw={500}>Additional Promo</Text>
+                                            <Text size="sm" fw={500}>-<Currency value={response?.estimation.additionalPromo} /></Text>
+                                        </Flex> : ''}
                                         <Flex justify={'space-between'}>
                                             <Text c="dimmed">GST ({response?.estimation.gst}%)</Text>
                                             <Text><Currency value={response?.estimation.tax} /></Text>

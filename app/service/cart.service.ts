@@ -1,10 +1,12 @@
 import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
-import { BookingStatus, Coupons_chargeType, FareMode } from "@prisma/client";
+import { BookingPaymentMode, BookingStatus, Coupons_chargeType, FareMode } from "@prisma/client";
 import { db } from "~/utils/database";
 
 const GST_PERCENTAGE = 18;
+const FULL_PAYMENT_DISCOUNT = 5;
+const FULL_PAYMENT_MAX = 2000;
 
 async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: string) {
     const vendor = await db.vendorServiceGroup.findFirst({
@@ -119,24 +121,39 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
     }
 }
 
-async function cartCalculateCost(cart: CartItem[], coupon?: string) {
+function calculateFullPaymentPromo(value: number) {
+    const discount = (FULL_PAYMENT_DISCOUNT * value) / 100;
+    if (discount > FULL_PAYMENT_MAX) {
+        return value - FULL_PAYMENT_MAX;
+    } else {
+        return value - discount;
+    }
+}
+
+async function cartCalculateCost(cart: CartItem[], coupon?: string, paymentMode?: BookingPaymentMode) {
     const gst = GST_PERCENTAGE;
     const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
     let couponData;
     let discount = 0;
+    let additionalPromo = 0;
 
     if (coupon) {
         couponData = await calculateCouponDiscount(coupon, total);
         discount = couponData.discount;
     }
 
-    const finalTotal = total - discount;
+    if (paymentMode === BookingPaymentMode.FULL) {
+        additionalPromo = calculateFullPaymentPromo(total);
+    }
+
+    const finalTotal = total - discount - additionalPromo;
     const tax = (gst * finalTotal) / 100;
 
     return {
         total,
         tax,
         gst,
+        additionalPromo,
         final: finalTotal + tax,
         discount,
         coupon: couponData?.code,
