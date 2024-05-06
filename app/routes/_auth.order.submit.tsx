@@ -83,6 +83,7 @@ export async function action({
             orderId: orderId,
             status: BookingStatus.PENDING,
             total: summary.final,
+            subTotal: summary.total,
             tax: summary.tax,
             discount: summary.discount,
             coupon: summary.coupon,
