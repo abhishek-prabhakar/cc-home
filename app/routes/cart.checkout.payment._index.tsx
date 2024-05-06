@@ -58,7 +58,7 @@ export async function action({ request }: ActionArgs) {
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 
     if (!currentCart.length) {
-        throw new Error('Invalid cart');
+        return null;
     }
 
     return cartSummary(currentCart, coupon, paymentMode);
@@ -110,7 +110,7 @@ export default function () {
     const fetcher = useFetcher<typeof cartSummary>();
 
     useEffect(() => {
-        fetchEstimation();
+        // fetchEstimation();
     }, []);
 
     function updatePayMethod(id: BookingPaymentMode) {
@@ -141,7 +141,7 @@ export default function () {
         <Grid justify="space-between">
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
-                    {data.paymentModes.map(item => <Alert variant={item.disabled || item.id === paymentMethod ? 'light' : 'outline'} color={item.disabled ? 'gray' : item.id === paymentMethod ? 'green' : 'gray'} title={<Group>{item.title}{item.disabled ? Disablebadge : ''}</Group>} icon={<Checkbox disabled={item.disabled} checked={item.id === paymentMethod} color="green" />} className={item.disabled ? '' : 'cursor-pointer'} onClick={() => updatePayMethod(item.id)}>
+                    {data.paymentModes.map(item => <Alert variant={item.disabled || item.id === paymentMethod ? 'light' : 'outline'} color={item.disabled ? 'gray' : item.id === paymentMethod ? 'green' : 'gray'} title={<Group>{item.title}{item.disabled ? Disablebadge : ''}</Group>} icon={<Checkbox disabled={item.disabled} checked={item.id === paymentMethod} color="green" />} className={item.disabled ? '' : 'cursor-pointer'} onClick={() => updatePayMethod(item.id)} key={item.id}>
                         {item.description}
                     </Alert>)}
                 </Stack>

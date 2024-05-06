@@ -139,7 +139,7 @@ const AppNavigation = {
                           path: Routes.get('Services', { id: item.id }),
                           name: 'Browse all ',
                         }].concat(child.list)
-                          .map(menuItem => <Link to={menuItem.path} onClick={() => toggleDrawer(false)}><Text key={menuItem.id}>{menuItem.name}</Text></Link>)
+                          .map(menuItem => <Link to={menuItem.path} onClick={() => toggleDrawer(false)} key={menuItem.id}><Text>{menuItem.name}</Text></Link>)
                         }
                       </Stack>)
                       }
