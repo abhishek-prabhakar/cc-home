@@ -39,7 +39,6 @@ export async function action({
         return redirect('/user/login');
     }
 
-
     const loggedInUser = await db.user.findFirst({
         where: {
             id: userId
@@ -49,7 +48,6 @@ export async function action({
     if (!loggedInUser || !paymentMode) {
         return redirect('/user/login');
     }
-
 
     const cartData: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 

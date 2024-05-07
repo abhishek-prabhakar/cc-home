@@ -110,7 +110,7 @@ export default function () {
     const fetcher = useFetcher<typeof cartSummary>();
 
     useEffect(() => {
-        // fetchEstimation();
+        fetchEstimation();
     }, []);
 
     function updatePayMethod(id: BookingPaymentMode) {
