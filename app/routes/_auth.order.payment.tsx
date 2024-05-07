@@ -1,0 +1,104 @@
+import { BookingPaymentMode, BookingStatus } from "@prisma/client";
+import { ActionArgs, LoaderArgs, defer, redirect } from "@remix-run/node";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { useEffect } from "react";
+import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import { CartService } from "~/service/cart.service";
+import EmailService from "~/service/email.service";
+import PaymentService from "~/service/payment.service";
+import { USER_SESSION_KEY, cartCheckoutCookie, getSession, userCartCookie } from "~/session.server";
+import { CartInput } from "~/types";
+import { db } from "~/utils/database";
+import generateUuid from "~/utils/uuid.generator";
+
+export async function loader({ request }: LoaderArgs) {
+    const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    const searchParams = new URL(request.url).searchParams;
+    const orderId = searchParams.get('id') || undefined;
+    const userId = session.get(USER_SESSION_KEY);
+
+    const orderData = await db.booking.findFirstOrThrow({
+        where: {
+            orderId,
+            userId: userId
+        },
+        select: {
+            orderId: true,
+            paymentRef: true,
+            total: true,
+            user: {
+                select: {
+                    username: true,
+                    email: true
+                }
+            }
+        }
+    });
+
+    if (!orderData.paymentRef) {
+        throw new Error('error');
+        return null;
+    }
+
+    const data = await PaymentService.getOrder(orderData.paymentRef);
+    if (data.amount_paid === orderData.total * 100) {
+        return null;
+    }
+    return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
+}
+
+export default () => {
+    const loaderData = useLoaderData<typeof loader>();
+    const [Razorpay, isLoaded] = useRazorpay();
+    const submit = useSubmit();
+
+    useEffect(() => {
+        if (!isLoaded || !loaderData) {
+            return;
+        }
+        const options: RazorpayOptions = {
+            key: loaderData.key,
+            amount: '' + loaderData?.rpData.amount,
+            currency: "INR",
+            name: "Celebria Collective",
+            description: loaderData.orderData.orderId,
+            image: "https://example.com/your_logo",
+            order_id: loaderData?.rpData.id,
+            handler: (res) => {
+                submitPaymentResponse(res);
+            },
+            prefill: {
+                email: loaderData.orderData.user.email || '',
+                contact: loaderData.orderData.user.username,
+            },
+            notes: {
+                address: "Razorpay Corporate Office",
+            },
+            theme: {
+                color: "#F5393A",
+            },
+        };
+
+        const rzpay = new Razorpay(options);
+        rzpay.open();
+    }, [isLoaded]);
+
+
+    function submitPaymentResponse(data: { razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string }) {
+        if (!loaderData?.orderData.orderId) {
+            return;
+        }
+        submit({
+            orderId: loaderData?.orderData.orderId,
+            razorpayPaymentId: data.razorpay_payment_id,
+            razorpaySignature: data.razorpay_signature
+        }, {
+            method: 'post',
+            action: '/order/verify'
+        });
+    }
+
+
+    return 'Processing your order. Please wait...'
+}
