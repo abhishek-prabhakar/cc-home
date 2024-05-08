@@ -105,3 +105,10 @@ export default () => {
 
     return 'Processing your order. Please wait...'
 }
+
+
+export function ErrorBoundary() {
+    return <div>
+        No pending payment found against this order
+    </div>
+}
