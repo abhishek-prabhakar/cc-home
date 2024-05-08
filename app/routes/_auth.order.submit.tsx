@@ -140,7 +140,7 @@ export async function action({
 
     REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
 } catch(e){
-    REDIRECT_SUCCESS = '/order/failed?id='+JSON.stringify(e)
+    REDIRECT_SUCCESS = '/order/failed?id='+debug_point+'e='+JSON.stringify(e)
 }
 
 const headers: [string, string][] = [
