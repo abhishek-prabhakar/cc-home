@@ -34,7 +34,8 @@ export async function action({
     const coupon = form.get('coupon')?.toString();
 
     let REDIRECT_SUCCESS = '/order/success';
-
+    
+    try{
     if (!userId) {
         return redirect('/user/login');
     }
@@ -135,16 +136,20 @@ export async function action({
         });
     }
 
+    REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
+} catch(e){
+    REDIRECT_SUCCESS = '/order/failed?e'+JSON.stringify(e)
+}
 
-    const headers: [string, string][] = [
-        ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
-    ]
+const headers: [string, string][] = [
+    ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
+]
 
-    if (source === 'cart') {
-        headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
-    }
+if (source === 'cart') {
+    headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
+}
 
-    return redirect(REDIRECT_SUCCESS + '?id=' + orderId, {
+    return redirect(REDIRECT_SUCCESS, {
         headers
     });
 }
