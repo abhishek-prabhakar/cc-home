@@ -375,27 +375,24 @@ const Page = {
         }
 
         return <CarouselProvider
-            naturalSlideWidth={300}
+            naturalSlideWidth={200}
             naturalSlideHeight={400}
             totalSlides={slots.length || 0}
             visibleSlides={1}
             isIntrinsicHeight={true}
             step={1} dragStep={1} currentSlide={slots.length - 1 ? 1 : 0}
-            className="carousel-slider-wrapper"
         >
-            <Slider className="carousel-slider">
-                {slots.map((slot, i) => <Slide className="item-wrapper" key={'s' + i} index={i}>
+            <Slider>
+                {slots.map((slot, i) => <Slide key={'s' + i} index={i}>
                     <Text ta={'center'}>{slot?.name}</Text>
                     <Space h="sm" />
-                    <div style={{ margin: 'auto', maxWidth: '400px' }}>
-                        <Grid justify="center" >
-                            {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 4 }}>
-                                <Card withBorder p="sm" key={'st' + time.value}>
-                                    <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
-                                </Card>
-                            </Grid.Col>)}
-                        </Grid>
-                    </div>
+                    <Grid justify="center" >
+                        {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 6, md: 5 }}>
+                            <Card withBorder p="sm" key={'st' + time.value}>
+                                <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
+                            </Card>
+                        </Grid.Col>)}
+                    </Grid>
                 </Slide>)}
                 {
                     !slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
