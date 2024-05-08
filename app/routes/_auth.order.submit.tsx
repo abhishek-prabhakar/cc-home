@@ -161,3 +161,9 @@ export async function loader() {
 export default () => {
     return 'Processing your order. Please wait...'
 }
+
+export function ErrorBoundary() {
+    return <div>
+        Invalid data
+    </div>
+}
