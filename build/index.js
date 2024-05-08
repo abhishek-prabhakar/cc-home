@@ -424,7 +424,7 @@ function Footer() {
 // app/components/Ticker.tsx
 var import_jsx_dev_runtime4 = require("react/jsx-dev-runtime");
 function Ticker() {
-  return /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("div", { style: { background: "black", color: "#d8d8d8", fontSize: "10px", padding: "5px 10px", textAlign: "center" }, children: "Use code WELCOME40 to get 40% discount on your first order." }, void 0, !1, {
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime4.jsxDEV)("div", { style: { background: "black", color: "#d8d8d8", fontSize: "10px", padding: "5px 10px", textAlign: "center" }, children: "Use code WELCOME40 to get 40% discount." }, void 0, !1, {
     fileName: "app/components/Ticker.tsx",
     lineNumber: 3,
     columnNumber: 12
@@ -5334,6 +5334,7 @@ function CouponSection({ invalid, applyCoupon }) {
 function cart_checkout_payment_index_default() {
   let [paymentMethod, setPayMethod] = (0, import_react21.useState)(), data = (0, import_react20.useLoaderData)(), navigation = (0, import_react20.useNavigation)(), location2 = (0, import_react20.useLocation)(), fetcher = (0, import_react20.useFetcher)();
   (0, import_react21.useEffect)(() => {
+    fetchEstimation();
   }, []);
   function updatePayMethod(id) {
     let item = data.paymentModes.find((x) => x.id === id);
@@ -10293,6 +10294,101 @@ var Photography2 = {
   }
 }, services_id_index_default = Photography2.Index;
 
+// app/routes/_auth.order.payment.tsx
+var auth_order_payment_exports = {};
+__export(auth_order_payment_exports, {
+  default: () => auth_order_payment_default,
+  loader: () => loader16
+});
+var import_react43 = require("@remix-run/react"), import_react44 = require("react"), import_react_razorpay = __toESM(require("react-razorpay"));
+
+// app/service/payment.service.ts
+var import_razorpay = __toESM(require("razorpay")), KEY_ID = process.env.RPAY_KEY || "", KEY_SECRET = process.env.RPAY_SECRET || "", rpInstance = new import_razorpay.default({ key_id: KEY_ID, key_secret: KEY_SECRET });
+async function createOrder(props) {
+  return await rpInstance.orders.create({
+    amount: props.amount,
+    currency: "INR",
+    receipt: props.orderId,
+    notes: {
+      key1: "value3",
+      key2: "value2"
+    }
+  });
+}
+async function getOrder(orderId) {
+  return await rpInstance.orders.fetch(orderId);
+}
+var PaymentService = {
+  createOrder,
+  getOrder
+}, payment_service_default = PaymentService;
+
+// app/routes/_auth.order.payment.tsx
+async function loader16({ request }) {
+  let cookieHeader = request.headers.get("Cookie"), session = await getSession(cookieHeader), orderId = new URL(request.url).searchParams.get("id") || void 0, userId = session.get(USER_SESSION_KEY), orderData = await db.booking.findFirstOrThrow({
+    where: {
+      orderId,
+      userId
+    },
+    select: {
+      orderId: !0,
+      paymentRef: !0,
+      total: !0,
+      user: {
+        select: {
+          username: !0,
+          email: !0
+        }
+      }
+    }
+  });
+  if (!orderData.paymentRef)
+    throw new Error("error");
+  let data = await payment_service_default.getOrder(orderData.paymentRef);
+  return data.amount_paid === orderData.total * 100 ? null : { orderData, rpData: data, key: process.env.RPAY_KEY || "" };
+}
+var auth_order_payment_default = () => {
+  let loaderData = (0, import_react43.useLoaderData)(), [Razorpay2, isLoaded] = (0, import_react_razorpay.default)(), submit = (0, import_react43.useSubmit)(), actionData = (0, import_react43.useActionData)();
+  (0, import_react44.useEffect)(() => {
+    if (!isLoaded || !loaderData)
+      return;
+    let options = {
+      key: loaderData.key,
+      amount: "" + (loaderData == null ? void 0 : loaderData.rpData.amount),
+      currency: "INR",
+      name: "Celebria Collective",
+      description: loaderData.orderData.orderId,
+      image: "https://example.com/your_logo",
+      order_id: loaderData == null ? void 0 : loaderData.rpData.id,
+      handler: (res) => {
+        submitPaymentResponse(res);
+      },
+      prefill: {
+        email: loaderData.orderData.user.email || "",
+        contact: loaderData.orderData.user.username
+      },
+      notes: {
+        address: "Razorpay Corporate Office"
+      },
+      theme: {
+        color: "#15bf39"
+      }
+    };
+    new Razorpay2(options).open();
+  }, [isLoaded]);
+  function submitPaymentResponse(data) {
+    loaderData != null && loaderData.orderData.orderId && submit({
+      orderId: loaderData == null ? void 0 : loaderData.orderData.orderId,
+      razorpayPaymentId: data.razorpay_payment_id,
+      razorpaySignature: data.razorpay_signature
+    }, {
+      method: "post",
+      action: "/order/verify"
+    });
+  }
+  return "Processing your order. Please wait...";
+};
+
 // app/routes/about.terms._index.tsx
 var about_terms_index_exports = {};
 __export(about_terms_index_exports, {
@@ -10438,9 +10534,9 @@ var auth_order_submit_exports = {};
 __export(auth_order_submit_exports, {
   action: () => action11,
   default: () => auth_order_submit_default,
-  loader: () => loader16
+  loader: () => loader17
 });
-var import_client8 = require("@prisma/client"), import_node15 = require("@remix-run/node"), import_react43 = require("@remix-run/react"), import_react44 = require("react"), import_react_razorpay = __toESM(require("react-razorpay"));
+var import_client8 = require("@prisma/client"), import_node15 = require("@remix-run/node");
 
 // app/data/email.data.ts
 var EMAIL_DATA = {
@@ -10505,27 +10601,6 @@ var EmailService = {
   notifyVendorNewOrder
 }, email_service_default = EmailService;
 
-// app/service/payment.service.ts
-var import_razorpay = __toESM(require("razorpay")), KEY_ID = process.env.RPAY_KEY || "", KEY_SECRET = process.env.RPAY_SECRET || "", rpInstance = new import_razorpay.default({ key_id: KEY_ID, key_secret: KEY_SECRET });
-async function createOrder(props) {
-  return await rpInstance.orders.create({
-    amount: props.amount,
-    currency: "INR",
-    receipt: props.orderId,
-    notes: {
-      key1: "value3",
-      key2: "value2"
-    }
-  });
-}
-async function getOrder(orderId) {
-  return await rpInstance.orders.fetch(orderId);
-}
-var PaymentService = {
-  createOrder,
-  getOrder
-}, payment_service_default = PaymentService;
-
 // app/routes/_auth.order.submit.tsx
 function genOrderId(user) {
   function extractTwoDigit(number) {
@@ -10558,7 +10633,7 @@ async function action11({
   paymentMode === import_client8.BookingPaymentMode.FULL && (rpOrderRef = (await payment_service_default.createOrder({
     amount: summary.final * 100,
     orderId
-  })).id, REDIRECT_SUCCESS = "/order/submit");
+  })).id, REDIRECT_SUCCESS = "/order/payment");
   let data = await db.booking.create({
     data: {
       id: generateUuid(),
@@ -10566,6 +10641,7 @@ async function action11({
       orderId,
       status: import_client8.BookingStatus.PENDING,
       total: summary.final,
+      subTotal: summary.total,
       tax: summary.tax,
       discount: summary.discount,
       coupon: summary.coupon,
@@ -10618,77 +10694,17 @@ async function action11({
     headers
   });
 }
-async function loader16({ request }) {
-  let cookieHeader = request.headers.get("Cookie"), session = await getSession(cookieHeader), orderId = new URL(request.url).searchParams.get("id") || void 0, userId = session.get(USER_SESSION_KEY), orderData = await db.booking.findFirstOrThrow({
-    where: {
-      orderId,
-      userId
-    },
-    select: {
-      orderId: !0,
-      paymentRef: !0,
-      total: !0,
-      user: {
-        select: {
-          username: !0,
-          email: !0
-        }
-      }
-    }
-  });
-  if (!orderData.paymentRef)
-    throw new Error("error");
-  let data = await payment_service_default.getOrder(orderData.paymentRef);
-  return data.amount_paid === orderData.total * 100 ? null : { orderData, rpData: data, key: process.env.RPAY_KEY || "" };
+async function loader17() {
+  return null;
 }
-var auth_order_submit_default = () => {
-  let loaderData = (0, import_react43.useLoaderData)(), [Razorpay2, isLoaded] = (0, import_react_razorpay.default)(), submit = (0, import_react43.useSubmit)();
-  (0, import_react44.useEffect)(() => {
-    if (!isLoaded || !loaderData)
-      return;
-    let options = {
-      key: loaderData.key,
-      amount: "" + (loaderData == null ? void 0 : loaderData.rpData.amount),
-      currency: "INR",
-      name: "Celebria Collective",
-      description: loaderData.orderData.orderId,
-      image: "https://example.com/your_logo",
-      order_id: loaderData == null ? void 0 : loaderData.rpData.id,
-      handler: (res) => {
-        submitPaymentResponse(res);
-      },
-      prefill: {
-        email: loaderData.orderData.user.email || "",
-        contact: loaderData.orderData.user.username
-      },
-      notes: {
-        address: "Razorpay Corporate Office"
-      },
-      theme: {
-        color: "#F5393A"
-      }
-    };
-    new Razorpay2(options).open();
-  }, [isLoaded]);
-  function submitPaymentResponse(data) {
-    loaderData != null && loaderData.orderData.orderId && submit({
-      orderId: loaderData == null ? void 0 : loaderData.orderData.orderId,
-      razorpayPaymentId: data.razorpay_payment_id,
-      razorpaySignature: data.razorpay_signature
-    }, {
-      method: "post",
-      action: "/order/verify"
-    });
-  }
-  return "Processing your order. Please wait...";
-};
+var auth_order_submit_default = () => "Processing your order. Please wait...";
 
 // app/routes/_auth.order.verify.tsx
 var auth_order_verify_exports = {};
 __export(auth_order_verify_exports, {
   action: () => action12,
   default: () => auth_order_verify_default,
-  loader: () => loader17
+  loader: () => loader18
 });
 var import_node16 = require("@remix-run/node"), import_razorpay_utils = require("razorpay/dist/utils/razorpay-utils");
 async function action12({
@@ -10711,9 +10727,9 @@ async function action12({
   return orderData != null && orderData.paymentRef ? (0, import_razorpay_utils.validatePaymentVerification)({
     order_id: orderData.paymentRef,
     payment_id: razorpayPaymentId
-  }, razorpaySignature, process.env.RPAY_SECRET || "") ? (0, import_node16.redirect)("/order/success?id=" + orderData.orderId) : !1 : void 0;
+  }, razorpaySignature, process.env.RPAY_SECRET || "") ? (0, import_node16.redirect)("/order/success?id=" + orderData.orderId) : (0, import_node16.redirect)("/order/failed?id=" + orderData.orderId) : void 0;
 }
-function loader17() {
+function loader18() {
   return null;
 }
 function auth_order_verify_default() {
@@ -10799,11 +10815,11 @@ async function action14({
 var auth_user_home_exports = {};
 __export(auth_user_home_exports, {
   default: () => auth_user_home_default,
-  loader: () => loader18
+  loader: () => loader19
 });
 var import_core34 = require("@mantine/core"), import_node19 = require("@remix-run/node"), import_react45 = require("@remix-run/react"), import_react46 = require("react");
 var import_jsx_dev_runtime35 = require("react/jsx-dev-runtime");
-async function loader18({ params, request }) {
+async function loader19({ params, request }) {
   let userId = (await getSession(request.headers.get("Cookie"))).get(USER_SESSION_KEY), orders = new Promise(function(resolve, reject) {
     if (!userId) {
       reject();
@@ -10974,7 +10990,7 @@ var UserHome = {
 var login_redirect_exports = {};
 __export(login_redirect_exports, {
   action: () => action15,
-  loader: () => loader19
+  loader: () => loader20
 });
 var import_node20 = require("@remix-run/node");
 async function action15({
@@ -10990,7 +11006,7 @@ async function action15({
     }
   })) : (0, import_node20.redirect)(redirectUrl || "/");
 }
-async function loader19({
+async function loader20({
   request
 }) {
   let session = await getSession(
@@ -11011,10 +11027,10 @@ var partner_signup_exports = {};
 __export(partner_signup_exports, {
   ErrorBoundary: () => ErrorBoundary5,
   default: () => PartnerSignupParent,
-  loader: () => loader20
+  loader: () => loader21
 });
 var import_react47 = require("@remix-run/react"), import_jsx_dev_runtime36 = require("react/jsx-dev-runtime");
-function loader20() {
+function loader21() {
   return null;
 }
 function PartnerSignupParent() {
@@ -11036,10 +11052,10 @@ function ErrorBoundary5() {
 var order_success_exports = {};
 __export(order_success_exports, {
   default: () => order_success_default,
-  loader: () => loader21
+  loader: () => loader22
 });
 var import_icons2 = require("@ant-design/icons"), import_core35 = require("@mantine/core"), import_node21 = require("@remix-run/node"), import_react48 = require("@remix-run/react"), import_jsx_dev_runtime37 = require("react/jsx-dev-runtime");
-async function loader21({
+async function loader22({
   params,
   request
 }) {
@@ -11179,7 +11195,7 @@ var profile_user_exports = {};
 __export(profile_user_exports, {
   ErrorBoundary: () => ErrorBoundary6,
   default: () => profile_user_default,
-  loader: () => loader22
+  loader: () => loader23
 });
 var import_core36 = require("@mantine/core"), import_node22 = require("@remix-run/node"), import_react49 = require("@remix-run/react"), import_icons_react20 = require("@tabler/icons-react"), import_icons_react21 = require("@tabler/icons-react"), import_react50 = require("react");
 
@@ -11189,7 +11205,7 @@ var accordian_module_default = { root: "accordian-module__root__AeZrj", item: "a
 // app/routes/profile.$user.tsx
 var import_icons_react22 = require("@tabler/icons-react"), import_icons_react23 = require("@tabler/icons-react"), import_icons_react24 = require("@tabler/icons-react");
 var import_icons_react25 = require("@tabler/icons-react"), import_jsx_dev_runtime38 = require("react/jsx-dev-runtime");
-async function loader22({ params, request }) {
+async function loader23({ params, request }) {
   var _a;
   let id = params.user || "", preselectedServiceGrpId = (_a = new URL(request.url).searchParams.get("service")) == null ? void 0 : _a.toString(), vendorDetails = VendorQuery.getVendorByUsername(id), serviceList = VendorQuery.getServices(id), getLinkedProfiles2 = VendorQuery.getLinkedProfiles(id);
   return (0, import_node22.defer)({
@@ -11892,7 +11908,7 @@ var profile_user_default = ProfileLayout.Index;
 // app/routes/_api.search.tsx
 var api_search_exports = {};
 __export(api_search_exports, {
-  loader: () => loader23
+  loader: () => loader24
 });
 var import_node23 = require("@remix-run/node");
 var import_fuse = __toESM(require("fuse.js")), fuseOptions = {
@@ -11903,7 +11919,7 @@ var import_fuse = __toESM(require("fuse.js")), fuseOptions = {
     "serviceGroupItem.service.name"
   ]
 };
-function loader23(args) {
+function loader24(args) {
   var _a, _b;
   let query = (_b = (_a = new URL(args.request.url).searchParams.get("q")) == null ? void 0 : _a.toLowerCase()) == null ? void 0 : _b.trim();
   if (!(query != null && query.length))
@@ -12015,15 +12031,15 @@ async function action16({
 // app/routes/logout.tsx
 var logout_exports = {};
 __export(logout_exports, {
-  loader: () => loader24
+  loader: () => loader25
 });
-var loader24 = async ({ request }) => logout(request);
+var loader25 = async ({ request }) => logout(request);
 
 // app/routes/_index.tsx
 var index_exports = {};
 __export(index_exports, {
   default: () => index_default,
-  loader: () => loader25,
+  loader: () => loader26,
   meta: () => meta4
 });
 var import_node25 = require("@remix-run/node"), import_react51 = require("react"), import_react52 = require("@remix-run/react");
@@ -12257,7 +12273,7 @@ function getCollections() {
 // app/routes/_index.tsx
 var import_pure_react_carousel3 = require("pure-react-carousel"), import_react_simple_typewriter = require("react-simple-typewriter"), import_core37 = require("@mantine/core"), import_icons_react26 = require("@tabler/icons-react");
 var import_icons_react27 = require("@tabler/icons-react"), import_jsx_dev_runtime39 = require("react/jsx-dev-runtime");
-async function loader25({ params }) {
+async function loader26({ params }) {
   let id = params.user, jumbotronList = getJumbotronList(), quickLinks = new Promise(function(resolve, reject) {
     db.serviceGroup.findMany({
       take: 4,
@@ -13336,11 +13352,11 @@ var Home = {
 var auth_exports = {};
 __export(auth_exports, {
   default: () => UserLayout,
-  loader: () => loader26
+  loader: () => loader27
 });
 var import_node26 = require("@remix-run/node"), import_react53 = require("@remix-run/react");
 var import_jsx_dev_runtime40 = require("react/jsx-dev-runtime");
-async function loader26(args) {
+async function loader27(args) {
   return (await getSession(
     args.request.headers.get("Cookie")
   )).get(USER_SESSION_KEY) ? !0 : (0, import_node26.redirect)("/");
@@ -13359,7 +13375,7 @@ function UserLayout() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-E3NPIHZJ.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-K36FZWCB.js", imports: ["/build/_shared/chunk-ERDQUNRL.js", "/build/_shared/chunk-GNTBZMIP.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-PEBG6N3H.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.checkout": { id: "routes/_auth.order.checkout", parentId: "routes/_auth", path: "order/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.checkout-O2SMNZLB.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-AK5B3NP5.js", imports: ["/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-D7EP7RG6.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.verify": { id: "routes/_auth.order.verify", parentId: "routes/_auth", path: "order/verify", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.verify-WIFLWF7Y.js", imports: ["/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-I25COSCY.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-SEKGMPZX.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-D7EP7RG6.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-DEKTHHOK.js", imports: ["/build/_shared/chunk-OWD3QA4C.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-SEKGMPZX.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-D7EP7RG6.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-4GZWIHYC.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-D7EP7RG6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.contact-us._index": { id: "routes/about.contact-us._index", parentId: "root", path: "about/contact-us", index: !0, caseSensitive: void 0, module: "/build/routes/about.contact-us._index-L54HSERT.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.privacy-policy._index": { id: "routes/about.privacy-policy._index", parentId: "root", path: "about/privacy-policy", index: !0, caseSensitive: void 0, module: "/build/routes/about.privacy-policy._index-SNCHH2SL.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.refund-policy._index": { id: "routes/about.refund-policy._index", parentId: "root", path: "about/refund-policy", index: !0, caseSensitive: void 0, module: "/build/routes/about.refund-policy._index-MEH4HSFE.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.terms._index": { id: "routes/about.terms._index", parentId: "root", path: "about/terms", index: !0, caseSensitive: void 0, module: "/build/routes/about.terms._index-2AG6F6XT.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-IPNOAVI7.js", imports: ["/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-4VLFE7KT.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout._index": { id: "routes/cart.checkout._index", parentId: "root", path: "cart/checkout", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout._index-G77DRQBO.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout.payment._index": { id: "routes/cart.checkout.payment._index", parentId: "root", path: "cart/checkout/payment", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout.payment._index-OWP26V5B.js", imports: ["/build/_shared/chunk-D7EP7RG6.js", "/build/_shared/chunk-CVKRGJQQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-W6LCAMKK.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-G3VV6B2U.js", imports: ["/build/_shared/chunk-TSV3FABP.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-JUM2FMGK.js", imports: ["/build/_shared/chunk-OWD3QA4C.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup": { id: "routes/partner.signup", parentId: "root", path: "partner/signup", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup-USHIYGCD.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "routes/partner.signup", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-CMMO7WT3.js", imports: ["/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "routes/partner.signup", path: "onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-L6CSMAI3.js", imports: ["/build/_shared/chunk-SEKGMPZX.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-IXK4VIAZ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-D7EP7RG6.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "routes/partner.signup", path: "onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-ZP7FPVRG.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "routes/partner.signup", path: "onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-CDWPJOEQ.js", imports: ["/build/_shared/chunk-IXK4VIAZ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-IKDOHBEQ.js", imports: ["/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-XLDG73RS.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-ERDQUNRL.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-TRON6ZUA.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-GKT65LAC.js", imports: ["/build/_shared/chunk-45M3FHT7.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-FZPEMERU.js", imports: ["/build/_shared/chunk-45M3FHT7.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "45cec09f", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1715015090130 }, url: "/build/manifest-45CEC09F.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-E3NPIHZJ.js", imports: ["/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-X5ADFWA7.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-F3NDZE2Q.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-PNG5AS42.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-WOKQOHV6.js", imports: ["/build/_shared/chunk-ERDQUNRL.js", "/build/_shared/chunk-GNTBZMIP.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_api.login": { id: "routes/_api.login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.login-EGZYGHF7.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.search": { id: "routes/_api.search", parentId: "root", path: "search", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.search-DIFQTRHV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_api.verify-otp": { id: "routes/_api.verify-otp", parentId: "root", path: "verify-otp", index: void 0, caseSensitive: void 0, module: "/build/routes/_api.verify-otp-POBOCWQC.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth": { id: "routes/_auth", parentId: "root", path: void 0, index: void 0, caseSensitive: void 0, module: "/build/routes/_auth-PEBG6N3H.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.checkout": { id: "routes/_auth.order.checkout", parentId: "routes/_auth", path: "order/checkout", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.checkout-O2SMNZLB.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.payment": { id: "routes/_auth.order.payment", parentId: "routes/_auth", path: "order/payment", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.payment-U3DNEMQC.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.submit": { id: "routes/_auth.order.submit", parentId: "routes/_auth", path: "order/submit", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.submit-GM3TMVUT.js", imports: ["/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-QKTJPAD7.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.order.verify": { id: "routes/_auth.order.verify", parentId: "routes/_auth", path: "order/verify", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.order.verify-BSNB7RIK.js", imports: ["/build/_shared/chunk-G7CHZRZX.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.home": { id: "routes/_auth.user.home", parentId: "routes/_auth", path: "user/home", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.home-6GWQZD4P.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-4G453DS7.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-QKTJPAD7.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/_auth.user.order.$id": { id: "routes/_auth.user.order.$id", parentId: "routes/_auth", path: "user/order/:id", index: void 0, caseSensitive: void 0, module: "/build/routes/_auth.user.order.$id-DEJSTETX.js", imports: ["/build/_shared/chunk-OWD3QA4C.js", "/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-4G453DS7.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-U3MUJB3C.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-QKTJPAD7.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-B266IZ5V.js", imports: ["/build/_shared/chunk-NMZL6IDN.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-QKTJPAD7.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.contact-us._index": { id: "routes/about.contact-us._index", parentId: "root", path: "about/contact-us", index: !0, caseSensitive: void 0, module: "/build/routes/about.contact-us._index-L54HSERT.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.privacy-policy._index": { id: "routes/about.privacy-policy._index", parentId: "root", path: "about/privacy-policy", index: !0, caseSensitive: void 0, module: "/build/routes/about.privacy-policy._index-SNCHH2SL.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.refund-policy._index": { id: "routes/about.refund-policy._index", parentId: "root", path: "about/refund-policy", index: !0, caseSensitive: void 0, module: "/build/routes/about.refund-policy._index-MEH4HSFE.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/about.terms._index": { id: "routes/about.terms._index", parentId: "root", path: "about/terms", index: !0, caseSensitive: void 0, module: "/build/routes/about.terms._index-2AG6F6XT.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add.$vendorServiceGroupId": { id: "routes/cart.add.$vendorServiceGroupId", parentId: "root", path: "cart/add/:vendorServiceGroupId", index: void 0, caseSensitive: void 0, module: "/build/routes/cart.add.$vendorServiceGroupId-IPNOAVI7.js", imports: ["/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.add._index": { id: "routes/cart.add._index", parentId: "root", path: "cart/add", index: !0, caseSensitive: void 0, module: "/build/routes/cart.add._index-4VLFE7KT.js", imports: ["/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout._index": { id: "routes/cart.checkout._index", parentId: "root", path: "cart/checkout", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout._index-G77DRQBO.js", imports: ["/build/_shared/chunk-V457K2MQ.js", "/build/_shared/chunk-5SPJNKFU.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/cart.checkout.payment._index": { id: "routes/cart.checkout.payment._index", parentId: "root", path: "cart/checkout/payment", index: !0, caseSensitive: void 0, module: "/build/routes/cart.checkout.payment._index-2OGGYCEY.js", imports: ["/build/_shared/chunk-QKTJPAD7.js", "/build/_shared/chunk-CVKRGJQQ.js", "/build/_shared/chunk-DMZCSMEQ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id.$highlight": { id: "routes/collections.$id.$highlight", parentId: "root", path: "collections/:id/:highlight", index: void 0, caseSensitive: void 0, module: "/build/routes/collections.$id.$highlight-W6LCAMKK.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/collections.$id._index": { id: "routes/collections.$id._index", parentId: "root", path: "collections/:id", index: !0, caseSensitive: void 0, module: "/build/routes/collections.$id._index-G3VV6B2U.js", imports: ["/build/_shared/chunk-TSV3FABP.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/login.redirect": { id: "routes/login.redirect", parentId: "root", path: "login/redirect", index: void 0, caseSensitive: void 0, module: "/build/routes/login.redirect-RG3ROWFZ.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-GGSXPJWV.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/order.success": { id: "routes/order.success", parentId: "root", path: "order/success", index: void 0, caseSensitive: void 0, module: "/build/routes/order.success-JUM2FMGK.js", imports: ["/build/_shared/chunk-OWD3QA4C.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup": { id: "routes/partner.signup", parentId: "root", path: "partner/signup", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup-USHIYGCD.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup._index": { id: "routes/partner.signup._index", parentId: "routes/partner.signup", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup._index-CMMO7WT3.js", imports: ["/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard.$id._index": { id: "routes/partner.signup.onboard.$id._index", parentId: "routes/partner.signup", path: "onboard/:id", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id._index-KZCUUOEC.js", imports: ["/build/_shared/chunk-4G453DS7.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-IXK4VIAZ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-QKTJPAD7.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/partner.signup.onboard.$id.success": { id: "routes/partner.signup.onboard.$id.success", parentId: "routes/partner.signup", path: "onboard/:id/success", index: void 0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard.$id.success-ZP7FPVRG.js", imports: ["/build/_shared/chunk-5HWTB4UN.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/partner.signup.onboard._index": { id: "routes/partner.signup.onboard._index", parentId: "routes/partner.signup", path: "onboard", index: !0, caseSensitive: void 0, module: "/build/routes/partner.signup.onboard._index-CDWPJOEQ.js", imports: ["/build/_shared/chunk-IXK4VIAZ.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-DMZCSMEQ.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user": { id: "routes/profile.$user", parentId: "root", path: "profile/:user", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user-IKDOHBEQ.js", imports: ["/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/profile.$user._index": { id: "routes/profile.$user._index", parentId: "routes/profile.$user", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/profile.$user._index-XLDG73RS.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-ERDQUNRL.js", "/build/_shared/chunk-PX6IH325.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/profile.$user.portfolio": { id: "routes/profile.$user.portfolio", parentId: "routes/profile.$user", path: "portfolio", index: void 0, caseSensitive: void 0, module: "/build/routes/profile.$user.portfolio-TRON6ZUA.js", imports: ["/build/_shared/chunk-55OPHICG.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-CYDCFY4A.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-RECXXUVJ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/services.$id.$subId": { id: "routes/services.$id.$subId", parentId: "root", path: "services/:id/:subId", index: void 0, caseSensitive: void 0, module: "/build/routes/services.$id.$subId-GKT65LAC.js", imports: ["/build/_shared/chunk-45M3FHT7.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/services.$id._index": { id: "routes/services.$id._index", parentId: "root", path: "services/:id", index: !0, caseSensitive: void 0, module: "/build/routes/services.$id._index-FZPEMERU.js", imports: ["/build/_shared/chunk-45M3FHT7.js", "/build/_shared/chunk-EVA3TCMM.js", "/build/_shared/chunk-TSV3FABP.js", "/build/_shared/chunk-CVKRGJQQ.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, version: "cfe54fdd", hmr: { runtime: "/build/_shared\\chunk-F3NDZE2Q.js", timestamp: 1715164138071 }, url: "/build/manifest-CFE54FDD.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_dev: !0, unstable_postcss: !1, unstable_tailwind: !1, v2_errorBoundary: !0, v2_headers: !0, v2_meta: !0, v2_normalizeFormMethod: !0, v2_routeConvention: !0 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
@@ -13514,6 +13530,14 @@ var assetsBuildDirectory = "public\\build", future = { v2_dev: !0, unstable_post
     index: !0,
     caseSensitive: void 0,
     module: services_id_index_exports
+  },
+  "routes/_auth.order.payment": {
+    id: "routes/_auth.order.payment",
+    parentId: "routes/_auth",
+    path: "order/payment",
+    index: void 0,
+    caseSensitive: void 0,
+    module: auth_order_payment_exports
   },
   "routes/about.terms._index": {
     id: "routes/about.terms._index",

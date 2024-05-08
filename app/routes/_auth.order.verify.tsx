@@ -41,7 +41,7 @@ export async function action({
     if (success) {
         return redirect('/order/success?id=' + orderData.orderId);
     } else {
-        return false;
+        return redirect('/order/failed?id=' + orderData.orderId);
     }
 }
 

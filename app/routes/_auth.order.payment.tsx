@@ -52,6 +52,7 @@ export default () => {
     const loaderData = useLoaderData<typeof loader>();
     const [Razorpay, isLoaded] = useRazorpay();
     const submit = useSubmit();
+    const actionData = useActionData();
 
     useEffect(() => {
         if (!isLoaded || !loaderData) {
@@ -76,13 +77,15 @@ export default () => {
                 address: "Razorpay Corporate Office",
             },
             theme: {
-                color: "#F5393A",
+                color: "#15bf39",
             },
         };
 
         const rzpay = new Razorpay(options);
         rzpay.open();
     }, [isLoaded]);
+
+
 
 
     function submitPaymentResponse(data: { razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string }) {
