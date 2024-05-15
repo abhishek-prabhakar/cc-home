@@ -34,7 +34,8 @@ export async function action({
     const coupon = form.get('coupon')?.toString();
 
     let REDIRECT_SUCCESS = '/order/success';
-
+    let debug_point = 'starting';
+    try{
     if (!userId) {
         return redirect('/user/login');
     }
@@ -54,16 +55,16 @@ export async function action({
     if (!cartData?.length) {
         return redirect('/cart/checkout');
     }
-
+    debug_point = '2';
     const cartInput = await CartService.summary(cartData);
 
     if (!cartInput) {
         return;
     }
-
+    debug_point = '3';
     const summary = await CartService.calculate(cartInput, coupon, paymentMode);
     const orderId = genOrderId(+loggedInUser.username);
-
+    debug_point = '4';
     let rpOrderRef: string = '';
     if (paymentMode === BookingPaymentMode.FULL) {
         const rpOrder = await PaymentService.createOrder({
@@ -72,8 +73,9 @@ export async function action({
         });
         rpOrderRef = rpOrder.id;
         REDIRECT_SUCCESS = '/order/payment'
+        debug_point = '5';
     }
-
+    debug_point = '6';
     const data = await db.booking.create({
         data: {
             id: generateUuid(),
@@ -90,7 +92,7 @@ export async function action({
         }
     });
 
-
+    debug_point = '7';
     for (let i = 0; i < cartInput.length; i++) {
         const item = cartInput[i];
         const endDate = new Date(item.date);
@@ -127,24 +129,29 @@ export async function action({
             }))
         });
 
-        await EmailService.notifyVendorNewOrder({
-            username: item.vendorId,
-            date: item.date.toString(),
-            serviceName: item.name,
-            orderId: orderId
-        });
+        // await EmailService.notifyVendorNewOrder({
+        //     username: item.vendorId,
+        //     date: item.date.toString(),
+        //     serviceName: item.name,
+        //     orderId: orderId
+        // });
     }
+    debug_point = '8';
 
+    REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
+} catch(e){
+    REDIRECT_SUCCESS = '/order/failed?id='+debug_point+'e='+JSON.stringify(e)
+}
 
-    const headers: [string, string][] = [
-        ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
-    ]
+const headers: [string, string][] = [
+    ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
+]
 
-    if (source === 'cart') {
-        headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
-    }
+if (source === 'cart') {
+    headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
+}
 
-    return redirect(REDIRECT_SUCCESS + '?id=' + orderId, {
+    return redirect(REDIRECT_SUCCESS, {
         headers
     });
 }
@@ -155,4 +162,10 @@ export async function loader() {
 
 export default () => {
     return 'Processing your order. Please wait...'
+}
+
+export function ErrorBoundary() {
+    return <div>
+        Invalid data
+    </div>
 }

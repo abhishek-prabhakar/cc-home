@@ -57,7 +57,7 @@ export async function action({ request }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 
-    if (!currentCart.length) {
+    if (!currentCart?.length) {
         return null;
     }
 
@@ -195,4 +195,10 @@ export default function () {
             </Grid.Col>
         </Grid>
     </Container>
+}
+
+export function ErrorBoundary() {
+    return <div>
+        Something went wrong
+    </div>
 }

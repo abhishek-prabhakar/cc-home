@@ -197,7 +197,7 @@ export default function App() {
         <meta property="twitter:image" content="https://celebriacollective.com/assets/og-img.jpg" />
 
         <ColorSchemeScript />
-        <script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script>
+        {/* <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script> */}
       </head>
       <body>
         <MantineProvider theme={theme}>
@@ -232,11 +232,5 @@ export function HydrateFallback() {
 export function ErrorBoundary() {
   const error: any = useRouteError();
 
-  return <MantineProvider>
-    <Container size={'xl'}>
-      <Alert variant="light" color="red" title="Could not load the page" >
-        {error?.data || 'Oops, Something went wrong!'}
-      </Alert>
-    </Container>
-  </MantineProvider>
+  return  error?.data || 'Oops, Something went wrong!'
 }
