@@ -456,7 +456,7 @@ const OnBoardPage = {
         }
 
         return <Container size={'xl'} >
-            <Grid gutter={40}>
+            <Grid gutter={{ base: 20,  md: 40}}>
                 <Grid.Col span={12}>
                     <Title>Welcome</Title>
                     <Title order={5}>Hello {data?.profile.name}, Please fill up the following details.</Title>
@@ -557,7 +557,7 @@ const OnBoardPage = {
         return <Card withBorder shadow="xs" title="Confirm your identity">
             <fetcher.Form method="post" action="">
 
-                <Grid gutter={40}>
+                <Grid gutter={{ base: 20,  md: 40}}>
                     <Grid.Col span={{ base: 12, md: 5 }}>
                         <Select placeholder="Select document type" style={{ width: '100%' }} onChange={v => setFileType(v)} data={fileTypes.map(x => ({ label: x.name, value: x.name }))} />
                         <Text c="dimmed">Upload any valid document to prove your identity.</Text>

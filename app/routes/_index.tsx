@@ -234,7 +234,7 @@ const Home = {
           </Grid.Col>
           <Grid.Col span={12}>
             <div className="card-style-3">
-              <Grid gutter={40} align={'center'} justify={'center'}>
+              <Grid gutter={{ base: 20,  md: 40}} align={'center'} justify={'center'}>
                 <Grid.Col span={{ base: 12, md: 7 }}>
                   <Stack align="center">
                     <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>

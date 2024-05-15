@@ -215,7 +215,7 @@ const Photography = {
       <Container size={'xl'} >
         <Stack gap={'lg'}>
           {/* <Banner.Default /> */}
-          <Grid gutter={40}>
+          <Grid gutter={{ base: 20,  md: 40}}>
             <Photography.Filters />
             <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
               <Stack gap={'lg'}>

@@ -13,7 +13,7 @@ const bannerStyle: React.CSSProperties = {
 
 function DefaultBanner({ data }: { data?: BannerItem }) {
     return data?.title ? <div style={{ ...bannerStyle, backgroundImage: 'url(' + data.img + ')' }} >
-        <Grid gutter={40} align="middle" justify={'center'}>
+        <Grid gutter={{ base: 20,  md: 40}} align="middle" justify={'center'}>
             <Grid.Col span={{ base: 12, md: 4 }}>
                 {/* <Tag color="cyan">20% OFF</Tag> */}
                 <Title order={2}>{data.title}</Title>

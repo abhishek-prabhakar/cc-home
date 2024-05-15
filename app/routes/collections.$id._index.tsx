@@ -72,7 +72,7 @@ const CollectionsPage = {
                             {result.map((item, i) => <Tabs.Tab value={'' + i}><Title order={5}>{item.name}</Title></Tabs.Tab>)}
                         </Tabs.List>
                         {result.map((item, i) => <Tabs.Panel value={'' + i}>
-                            <Grid key={item.keyName} gutter={40} style={{ padding: '40px 0' }}>
+                            <Grid key={item.keyName} gutter={{ base: 20,  md: 40}} style={{ padding: '40px 0' }}>
                                 {item.serviceGroup.map(service => <Grid.Col key={service.id} span={{ base: 12, md: 3 }}><Link to={Routes.get('ServiceGroup', { id: item.keyName, subId: service.id })}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
                                         <Stack>

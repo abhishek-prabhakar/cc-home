@@ -99,7 +99,7 @@ const Photography = {
         return (
             <Container size={'xl'}>
                 <Stack gap={'lg'}>
-                    <Grid gutter={40}>
+                    <Grid gutter={{ base: 20,  md: 40}}>
                         <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
                             <Stack gap={'lg'}>
                                 <Group>

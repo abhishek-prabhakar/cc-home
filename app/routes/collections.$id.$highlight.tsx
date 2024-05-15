@@ -61,7 +61,7 @@ const CollectionsHighlightPage = {
                         <div style={{ paddingBottom: '10px' }}></div>
                         <Title order={5}>Book {response?.vendorType}</Title>
                         <div style={{ paddingBottom: '40px' }}></div>
-                        <Grid gutter={40}>
+                        <Grid gutter={{ base: 20,  md: 40}}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                                 <ServiceQuickCard url={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })} title={service.name} img={service.imageName} services={service.description} />
                             </Grid.Col>)
@@ -79,7 +79,7 @@ const CollectionsHighlightPage = {
             <div style={{ paddingBottom: '30px' }}></div>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data?.related}>
-                    {response => <Grid gutter={40} justify="start">
+                    {response => <Grid gutter={{ base: 20,  md: 40}} justify="start">
                         {response?.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
                             <Link to={Routes.get('ServiceGroup', { id: service.vendorType.keyName, subId: service.id })}><Image src={service.imageName} style={{ borderRadius: '5px' }} /></Link>
                             <div style={{ paddingBottom: '14px' }}></div>

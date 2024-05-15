@@ -91,6 +91,8 @@ export async function loader({ request }: LoaderArgs) {
           phone: +loggedInUser.username,
           name: ''
         });
+      } else{
+        resolve(null);
       }
     } catch (e) {
       resolve(null);
