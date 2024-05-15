@@ -11,11 +11,12 @@ import { getCategoryCollection, getCollections, getJumbotronList, getPopularServ
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Container, Flex, Grid, Image, Input, Loader, Modal, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Avatar, Box, Button, Container, Flex, Grid, Group, Image, Input, Loader, Modal, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
 import { FuseResult } from "fuse.js";
+import classNames from "classnames";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -453,6 +454,7 @@ const Home = {
     const loaderData = useLoaderData<typeof loader>();
     const [modalData, setIsModalOpen] = useState<HomeCategoryItem | null>(null);
     const [isMobile, setMobile] = useState(false);
+    const [activeItemIndex, setActiveItem] = useState(0);
 
     useEffect(() => {
       setMobile(window?.innerWidth < 600);
@@ -497,12 +499,16 @@ const Home = {
             step={sliderCount()} dragStep={sliderCount()}
             className="carousel-slider-wrapper slider-homepage-focused slider-uplift"
           >
-            <Slider className="carousel-slider">{data.map((item, i) => <Slide className="item-wrapper" key={'s' + item.id} index={i} onClick={() => showModal(item)}>
+            <Slider className="carousel-slider">{data.map((item, i) => <Slide className={classNames('item-wrapper', { _active: activeItemIndex === i })} key={'s' + item.id} index={i} onClick={() => showModal(item)} onMouseEnter={() => setActiveItem(i)}>
               <div className="item-spacer">
                 <div className="item">
                   <Stack>
                     {CatIconList.find(x => item.title.toLowerCase().includes(x.name))?.icon}
                     <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
+                    <Group className="hover-active" align="center">
+                      <Text fw={500} c={'white'}>Expore</Text>
+                      <IconArrowNarrowRight />
+                    </Group>
                   </Stack>
                 </div>
               </div>
