@@ -78,6 +78,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                 </Indicator>
                             </Link>
                             <Box visibleFrom="md" >
+                                <Group>
                                 <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
                                     <Popover.Target>
                                         {user?.id ? <Link to={'/user/home'}><Avatar onMouseEnter={open} radius="xl" /></Link> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
@@ -106,7 +107,6 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                         </div>
                                     </Popover.Dropdown>
                                 </Popover>
-                            </Box>
                             <Divider orientation="vertical"/>
                             <Link to="/partner/signup">
                             <Button
@@ -117,6 +117,8 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                 Join Now
                             </Button>
                             </Link>
+                            </Group>
+                            </Box>
                         </Flex>
                     </Grid.Col>
                 </Grid>
