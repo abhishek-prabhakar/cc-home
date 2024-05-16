@@ -33,12 +33,16 @@ export function Footer() {
             <Space h="md" />
             <Text c="dimmed">Follow us on social media</Text>
             <Group gap="xl" pt="sm">
-                <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
-                    <IconBrandInstagram />
-                </ThemeIcon>
-                <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
-                    <IconBrandYoutube />
-                </ThemeIcon>
+                <Link to={'https://www.instagram.com/celebriacollective/'} target="_BLANK">
+                    <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
+                        <IconBrandInstagram />
+                    </ThemeIcon>
+                </Link>
+                <Link to={'https://www.youtube.com/@celebria_collective'} target="_BLANK">
+                    <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
+                        <IconBrandYoutube />
+                    </ThemeIcon>
+                </Link>
             </Group>
             <Space h="md" />
             <Divider />
