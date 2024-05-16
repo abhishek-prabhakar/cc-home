@@ -4,6 +4,7 @@ import Fuse, { FuseResult } from 'fuse.js'
 import { SearchResultItem } from "~/types";
 
 const fuseOptions = {
+     useExtendedSearch: true,
     keys: [
         "name",
         "vendorType.name",
@@ -21,7 +22,6 @@ export function loader(args: LoaderArgs) {
 
     const groups = new Promise<FuseResult<SearchResultItem>[]>(function (resolve, reject) {
         db.serviceGroup.findMany({
-            take: 15,
             where: {
                 vendorType: {
                     isActive: true
