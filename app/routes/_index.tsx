@@ -17,6 +17,7 @@ import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
 import { FuseResult } from "fuse.js";
 import classNames from "classnames";
+import { useDebouncedValue } from "@mantine/hooks";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -275,6 +276,8 @@ const Home = {
     const fetcher = useFetcher<{ results: FuseResult<SearchResultItem>[] }>();
     const navigate = useNavigate();
     const [searchBusy, setSearchBusy] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const [debounced] = useDebouncedValue(searchValue, 200);
 
     const typewriterWords = ['work done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
 
@@ -282,9 +285,14 @@ const Home = {
       setSearchBusy(fetcher.state === 'loading');
     }, [fetcher.state]);
 
+    useEffect(() =>{
+      if(debounced){
+       search(debounced)
+      }
+    },[debounced]);
 
-    function search(event: any) {
-      const q = event.target.value || '';
+
+    function search(q: string) {
       setSearchBusy(true);
       fetcher.submit({
         q
@@ -312,13 +320,13 @@ const Home = {
                     <Stack gap={'sm'}>
                       <Text fw={500} c="dimmed">Get Started</Text>
                       <div style={{ background: 'white', padding: '6px 12px', borderRadius: '24px', boxShadow: '0 4px 4px #e1e1e1' }}>
-                        <Input variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} onChange={search} />
+                        <Input variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} onChange={v => setSearchValue(v.target.value)} />
                       </div>
                     </Stack>
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
-                          {response => response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
+                          {response =>searchValue && response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
                             {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType.name}</Text>
                           </div>)}{!response.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
                         </Await>
