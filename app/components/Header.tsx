@@ -107,6 +107,16 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                     </Popover.Dropdown>
                                 </Popover>
                             </Box>
+                            <Divider orientation="vertical"/>
+                            <Link to="/partner/signup">
+                            <Button
+                            radius={'xl'}
+                                variant="gradient"
+                                gradient={{ from: 'red', to: 'violet', deg: 90 }}
+                                >
+                                Join Now
+                            </Button>
+                            </Link>
                         </Flex>
                     </Grid.Col>
                 </Grid>

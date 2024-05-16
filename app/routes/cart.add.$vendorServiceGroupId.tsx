@@ -1,19 +1,15 @@
 import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, ThemeIcon, Title, rem } from "@mantine/core";
-import { Calendar, TimeInput } from "@mantine/dates";
-import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
+import { Calendar } from "@mantine/dates";
+import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Await, Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { IconArrowNarrowLeft, IconArrowNarrowRight, IconCheck, IconNumber1, IconNumber2, IconSquareCheck } from "@tabler/icons-react";
-import { IconSquareCheckFilled } from "@tabler/icons-react";
+import {  IconCheck, IconNumber1, IconNumber2 } from "@tabler/icons-react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { IconNumber3 } from "@tabler/icons-react";
 import { IconNumber4 } from "@tabler/icons-react";
-import { IconCircleArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import UserLogin from "~/components/UserLogin";
-import COMMON_DATA from "~/data/common.data";
 import TIME_SLOTS from "~/data/time-slots.data";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
@@ -21,9 +17,10 @@ import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { cartCheckoutCookie, userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartInput, CartItem } from "~/types";
+import { CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
+import { Carousel } from '@mantine/carousel';
 
 enum ActionType {
     ESTIMATION = 'ESTIMATION',
@@ -204,14 +201,14 @@ const Page = {
                         </ActionIcon>
                         <Title order={5}>{step.title}</Title>
                     </Group>
-                    <Grid>
-                        <Grid.Col span={'content'} p={'0 30px 0 30px'}>
+                    <Flex>
+                        <Box w={'42px'} pl={'21px'} pr={'21px'}>
                             {i < steps.length - 1 ? <Divider orientation="vertical" h="100%" /> : ''}
-                        </Grid.Col>
-                        <Grid.Col span="auto" pt="sm" pb="md">
+                        </Box>
+                        <Box flex={1}>
                             {step.child}
-                        </Grid.Col>
-                    </Grid>
+                        </Box>
+                    </Flex>
                 </Box>)}
             <Space h="lg" />
         </Container>
@@ -327,7 +324,7 @@ const Page = {
         }
 
         return <Grid gutter={'md'}>
-            <Grid.Col span={{ base: 12, md: 'content' }}>
+        <Grid.Col span={{ base: 12, md: 'content' }}>
                 <Text fw={500}>When you are looking for?</Text>
                 <Space h="sm" />
                 <Calendar
@@ -337,7 +334,7 @@ const Page = {
                         disabled: dayjs(date).isBefore(new Date())
                     })}
                 />
-            </Grid.Col>
+                </Grid.Col>
             <Grid.Col span={{ base: 12, md: 'auto' }}>
                 <Text fw={500}>Select a preferred time</Text>
                 <Space h="sm" />
@@ -356,7 +353,7 @@ const Page = {
                         </>}
                     </Await>
                 </Suspense>
-            </Grid.Col>
+                </Grid.Col>
         </Grid>
     },
     TimePicker: ({ slots, onChange, selected }: { slots: typeof TIME_SLOTS, selected?: number, onChange: (d: number) => void }) => {
@@ -374,33 +371,22 @@ const Page = {
             onChange(v);
         }
 
-        return <CarouselProvider
-            naturalSlideWidth={200}
-            naturalSlideHeight={400}
-            totalSlides={slots.length || 0}
-            visibleSlides={1}
-            isIntrinsicHeight={true}
-            step={1} dragStep={1} currentSlide={slots.length - 1 ? 1 : 0}
-        >
-            <Slider>
-                {slots.map((slot, i) => <Slide key={'s' + i} index={i}>
+        return <Carousel slideGap="md">
+                {slots.map((slot, i) => <Carousel.Slide key={'s' + i}>
                     <Text ta={'center'}>{slot?.name}</Text>
                     <Space h="sm" />
                     <Grid justify="center" >
-                        {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 6, md: 5 }}>
-                            <Card withBorder p="sm" key={'st' + time.value}>
+                        {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 5 }}>
+                            <Card withBorder p="sm" >
                                 <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
                             </Card>
                         </Grid.Col>)}
                     </Grid>
-                </Slide>)}
+                </Carousel.Slide>)}
                 {
                     !slots.length && <Text c={'dimmed'}>Sorry, No free slots available on this day. Pls choose a different day.</Text>
                 }
-            </Slider>
-            <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
-            <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
-        </CarouselProvider>;
+                </Carousel>
     },
     ChooseVenue: ({ onChange }: { onChange: (p: FormParams) => void }) => {
         const data = useLoaderData<typeof loader>();

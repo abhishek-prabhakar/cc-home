@@ -25,7 +25,6 @@ import { db } from "./utils/database";
 import { Provider } from 'react-redux';
 import store from './store/store';
 import { Suspense, useEffect, useState } from "react";
-import UserService from "./service/user.service";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
 import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space, Alert } from "@mantine/core";
@@ -33,9 +32,8 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
-import Tracker from '@openreplay/tracker/cjs';
 import { OPENREPLY_KEY, startTracker } from "./tracker";
-import { CartService } from "./service/cart.service";
+import '@mantine/carousel/styles.css';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),

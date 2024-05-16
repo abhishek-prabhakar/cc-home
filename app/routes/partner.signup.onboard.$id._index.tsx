@@ -639,15 +639,19 @@ const OnBoardPage = {
 
             {item.group.serviceGroupItem.map((service, i) => <Grid key={service.service.id} gutter={20}>
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Grid.Col span={12}>
-                    {service.isOptional ? [<Title style={{ color: '#1890ff' }} order={5}>Additional Services</Title>, <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert variant="light" color="blue" title="Do not add base charge to additional service." icon={<IconInfoCircle />} />] : <Title style={{ color: '#1890ff' }} order={5}>Services included in this category</Title>}</Grid.Col >
+                    {service.isOptional ? <><Title style={{ color: '#1890ff' }} order={5}>Additional Services</Title> <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert variant="light" color="blue" title="Do not add base charge to additional service." icon={<IconInfoCircle />} /></> : <Title style={{ color: '#1890ff' }} order={5}>Services included in this category</Title>}</Grid.Col >
                 }
                 <Grid.Col span={2}>
                     {service.isOptional ? <Checkbox
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
                         onChange={v => setEnabledList(service.service.id, v.target.checked)}
-                    /> : [<input type="hidden" name="serviceId"
-                        value={service.service.id} />, <input type="hidden" name="cost" value={0} />, <input type="hidden" name="duration" value={1} />, <input type="hidden" value={service.service.fareMode} name="fareMode" />]}
+                    /> : <>
+                    <input type="hidden" name="serviceId" value={service.service.id} />
+                         <input type="hidden" name="cost" value={0} />
+                          <input type="hidden" name="duration" value={1} />
+                          <input type="hidden" value={service.service.fareMode} name="fareMode" />
+                          </>}
                 </Grid.Col >
                 <Grid.Col span={10}>
                     <Text fw={500}>{service.service.name} {service.addonGroup?.name ? '(' + service.addonGroup?.name + ')' : ''}</Text>
@@ -658,8 +662,8 @@ const OnBoardPage = {
                         <Grid.Col span={{ base: 12, md: 5 }}>
                             <input type="hidden" value={service.service.fareMode} name="fareMode" />
                             <div><Text>Charged by:</Text> {FareModeLabel.get(service.service.fareMode)}</div>
-                            {service.service.fareMode === FareMode.HOURLY ? [<div><Text>Duration</Text></div>,
-                            <Input rightSection="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} />] : <input type="hidden" name="duration" value={1} />}
+                            {service.service.fareMode === FareMode.HOURLY ? <><div><Text>Duration</Text></div>
+                            <Input rightSection="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} /></> : <input type="hidden" name="duration" value={1} />}
                         </Grid.Col >
                         <Grid.Col span={{ base: 12, md: 7 }}>
                             <div><Text>Cost</Text></div>

@@ -18,10 +18,10 @@ export function Footer() {
                 <Await resolve={data.pages}>
                     {navList =>
                         <Grid gutter={'xl'}>
-                            {navList.map(item => <Grid.Col span={{ base: 6, md: 2 }}>
+                            {navList.map(item => <Grid.Col key={item.id} span={{ base: 6, md: 2 }}>
                                 <Text fw={500} pb={'sm'}>{item.name}</Text>
                                 <Stack>
-                                    {item.children[0]?.list.map((child, i) => <Link to={child.path}><Text size="sm">{child.name}</Text></Link>)}
+                                    {item.children[0]?.list.map((child, i) => <Link key={child.id} to={child.path}><Text size="sm">{child.name}</Text></Link>)}
                                 </Stack>
                             </Grid.Col>)}
                         </Grid>
