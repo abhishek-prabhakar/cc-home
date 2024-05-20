@@ -194,22 +194,25 @@ const Page = {
             <Space h="xl" />
 
             {steps.map((step, i) =>
-                <Box key={'step-' + i}>
-                    <Group>
-                        <ActionIcon variant={step.success ? 'filled' : 'light'} color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
-                            <step.icon />
-                        </ActionIcon>
+                <Grid key={'step-' + i}>
+                    <Grid.Col  span={{base:12, md: 'content'}}>
+                        <Group>
+                            <ActionIcon variant={step.success ? 'filled' : 'light'} color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
+                                <step.icon />
+                            </ActionIcon>
+                        </Group>
+                                {i < steps.length - 1 ? <Divider visibleFrom="md" orientation="vertical" h="100%" ml={'22px'} /> : ''}
+                    </Grid.Col>
+                    <Grid.Col span={{base: 12, md: 'auto'}}>
                         <Title order={5}>{step.title}</Title>
-                    </Group>
-                    <Flex>
-                        <Box w={'42px'} pl={'21px'} pr={'21px'}>
-                            {i < steps.length - 1 ? <Divider orientation="vertical" h="100%" /> : ''}
-                        </Box>
-                        <Box flex={1}>
-                            {step.child}
-                        </Box>
-                    </Flex>
-                </Box>)}
+                        <Flex>
+                            <Box flex={1}>
+                                {step.child}
+                            </Box>
+                        </Flex>
+                        <Space h={'xl'}/>
+                    </Grid.Col>
+                </Grid>)}
             <Space h="lg" />
         </Container>
     },
@@ -323,8 +326,8 @@ const Page = {
             });
         }
 
-        return <Grid gutter={'md'}>
-        <Grid.Col span={{ base: 12, md: 'content' }}>
+        return <Grid gutter={'md'} justify="center" pt={'sm'}>
+            <Grid.Col span={{ base:  'content' }}>
                 <Text fw={500}>When you are looking for?</Text>
                 <Space h="sm" />
                 <Calendar
@@ -371,8 +374,8 @@ const Page = {
             onChange(v);
         }
 
-        return <Carousel slideGap="md">
-                {slots.map((slot, i) => <Carousel.Slide key={'s' + i}>
+        return <Carousel slideGap="md" p={0}>
+                {slots.map((slot, i) => <Carousel.Slide key={'s' + i} p={0}>
                     <Text ta={'center'}>{slot?.name}</Text>
                     <Space h="sm" />
                     <Grid justify="center" >
