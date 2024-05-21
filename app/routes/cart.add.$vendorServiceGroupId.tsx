@@ -194,17 +194,23 @@ const Page = {
             <Space h="xl" />
 
             {steps.map((step, i) =>
-                <Grid key={'step-' + i}>
-                    <Grid.Col  span={{base:12, md: 'content'}}>
+                <Grid  key={'step-' + i}>
+                    <Grid.Col  span={{base:  'content'}}>
                         <Group>
                             <ActionIcon variant={step.success ? 'filled' : 'light'} color={step.success ? 'green' : 'blue'} size="xl" radius="xl" aria-label="Settings">
                                 <step.icon />
                             </ActionIcon>
                         </Group>
-                                {i < steps.length - 1 ? <Divider visibleFrom="md" orientation="vertical" h="100%" ml={'22px'} /> : ''}
+                    </Grid.Col>
+                    <Grid.Col span={11}>
+                        <Title mt={'10px'} order={5}>{step.title}</Title>
+                    </Grid.Col>
+                    <Grid.Col visibleFrom="md" span={'content'}>
+                        <Box h={'100%'} w={'40px'}>
+                            {i < steps.length - 1 ? <Divider  orientation="vertical" h="100%" ml={'22px'} /> : ''}
+                        </Box>
                     </Grid.Col>
                     <Grid.Col span={{base: 12, md: 'auto'}}>
-                        <Title order={5}>{step.title}</Title>
                         <Flex>
                             <Box flex={1}>
                                 {step.child}
@@ -262,7 +268,6 @@ const Page = {
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
-
                     {data.serviceGroup.addons.length ? <Stack gap="xs">
                         <Text fw={500}>Recommended Addons</Text>
                         <SimpleGrid cols={{ base: 2, md: 3, lg: 3, xl: 3 }}
