@@ -202,7 +202,7 @@ const Page = {
                             </ActionIcon>
                         </Group>
                     </Grid.Col>
-                    <Grid.Col span={11}>
+                    <Grid.Col span={{base: 8,md: 11}}>
                         <Title mt={'10px'} order={5}>{step.title}</Title>
                     </Grid.Col>
                     <Grid.Col visibleFrom="md" span={'content'}>
