@@ -157,7 +157,7 @@ function SelectableList({data, onChange}:{data:AddonGroupItem[], onChange: (x:st
     }
 
     return <Stack>
-        {data.map(item => <Select key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} clearable onChange={v=> toggleId(item.id, v)}/>)}
+        {data.map(item => <Select key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} allowDeselect={false} onChange={v=> toggleId(item.id, v)}/>)}
         </Stack>
 }
 

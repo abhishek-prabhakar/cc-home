@@ -525,10 +525,10 @@ function getVendorServiceGroupBasicInfo(id: string){
             },
         }).then(r => {
             const optionalIds = r.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
-            let optional = r.vendorService.filter(i => optionalIds.includes(i.service.id))
+            let optional = r.vendorService.filter(i => optionalIds.includes(i.service.id));
 
             const selectableList = r.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
-                if (!item.addonGroup) {
+                if (!item.addonGroup || !r.vendorService.map(x=>x.service.id).includes(item.service.id)) {
                     return acc;
                 }
                 const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
@@ -652,7 +652,7 @@ function getVendorServiceGroup(id: string) {
             let optional = r.vendorService.filter(i => !includedIds.includes(i.service.id))
 
             const selectableList = r.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
-                if (!item.addonGroup) {
+                if (!item.addonGroup || !r.vendorService.map(x=>x.service.id).includes(item.service.id)) {
                     return acc;
                 }
                 const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
