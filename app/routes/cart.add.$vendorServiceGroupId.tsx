@@ -229,11 +229,11 @@ const Page = {
                         </Box>
                     </Grid.Col>
                     <Grid.Col span={{base: 12, md: 'auto'}}>
-                        <Flex>
+                        {i===0 || steps[i-1].success? <Flex>
                             <Box flex={1}>
                                 {step.child}
                             </Box>
-                        </Flex>
+                        </Flex>: <Text c={'gray'}>Complete previous step</Text>}
                         <Space h={'xl'}/>
                     </Grid.Col>
                 </Grid>)}
