@@ -34,6 +34,7 @@ import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
 import { OPENREPLY_KEY, startTracker } from "./tracker";
 import '@mantine/carousel/styles.css';
+import {SpeedInsights} from "@vercel/speed-insights/remix";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -219,6 +220,7 @@ export default function App() {
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
+          <SpeedInsights/>
         </MantineProvider>
       </body>
     </html>

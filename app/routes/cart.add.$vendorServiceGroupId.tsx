@@ -227,12 +227,12 @@ const Page = {
         const [selectedAddons, setAddons] = useState<string[]>([]);
 
         useEffect(() => {
-            const preselectId = data.savedData?.services.map(x => x.id) || [];
-            setAddons(preselectId);
+            const preselectedAddons = data.savedData?.services.map(x => x.id) || [];
+            setAddons(preselectedAddons);
             onChange({
                 services: [{
                     vendorServiceGroupId: data.vendorServiceGroupId,
-                    addonsIds: preselectId
+                    addonsIds: preselectedAddons
                 }]
             });
         }, []);
