@@ -299,7 +299,7 @@ const Page = {
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     {data.serviceGroup.selectableList.length? <>
                     <Text fw={500}>Required Services</Text>
-                    <SelectableList onChange={(v) => updateMandatoryAddons(v)} data={data.serviceGroup.selectableList}/>
+                    <SelectableList  onChange={(v) => updateMandatoryAddons(v)} data={data.serviceGroup.selectableList}/>
                     </>: ''}
 
                     {data.serviceGroup.addons.length ? <Stack gap="xs">
@@ -413,7 +413,7 @@ const Page = {
             onChange(v);
         }
 
-        return <Carousel slideGap="md" p={0}>
+        return <Carousel slideGap="md" initialSlide={1} p={0}>
                 {slots.map((slot, i) => <Carousel.Slide key={'s' + i} p={0}>
                     <Text ta={'center'}>{slot?.name}</Text>
                     <Space h="sm" />
