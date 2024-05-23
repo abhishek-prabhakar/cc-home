@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, Container, Divider, Flex, Grid, Group, Image, Input, Loader, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, ThemeIcon, Title, rem } from "@mantine/core";
+import { Accordion, ActionIcon, Alert, Avatar, Badge, Box, Button, Card, Checkbox, ComboboxData, Container, Divider, Flex, Grid, Group, Image, Input, Loader, Select, SimpleGrid, Skeleton, Space, Stack, Stepper, Text, Textarea, ThemeIcon, Title, rem } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { Await, Form, Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
@@ -17,7 +17,7 @@ import { CartService } from "~/service/cart.service";
 import { VendorQuery } from "~/service/vendor.service";
 import { cartCheckoutCookie, userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
-import { CartInput } from "~/types";
+import { AddonGroupItem, CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { Carousel } from '@mantine/carousel';
@@ -114,7 +114,7 @@ export async function loader(args: LoaderArgs) {
         throw new Error("Invalid service");
     }
 
-    const service = await VendorQuery.getVendorServiceGroup(id);
+    const service = await VendorQuery.getVendorServiceGroupBasicInfo(id);
     const vendor = await db.vendorServiceGroup.findFirstOrThrow({
         where: {
             id
@@ -141,6 +141,24 @@ export async function loader(args: LoaderArgs) {
         savedData,
         source
     })
+}
+
+function SelectableList({data, onChange}:{data:AddonGroupItem[], onChange: (x:string[] )=> void}){
+    const [selectedIds, setSelectedIds] = useState<{id: string, parentId: string }[]>([]);
+
+    function toggleId(parentId:string, id:string | null){
+        const filtered = selectedIds.filter(x => x.parentId !== parentId);
+        if(id){
+            filtered.push({parentId, id})
+        }
+
+        setSelectedIds(filtered);
+        onChange(filtered.map(x => x.id));
+    }
+
+    return <Stack>
+        {data.map(item => <Select key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} clearable onChange={v=> toggleId(item.id, v)}/>)}
+        </Stack>
 }
 
 const Page = {
@@ -225,31 +243,42 @@ const Page = {
     Addons: ({ onChange }: { onChange: (p: FormParams) => void }) => {
         const data = useLoaderData<typeof loader>();
         const [selectedAddons, setAddons] = useState<string[]>([]);
+        const [mandatoryAddons, setMandatoryAddons] = useState<string[]>([]);
 
         useEffect(() => {
             const preselectedAddons = data.savedData?.services.map(x => x.id) || [];
             setAddons(preselectedAddons);
-            onChange({
-                services: [{
-                    vendorServiceGroupId: data.vendorServiceGroupId,
-                    addonsIds: preselectedAddons
-                }]
-            });
+            propogateData(preselectedAddons);
         }, []);
 
         function toggleAddon(id: string) {
-            let newIds;
+            let newIds:string[];
             if (selectedAddons.includes(id)) {
                 newIds = selectedAddons.filter(x => x !== id);
             } else {
                 newIds = [...selectedAddons, id];
             }
-            setAddons(newIds);
+            setAddons(x=> newIds);
+            propogateData(mandatoryAddons.concat(newIds));
+        }
 
-            onChange({
+        function updateMandatoryAddons(ids: string[]){
+            setMandatoryAddons(x => ids);
+            propogateData(selectedAddons.concat(ids));
+        }
+
+        /*
+            emit the data only if the required addons are selected
+        */
+        function propogateData(addonsIds:string[]){
+            if(addonsIds.length < data.serviceGroup.selectableList.length){
+                onChange({ services: [] });
+                return;
+            }
+           onChange({
                 services: [{
                     vendorServiceGroupId: data.vendorServiceGroupId,
-                    addonsIds: newIds
+                    addonsIds: addonsIds
                 }]
             });
         }
@@ -268,6 +297,11 @@ const Page = {
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
+                    {data.serviceGroup.selectableList.length? <>
+                    <Text fw={500}>Required Services</Text>
+                    <SelectableList onChange={(v) => updateMandatoryAddons(v)} data={data.serviceGroup.selectableList}/>
+                    </>: ''}
+
                     {data.serviceGroup.addons.length ? <Stack gap="xs">
                         <Text fw={500}>Recommended Addons</Text>
                         <SimpleGrid cols={{ base: 2, md: 3, lg: 3, xl: 3 }}
@@ -384,7 +418,7 @@ const Page = {
                     <Text ta={'center'}>{slot?.name}</Text>
                     <Space h="sm" />
                     <Grid justify="center" >
-                        {slot?.slots.map(time => <Grid.Col key={'t-' + time} span={{ base: 5, md: 5 }}>
+                        {slot?.slots.map(time => <Grid.Col key={'t-' + time.value} span={{ base: 5, md: 5 }}>
                             <Card withBorder p="sm" >
                                 <Checkbox checked={selectedTime === time.value} label={time.label} onChange={() => setTimeHour(time.value)} />
                             </Card>
