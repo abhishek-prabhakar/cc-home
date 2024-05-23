@@ -157,7 +157,7 @@ function SelectableList({data, onChange}:{data:AddonGroupItem[], onChange: (x:st
     }
 
     return <Stack>
-        {data.map(item => <Select key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} allowDeselect={false} onChange={v=> toggleId(item.id, v)}/>)}
+        {data.map(item => <Select placeholder="Select..." key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} allowDeselect={false} onChange={v=> toggleId(item.id, v)}/>)}
         </Stack>
 }
 
@@ -233,7 +233,7 @@ const Page = {
                             <Box flex={1}>
                                 {step.child}
                             </Box>
-                        </Flex>: <Text c={'gray'}>Complete previous step</Text>}
+                        </Flex>: <Text c={'gray'}>Previous step is incomplete</Text>}
                         <Space h={'xl'}/>
                     </Grid.Col>
                 </Grid>)}
