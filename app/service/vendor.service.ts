@@ -454,9 +454,130 @@ function getServices(username: string) {
     });
 }
 
+function getVendorServiceGroupBasicInfo(id: string){
+    return new Promise<{
+        vendorServiceGroupId: string,
+                groupId: string,
+                title:string,
+                image: string,
+                minHour: number,
+                costExtraHour: number,
+                addons: {
+                    id: string,
+                    title: string,
+                    duration: number,
+                    cost: number
+                }[],
+                selectableList: AddonGroupItem[]
+    }>(function (resolve, reject) {
+        db.vendorServiceGroup.findFirstOrThrow({
+            where: {
+                id,
+                isActive: true
+            },
+            select: {
+                id: true,
+                costExtraHour: true,
+                group: {
+                    select: {
+                        id: true,
+                        name: true,
+                        imageName: true,
+                        minHour: true,
+                        serviceGroupItem: {
+                            orderBy: {
+                                position: 'asc'
+                            },
+                            where:{
+                                isOptional: true
+                            },
+                            select: {
+                                serviceId: true,
+                                isOptional: true,
+                                addonGroup: {
+                                    select: {
+                                        name: true,
+                                        id: true
+                                    }
+                                },
+                                service: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+                vendorService: {
+                    select: {
+                        service: {
+                            select: {
+                                id: true,
+                                name: true,
+                            }
+                        },
+                        cost: true,
+                        duration: true,
+                    }
+                }
+            },
+        }).then(r => {
+            const optionalIds = r.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
+            let optional = r.vendorService.filter(i => optionalIds.includes(i.service.id))
+
+            const selectableList = r.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
+                if (!item.addonGroup) {
+                    return acc;
+                }
+                const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
+                if (!addongGrp) {
+                    acc.push({
+                        id: item.addonGroup?.id,
+                        title: item.addonGroup?.name,
+                        services: [{
+                            id: item.service.id,
+                            title: item.service.name,
+                            duration: 0
+                        }]
+                    });
+                } else {
+                    addongGrp.services.push({
+                        id: item.service.id,
+                        title: item.service.name,
+                        duration: 0
+                    });
+                }
+                optional = optional.filter(x => x.service.id !== item.serviceId);
+                return acc;
+            }, []);
+
+            const groupData = {
+                vendorServiceGroupId: r.id,
+                groupId: r.group.id,
+                title: r.group.name,
+                minHour: r.group.minHour,
+                costExtraHour: r.costExtraHour,
+                image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
+                addons: optional.map(i => ({
+                    id: i.service.id,
+                    title: i.service.name,
+                    duration: i.duration,
+                    cost: i.cost
+                })),
+                selectableList
+            };
+
+            resolve(groupData);
+        }).catch(e => {
+            reject('Connection failed');
+        });;
+    });
+}
+
 function getVendorServiceGroup(id: string) {
     return new Promise<VendorService>(function (resolve, reject) {
-
         db.vendorServiceGroup.findFirstOrThrow({
             orderBy: [{
                 group: {
@@ -685,6 +806,7 @@ export const VendorQuery = {
     getVendorBasicInfo,
     getServices,
     getVendorServiceGroup,
+    getVendorServiceGroupBasicInfo,
     getLinkedProfiles,
     topRatedVendorsByType
 }
