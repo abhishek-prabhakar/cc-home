@@ -197,9 +197,35 @@ const budgetMarks = {
   },
 };
 
+function BadgeCounter({category, activeFilters}:{category: {
+  id: string;
+  name: string;
+}[], activeFilters: string[]}){
+  function getSelectedCatgoryCount(
+    categoryList: {
+      id: string;
+      name: string;
+    }[]
+  ) {
+    const categoryIdList = categoryList.map((value) => value.id);
+    const filteredArray = activeFilters.filter((value) =>
+      categoryIdList.includes(value)
+    );
+    return filteredArray.length;
+  }
+
+  const selectedCategoryCount = getSelectedCatgoryCount(
+    category
+  );
 
 
-const Photography = {
+    return  selectedCategoryCount !== 0 ? (
+      <Badge color="#faad14"
+      >{selectedCategoryCount}</Badge>
+    ) : null
+  }
+
+const Page = {
   Index: () => {
     const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
@@ -216,7 +242,7 @@ const Photography = {
         <Stack gap={'lg'}>
           {/* <Banner.Default /> */}
           <Grid gutter={{ base: 20,  md: 40}}>
-            <Photography.Filters />
+            <Page.Filters />
             <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
               <Stack gap={'lg'}>
                 <Stack>
@@ -229,7 +255,7 @@ const Photography = {
                 >
                   <Await resolve={data?.result}>
                     {(response) => (
-                      <Photography.Results
+                      <Page.Results
                         vendors={response.data}
                         loadMore={response.loadMore}
                       />
@@ -247,11 +273,11 @@ const Photography = {
     const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
     const location = useLocation();
-    const [getCategory, setCategory] = useState<string[]>([]);
+    const [getCategoryFitlers, setCategoryFilters] = useState<string[]>([]);
 
     useEffect(() => {
       const params = new URLSearchParams(location.search);
-      setCategory(
+      setCategoryFilters(
         params
           .get("category")
           ?.split(",")
@@ -259,84 +285,19 @@ const Photography = {
       );
     }, []);
 
-    function toggleCategoryItem(checked: boolean, value: string) {
-      let list;
-      if (checked) {
-        list = [...getCategory, value];
+    function toggleCategoryFilterItem(value: string) {
+      let list = getCategoryFitlers;
+      if (list.includes(value)) {
+        list =  list.filter(x => x!== value);
       } else {
-        list = [...getCategory.filter((x) => x !== value)];
+        list.push(value)
       }
 
-      setCategory(list);
-
+      setCategoryFilters(list);
       const params = new URLSearchParams(location.search);
       params.set("category", list.join(","));
       params.set("page", "0");
       navigate(`${location.pathname}?${params.toString()}`);
-    }
-
-    function getSelectedCatgoryCount(
-      categoryList: {
-        id: string;
-        name: string;
-      }[]
-    ) {
-      const categoryIdList = categoryList.map((value) => value.id);
-      const filteredArray = getCategory.filter((value) =>
-        categoryIdList.includes(value)
-      );
-      return filteredArray.length;
-    }
-
-    function filterItems(filters: Filter[]) {
-      const filterOptionsList = filters.map(
-        (filter, index) => {
-          const selectedCategoryCount = getSelectedCatgoryCount(
-            filter.category
-          );
-          return <Accordion.Item value={filter.name}>
-            <Accordion.Control>
-              <Group justify="space-between" align="center">
-                <Text fw={500}>{filter.name}</Text>{" "}
-                {selectedCategoryCount !== 0 ? (
-                  <Badge color="#faad14"
-                  >{selectedCategoryCount}</Badge>
-                ) : null}
-              </Group>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Stack>
-                {filter.category.map((item) => (
-                  <Checkbox
-                    key={item.id}
-                    label={item.name}
-                    value={item.id}
-                    checked={getCategory.includes(item.id)}
-                    className=""
-                    onChange={(e) =>
-                      toggleCategoryItem(e?.target?.checked, e?.target?.value)
-                    }
-                  />
-                ))}
-                {!filter.category?.length && <div>Unavailable right now.</div>}
-              </Stack>
-            </Accordion.Panel>
-          </Accordion.Item>
-        });
-
-      //     {
-      //         key: '2',
-      //         label: <Text strong>Budget</Text>,
-      //         children: <Slider marks={budgetMarks} defaultValue={100} min={10} max={100} tooltip={{ formatter: null }} />,
-      //     },
-      //     {
-      //         key: '3',
-      //         label: 'Filter 3',
-      //         children: <p>My filters</p>,
-      //     },
-      // ];
-
-      return filterOptionsList;
     }
 
     return (
@@ -353,7 +314,7 @@ const Photography = {
               <Await resolve={data.filters}>
                 {(filters) => (
                   <Accordion>
-                    {filterItems(filters)}
+                   <Page.FilterAccordianItem  activeFilters={getCategoryFitlers} filters={filters} onChange={toggleCategoryFilterItem}/>
                   </Accordion>
                 )}
               </Await>
@@ -413,6 +374,38 @@ const Photography = {
       </InfiniteScroll>
     );
   },
+  FilterAccordianItem: ({filters, activeFilters, onChange}:{filters: Filter[], activeFilters: string[], onChange: (r:string) => void})=> {
+      const filterOptionsList = filters.map(
+        (filter, index) => {
+
+          return <Accordion.Item key={index} value={filter.name}>
+            <Accordion.Control>
+              <Group justify="space-between" align="center">
+                <Text fw={500}>{filter.name}</Text>
+                <BadgeCounter category={filter.category} activeFilters={activeFilters}/>
+              </Group>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Stack>
+                {filter.category.map((item) => (
+                  <Checkbox
+                    key={item.id}
+                    label={item.name}
+                    value={item.id}
+                    checked={activeFilters.includes(item.id)}
+                    onChange={(e) =>
+                      onChange(item.id)
+                    }
+                  />
+                ))}
+                {!filter.category?.length && <div>Unavailable right now.</div>}
+              </Stack>
+            </Accordion.Panel>
+          </Accordion.Item>
+        });
+
+      return filterOptionsList;
+  }
 };
 
-export default Photography.Index;
+export default Page.Index;
