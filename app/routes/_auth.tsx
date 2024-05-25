@@ -1,6 +1,13 @@
-import { LoaderArgs, TypedResponse, redirect } from "@remix-run/node"
+import { LoaderArgs, TypedResponse, V2_MetaFunction, redirect } from "@remix-run/node"
 import { Outlet, useLoaderData } from "@remix-run/react"
 import { getSession, USER_SESSION_KEY } from "~/session.server";
+
+export const meta: V2_MetaFunction = () => {
+    return [
+        { title: "My Account" },
+        { name: "description", content: "Celebria Collective, Find your Pefect vendor" },
+    ];
+};
 
 export async function loader(args: LoaderArgs): Promise<boolean | TypedResponse> {
     const session = await getSession(

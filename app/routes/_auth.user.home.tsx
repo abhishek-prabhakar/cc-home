@@ -1,7 +1,7 @@
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Badge, Button, Card, Grid, Group, Skeleton, Space, Text, Title } from "@mantine/core";
 import { BookingStatus, User } from "@prisma/client";
-import { LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
+import { LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
@@ -11,6 +11,14 @@ import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 
 type OrderItem = { id: string, status: BookingStatus, date: Date }
+
+
+export const meta: V2_MetaFunction = () => {
+    return [
+        { title: "My Account | Orders" },
+        { name: "description", content: "Celebria Collective, Find your Pefect vendor" },
+    ];
+};
 
 export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));

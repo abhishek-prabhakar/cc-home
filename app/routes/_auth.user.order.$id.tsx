@@ -1,7 +1,7 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Skeleton, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
-import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { IconChecks, IconProgress } from "@tabler/icons-react";
 import { IconCreditCardRefund } from "@tabler/icons-react";
@@ -240,6 +240,14 @@ const orderStatusCheckList: {
             filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
         },
     ]
+
+
+export const meta: V2_MetaFunction = () => {
+    return [
+        { title: "My Account | Order Status" },
+        { name: "description", content: "Celebria Collective, Find your Pefect vendor" },
+    ];
+};
 
 const UserOrderHome = {
     Index: () => {
