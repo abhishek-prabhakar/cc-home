@@ -10,7 +10,7 @@ import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
 
-type OrderItem = { id: string, status: BookingStatus, date: Date, services: string[] }
+type OrderItem = { id: string, status: BookingStatus, date: Date }
 
 export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));
@@ -33,27 +33,13 @@ export async function loader({ params, request }: LoaderArgs) {
                 id: true,
                 orderId: true,
                 status: true,
-                created_at: true,
-                bookingService: {
-                    select: {
-                        vendorServiceGroup: {
-                            select: {
-                                group: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                created_at: true
             }
         }).then(r => {
             const p = r.map(x => ({
                 id: x.orderId,
                 status: x.status,
                 date: x.created_at,
-                services: x.bookingService.map(i => i.vendorServiceGroup.group.name || 'Deleted service')
             }));
 
             resolve(p);
