@@ -6,8 +6,10 @@ import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { IconChecks, IconProgress } from "@tabler/icons-react";
 import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
+import { Orders } from "razorpay/dist/types/orders";
 import { Suspense, useState } from "react";
 import { PATH } from "~/path.data";
+import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
@@ -32,11 +34,15 @@ type UserBooking = {
         name: string,
         vendor: {
             vendorType: {
-                name: string;
+                vendorIdentifier: string | null;
             } | null;
             username: string;
             profileImageName: string | null;
-        }
+        },
+        addons:{
+            serviceName: string,
+            cost: number
+        }[]
     }[]
 }
 
@@ -79,6 +85,10 @@ export async function loader({ request, params }: LoaderArgs) {
     const orderId = params.id;
     const session = await getSession(request.headers.get("Cookie"));
     const userId = session.get(USER_SESSION_KEY);
+    if(!orderId){
+        throw new Error('invalid order');
+        return;
+    }
 
     const data = new Promise<UserBooking>(function (resolve, reject) {
         db.booking.findFirst({
@@ -108,7 +118,8 @@ export async function loader({ request, params }: LoaderArgs) {
                             select: {
                                 group: {
                                     select: {
-                                        name: true
+                                        name: true,
+                                        imageName: true
                                     }
                                 },
                                 vendor: {
@@ -117,13 +128,19 @@ export async function loader({ request, params }: LoaderArgs) {
                                         profileImageName: true,
                                         vendorType: {
                                             select: {
-                                                name: true
+                                                vendorIdentifier:true
                                             }
                                         }
                                     }
                                 }
                             }
                         },
+                        BookingAddons:{
+                            select:{
+                                serviceName: true,
+                                cost: true
+                            }
+                        }
                     }
                 }
             }
@@ -150,7 +167,8 @@ export async function loader({ request, params }: LoaderArgs) {
                         duration: x.duration,
                         location: x.location,
                         name: x.vendorServiceGroup.group.name,
-                        vendor: x.vendorServiceGroup.vendor
+                        vendor: x.vendorServiceGroup.vendor,
+                        addons: x.BookingAddons
                     }))
                 })
             }
@@ -159,8 +177,16 @@ export async function loader({ request, params }: LoaderArgs) {
         })
     });
 
+    let paymentStatus:Orders.RazorpayOrder | null = null;
+    try{
+     const paymentStatus =  await PaymentService.getOrder(orderId);
+    } catch (e){
+        paymentStatus = null;
+    }
+
     return defer({
-        data
+        data,
+        paymentStatus
     });
 }
 
@@ -265,7 +291,7 @@ const UserOrderHome = {
                                 <Text c="dimmed" size="sm">Your order has been recieved.</Text>
                                 <Text size="xs" mt={4}>{DateFormatter.short(orderData.date)}</Text>
                             </Timeline.Item>
-                            {orderStatusCheckList.filter(x => x.filter?.includes(orderData.status)).map(item => <Timeline.Item title={item.children} bullet={<ThemeIcon
+                            {orderStatusCheckList.filter(x => x.filter?.includes(orderData.status)).map((item,i) => <Timeline.Item key={i} title={item.children} bullet={<ThemeIcon
                                 c={item.color}
                                 radius="xl"
                                 size={24}
@@ -278,24 +304,36 @@ const UserOrderHome = {
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
-                    {orderData.services.map(service => <Grid align="center">
+                    {orderData.services.map(service => <Grid align="center" key={service.id}>
                         <Grid.Col span={'content'}>
                             <Link to={'/profile/' + service.vendor.username}><Avatar src={PATH.RESOURCE_URL + service.vendor.profileImageName} /></Link>
                         </Grid.Col>
                         <Grid.Col span={'auto'}>
                             <Stack>
+                               <Group>
                                 <Link to={'/profile/' + service.vendor.username}><Text fw={500}>{service.vendor.username}</Text></Link>
-                                <Badge size="xs">{service.name}</Badge>
+                                <Badge size="xs">{service.vendor.vendorType?.vendorIdentifier}</Badge>
+                                </Group>
+                                <Title order={5}>{service.name}</Title>
                                 <Text>
-                                    Date: {service.date}, at {service.timeHour} ({service.duration} hours)
+                                    Date: {DateFormatter.short(service.date)}, at {service.timeHour} ({service.duration} hours)
                                 </Text>
                                 <Text>
                                     Venue: {service.location}
                                 </Text>
                             </Stack>
+                            <Space h="md" />
+                           {
+                           service.addons.length? <Stack>
+                            <Text fw={500} td="underline">Addon Services</Text>
+                            <List>
+                                {service.addons.map(item => <List.Item key={item.serviceName}>{item.serviceName}</List.Item>)}
+                            </List>
+                            </Stack>: ''
+                            }
                         </Grid.Col>
                         <Grid.Col span={'content'}>
-                            <Tooltip label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
+                            <Tooltip hidden={service.status !== BookingStatus.PENDING} label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
                                 {service.status !== BookingStatus.ACCEPTED ? <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={true}>
                                     Call
                                 </Button> : <a href="tel:+916363369715"><Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'}>
@@ -307,11 +345,6 @@ const UserOrderHome = {
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
-                    <Text fw={500} td="underline">Addon Services</Text>
-                    <List>
-                        {orderData.services.map(item => <List.Item c={StatusMarker.get(item.status)}>{item.name}</List.Item>)}
-                    </List>
-
                     <Modal opened={showModal} onClose={() => setModal(false)} title="Confirm cancellation" >
                         <Form method="post">
                             <Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Text>
