@@ -219,7 +219,7 @@ function BadgeCounter({category, activeFilters}:{category: {
   );
 
 
-    return  selectedCategoryCount !== 0 ? (
+    return  selectedCategoryCount > 0? (
       <Badge color="#faad14"
       >{selectedCategoryCount}</Badge>
     ) : null

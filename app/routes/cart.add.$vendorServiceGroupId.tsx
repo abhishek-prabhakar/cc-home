@@ -300,6 +300,7 @@ const Page = {
                     {data.serviceGroup.selectableList.length? <>
                     <Text fw={500}>Required Services</Text>
                     <SelectableList  onChange={(v) => updateMandatoryAddons(v)} data={data.serviceGroup.selectableList}/>
+                    <Space h="md"/>
                     </>: ''}
 
                     {data.serviceGroup.addons.length ? <Stack gap="xs">
