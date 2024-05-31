@@ -60,6 +60,18 @@ export type VendorService = {
     selectableList?: AddonGroupItem[]
 }
 
+export type VendorServicePublic = {
+    vendorServiceGroupId: string,
+    groupId:string,
+    title: string,
+    cost: number,
+    isEstimated?: boolean,
+    included: { id: string,
+        title: string }[],
+    addons: { id: string,
+        title: string }[],
+}
+
 export type Vendor = VendorProfile & VendorPortfolio & { services: VendorService[] };
 
 

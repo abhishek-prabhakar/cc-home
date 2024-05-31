@@ -1,4 +1,3 @@
-import { CheckCircleFilled, InfoCircleOutlined, PlusCircleFilled, PlusOutlined, WarningFilled } from "@ant-design/icons";
 import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
 import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
@@ -10,7 +9,7 @@ import ConfigureBooking from "~/components/ConfigureBooking";
 import COMMON_DATA from "~/data/common.data";
 import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
-import { AddonGroupItem, VendorProfile, VendorService, VendorServiceOption } from "~/types";
+import { VendorProfile, VendorServicePublic } from "~/types";
 type RequiredMark = boolean | 'optional' | 'customize';
 import classes from '../styles/accordian.module.css';
 import { IconDiscountCheckFilled } from "@tabler/icons-react";
@@ -25,7 +24,7 @@ const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', 
 const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
-type ServiceGroup = { name: string, services: VendorService[] };
+type ServiceGroup = { name: string, services: VendorServicePublic[] };
 
 export async function loader({ params, request }: LoaderArgs) {
     const id = params.user || '';
@@ -49,12 +48,12 @@ export async function loader({ params, request }: LoaderArgs) {
 
 const ProfileLayout = {
     Index: () => {
-        const [activeGroupData, setActiveGroupData] = useState<VendorService | null>()
+        const [activeGroupData, setActiveGroupData] = useState<VendorServicePublic | null>()
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
         const [profileData, setProfileData] = useState<VendorProfile | null>();
 
-        function setPreselectedGrpData(d?: VendorService | null) {
+        function setPreselectedGrpData(d?: VendorServicePublic | null) {
             if (d) {
                 setActiveGroupData(d)
             } else {
@@ -99,7 +98,7 @@ const ProfileLayout = {
             <ProfileLayout.CartSuggestion />
         </Container>
     },
-    Cover: ({ profile, activeGroupData, onLoad }: { profile: VendorProfile | null, activeGroupData?: VendorService | null, onLoad: (d: VendorProfile | null) => void }) => {
+    Cover: ({ profile, activeGroupData, onLoad }: { profile: VendorProfile | null, activeGroupData?: VendorServicePublic | null, onLoad: (d: VendorProfile | null) => void }) => {
 
         useEffect(() => {
             onLoad(profile)
@@ -152,12 +151,12 @@ const ProfileLayout = {
             </Card.Section>
         </Card>;
     },
-    Pricing: ({ services, preSelectedGroupId, preSelectedGroup }: { services: ServiceGroup[], preSelectedGroupId: string | null, preSelectedGroup: (d?: VendorService | null) => void }) => {
-        const [activeService, setActive] = useState<VendorService>();
-        const [flatList, setFlatList] = useState<VendorService[]>([]);
+    Pricing: ({ services, preSelectedGroupId, preSelectedGroup }: { services: ServiceGroup[], preSelectedGroupId: string | null, preSelectedGroup: (d?: VendorServicePublic | null) => void }) => {
+        const [activeService, setActive] = useState<VendorServicePublic>();
+        const [flatList, setFlatList] = useState<VendorServicePublic[]>([]);
 
         useEffect(() => {
-            const list = services.reduce<VendorService[]>((acc, x) => acc.concat(x.services), []);
+            const list = services.reduce<VendorServicePublic[]>((acc, x) => acc.concat(x.services), []);
             setFlatList(list);
             if (preSelectedGroupId) {
                 const grpData = list.find(x => x.groupId === preSelectedGroupId);

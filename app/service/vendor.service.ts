@@ -1,6 +1,6 @@
 import { UserSource } from "@prisma/client";
 import { PATH } from "~/path.data";
-import { AddonGroupItem, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption } from "~/types";
+import { AddonGroupItem, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
@@ -300,7 +300,7 @@ function getVendorByUsername(username: string) {
 }
 
 function getServices(username: string) {
-    return new Promise<{ name: string, services: VendorService[] }[]>(function (resolve, reject) {
+    return new Promise<{ name: string, services: VendorServicePublic[] }[]>(function (resolve, reject) {
 
         db.vendorServiceGroup.findMany({
             orderBy: [{
@@ -332,7 +332,6 @@ function getServices(username: string) {
                         },
                         id: true,
                         name: true,
-                        minHour: true,
                         isEstimated: true,
                         serviceGroupItem: {
                             orderBy: {
@@ -374,17 +373,13 @@ function getServices(username: string) {
                             select: {
                                 id: true,
                                 name: true,
-                                fareMode: true
                             }
-                        },
-                        cost: true,
-                        duration: true,
+                        }
                     }
                 }
             },
         }).then(r => {
-            const groupedItems: { [key in string]: { name: string, services: VendorService[] } } = {};
-
+            const groupedItems: { [key in string]: { name: string, services: VendorServicePublic[] } } = {};
             r.forEach(x => {
                 const grouptype = x.group.serviceGroupType?.name || 'Others';
                 if (!groupedItems[grouptype]) {
@@ -395,55 +390,20 @@ function getServices(username: string) {
                 const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
                 let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
 
-                const selectableList = x.group.serviceGroupItem.reduce<AddonGroupItem[]>((acc, item) => {
-                    if (!item.addonGroup) {
-                        return acc;
-                    }
-                    const addongGrp = acc.find(i => i.id === item.addonGroup?.id);
-                    if (!addongGrp) {
-                        acc.push({
-                            id: item.addonGroup?.id,
-                            title: item.addonGroup?.name,
-                            services: [{
-                                id: item.service.id,
-                                title: item.service.name,
-                                duration: 0,
-                            }]
-                        });
-                    } else {
-                        const addonItem = optional.find(x => x.service.id === item.serviceId);
-                        addongGrp.services.push({
-                            id: item.service.id,
-                            title: item.service.name,
-                            duration: 0,
-                            cost: addonItem?.cost,
-                            fareMode: addonItem?.service.fareMode
-                        });
-                    }
-                    optional = optional.filter(x => x.service.id !== item.serviceId);
-                    return acc;
-                }, []);
-
                 groupedItems[grouptype].services.push({
                     vendorServiceGroupId: x.id,
                     groupId: x.group.id,
                     title: x.group.name,
-                    minHour: x.group.minHour,
                     cost: x.cost,
                     isEstimated: x.group.isEstimated,
                     included: included.map(i => ({
                         id: i.service.id,
                         title: i.service.name,
-                        duration: i.duration,
                     })),
                     addons: optional.map(i => ({
                         id: i.service.id,
                         title: i.service.name,
-                        duration: i.duration,
-                        cost: i.cost,
-                        fareMode: i.service.fareMode
                     })),
-                    selectableList
                 });
             });
 
