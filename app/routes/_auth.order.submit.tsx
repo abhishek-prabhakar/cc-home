@@ -129,12 +129,12 @@ export async function action({
             }))
         });
 
-        // await EmailService.notifyVendorNewOrder({
-        //     username: item.vendorId,
-        //     date: item.date.toString(),
-        //     serviceName: item.name,
-        //     orderId: orderId
-        // });
+        await EmailService.notifyVendorNewOrder({
+            username: item.vendorId,
+            date: item.date.toString(),
+            serviceName: item.name,
+            orderId: orderId
+        });
     }
     debug_point = '8';
 
