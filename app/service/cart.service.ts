@@ -49,6 +49,62 @@ async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: 
     })
 }
 
+async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode){
+    const vendorGrpIds:string[] = [];
+    let addonsIds:string[] = [];
+    cart.forEach(x => {
+        vendorGrpIds.push(x.vendorServiceGroupId);
+        addonsIds = addonsIds.concat(x.services.map(y => y.id));
+    });
+    const groupData  = await db.vendorServiceGroup.findMany({
+        where:{
+            id:{
+                in: vendorGrpIds
+            }
+        },
+        select:{
+            id:true,
+            cost: true,
+            vendorId: true,
+            group:{
+                select:{
+                    name: true
+                }
+            }
+        }
+    });
+
+    const addonData  = await db.vendorService.findMany({
+        where:{
+            id:{
+                in: addonsIds
+            }
+        },
+        select:{
+            vendorServiceGroupId: true,
+            cost: true,
+            serviceId: true,
+            fareMode: true,
+            service:{
+                select:{
+                    name: true
+                }
+            }
+        }
+    });
+    const estimation = await cartCalculateCost(
+        groupData.map(x => x.cost),
+        addonData.map(x => x.cost),
+        coupon,
+        paymentMode
+    );
+    return {
+        groupData,
+        addonData,
+        estimation
+    }
+}
+
 function cartSummary(cart: CartInput[]) {
     return new Promise<CartItem[]>(async function (resolve) {
         if (!cart?.length) {
@@ -130,9 +186,9 @@ function calculateFullPaymentPromo(value: number) {
     }
 }
 
-async function cartCalculateCost(cart: CartItem[], coupon?: string, paymentMode?: BookingPaymentMode) {
+async function cartCalculateCost(groupCosts: number[], addonsCost: number[], coupon?: string, paymentMode?: BookingPaymentMode) {
     const gst = GST_PERCENTAGE;
-    const total = cart.reduce<CartItemService[]>((arr, x) => arr.concat(x.services), []).reduce((sum, item) => sum + item.cost, 0);
+    const total = groupCosts.concat(addonsCost).reduce((sum, item) => sum + item, 0);
     let couponData;
     let discount = 0;
     let additionalPromo = 0;
@@ -164,6 +220,7 @@ async function cartCalculateCost(cart: CartItem[], coupon?: string, paymentMode?
 export const CartService = {
     getGst: GST_PERCENTAGE,
     calculate: cartCalculateCost,
-    summary: cartSummary,
-    getVendorServiceBookingsByDate
+    summary: cartSummary, 
+    getVendorServiceBookingsByDate,
+    cartEstimationForCheckout
 }

@@ -43,7 +43,9 @@ const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMod
 
 async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode) {
     const cartSummary = await CartService.summary(input);
-    const estimation = await CartService.calculate(cartSummary, coupon, paymentMode);
+    const groupCost = cartSummary.map<number>(x => x.cost);
+    const addonCost = cartSummary.reduce<number[]>((acc,i) => { return acc.concat(i.services.map(x => x.cost)); }, []);
+    const estimation = await CartService.calculate(groupCost,addonCost, coupon, paymentMode);
     return {
         estimation
     };
@@ -58,9 +60,9 @@ export async function action({ request }: ActionArgs) {
     const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
 
     if (!currentCart?.length) {
-        return null;
+        return redirect('/');
     }
-
+    
     return cartSummary(currentCart, coupon, paymentMode);
 }
 
@@ -75,6 +77,7 @@ export async function loader({
     let estimatedPaymentModes: BookingPaymentMode[] = ACTIVE_PAYMENT_MODES;
 
     const cartSummary = await CartService.summary(currentCart);
+    
     const containsEstimated = cartSummary.filter(item => item.isEstimated).length;
     if (containsEstimated) {
         estimatedPaymentModes = ESTIMATED_SERVICE_PAYMENT_MODES;
