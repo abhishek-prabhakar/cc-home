@@ -14,6 +14,7 @@ import Stories from 'react-insta-stories';
 import { CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { VendorQuery } from "~/service/vendor.service";
 import VideoPreviewItem from "~/components/VideoPreviewItem";
+import { useMediaQuery } from "@mantine/hooks";
 
 type ProfileService = { name: string, description: string };
 type Story = {
@@ -203,12 +204,8 @@ const ProfileHome = {
     Stories: () => {
         const data = useLoaderData<typeof loader>();
         const fetcher = useFetcher<typeof action>();
-        const [isMobile, setMobile] = useState(false);
+        const isWideScreen = useMediaQuery('(min-width: 56.25em)');
         const [stories, setStories] = useState<Story[]>([]);
-
-        useEffect(() => {
-            setMobile(window?.innerWidth < 600);
-        }, []);
 
         useEffect(() => {
             const list = fetcher.data?.map<Story>(x => ({ url: PATH.RESOURCE_URL + x.fileName })) || [];
@@ -224,7 +221,7 @@ const ProfileHome = {
             });
         }
 
-        function sliderCount() { return isMobile ? 3 : 6; }
+        function sliderCount() { return isWideScreen ? 6 : 3; }
 
         return <>
             <Suspense fallback={<Skeleton />}>
@@ -253,7 +250,7 @@ const ProfileHome = {
                                                     <Overlay
                                                         gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                                         opacity={0.85}
-                                                        p={isMobile ? 'xs' : 'md'}
+                                                        p={{base: 'xs', md:  'md'}}
                                                     >
                                                         <Flex align={'end'} h="100%">
                                                             <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>

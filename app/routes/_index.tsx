@@ -17,7 +17,7 @@ import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
 import { FuseResult } from "fuse.js";
 import classNames from "classnames";
-import { useDebouncedValue } from "@mantine/hooks";
+import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -298,14 +298,10 @@ const Home = {
   },
   PopularServices: () => {
     const data = useLoaderData<HomePage>();
-    const [isMobile, setMobile] = useState(false);
+    const isWideScreen = useMediaQuery('(min-width: 56.25em)');
     const navigate = useNavigate();
 
-    useEffect(() => {
-      setMobile(window?.innerWidth < 600);
-    }, []);
-
-    function sliderCount() { return isMobile ? 2 : 4; }
+    function sliderCount() { return isWideScreen ? 4 : 2; }
 
     return <Grid justify={'space-between'} align={'center'}>
       <Grid.Col span={{ base: 12, md: 2 }}>
@@ -347,13 +343,9 @@ const Home = {
   },
   Collections: () => {
     const data = useLoaderData<HomePage>();
-    const [isMobile, setMobile] = useState(false);
+    const isWideScreen = useMediaQuery('(min-width: 56.25em)');
 
-    useEffect(() => {
-      setMobile(window?.innerWidth < 600);
-    }, []);
-
-    function sliderCount() { return isMobile ? 1 : 4; }
+    function sliderCount() { return isWideScreen ? 4 : 1; }
 
     return <Grid justify={'center'}>
       <Grid.Col span={12}>
@@ -412,12 +404,8 @@ const Home = {
   Services: () => {
     const loaderData = useLoaderData<typeof loader>();
     const [modalData, setIsModalOpen] = useState<HomeCategoryItem | null>(null);
-    const [isMobile, setMobile] = useState(false);
+    const isWideScreen = useMediaQuery('(min-width: 56.25em)');
     const [activeItemIndex, setActiveItem] = useState(0);
-
-    useEffect(() => {
-      setMobile(window?.innerWidth < 600);
-    }, [])
 
     const showModal = (data: HomeCategoryItem) => {
       setIsModalOpen(data);
@@ -427,7 +415,7 @@ const Home = {
       setIsModalOpen(null);
     };
 
-    function sliderCount() { return isMobile ? 2 : 5; }
+    function sliderCount() { return isWideScreen ? 5 : 2; }
 
     const CatIconList = [{
       name: 'video',
