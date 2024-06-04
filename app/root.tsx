@@ -63,8 +63,6 @@ const headerStyle: React.CSSProperties = {
   zIndex: 1
 };
 
-type LoaderData = RootLoaderData;
-
 export async function loader({ request }: LoaderArgs) {
   const cookie = request.headers.get("Cookie");
   const session = await getSession(cookie);

@@ -18,17 +18,6 @@ type SendEmailInput = {
     html: string
 };
 
-async function getVendorEmailByUsername(username: string) {
-    return await db.vendor.findFirst({
-        where: {
-            username
-        },
-        select: {
-            email: true
-        }
-    });
-}
-
 async function sendEmail(input: SendEmailInput) {
     await transporter.sendMail({
         from: '"Celebria Collective" <team@celebriacollective.com>',
@@ -41,16 +30,14 @@ async function sendEmail(input: SendEmailInput) {
 
 
 async function notifyVendorNewOrder(input: {
-    username: string,
+    email?: string,
     date: string,
     serviceName: string,
     orderId: string
 }) {
-    const email = await getVendorEmailByUsername(input.username);
-    if (!email?.email) {
+    if(!input.email){
         return;
     }
-
     const subject = 'You have a new booking';
     const html = `Hello, You have a new booking <br/><br/> Service:<b>${input.serviceName}</b>
     <br/>
@@ -64,7 +51,7 @@ async function notifyVendorNewOrder(input: {
     const text = 'Hello, You have a new booking on ' + input.date;
 
     await sendEmail({
-        to: email?.email,
+        to: input.email,
         subject,
         html,
         text

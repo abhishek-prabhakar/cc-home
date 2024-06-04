@@ -759,6 +759,20 @@ function getVendorBasicInfo(username: string) {
     })
 }
 
+
+
+async function getVendorContactsByUsername(username: string) {
+    return await db.vendor.findFirst({
+        where: {
+            username
+        },
+        select: {
+            email: true,
+            mobileNumber: true
+        }
+    });
+}
+
 export const VendorQuery = {
     Stories,
     portfolioByAlbumId,
@@ -771,5 +785,6 @@ export const VendorQuery = {
     getVendorServiceGroup,
     getVendorServiceGroupBasicInfo,
     getLinkedProfiles,
-    topRatedVendorsByType
+    topRatedVendorsByType,
+    getVendorContactsByUsername
 }

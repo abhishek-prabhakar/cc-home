@@ -7,7 +7,7 @@ import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, Collection, HomeCategoryItem, Jumbotron, SearchResultItem } from "~/types";
-import { getCategoryCollection, getCollections, getJumbotronList, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
+import { getCategoryCollection, getCollections, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
@@ -47,19 +47,11 @@ type HomePage = {
   jumbotron: Jumbotron[];
   popularServices: Collection[];
   collections: Collection[];
-  morePages: Page[];
   categories: Page[];
 };
-
-// : Promise<TypedDeferredData<{
-//   jumbotron: Promise<Jumbotron[]>;
-//   collection: Promise<Grid.Collection[]>;
-//   morePages: Promise<Page[]>;
-//   categories: Promise<Page[]>
-// }>>
+ 
 export async function loader({ params }: LoaderArgs) {
   const id = params.user;
-  const jumbotronList = getJumbotronList()
 
   const quickLinks = new Promise<Collection[]>(function (resolve, reject) {
     db.serviceGroup.findMany({
@@ -95,36 +87,6 @@ export async function loader({ params }: LoaderArgs) {
       }
     }).then(r => {
       resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
-    }, e => {
-      reject('Connection failed');
-    })
-  });
-
-  const morePages = new Promise<Page[]>(function (resolve, reject) {
-    db.vendorType.findMany({
-      take: 3,
-      orderBy: {
-        name: 'asc'
-      },
-      where: {
-        isActive: true
-      },
-      select: {
-        id: true,
-        name: true,
-        keyName: true,
-        serviceGroup: {
-          select: {
-            id: true,
-            name: true,
-            imageName: true
-          }
-        }
-      }
-    }).then(r => {
-      resolve(r.map(x => ({
-        path: Routes.get('Services', { id: x.keyName }), title: x.name, id: x.id, serviceGroup: x.serviceGroup
-      })))
     }, e => {
       reject('Connection failed');
     })
@@ -203,18 +165,7 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-const jumbotronWrapperStyle = { overflow: 'auto', };
-const jumbotronListStyle = { display: 'flex', gap: '20px', alignItems: 'center' }
-const jumbotronItemWrapperStyle: React.CSSProperties = { width: '60vw' }
-const jumbotronItemStyle: React.CSSProperties = { padding: '50px 20px', width: '100%', borderRadius: '15px', }
-
 const FALLBACK_IMG = 'https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png';
-
-const contentStyle: React.CSSProperties = {
-  margin: 0,
-  height: '400px',
-};
-
 
 const Home = {
   Index: () => {

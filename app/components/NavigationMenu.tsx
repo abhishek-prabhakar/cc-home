@@ -30,35 +30,36 @@ type MenuItem = {
   children?: MenuItem[];
 };
 
+
+function DropdownContent({navitem}: {navitem: HeaderNavListItem }) {
+  return <Stack p={'sm'}>
+    <Text>
+      {" "}
+      <Link to={Routes.get('Services', { id: navitem.id })}>
+        Browse all {navitem.name}
+      </Link>
+    </Text>
+    {navitem.children?.map((menuItem) => (
+      <div key={menuItem.name}>
+        <Stack gap={'xs'}>
+          <Text c="dimmed">
+            {menuItem.name}
+          </Text>
+          {menuItem.list.map((item) => (
+            <Link key={item.id} to={item.path}>
+              <Text size="sm" c="black">{item.name}</Text>
+            </Link>
+          ))}
+          {!menuItem.list.length && <Text c="dimmed">Sorry, no results found.</Text>}
+        </Stack>
+      </div>
+    ))}
+  </Stack>;
+}
+
 const AppNavigation = {
   MainMenu: () => {
     const data = useLoaderData<RootLoaderData>();
-
-    function dropdownContent(navitem: HeaderNavListItem) {
-      return <Stack p={'sm'}>
-        <Text>
-          {" "}
-          <Link to={Routes.get('Services', { id: navitem.id })}>
-            Browse all {navitem.name}
-          </Link>
-        </Text>
-        {navitem.children?.map((menuItem) => (
-          <div key={menuItem.name}>
-            <Stack gap={'xs'}>
-              <Text c="dimmed">
-                {menuItem.name}
-              </Text>
-              {menuItem.list.map((item) => (
-                <Link key={item.id} to={item.path}>
-                  <Text size="sm" c="black">{item.name}</Text>
-                </Link>
-              ))}
-              {!menuItem.list.length && <Text c="dimmed">Sorry, no results found.</Text>}
-            </Stack>
-          </div>
-        ))}
-      </Stack>;
-    }
 
     return (
       <Suspense fallback={<Skeleton />}>
@@ -79,7 +80,7 @@ const AppNavigation = {
                       </Flex>
                     </Menu.Target>
                     <Menu.Dropdown>
-                      {dropdownContent(item)}
+                      <DropdownContent navitem={item}/>
                     </Menu.Dropdown>
                   </Menu>
                 </Box>
