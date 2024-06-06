@@ -66,7 +66,7 @@ const OrderSuccess = {
                         </Card>
                         <Card>
                             <Title order={5}>How was your experience?</Title>
-                            <Rating defaultValue={3} emptySymbol={({ index }: any) => customIcons[index + 1]} />
+                            <Rating  emptySymbol={({ index }: any) => customIcons[index + 1]} />
                         </Card>
                     </Stack>
                 </Grid.Col>
