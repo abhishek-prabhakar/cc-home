@@ -341,7 +341,7 @@ const ProfileHome = {
                             {portfolio => <>
                             <Title order={5}>Other works</Title>
                             <Space h={'sm'}/>
-                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={5}>{portfolio?.map((image, key) =>
+                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{default: 5, '800': 3 }}>{portfolio?.map((image, key) =>
                                     image.type === 'youtube' ?
                                         <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}>
                                             <VideoPreviewItem ytId={image.value} />
