@@ -46,8 +46,6 @@ const Request = {
         },
         };
 
-        console.log(MESSAGE_BODY)
-
         return axios({
             method: 'post',
             url: END_POINT, 
