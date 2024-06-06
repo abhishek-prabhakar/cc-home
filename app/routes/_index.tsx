@@ -446,14 +446,14 @@ const Home = {
             step={sliderCount()} dragStep={sliderCount()}
             className="carousel-slider-wrapper slider-homepage-focused slider-uplift"
           >
-            <Slider className="carousel-slider">{data.map((item, i) => <Slide className={classNames('item-wrapper', { _active: activeItemIndex === i })} key={'s' + item.id} index={i} onClick={() => showModal(item)} onMouseEnter={() => setActiveItem(i)}>
+            <Slider className="carousel-slider">{data.map((item, i) => <Slide className={classNames('item-wrapper', { _active: activeItemIndex === i })} key={'s' + item.id} index={i} onClick={() => showModal(item)} onMouseOver={() => setActiveItem(i)}>
               <div className="item-spacer">
                 <div className="item">
                   <Stack>
                     {CatIconList.find(x => item.title.toLowerCase().includes(x.name))?.icon}
                     <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
                     <Group className="hover-active" align="center">
-                      <Text fw={500} c={'white'}>Expore</Text>
+                      <Text fw={500} c={'white'}>Explore</Text>
                       <IconArrowNarrowRight />
                     </Group>
                   </Stack>
