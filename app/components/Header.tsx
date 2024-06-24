@@ -79,45 +79,45 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                             </Link>
                             <Box visibleFrom="md" >
                                 <Group>
-                                <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
-                                    <Popover.Target>
-                                        {user?.id ? <Link to={'/user/home'}><Avatar onMouseEnter={open} radius="xl" /></Link> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
-                                    </Popover.Target>
-                                    <Popover.Dropdown p={0}>
-                                        <div style={userMenuStyle}>
-                                            <div style={{ padding: '12px' }}>
-                                                {user?.id ?
-                                                    <Group align="center" justify={'space-between'}>
-                                                        <Box>
-                                                            <Title order={5}>Hey!</Title>
-                                                            <Link to={'/user/home'}>My Bookings</Link>
-                                                        </Box>
-                                                        <Box>
-                                                            <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
-                                                        </Box>
-                                                    </Group>
-                                                    : <UserLogin inlineMode={true} redirectUrl={location.pathname} />}
+                                    <Popover shadow="md" position="bottom" trapFocus withArrow opened={opened} onChange={v => !v ? close() : null}>
+                                        <Popover.Target>
+                                            {user?.id ? <Link to={'/user/home'}><Avatar onMouseEnter={open} radius="xl" /></Link> : <Button onMouseEnter={open} radius={'xl'}>Sign-in</Button>}
+                                        </Popover.Target>
+                                        <Popover.Dropdown p={0}>
+                                            <div style={userMenuStyle}>
+                                                <div style={{ padding: '12px' }}>
+                                                    {user?.id ?
+                                                        <Group align="center" justify={'space-between'}>
+                                                            <Box>
+                                                                <Title order={5}>Hey!</Title>
+                                                                <Link to={'/user/home'}>My Bookings</Link>
+                                                            </Box>
+                                                            <Box>
+                                                                <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
+                                                            </Box>
+                                                        </Group>
+                                                        : <UserLogin inlineMode={true} redirectUrl={location.pathname} />}
+                                                </div>
+                                                <div style={menuArtisantStyle}>
+                                                    <Stack style={{ padding: 8 }} >
+                                                        <Title order={3}>Artisan?</Title>
+                                                        <Link to="/partner/signup"><Button radius="xl" variant="outline" >Signup</Button></Link>
+                                                    </Stack>
+                                                </div>
                                             </div>
-                                            <div style={menuArtisantStyle}>
-                                                <Stack style={{ padding: 8 }} >
-                                                    <Title order={3}>Artisan?</Title>
-                                                    <Link to="/partner/signup"><Button radius="xl" variant="outline" >Signup</Button></Link>
-                                                </Stack>
-                                            </div>
-                                        </div>
-                                    </Popover.Dropdown>
-                                </Popover>
-                            <Divider orientation="vertical"/>
-                            <Link to="/partner/signup">
-                            <Button
-                            radius={'xl'}
-                                variant="gradient"
-                                gradient={{ from: 'red', to: 'violet', deg: 90 }}
-                                >
-                                Join Now
-                            </Button>
-                            </Link>
-                            </Group>
+                                        </Popover.Dropdown>
+                                    </Popover>
+                                    <Divider orientation="vertical"/>
+                                    <Link to="/partner/signup">
+                                    <Button
+                                    radius={'xl'}
+                                        variant="gradient"
+                                        gradient={{ from: 'red', to: 'violet', deg: 90 }}
+                                        >
+                                        Join Now
+                                    </Button>
+                                    </Link>
+                                </Group>
                             </Box>
                         </Flex>
                     </Grid.Col>

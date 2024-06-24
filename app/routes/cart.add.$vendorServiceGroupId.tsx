@@ -157,7 +157,7 @@ function SelectableList({data, onChange}:{data:AddonGroupItem[], onChange: (x:st
     }
 
     return <Stack>
-        {data.map(item => <Select placeholder="Select..." key={item.id} label={item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} allowDeselect={false} onChange={v=> toggleId(item.id, v)}/>)}
+        {data.map(item => <Select placeholder="Select..." key={item.id} label={'Select '+item.title} required data={item.services.map(x =>({ value: x.id, label: x.title}))} allowDeselect={false} onChange={v=> toggleId(item.id, v)}/>)}
         </Stack>
 }
 
@@ -298,7 +298,6 @@ const Page = {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 'auto' }}>
                     {data.serviceGroup.selectableList.length? <>
-                    <Text fw={500}>Required Services</Text>
                     <SelectableList  onChange={(v) => updateMandatoryAddons(v)} data={data.serviceGroup.selectableList}/>
                     <Space h="md"/>
                     </>: ''}

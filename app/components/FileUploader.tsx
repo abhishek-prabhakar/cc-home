@@ -51,6 +51,7 @@ export default (props: DefaultProps & { path?: string }) => {
                 'Access-Control-Allow-Origin': '*'
             },
         }}
+        
         accept="image/*"
 
     >
