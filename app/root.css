@@ -261,7 +261,7 @@ a, a:active{
         /* padding: 30px 40px 30px 20px; */
     }
     .item-wrapper._active .item,
-    .item-wrapper:hover .item{
+    .item-wrapper-not-needed:hover .item{
             position: relative;
             background: linear-gradient(#873CEA, #6828F5);
             border-radius: 10px;
