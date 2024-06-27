@@ -287,8 +287,8 @@ function getVendorByUsername(username: string) {
                     gender: '',
                     type: r.vendorType?.name || '',
                     primaryColor: r.primaryColor,
-                    avatar: r.profileImageName ? PATH.THUMB_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                    coverImageName: r.coverImageName ? PATH.THUMB_URL + r.coverImageName : '',
+                    avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                    coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
                     bio: r.bio,
                     baseCharge: r.VendorServiceGroup[0]?.cost || 0
                 });
