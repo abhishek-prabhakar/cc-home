@@ -63,7 +63,7 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                 services: r?.ServiceGroup.map(service => ({
                     name: service.name,
                     id: service.id,
-                    imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG,
+                    imageName: service.imageName ? PATH.THUMB_URL + service.imageName : PATH.FALLBACK_IMG,
                     description: service.serviceGroupItem.map(x => x.service.name?.toLocaleLowerCase())
                 })),
                 vendorType: r?.ServiceGroup[0].vendorType.name
@@ -120,7 +120,7 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
             resovle(r?.ServiceGroup.map(service => ({
                 name: service.name,
                 id: service.id,
-                imageName: service.imageName ? PATH.RESOURCE_URL + service.imageName : PATH.FALLBACK_IMG,
+                imageName: service.imageName ? PATH.THUMB_URL + service.imageName : PATH.FALLBACK_IMG,
                 vendorType: service.vendorType
             })));
         }).catch(e => {

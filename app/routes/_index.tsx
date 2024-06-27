@@ -86,7 +86,7 @@ export async function loader({ params }: LoaderArgs) {
         }
       }
     }).then(r => {
-      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
+      resolve(r.map(x => ({ id: x.id, title: x.name, image: x.imageName ? PATH.THUMB_URL + x.imageName : '', label: x.vendorType.name, path: `/services/${x.vendorType.keyName}?category=${x.id}`, cost: x.serviceGroupItem[0]?.service?.vendorService[0]?.cost })));
     }, e => {
       reject('Connection failed');
     })
@@ -141,7 +141,7 @@ export async function loader({ params }: LoaderArgs) {
       return {
         title: x.title,
         description: x.description,
-        img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+        img: x.imageName ? PATH.THUMB_URL + x.imageName : '',
         url: url.replace(':vendorType', x.vendorType?.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || ''),
         bannerLocation: item.targetPage
       }
@@ -474,7 +474,7 @@ const Home = {
             {item.isCollection && false ? <Grid.Col span={12} key={item.id}>
               <Link to={item.path}>
                 <div style={{ position: 'relative', borderRadius: '10px', boxShadow: '0 20px 40px #d3d3d3', overflow: 'hidden' }}>
-                  <Image src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
+                  <Image src={item.imageName ? PATH.THUMB_URL + item.imageName : FALLBACK_IMG} width={'100%'} height={150} style={{ borderRadius: '10px', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: collectionBg[index % 2], display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: 'white', flexDirection: 'column' }}>
                     <Title order={4} style={{ wordBreak: 'normal', color: 'white' }}>{item.name}</Title>
                     <div style={{ padding: '0 15%', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{item.description}</div>
@@ -484,7 +484,7 @@ const Home = {
             </Grid.Col> : <Grid.Col span={{ base: 6, md: 4 }} key={item.id}>
               <Link to={item.path}>
                 <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-                  <Image src={item.imageName ? PATH.RESOURCE_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
+                  <Image src={item.imageName ? PATH.THUMB_URL + item.imageName : FALLBACK_IMG} style={{ borderRadius: '10px' }} />
                   <div style={{
                     background: 'linear-gradient(0deg, rgb(2, 0, 36, 0.3) 0%, rgb(9, 9, 121, 0.3) 35%, rgb(0, 212, 255, 0.3) 100%)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '12px'
                   }}>
@@ -512,7 +512,7 @@ const Home = {
                   <Grid.Col>{i + 1}</Grid.Col>
                   <Grid.Col>
                     <Avatar
-                      src={vendor.profileImageName ? PATH.RESOURCE_URL + vendor.profileImageName
+                      src={vendor.profileImageName ? PATH.THUMB_URL + vendor.profileImageName
                         : PATH.AVATAR_PLACEHOLDER}
                     /></Grid.Col>
                   <Grid.Col flex={'auto'}>

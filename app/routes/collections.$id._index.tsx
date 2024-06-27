@@ -76,7 +76,7 @@ const CollectionsPage = {
                                 {item.serviceGroup.map(service => <Grid.Col key={service.id} span={{ base: 12, md: 3 }}><Link to={Routes.get('ServiceGroup', { id: item.keyName, subId: service.id })}>
                                     <div style={{ borderRadius: '10px', background: '#F5F5F7', padding: '12px', boxShadow: '0 2px 4px #d3d3d3' }}>
                                         <Stack>
-                                            <Image src={service.imageName ? PATH.RESOURCE_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} />
+                                            <Image src={service.imageName ? PATH.THUMB_URL + service.imageName : ''} style={{ borderRadius: '6px', maxHeight: '140px', objectFit: 'cover' }} width={'100%'} />
                                             <Link to={Routes.get('ServiceGroup', { id: item.keyName, subId: service.id })}>
                                                 <Title order={5}>{service.name}</Title>
                                             </Link>

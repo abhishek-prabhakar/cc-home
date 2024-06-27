@@ -314,7 +314,7 @@ const UserOrderHome = {
                     <Space h="md" />
                     {orderData.services.map(service => <Grid align="center" key={service.id}>
                         <Grid.Col span={'content'}>
-                            <Link to={'/profile/' + service.vendor.username}><Avatar src={PATH.RESOURCE_URL + service.vendor.profileImageName} /></Link>
+                            <Link to={'/profile/' + service.vendor.username}><Avatar src={PATH.THUMB_URL + service.vendor.profileImageName} /></Link>
                         </Grid.Col>
                         <Grid.Col span={'auto'}>
                             <Stack>

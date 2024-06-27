@@ -117,7 +117,7 @@ const Onboard = {
                                 <Flex style={{ marginTop: '10px' }}>
                                     {
                                         files.map(img => <div key={img}>
-                                            <Image src={PATH.RESOURCE_URL + img} width={100} />
+                                            <Image src={PATH.THUMB_URL + img} width={100} />
                                             <input type="hidden" name="portfolio" value={img} />
                                         </div>)
                                     }

@@ -48,7 +48,7 @@ function getJumbotronList() {
                 return {
                     title: x.title,
                     description: x.description,
-                    img: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+                    img: x.imageName ? PATH.THUMB_URL + x.imageName : '',
                     url: url.replace(':vendorType', x.vendorType?.keyName || x.group?.vendorType.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
                 }
             })
@@ -212,7 +212,7 @@ function getPopularServices() {
                 title: x.name,
                 path: Routes.get('ServiceGroup', { id: x.vendorType.keyName, subId: x.id }),
                 label: '',
-                image: x.imageName ? PATH.RESOURCE_URL + x.imageName : '',
+                image: x.imageName ? PATH.THUMB_URL + x.imageName : '',
                 cost: 0
             })))
         }).catch(e => {
@@ -242,7 +242,7 @@ function getCollections() {
 
             resolve(r.map(x => ({
                 id: x.keyName,
-                image: PATH.RESOURCE_URL + x.ServiceGroup.find(i => i.imageName)?.imageName,
+                image: PATH.THUMB_URL + x.ServiceGroup.find(i => i.imageName)?.imageName,
                 title: x.name,
                 label: x.ServiceGroup.map(g => g.name).join(', '),
                 path: Routes.get('Collections', { id: x.keyName }),

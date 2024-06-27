@@ -25,7 +25,7 @@ export default function Portfolio() {
                 {data?.map((image, key) =>
                     image.fileType === 'youtube' ?
                         <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}><VideoPreviewItem ytId={image.fileName} /></div> : <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.fileName}>
-                            <Image radius={'md'} className="cursor-pointer" src={PATH.RESOURCE_URL + image.fileName} />
+                            <Image radius={'md'} className="cursor-pointer" src={PATH.THUMB_URL + image.fileName} />
                         </PhotoView>)}
             </Masonry>
         </PhotoProvider>

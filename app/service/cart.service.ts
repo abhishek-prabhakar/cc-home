@@ -118,11 +118,11 @@ function cartSummary(cart: CartInput[]) {
             if (res) {
                 results.push({
                     name: res.group.name,
-                    coverImg: res.group.imageName ? PATH.RESOURCE_URL + res.group.imageName : '',
+                    coverImg: res.group.imageName ? PATH.THUMB_URL + res.group.imageName : '',
                     vendorServiceGroupId: res.id,
                     vendorType: res.vendor.vendorType?.name || '',
                     vendorName: res.vendor.username,
-                    vendorImg: res.vendor.profileImageName ? PATH.RESOURCE_URL + res.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                    vendorImg: res.vendor.profileImageName ? PATH.THUMB_URL + res.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER,
                     vendorId: res.vendor.username,
                     date: item.date,
                     timeHour: item.timeHour,

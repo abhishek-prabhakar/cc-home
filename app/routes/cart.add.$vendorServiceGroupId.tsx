@@ -204,7 +204,7 @@ const Page = {
                             <Title order={5}>{data.vendor.vendor.username}</Title>
                         </Link>
                         <Link to={Routes.get('VendorProfile', { id: data.vendor.vendor.username })}>
-                            <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.RESOURCE_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
+                            <Avatar size="xl" src={data.vendor.vendor.profileImageName ? PATH.THUMB_URL + data.vendor.vendor.profileImageName : PATH.AVATAR_PLACEHOLDER} />
                         </Link>
                     </Flex>
                 </Grid.Col>

@@ -205,7 +205,7 @@ function getFilteredVendors(params: {
                         tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
                         startsFrom: x.cost || 0,
                         profileImg: x.vendor.profileImageName
-                            ? PATH.RESOURCE_URL + x.vendor.profileImageName
+                            ? PATH.THUMB_URL + x.vendor.profileImageName
                             : PATH.AVATAR_PLACEHOLDER,
                         services: x.vendor.services.map((x) => x.service.name),
                     })),
@@ -287,8 +287,8 @@ function getVendorByUsername(username: string) {
                     gender: '',
                     type: r.vendorType?.name || '',
                     primaryColor: r.primaryColor,
-                    avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
-                    coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
+                    avatar: r.profileImageName ? PATH.THUMB_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
+                    coverImageName: r.coverImageName ? PATH.THUMB_URL + r.coverImageName : '',
                     bio: r.bio,
                     baseCharge: r.VendorServiceGroup[0]?.cost || 0
                 });
@@ -518,7 +518,7 @@ function getVendorServiceGroupBasicInfo(id: string){
                 title: r.group.name,
                 minHour: r.group.minHour,
                 costExtraHour: r.costExtraHour,
-                image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
+                image: r.group.imageName ? PATH.THUMB_URL + r.group.imageName : PATH.FALLBACK_IMG,
                 addons: optional.map(i => ({
                     id: i.service.id,
                     title: i.service.name,
@@ -644,7 +644,7 @@ function getVendorServiceGroup(id: string) {
                 vendorServiceGroupId: r.id,
                 groupId: r.group.id,
                 title: r.group.name,
-                image: r.group.imageName ? PATH.RESOURCE_URL + r.group.imageName : PATH.FALLBACK_IMG,
+                image: r.group.imageName ? PATH.THUMB_URL + r.group.imageName : PATH.FALLBACK_IMG,
                 minHour: r.group.minHour,
                 cost: r.cost,
                 costExtraHour: r.costExtraHour,
@@ -692,7 +692,7 @@ function topRatedVendorsByType(vendorType: string) {
             resolve(r.map(x => ({
                 id: x.username,
                 name: x.username,
-                image: x.profileImageName ? PATH.RESOURCE_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
+                image: x.profileImageName ? PATH.THUMB_URL + x.profileImageName : PATH.AVATAR_PLACEHOLDER
             })))
         }).catch(e => {
             reject('Connection failed');

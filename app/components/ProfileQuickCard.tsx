@@ -68,7 +68,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
                 <Image
                   className="cursor-pointer"
                   style={itemDataThumbSetStyles}
-                  src={PATH.RESOURCE_URL + imageItem.value}
+                  src={PATH.THUMB_URL + imageItem.value}
                   alt={'reload to display image'}
                 />
               </PhotoView>}

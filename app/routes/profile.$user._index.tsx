@@ -208,7 +208,7 @@ const ProfileHome = {
         const [stories, setStories] = useState<Story[]>([]);
 
         useEffect(() => {
-            const list = fetcher.data?.map<Story>(x => ({ url: PATH.RESOURCE_URL + x.fileName })) || [];
+            const list = fetcher.data?.map<Story>(x => ({ url: PATH.THUMB_URL + x.fileName })) || [];
             setStories(list);
         }, [fetcher?.data])
 
@@ -245,8 +245,8 @@ const ProfileHome = {
                                         <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                                             <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
                                                 <div style={{ position: 'relative', cursor: 'pointer' }}>
-                                                    <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
-                                                    <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.RESOURCE_URL + item.fileName} fit="cover" />
+                                                    <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
+                                                    <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
                                                     <Overlay
                                                         gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                                         opacity={0.85}
@@ -325,7 +325,7 @@ const ProfileHome = {
                                             <VideoPreviewItem ytId={image.value} />
                                         </div> :
                                         <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
-                                            <Image radius={'md'} src={PATH.RESOURCE_URL + image.value} className="cursor-pointer" />
+                                            <Image radius={'md'} src={PATH.THUMB_URL + image.value} className="cursor-pointer" />
                                         </PhotoView>)}
                                 </Masonry>
                                 {!portfolio.length ? 'Sorry, This profile doesnt contains any works to display' : ''}
@@ -347,7 +347,7 @@ const ProfileHome = {
                                             <VideoPreviewItem ytId={image.value} />
                                         </div> :
                                         <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
-                                            <Image radius={'md'} src={PATH.RESOURCE_URL + image.value} className="cursor-pointer" />
+                                            <Image radius={'md'} src={PATH.THUMB_URL + image.value} className="cursor-pointer" />
                                         </PhotoView>)}
                                 </Masonry>
                             </>
