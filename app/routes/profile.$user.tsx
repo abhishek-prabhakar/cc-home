@@ -45,7 +45,6 @@ export async function loader({ params, request }: LoaderArgs) {
     });
 }
 
-
 const ProfileLayout = {
     Index: () => {
         const [activeGroupData, setActiveGroupData] = useState<VendorServicePublic | null>()
@@ -86,7 +85,7 @@ const ProfileLayout = {
                         </Suspense>
                     </Stack>
                     <Space h={'md'} />
-                    <Outlet context={profileData} />
+                    <Outlet context={{profileData,  activeGroupData }} />
                 </Grid.Col>
             </Grid>
             <Divider my="xl" />

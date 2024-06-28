@@ -7,7 +7,7 @@ import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
-import { PortfolioItem, Vendor, VendorPortfolio, VendorProfile, VendorService } from "~/types";
+import { PortfolioItem, Vendor, VendorPortfolio, VendorProfile, VendorService, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
 import Stories from 'react-insta-stories';
 
@@ -28,6 +28,12 @@ type Story = {
 enum ActionType {
     STORIES = 'STORIES'
 };
+
+
+type OutletContextData = {
+    activeGroupData: VendorServicePublic,
+    profileData:  VendorProfile
+}
 
 export async function action(args: ActionArgs) {
     const username = args.params.user;
@@ -166,7 +172,7 @@ const elementSize = 400;
 const ProfileHome = {
     Index: () => {
         const data = useLoaderData<typeof loader>();
-        const outletContext = useOutletContext<VendorProfile>();
+        const outletContext = useOutletContext<OutletContextData>();
 
         return <>
             <ProfileHome.Stories />
@@ -187,7 +193,7 @@ const ProfileHome = {
                             borderColor: '#2a2a2a'
                         }} />
                         <Space h="md" />
-                        <Text>{outletContext?.bio}</Text>
+                        <Text>{outletContext?.profileData.bio}</Text>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <ProfileHome.Services />
@@ -304,10 +310,13 @@ const ProfileHome = {
     Gallery: () => {
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
+        const outletContext = useOutletContext<OutletContextData>();
+
+        const sectionTitle = data?.preselectedServiceGrpId? 'in '+ outletContext?.activeGroupData?.title:'';
 
         return <Stack>
             <Grid justify={'space-between'} align={'middle'} gutter={'sm'}>
-                <Grid.Col span="content"><Title order={4}>Best works</Title></Grid.Col>
+                <Grid.Col span="content"><Title order={4}>Best works {sectionTitle}</Title></Grid.Col>
                 <Grid.Col span="content">
                     <Button variant="subtle" radius={'xl'} onClick={() => navigate('portfolio')} >
                         See all
