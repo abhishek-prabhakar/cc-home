@@ -193,7 +193,7 @@ const ProfileHome = {
                             borderColor: '#2a2a2a'
                         }} />
                         <Space h="md" />
-                        <Text>{outletContext?.profileData.bio}</Text>
+                        <Text>{outletContext?.profileData?.bio}</Text>
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 4 }}>
                         <ProfileHome.Services />
