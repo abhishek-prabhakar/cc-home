@@ -1,4 +1,4 @@
-import { BannerLocation, FareMode } from "@prisma/client";
+import { BannerLocation, ChatThread_type, FareMode } from "@prisma/client";
 
 export type RootLoaderData = {
     user: User | null,
@@ -213,3 +213,28 @@ export type VendorResultListItem = {
     services: string[];
     startsFrom?: number;
 };
+export type ChatOutputThread = {
+    type: ChatThread_type;
+    message: string;
+    created_at: Date | string;
+    memberId: string;
+}
+
+export type ChatOutput = {
+   threads: ChatOutputThread[],
+    members: {
+        user: {
+            name: string | null;
+        } | null;
+        vendor: {
+            username: string;
+            profileImageName: string | null;
+        } | null;
+    }[]
+}
+
+
+export enum CHAT_DATA_TYPE {
+    RECENT = 'RECENT',
+    ALL_THREADS = 'ALL_THREADS'
+}

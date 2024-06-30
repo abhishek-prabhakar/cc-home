@@ -10,14 +10,15 @@ datasource db {
 }
 
 model User {
-  id        String     @id
-  name      String?
-  username  String     @unique
-  email     String?
-  source    UserSource
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  bookings  Booking[]
+  id              String            @id
+  name            String?
+  username        String            @unique
+  email           String?
+  source          UserSource
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  bookings        Booking[]
+  ChatGroupMember ChatGroupMember[]
 
   @@map("user")
 }
@@ -58,6 +59,7 @@ model Vendor {
   VendorFiles        VendorFiles[]
   JumbotronData      JumbotronData[]
   VendorServiceGroup VendorServiceGroup[]
+  ChatGroupMember    ChatGroupMember[]
 
   @@map("vendors")
 }
@@ -118,6 +120,7 @@ model Booking {
   subTotal       Int                @default(0)
   user           User               @relation(fields: [userId], references: [id])
   bookingService BookingService[]
+  ChatGroup      ChatGroup[]
 }
 
 model BookingService {
@@ -168,7 +171,7 @@ model VendorService {
   cost                 Int
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt            DateTime?          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  vendorServiceGroupId String 
+  vendorServiceGroupId String
   service              Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceGroup         VendorServiceGroup @relation(fields: [vendorServiceGroupId], references: [id], onDelete: Cascade)
   vendor               Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -369,6 +372,39 @@ model Coupons {
   created_at       DateTime           @default(now()) @db.Timestamp(6)
 }
 
+model ChatGroup {
+  id              String            @id
+  bookingId       String
+  created_at      DateTime          @default(now()) @db.Timestamp(6)
+  booking         Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  ChatGroupMember ChatGroupMember[]
+  ChatThread      ChatThread[]
+}
+
+model ChatGroupMember {
+  id          String       @id
+  chatGroupId String
+  userId      String?
+  vendorId    String?
+  created_at  DateTime     @default(now()) @db.Timestamp(6)
+  chatGroup   ChatGroup    @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id])
+  vendor      Vendor?      @relation(fields: [vendorId], references: [id])
+  ChatThread  ChatThread[]
+}
+
+model ChatThread {
+  id          String          @id
+  chatGroupId String
+  type        ChatThread_type
+  memberId    String
+  message     String
+  isDeleted   Boolean         @default(false)
+  created_at  DateTime        @default(now()) @db.Timestamp(6)
+  member      ChatGroupMember @relation(fields: [memberId], references: [id])
+  chatGroup   ChatGroup       @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
+}
+
 enum UserSource {
   ORGANIC
   MANUAL
@@ -429,4 +465,9 @@ enum ActiveChargesAndPromotions_chargeType {
 enum Coupons_chargeType {
   FLAT
   PERCENTAGE
+}
+
+enum ChatThread_type {
+  TEXT
+  IMAGE
 }

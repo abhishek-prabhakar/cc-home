@@ -1,5 +1,5 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Skeleton, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
+import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
@@ -8,6 +8,8 @@ import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Orders } from "razorpay/dist/types/orders";
 import { Suspense, useState } from "react";
+import { ChatBox } from "~/components/ChatBox";
+import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
@@ -91,7 +93,7 @@ export async function loader({ request, params }: LoaderArgs) {
     }
 
     const data = new Promise<UserBooking>(function (resolve, reject) {
-        db.booking.findFirst({
+        db.booking.findFirstOrThrow({
             where: {
                 userId,
                 orderId
@@ -177,6 +179,24 @@ export async function loader({ request, params }: LoaderArgs) {
         })
     });
 
+   const chatGroup = await db.chatGroup.findFirst({
+        where:{
+            bookingId:orderId,
+        },
+        select:{
+            id: true,
+            ChatGroupMember:{
+                select:{
+                    id: true
+                },
+                take: 1,
+                where:{
+                    userId
+                }
+            }
+        }
+    });
+
     let paymentStatus:Orders.RazorpayOrder | null = null;
     try{
      const paymentStatus =  await PaymentService.getOrder(orderId);
@@ -186,6 +206,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
     return defer({
         data,
+        chatGroup,
         paymentStatus
     });
 }
@@ -251,13 +272,18 @@ export const meta: V2_MetaFunction = () => {
 
 const UserOrderHome = {
     Index: () => {
-        return <Grid>
-            <Grid.Col span={{ base: 12, md: 8 }}>
-                <Title order={3}>Manage Booking</Title>
+        return <>
+        <Title order={3}>Manage Booking</Title>
                 <Space h="md" />
+                <Grid>
+            <Grid.Col span={{ base: 12, md: 8 }}>
                 <UserOrderHome.Order />
             </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+                <UserOrderHome.ChatBox />
+            </Grid.Col>
         </Grid>
+        </>
     },
     Order: () => {
         const data = useLoaderData<typeof loader>();
@@ -366,11 +392,31 @@ const UserOrderHome = {
                 }
             </Await>
         </Suspense>;
+    },
+    ChatBox: () =>{
+        const data = useLoaderData<typeof loader>();
+        return  <Suspense fallback={<Skeleton/>}>
+            <Await resolve={data.chatGroup}>
+            {
+                response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id}/> : <Card withBorder title="Chat is disabled">
+                        Contact support to enable chat for this order.
+                </Card>
+            }
+            {/* {
+                response => <Testt d={response}/>
+            } */}
+        </Await>
+        </Suspense>
     }
 }
 
 export default UserOrderHome.Index;
 
+
+function Testt(p:{d: any}){
+    console.log(p.d)
+    return <div>sdf</div>
+}
 
 export function ErrorBoundary() {
     return <div>

@@ -100,6 +100,20 @@ export async function action({
             }
         });
 
+       const chatGroup = await db.chatGroup.create({
+            data:{
+                id: generateUuid(),
+                bookingId: orderId
+            }
+        });
+        await db.chatGroupMember.create({
+            data:{
+                id: generateUuid(),
+                chatGroupId: chatGroup.id,
+                userId:  loggedInUser.id,
+            }
+        });
+
         debug_point = '7';console.log(debug_point);
         for (let i = 0; i < summary.groupData.length; i++) {
             const item = summary.groupData[i];
@@ -140,6 +154,13 @@ export async function action({
                     status: BookingStatus.PENDING,
                     cost: x.cost
                 }))
+            });
+            await db.chatGroupMember.create({
+                data:{
+                    id: generateUuid(),
+                    chatGroupId: chatGroup.id,
+                    vendorId: item.vendorId
+                }
             });
             console.log(debug_point, i, 'y');
 
