@@ -63,7 +63,9 @@ export function ChatBox(input: inputProps){
             return;
         }
         const newMsg =  inputRef.current.value;
-        const msgType =  ChatThread_type.TEXT;
+        if(!newMsg) {return; }
+        
+       const msgType =  ChatThread_type.TEXT;
         setPendingThreads(pendingThreads.concat([newMsg]));
         fetcher.submit({
             message: newMsg,
@@ -96,9 +98,9 @@ export function ChatBox(input: inputProps){
             <Space h="md"/>
             <Divider/>
             <Space h="md"/>
-            <Box pos={'relative'}>
+            <Box pos={'relative'} mx={'-18px'}>
                 <LoadingOverlay visible={!threads.length} zIndex={1} />
-                <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars>
+                <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars  type="always" px={10}>
                             <Stack gap={'xs'}>
                                 {threads.map(item => <Grid gutter={0}  key={item.created_at.toString()} justify={item.memberId === input.memberId? 'end': 'start'}>
                                     <Grid.Col span={'content'}><Badge tt="none" color="gray" size="lg">{item.message}</Badge></Grid.Col>
@@ -113,7 +115,7 @@ export function ChatBox(input: inputProps){
             <fetcher.Form onSubmit={submitForm}>
             <Grid gutter={'xs'}>
                 <Grid.Col span={'auto'}>
-                    <TextInput ref={inputRef} name="message" placeholder="Type your message here..."/>
+                    <TextInput ref={inputRef} name="ccmsginput" autoComplete="false" placeholder="Type your message here..."/>
                 </Grid.Col>
                 <Grid.Col span={'content'}>
                     <ActionIcon  size="lg" type="submit" variant="filled" color="green" aria-label="Settings">
