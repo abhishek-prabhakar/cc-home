@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Card, Divider, Grid, ScrollArea, Space, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Card, Divider, Grid, LoadingOverlay, ScrollArea, Space, Stack, TextInput, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
 import { IconSend } from "@tabler/icons-react";
@@ -78,6 +78,9 @@ export function ChatBox(input: inputProps){
     }
 
     function setIncomingMsg(msgs:ChatOutputThread[] = []){
+        if(!msgs.length){
+            return;
+        }
         setThreads(threads.concat(msgs || []));
         setPendingThreads([]);
         setTimeout(() => scrollToBottom());
@@ -93,16 +96,19 @@ export function ChatBox(input: inputProps){
             <Space h="md"/>
             <Divider/>
             <Space h="md"/>
-            <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars>
-                <Stack gap={'xs'}>
-                    {threads.map(item => <Grid gutter={0}  key={item.created_at.toString()} justify={item.memberId === input.memberId? 'end': 'start'}>
-                        <Grid.Col span={'content'}><Badge tt="none" color="gray" size="lg">{item.message}</Badge></Grid.Col>
-                    </Grid> )}
-                    {pendingThreads.map((item,key) => <Grid gutter={0}  key={key} justify="end">
-                        <Grid.Col span={'content'}><Badge tt="none" color="gray" size="lg">{item}</Badge></Grid.Col>
-                    </Grid> )}
-                </Stack>
-            </ScrollArea>
+            <Box pos={'relative'}>
+                <LoadingOverlay visible={!threads.length} zIndex={1} />
+                <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars>
+                            <Stack gap={'xs'}>
+                                {threads.map(item => <Grid gutter={0}  key={item.created_at.toString()} justify={item.memberId === input.memberId? 'end': 'start'}>
+                                    <Grid.Col span={'content'}><Badge tt="none" color="gray" size="lg">{item.message}</Badge></Grid.Col>
+                                </Grid> )}
+                                {pendingThreads.map((item,key) => <Grid gutter={0}  key={key} justify="end">
+                                    <Grid.Col span={'content'}><Badge tt="none" color="gray" size="lg">{item}</Badge></Grid.Col>
+                                </Grid> )}
+                            </Stack>
+                </ScrollArea>
+                </Box>
             <Space h="md"/>
             <fetcher.Form onSubmit={submitForm}>
             <Grid gutter={'xs'}>
