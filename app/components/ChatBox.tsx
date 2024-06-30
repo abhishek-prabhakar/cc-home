@@ -64,7 +64,7 @@ export function ChatBox(input: inputProps){
         }
         const newMsg =  inputRef.current.value;
         if(!newMsg) {return; }
-        
+
        const msgType =  ChatThread_type.TEXT;
         setPendingThreads(pendingThreads.concat([newMsg]));
         fetcher.submit({
@@ -85,11 +85,11 @@ export function ChatBox(input: inputProps){
         }
         setThreads(threads.concat(msgs || []));
         setPendingThreads([]);
-        setTimeout(() => scrollToBottom());
+        scrollToBottom();
     }
 
     function scrollToBottom(){
-        viewport.current!.scrollTo({ top: viewport.current!.scrollHeight, behavior: 'smooth' });
+        setTimeout(() =>  viewport.current!.scrollTo({ top: viewport.current!.scrollHeight, behavior: 'smooth' }));
     }
 
     return <Box>
