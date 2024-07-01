@@ -103,7 +103,7 @@ const Photography = {
                         <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
                             <Stack gap={'lg'}>
                                 <Group>
-                                    <Badge color="magenta">{data.meta.name}</Badge><Text c="dimmed">in Banglore</Text>
+                                    <Badge color="magenta">{data.meta.name}</Badge><Text c="dimmed">in Bangalore</Text>
                                 </Group>
                                 <Title order={3}>{data.data?.name}</Title>
                                 <p>{data.meta.description}</p>

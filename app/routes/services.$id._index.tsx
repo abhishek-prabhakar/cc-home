@@ -246,7 +246,7 @@ const Page = {
             <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
               <Stack gap={'lg'}>
                 <Stack>
-                  <Title order={3}>{data.meta.name} in Banglore</Title>
+                  <Title order={3}>{data.meta.name} in Bangalore</Title>
                   <Text size="sm">{data.meta.description}</Text>
                 </Stack>
                 <ListSortBar onSort={sortItems} />
