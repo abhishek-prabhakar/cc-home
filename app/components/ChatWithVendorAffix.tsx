@@ -12,8 +12,8 @@ export function ChatWithVendorAffix(p:{
           <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
             {(transitionStyles) => (
               <Card style={{...transitionStyles, overflow: 'unset'}} radius={'lg'} withBorder shadow='xl' pos="relative">
-                    <CloseButton onClick={()=>setShowCard(false)} pos="absolute" left={'-12px'} top={'-12px'} bg="#e1e1e1"/>
-                    <Avatar pos="absolute" size={'lg'} src={p.avatar} right={20} top={'-20px'}/>
+                    <CloseButton  size="sm" onClick={()=>setShowCard(false)} pos="absolute" left={'-10px'} top={'-10px'} bg="#e1e1e1"/>
+                    <Avatar  pos="absolute" size={'lg'} src={p.avatar} right={20} top={'-20px'}/>
                     <Title order={5}>Got any queries?</Title>
                     <Space h="sm"/>
                     <Text>Get start with a service to chat with me.</Text>
