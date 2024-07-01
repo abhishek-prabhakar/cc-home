@@ -18,6 +18,7 @@ import { IconHeart } from "@tabler/icons-react";
 import Currency from "~/utils/currency.transformer";
 import { IconPoint } from "@tabler/icons-react";
 import { IconCircleArrowDownFilled } from "@tabler/icons-react";
+import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -95,6 +96,7 @@ const ProfileLayout = {
                 </Await>
             </Suspense>
             <ProfileLayout.CartSuggestion />
+            <ChatWithVendorAffix avatar={profileData?.avatar}/>
         </Container>
     },
     Cover: ({ profile, activeGroupData, onLoad }: { profile: VendorProfile | null, activeGroupData?: VendorServicePublic | null, onLoad: (d: VendorProfile | null) => void }) => {

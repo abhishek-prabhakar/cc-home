@@ -56,6 +56,7 @@ export async function loader(args: LoaderArgs):Promise<ChatOutput>{
     const url = new URL(args.request.url);
     const requestType =  url.searchParams.get('type')?.toString() as unknown as CHAT_DATA_TYPE;
     const lastTimestamp = url.searchParams.get('timestamp')?.toString() || 0;
+    const memberId =  url.searchParams.get('memberId')?.toString() || '';
     let threads:ChatOutputThread[], members: { user: { name: string | null; } | null; vendor: { username: string; profileImageName: string | null; } | null; }[] = [];
 
     switch(requestType){
@@ -114,6 +115,16 @@ export async function loader(args: LoaderArgs):Promise<ChatOutput>{
             });
         break;
     }
+
+    await db.chatGroupMember.update({
+        where:{
+            id:memberId,
+            chatGroupId
+        },
+        data:{
+            lastSeen: new Date()
+        }
+    });
 
    return {
     threads,

@@ -48,6 +48,7 @@ export function ChatBox(input: inputProps){
             return;
         }
         fetcher.submit({
+            memberId: input.memberId,
             type: getRecent? CHAT_DATA_TYPE.RECENT: CHAT_DATA_TYPE.ALL_THREADS,
             timestamp: threads[threads.length-1]?.created_at.toString()
         },{

@@ -376,6 +376,7 @@ model ChatGroup {
   id              String            @id
   bookingId       String
   created_at      DateTime          @default(now()) @db.Timestamp(6)
+  isDisabled      Boolean           @default(false)
   booking         Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   ChatGroupMember ChatGroupMember[]
   ChatThread      ChatThread[]
@@ -387,6 +388,8 @@ model ChatGroupMember {
   userId      String?
   vendorId    String?
   created_at  DateTime     @default(now()) @db.Timestamp(6)
+  isDisabled  Boolean      @default(false)
+  lastSeen    DateTime     @default(now()) @db.Timestamp(6)
   chatGroup   ChatGroup    @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
   user        User?        @relation(fields: [userId], references: [id])
   vendor      Vendor?      @relation(fields: [vendorId], references: [id])
