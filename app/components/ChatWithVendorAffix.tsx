@@ -1,15 +1,18 @@
-import { Affix, Avatar, Button, Card, Group, Space, Text, Title, Transition } from "@mantine/core";
+import { Affix, Avatar, Button, Card, CloseButton, Group, Space, Text, Title, Transition } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
+import { useState } from "react";
 
 export function ChatWithVendorAffix(p:{
     avatar?: string
 }){
     const [scroll, scrollTo] = useWindowScroll();
+    const [showCard, setShowCard] = useState(true);
 
     return   <Affix position={{ bottom: 20, right: 20 }}>
-          <Transition transition="slide-up" mounted={scroll.y > 0}>
+          <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
             {(transitionStyles) => (
               <Card style={{...transitionStyles, overflow: 'unset'}} radius={'lg'} withBorder shadow='xl' pos="relative">
+                    <CloseButton onClick={()=>setShowCard(false)} pos="absolute" left={'-12px'} top={'-12px'} bg="#e1e1e1"/>
                     <Avatar pos="absolute" size={'lg'} src={p.avatar} right={20} top={'-20px'}/>
                     <Title order={5}>Got any queries?</Title>
                     <Space h="sm"/>
