@@ -12,13 +12,14 @@ import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import generateUuid from "~/utils/uuid.generator";
 
+const ORDER_PREFIX = 'CC';
 
 function genOrderId(user: number) {
     function extractTwoDigit(number: number) {
         return number % 100;
     }
     const date = new Date();
-    const orderId = 'CC' + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+user) + extractTwoDigit(Date.now());
+    const orderId = ORDER_PREFIX + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+user) + extractTwoDigit(Date.now());
 
     return orderId;
 }
@@ -169,27 +170,29 @@ export async function action({
             }));
             console.log(debug_point, i, 'z');
         }
-    debug_point = '8';console.log(debug_point);
+        debug_point = '8';console.log(debug_point);
 
-    notificationQueue.push(WhatsappService.orderConfirmation( loggedInUser.username, orderId, summary.estimation.final));
-    
-    REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
-} catch(e){
-    REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
-}
+        notificationQueue.push(WhatsappService.orderConfirmation( loggedInUser.username, orderId, summary.estimation.final));
+        
+        REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
+    } catch(e){
+        REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
+    }
 
-try{
-    await Promise.allSettled(notificationQueue);
-} catch(e){
-}
+    /** Errors in notification shouldn't impact the order placement flow  */
+    try{
+        await Promise.allSettled(notificationQueue);
+    } catch(e){
+        console.log('Notification failed')
+    }
 
-const headers: [string, string][] = [
-    ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
-]
+    const headers: [string, string][] = [
+        ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
+    ]
 
-if (source === 'cart') {
-    headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
-}
+    if (source === 'cart') {
+        headers.push(["Set-Cookie", await userCartCookie.serialize(null)])
+    }
 
     return redirect(REDIRECT_SUCCESS, {
         headers
