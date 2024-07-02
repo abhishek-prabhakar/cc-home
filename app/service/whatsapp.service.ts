@@ -4,6 +4,7 @@ const API_KEY = process.env.WHATSAPP_KEY;
 const END_POINT = " https://graph.facebook.com/v19.0/335976452932928/messages";
 
 enum TEMPLATES {
+    booking_confirmation_user = "booking_confirmation_user",
     order_confirmation = "order_confirmation",
     vendor_new_order = "vendor_new_order",
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular "
@@ -16,18 +17,18 @@ type Param = {
 
 type Interaction = {
     "type": "button",
-    "sub_type" : "url",
+    "sub_type" : "url" | "quick_reply",
     "index": "0",
     "parameters": [
         {
-            "type": "text",
-            "text": string
+            "type": "payload",
+            "payload": string
         }
     ]
 }
 
 const Request = {
-    post: ({template,to,params,lang ='en_US', interaction}: {template: TEMPLATES, to: string, params: Param[], interaction?: Interaction[], lang?: "en_US" | "en_UK"}) => {
+    post: ({template,to,params,lang ='en_US', interaction = []}: {template: TEMPLATES, to: string, params: Param[], interaction?: Interaction[], lang?: "en_US" | "en_UK" | 'en'}) => {
 
     const MESSAGE_BODY = {
         "messaging_product": "whatsapp",
@@ -41,8 +42,9 @@ const Request = {
                 {
                     "type": "body",
                     "parameters": params
-                }
-            ].concat(interaction || []),
+                },
+                ...interaction
+            ],
         },
         };
 
@@ -75,9 +77,52 @@ async function orderConfirmation(to: string, orderId: string, cost: number){
             {
                 "type": "text",
                 "text": "Celebria Collective"
-            }]
+            }];
 
     await Request.post({ template: TEMPLATES.order_confirmation, to, params });
+}
+
+
+async function orderConfirmationUser(to: string, orderId: string, cost: number){
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": 'Customer'
+        },
+        {
+            "type": "text",
+            "text": 'Photo Shoot'
+        },
+        {
+            "type": "text",
+            "text": orderId
+            },
+        {
+            "type": "text",
+            "text": '24/06/2024'
+        },
+        {
+            "type": "text",
+            "text": '10 AM'
+            },
+        {
+            "type": "text",
+            "text": 'https://maps.app.goo.gl/XLnducGtHMcXSq8d7'
+        }];
+
+        const interaction:Interaction[]= [{
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+                {
+                    "type": "payload",
+                    "payload": "https://www.celebriacollective.com/"
+                }
+            ]
+        }];   
+
+await Request.post({ template: TEMPLATES.booking_confirmation_user, to, params, interaction, lang:'en' });
 }
 
 
@@ -112,23 +157,24 @@ async function notifyVendorNewOrder(input: { to?: string, orderId: string, servi
                 "text": "http://celebriacollective.com/partner/order/"+input.orderId+"/manage"
             }];
 
-    const interaction:Interaction[]= [{
-                "type": "button",
-                "sub_type": "url",
-                "index": "0",
-                "parameters": [
-                    {
-                        "type": "text",
-                        "text":input.orderId
-                    }
-                ]
-            }];   
+    // const interaction:Interaction[]= [{
+    //             "type": "button",
+    //             "sub_type": "custom",
+    //             "index": "0",
+    //             "parameters": [
+    //                 {
+    //                     "type": "payload",
+    //                     "payload":input.orderId
+    //                 }
+    //             ]
+    //         }];   
 
     await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params, lang:  'en_US' });
 }
 
 const WhatsappService = {
     orderConfirmation,
+    orderConfirmationUser,
     notifyVendorNewOrder
 }
 
