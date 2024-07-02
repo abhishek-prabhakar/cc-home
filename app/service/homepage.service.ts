@@ -202,6 +202,7 @@ function getPopularServices() {
                 }
             },
             where: {
+                isActive: true,
                 groupTypeId: {
                     not: undefined
                 }

@@ -128,6 +128,7 @@ export async function loader({
                 name: true,
               },
               where: {
+                isActive: true,
                 vendorTypeId: res.id,
                 groupTypeId: {
                   in: undefined || null,

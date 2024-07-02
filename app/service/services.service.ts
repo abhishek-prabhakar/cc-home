@@ -113,6 +113,9 @@ function getServiceByGroup() {
         orderBy: {
             name: 'asc'
         },
+        where:{
+            isActive: true,
+        },
         select: {
             name: true,
             id: true,

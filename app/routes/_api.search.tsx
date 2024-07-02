@@ -23,6 +23,7 @@ export function loader(args: LoaderArgs) {
     const groups = new Promise<FuseResult<SearchResultItem>[]>(function (resolve, reject) {
         db.serviceGroup.findMany({
             where: {
+                isActive: true,
                 vendorType: {
                     isActive: true
                 }

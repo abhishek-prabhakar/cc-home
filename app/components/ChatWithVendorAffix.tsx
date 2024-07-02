@@ -15,7 +15,7 @@ export function ChatWithVendorAffix(p:{
                     <CloseButton  size="sm" onClick={()=>setShowCard(false)} pos="absolute" right={'12px'} top={'12px'} bg="#e1e1e1"/>
                     <Avatar  pos="absolute" size={'lg'} src={p.avatar} right={'-8px'} bottom={'-8px'}/>
                     <Title order={5}>Got any queries?</Title>
-                    <Space h="sm"/>
+                    <Space h="5"/>
                     <Text>Get start with a service to chat with me.</Text>
                     <Space h="lg"/>
                     <Group justify="center">

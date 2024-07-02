@@ -220,6 +220,7 @@ model ServiceGroup {
   isEstimated            Boolean                  @default(false)
   minHour                Int                      @default(1)
   commitFullDay          Boolean                  @default(false)
+  isActive               Boolean                  @default(true)
   vendorType             VendorType               @relation(fields: [vendorTypeId], references: [id], onDelete: Cascade)
   serviceGroupType       ServiceGroupType?        @relation(fields: [groupTypeId], references: [id])
   serviceGroupItem       ServiceGroupItem[]

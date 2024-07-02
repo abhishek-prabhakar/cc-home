@@ -56,6 +56,9 @@ export async function loader({ params }: LoaderArgs) {
   const quickLinks = new Promise<Collection[]>(function (resolve, reject) {
     db.serviceGroup.findMany({
       take: 4,
+      where:{
+        isActive: true,
+      },
       select: {
         id: true,
         name: true,

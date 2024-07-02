@@ -68,7 +68,8 @@ export async function loader({
 
     const data = await db.serviceGroup.findFirstOrThrow({
         where: {
-            id: categoryId
+            id: categoryId,
+            isActive: true
         },
         select: {
             name: true
