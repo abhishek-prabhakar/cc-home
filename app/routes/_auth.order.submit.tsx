@@ -1,9 +1,7 @@
 import { BookingPaymentMode, BookingStatus } from "@prisma/client";
-import { ActionArgs, LoaderArgs, defer, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
-import { useEffect } from "react";
-import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import { ActionArgs, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
+import ChatService from "~/service/chat.service";
 import EmailService from "~/service/email.service";
 import PaymentService from "~/service/payment.service";
 import { VendorQuery } from "~/service/vendor.service";
@@ -100,18 +98,11 @@ export async function action({
             }
         });
 
-       const chatGroup = await db.chatGroup.create({
-            data:{
-                id: generateUuid(),
-                bookingId: orderId
-            }
-        });
-        await db.chatGroupMember.create({
-            data:{
-                id: generateUuid(),
-                chatGroupId: chatGroup.id,
-                userId:  loggedInUser.id,
-            }
+        const chatGroup = await ChatService.createChatGroup(orderId);
+        
+        await ChatService.addUserAsChatGroupMember({
+            chatGroupId: chatGroup.id,
+            userId: loggedInUser.id
         });
 
         debug_point = '7';console.log(debug_point);
@@ -155,12 +146,9 @@ export async function action({
                     cost: x.cost
                 }))
             });
-            await db.chatGroupMember.create({
-                data:{
-                    id: generateUuid(),
-                    chatGroupId: chatGroup.id,
-                    vendorId: item.vendorId
-                }
+            await ChatService.addVendorAsChatGroupMember({
+                chatGroupId: chatGroup.id,
+                vendorId: item.vendorId
             });
             console.log(debug_point, i, 'y');
 

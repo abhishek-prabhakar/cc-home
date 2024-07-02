@@ -13,7 +13,7 @@
 
 ## IMPORTANT
 
-- Never run prisma migrate or any query to update the database schema on this repo. It will end up wiping out the entire data. Always run migrations in the admin repo celebria-admin
+- Never run prisma migrate or any query to update the database schema on this repo. It will end up wiping out the entire data. Always run migrations from admin repo 'celebria-admin'
 
 ## Netlify Setup
 
