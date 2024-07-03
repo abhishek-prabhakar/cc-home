@@ -157,7 +157,7 @@ export async function action({
             
             notificationQueue.push(EmailService.notifyVendorNewOrder({
                 email: vendor?.email,
-                date: cartItem.date.toString(),
+                date: DateFormatter.short(cartItem.date),
                 serviceName: item.group.name,
                 orderId: orderId
             }));

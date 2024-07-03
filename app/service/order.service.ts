@@ -1,13 +1,36 @@
 import { BookingStatus } from "@prisma/client";
 import { db } from "~/utils/database";
+import WhatsappService from "./whatsapp.service";
+import { DateFormatter } from "~/utils/date.transform";
 
 async function cancelOrder(id: string){
-    await db.booking.update({
+   const orderInfo =  await db.booking.update({
         where: {
             id
         },
         data: {
             status: BookingStatus.CANCELLED
+        },
+        select:{
+            bookingService:{
+                select:{
+                    date: true,
+                    vendorServiceGroup:{
+                        select:{
+                            vendor:{
+                                select:{
+                                    mobileNumber: true
+                                }
+                            },
+                            group:{
+                                select:{
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -19,6 +42,18 @@ async function cancelOrder(id: string){
             status: BookingStatus.CANCELLED
         }
     });
+
+    try{
+        orderInfo.bookingService.forEach(async service =>{
+            await WhatsappService.notifyVendorOrderCancel({
+                to: service.vendorServiceGroup.vendor.mobileNumber,
+                orderId: id,
+                service: service.vendorServiceGroup.group.name,
+                date: DateFormatter.short(service.date)
+            });
+        })
+        
+    } catch (e){}
 }
 
 const OrderService = {

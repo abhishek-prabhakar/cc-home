@@ -172,10 +172,16 @@ async function notifyVendorNewOrder(input: { to?: string, orderId: string, servi
     await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params, lang:  'en_US' });
 }
 
+async function notifyVendorOrderCancel(input: { to?: string, orderId: string, service: string, date: string }){
+
+}
+
+
 const WhatsappService = {
     orderConfirmation,
     orderConfirmationUser,
-    notifyVendorNewOrder
+    notifyVendorNewOrder,
+    notifyVendorOrderCancel
 }
 
 export default WhatsappService;
