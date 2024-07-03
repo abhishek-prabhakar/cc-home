@@ -105,6 +105,10 @@ const ProfileLayout = {
             onLoad(profile)
         }, [])
 
+        function addToWishlist(){
+            alert('Something went wrong.');
+        }
+
         return <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Card.Section>
                 <Grid align={'center'}>
@@ -130,23 +134,23 @@ const ProfileLayout = {
                                         <Button variant="filled" radius={'sm'} fullWidth>Book a service</Button>
                                     </a>
                                 </Box>
-                                <ActionIcon size="lg" variant="light" color="pink" aria-label="Favourite">
+                                <ActionIcon size="lg" variant="light" color="pink" aria-label="Favourite" onClick={addToWishlist}>
                                     <IconHeart style={{ width: '70%', height: '70%' }} stroke={1.5} />
                                 </ActionIcon>
                             </Flex>
-                            <Space h="md" />
+                        </Box>
+                    </Grid.Col>
+                    <Grid.Col span={12}>
                             <Divider />
-                            <Space h="md" />
+                            <Box  p={'md'}>
                             {activeGroupData ?
                                 <>
                                     <Text c="dimmed">{activeGroupData.title} starting from <Currency value={activeGroupData?.cost} /></Text>
-                                    <Space h="md" />
-                                    <Divider />
-                                    <Space h="md" />
+                                    <Space h="xs" />
                                     <Text c="dimmed">Other services starting from <Currency value={profile?.baseCharge} /></Text>
                                 </>
                                 : <Text c="dimmed">Starting from <Currency value={profile?.baseCharge} /></Text>}
-                        </Box>
+                                </Box>
                     </Grid.Col>
                 </Grid>
             </Card.Section>
