@@ -1,5 +1,5 @@
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box } from "@mantine/core";
+import { CheckCircleFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box, ThemeIcon, Group } from "@mantine/core";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useRouteError, useSubmit } from "@remix-run/react";
@@ -44,6 +44,7 @@ type VendorServiceGroup = {
     }[];
     group: ServiceGroup;
 }
+
 type LoaderData = {
     profile: {
         id: string;
@@ -498,6 +499,7 @@ const OnBoardPage = {
     },
     SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceGroup[] }) => {
         const [getServiceDialogData, setServiceDialogData] = useState<VendorServiceGroup | null | undefined>(null);
+        const [activePanel, setActivePanelValue] = useState<string | null>(null);
 
         function setService(data: string) {
             const group = serviceList.find(x => x.id === data);
@@ -513,15 +515,32 @@ const OnBoardPage = {
                 setServiceDialogData(null);
             }
         }
-
+        
         return <>
             <Card withBorder shadow="xs" title="Choose your services">
                 <Stack>
                     <div><Text fw={500}>Add one or more services from below</Text></div>
-                    <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} allowDeselect={false} />
+                    {/* <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} allowDeselect={false} /> */}
                     {/* {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>} */}
-                    <div><Text fw={500}>Selected Services</Text></div>
-                    <OnBoardPage.CostSection />
+                    
+                    <Accordion value={activePanel} onChange={setActivePanelValue}>
+                    <OnBoardPage.SelectedServices />
+                    {serviceList.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
+                        <Accordion.Control>{item.name}</Accordion.Control>
+                        <Accordion.Panel>
+                            <OnBoardPage.UpdateGroupServiceCost
+                                activeType={activeType} 
+                                addService={true} 
+                                item={{ 
+                                id: 'NEW',
+                                vendorService: [],
+                                cost: 0,
+                                costExtraHour: 0,
+                                group: item
+                            }} />
+                        </Accordion.Panel>
+                    </Accordion.Item>)}
+                </Accordion> 
                 </Stack>
             </Card>
             <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} opened={!!getServiceDialogData?.id} onClose={() => setServiceDialogData(null)} >
@@ -529,17 +548,15 @@ const OnBoardPage = {
             </Modal>
         </>
     },
-    CostSection: () => {
+    SelectedServices: () => {
         const data = useLoaderData<LoaderData>();
 
-        return data.profile.VendorServiceGroup?.length ? <Accordion>
-            {data.profile.VendorServiceGroup.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
-                <Accordion.Control>{item.group.name}</Accordion.Control>
+        return  data.profile.VendorServiceGroup.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
+                <Accordion.Control icon={<ThemeIcon size="xs" radius="xl" color="green"><CheckOutlined/></ThemeIcon>}>{item.group.name}</Accordion.Control>
                 <Accordion.Panel>
                     <OnBoardPage.UpdateGroupServiceCost item={item} />
                 </Accordion.Panel>
-            </Accordion.Item>)}
-        </Accordion> : 'Please add services from above list to get started.'
+            </Accordion.Item>)
     },
     Documents: ({ data }: { data: LoaderData }) => {
         const fetcher = useFetcher();
@@ -607,7 +624,6 @@ const OnBoardPage = {
 
         useEffect(() => {
             if (fetcher.data) {
-                alert('Thank you for updating your profile');
                 if (onClose) { onClose(); }
             }
         }, [fetcher.data])
@@ -642,7 +658,7 @@ const OnBoardPage = {
                 {item.group.serviceGroupItem[i - 1]?.isOptional !== service.isOptional && <Grid.Col span={12}>
                     {service.isOptional ? <><Title style={{ color: '#1890ff' }} order={5}>Additional Services</Title> <div style={{ paddingBottom: '10px' }}>(Choose only applicable services)</div>, <Alert variant="light" color="blue" title="Do not add base charge to additional service." icon={<IconInfoCircle />} /></> : <Title style={{ color: '#1890ff' }} order={5}>Services included in this category</Title>}</Grid.Col >
                 }
-                <Grid.Col span={2}>
+                <Grid.Col span={'content'}>
                     {service.isOptional ? <Checkbox
                         defaultChecked={!!item.vendorService.find(x => x.serviceId === service.service.id)} name="serviceId"
                         value={service.service.id}
@@ -660,11 +676,13 @@ const OnBoardPage = {
                         <Text c="dimmed">{service.service.description}</Text>
                     </div>
                     {enabledIds.includes(service.service.id) && service.isOptional && <Grid gutter={20} style={{ paddingTop: '10px' }}>
-                        <Grid.Col span={{ base: 12, md: 5 }}>
+                        <Grid.Col span={12}>
                             <input type="hidden" value={service.service.fareMode} name="fareMode" />
-                            <div><Text>Charged by:</Text> {FareModeLabel.get(service.service.fareMode)}</div>
-                            {service.service.fareMode === FareMode.HOURLY ? <><div><Text>Duration</Text></div>
-                            <Input rightSection="hours" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} /></> : <input type="hidden" name="duration" value={1} />}
+                            <Text>Charged by: {FareModeLabel.get(service.service.fareMode)}</Text>
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 5 }}>
+                            {service.service.fareMode === FareMode.HOURLY ? <><div><Text>Duration (in hours)</Text></div>
+                            <Input rightSection="hrs" defaultValue={item.vendorService.find(x => x.serviceId === service.service.id)?.duration || item.group.minHour} name="duration" type="number" required min={item.group.minHour} /></> : <input type="hidden" name="duration" value={1} />}
                         </Grid.Col >
                         <Grid.Col span={{ base: 12, md: 7 }}>
                             <div><Text>Cost</Text></div>

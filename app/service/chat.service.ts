@@ -38,7 +38,28 @@ async function addVendorAsChatGroupMember(input: {
     });
 }
 
+async function getChatgroup(orderId: string, userId: string){
+    return await db.chatGroup.findFirst({
+        where:{
+            bookingId:orderId,
+        },
+        select:{
+            id: true,
+            ChatGroupMember:{
+                select:{
+                    id: true
+                },
+                take: 1,
+                where:{
+                    userId
+                }
+            }
+        }
+    });
+}
+
 const ChatService = {
+    getChatgroup,
     createChatGroup,
     addUserAsChatGroupMember,
     addVendorAsChatGroupMember

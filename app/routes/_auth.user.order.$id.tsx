@@ -12,6 +12,7 @@ import { ChatBox } from "~/components/ChatBox";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
+import ChatService from "~/service/chat.service";
 import OrderService from "~/service/order.service";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
@@ -182,24 +183,7 @@ export async function loader({ request, params }: LoaderArgs) {
         })
     });
 
-   const chatGroup = await db.chatGroup.findFirst({
-        where:{
-            bookingId:orderId,
-        },
-        select:{
-            id: true,
-            ChatGroupMember:{
-                select:{
-                    id: true
-                },
-                take: 1,
-                where:{
-                    userId
-                }
-            }
-        }
-    });
-
+    const chatGroup = await ChatService.getChatgroup(orderId,userId);
   
     let paymentStatus:Orders.RazorpayOrder | null = null;
     try{
