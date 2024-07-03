@@ -13,6 +13,9 @@ function Stories(username?: string) {
         select: {
             serviceGroupId: true,
             serviceGroup: {
+                where:{
+                    isActive: true,
+                },
                 select: {
                     name: true,
                     vendorType: {
@@ -93,6 +96,7 @@ function getFilteredVendors(params: {
                     id: true,
                     serviceGroup: {
                         where: {
+                            isActive: true,
                             id: {
                                 in: params.serviceGroupIds,
                             },
@@ -135,6 +139,7 @@ function getFilteredVendors(params: {
                                     },
                                     where: {
                                         serviceGroup: {
+                                            isActive: true,
                                             groupId: {
                                                 in: serviceGrpIds.length ? serviceGrpIds : undefined,
                                             },

@@ -77,6 +77,9 @@ function getCategoryCollection() {
                 description: true,
                 keyName: true,
                 serviceGroup: {
+                    where:{
+                        isActive: true,
+                    },
                     select: {
                         id: true,
                         name: true,
@@ -233,6 +236,9 @@ function getCollections() {
                 name: true,
                 ServiceGroup: {
                     take: 10,
+                    where:{
+                        isActive: true,
+                    },
                     select: {
                         name: true,
                         imageName: true

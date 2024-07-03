@@ -20,6 +20,7 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                 name: true,
                 ServiceGroup: {
                     where: {
+                        isActive: true,
                         vendorType: {
                             keyName: vendorTypeKey
                         }
@@ -92,6 +93,7 @@ function getRelatedCollectionByType(type: string, vendorTypeKey: string) {
                 name: true,
                 ServiceGroup: {
                     where: {
+                        isActive: true,
                         vendorType: {
                             NOT: {
                                 keyName: vendorTypeKey
@@ -162,6 +164,7 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                         name: 'asc'
                     },
                     where: {
+                        isActive: true,
                         serviceGroupType: {
                             keyName
                         }

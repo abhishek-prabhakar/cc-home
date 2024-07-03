@@ -119,6 +119,7 @@ export async function loader({ request }: LoaderArgs) {
             },
           },
           where: {
+            isActive: true,
             groupTypeId: {
               not: null
             }
