@@ -44,7 +44,7 @@ const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMod
 async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode) {
     const cartSummary = await CartService.summary(input);
     const groupCost = cartSummary.map<number>(x => x.cost);
-    const addonCost = cartSummary.reduce<number[]>((acc,i) => { return acc.concat(i.services.map(x => x.cost)); }, []);
+    const addonCost = cartSummary.reduce<number[]>((acc,i) => { return acc.concat(i.services.filter(x=>!!x.id).map(x => x.cost)); }, []);
     const estimation = await CartService.calculate(groupCost,addonCost, coupon, paymentMode);
     return {
         estimation
