@@ -97,12 +97,13 @@ export async function loader({
 function CouponSection({ invalid, applyCoupon }: { invalid: boolean, applyCoupon: Function }) {
     const [getCoupon, setCoupon] = useState('');
 
-    return <Group gap={'md'} align="end">
-        <Input.Wrapper flex={1} label="Coupon" error={invalid ? 'Coupon expired' : ''} >
-            <Input error={invalid} onChange={v => setCoupon(v.target.value)} />
+    return  <Input.Wrapper  label="Coupon" error={invalid ? 'Coupon expired' : ''} >
+            <Group gap={'md'} align="start">
+                <Input size="xs"  flex={1}  error={invalid} onChange={v => setCoupon(v.target.value)} />
+            <Button variant="outline" size="xs" onClick={() => applyCoupon(getCoupon)}>Apply</Button>
+            </Group>
         </Input.Wrapper>
-        <Button variant="outline" size="xs" onClick={() => applyCoupon(getCoupon)}>Apply</Button>
-    </Group>;
+        ;
 };
 
 export default function () {

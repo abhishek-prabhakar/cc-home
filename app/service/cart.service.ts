@@ -192,12 +192,10 @@ async function cartCalculateCost(groupCosts: number[], addonsCost: number[], cou
     let couponData;
     let discount = 0;
     let additionalPromo = 0;
-
     if (coupon) {
         couponData = await calculateCouponDiscount(coupon, total);
         discount = couponData.discount;
     }
-
     if (paymentMode === BookingPaymentMode.FULL) {
         additionalPromo = calculateFullPaymentPromo(total);
     }
@@ -213,7 +211,7 @@ async function cartCalculateCost(groupCosts: number[], addonsCost: number[], cou
         final: finalTotal + tax,
         discount,
         coupon: couponData?.code,
-        invalidCoupon: coupon && !couponData ? true : false
+        invalidCoupon: coupon && !couponData?.code ? true : false
     };
 }
 
