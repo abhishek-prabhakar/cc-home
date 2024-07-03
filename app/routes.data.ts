@@ -10,6 +10,7 @@ const RoutesList = {
     CartAddEdit: '/cart/add/:venderServiceGroupId',
     VendorSignupForm: '/partner/signup/onboard/:id',
     CheckoutPayment: '/cart/checkout/payment',
+    PaymentGateway: '/order/payment?id=:id'
 }
 
 type RoutesKeys = keyof typeof RoutesList;

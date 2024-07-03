@@ -109,7 +109,7 @@ const Onboard = {
                             <Input.Wrapper label="Phone*">
                                 <Input name="phone" leftSection="+91" placeholder="Enter your contact number for communication purpose." required maxLength={10} minLength={10} />
                             </Input.Wrapper>
-                            <Box>
+                            {/* <Box>
                                 <Text fw={500}>Portfolio (optional)</Text>
                                 <Text c="dimmed">Add few of your best works.</Text>
                                 <FileUploader buttonType="default" id={'GUEST'} label="Choose file" path={PATH.GUEST_FILE_UPLOAD} onUpload={v => previewFile(v)} />
@@ -122,7 +122,7 @@ const Onboard = {
                                         </div>)
                                     }
                                 </Flex>
-                            </Box>
+                            </Box> */}
                             <Box>
                                 <Text fw={500}>Social media url</Text>
                                 <Input name="socialUrl" type="url" required />

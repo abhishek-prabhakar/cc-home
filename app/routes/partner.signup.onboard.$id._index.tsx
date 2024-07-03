@@ -7,6 +7,7 @@ import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileUploader from "~/components/FileUploader";
+import { PATH } from "~/path.data";
 import { ServiceQuery } from "~/service/services.service";
 import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
@@ -576,14 +577,14 @@ const OnBoardPage = {
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>Document Type</Table.Th>
-                        <Table.Th>File Name</Table.Th>
+                        <Table.Th>File</Table.Th>
                         <Table.Th></Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {data.files.map(element => <Table.Tr key={element.id}>
                         <Table.Td>{element.fileType}</Table.Td>
-                        <Table.Td>{element.fileName}</Table.Td>
+                        <Table.Td><a href={PATH.RESOURCE_URL+element.fileName} target="_BLANK">View file</a></Table.Td>
                         <Table.Td></Table.Td>
                     </Table.Tr>)}
                 </Table.Tbody>

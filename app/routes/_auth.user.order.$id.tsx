@@ -1,9 +1,9 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
+import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { IconChecks, IconProgress } from "@tabler/icons-react";
+import { IconChecks, IconInfoCircle, IconProgress } from "@tabler/icons-react";
 import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Orders } from "razorpay/dist/types/orders";
@@ -11,6 +11,7 @@ import { Suspense, useState } from "react";
 import { ChatBox } from "~/components/ChatBox";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
+import Routes from "~/routes.data";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -48,6 +49,22 @@ type UserBooking = {
     }[]
 }
 
+async function razerPayPaymentStatus(userId:string,orderId:string){
+    const rpPaymentRef = await db.booking.findFirstOrThrow({
+        where: {
+            userId,
+            orderId
+        },
+        select:{
+            paymentRef: true
+        }
+    });
+    if(!rpPaymentRef?.paymentRef){
+        return null;
+    }
+
+    return await PaymentService.getOrder(rpPaymentRef.paymentRef);
+}
 
 export async function action(args: ActionArgs) {
     const formData = args.request.formData();
@@ -87,7 +104,7 @@ export async function loader({ request, params }: LoaderArgs) {
     const orderId = params.id;
     const session = await getSession(request.headers.get("Cookie"));
     const userId = session.get(USER_SESSION_KEY);
-    if(!orderId){
+    if(!orderId || !userId){
         throw new Error('invalid order');
         return;
     }
@@ -197,14 +214,16 @@ export async function loader({ request, params }: LoaderArgs) {
         }
     });
 
+  
     let paymentStatus:Orders.RazorpayOrder | null = null;
     try{
-     const paymentStatus =  await PaymentService.getOrder(orderId);
+       paymentStatus = await razerPayPaymentStatus(userId, orderId);
     } catch (e){
         paymentStatus = null;
     }
 
     return defer({
+        orderId,
         data,
         chatGroup,
         paymentStatus
@@ -277,6 +296,7 @@ const UserOrderHome = {
                 <Space h="md" />
                 <Grid>
             <Grid.Col span={{ base: 12, md: 8 }}>
+                <UserOrderHome.PaymentAlert/>
                 <UserOrderHome.Order />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
@@ -407,6 +427,25 @@ const UserOrderHome = {
             } */}
         </Await>
         </Suspense>
+    },
+    PaymentAlert: () =>{
+        const data= useLoaderData<typeof loader>();
+
+        if(data.paymentStatus?.amount_paid === data.paymentStatus?.amount){
+            return <></>;
+        }
+
+        const icon = <IconInfoCircle />;
+
+        return  <Alert variant="light" color="red" title="Payment was unsuccessfull" icon={icon} mb={'md'}>
+            <Text>We couldn't confirm the payment for this order. Kindly complete the payment immediately to avoid cancellation.</Text>
+            <Space h="md"/>
+            <Link to={Routes.get('PaymentGateway', {
+                id: data.orderId
+            })}>
+                <Button>Pay Now</Button>
+            </Link>
+        </Alert>
     }
 }
 

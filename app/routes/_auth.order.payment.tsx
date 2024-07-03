@@ -1,15 +1,10 @@
-import { BookingPaymentMode, BookingStatus } from "@prisma/client";
-import { ActionArgs, LoaderArgs, defer, redirect } from "@remix-run/node";
+import {  LoaderArgs } from "@remix-run/node";
 import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
 import { useEffect } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
-import { CartService } from "~/service/cart.service";
-import EmailService from "~/service/email.service";
 import PaymentService from "~/service/payment.service";
-import { USER_SESSION_KEY, cartCheckoutCookie, getSession, userCartCookie } from "~/session.server";
-import { CartInput } from "~/types";
+import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
-import generateUuid from "~/utils/uuid.generator";
 
 export async function loader({ request }: LoaderArgs) {
     const cookieHeader = request.headers.get("Cookie");
@@ -38,12 +33,11 @@ export async function loader({ request }: LoaderArgs) {
 
     if (!orderData.paymentRef) {
         throw new Error('error');
-        return null;
     }
 
     const data = await PaymentService.getOrder(orderData.paymentRef);
     if (data.amount_paid === orderData.total * 100) {
-        return null;
+        throw new Error('error');
     }
     return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
 }

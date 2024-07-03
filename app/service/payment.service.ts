@@ -22,10 +22,11 @@ async function createOrder(props: {
     return data;
 }
 
-async function getOrder(orderId: string) {
-    const data = await rpInstance.orders.fetch(orderId);
+async function getOrder(paymentRef: string) {
+    const data = await rpInstance.orders.fetch(paymentRef);
     return data;
 }
+
 
 const PaymentService = {
     createOrder,
