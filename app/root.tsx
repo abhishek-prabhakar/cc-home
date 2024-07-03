@@ -233,5 +233,7 @@ export function HydrateFallback() {
 export function ErrorBoundary() {
   const error: any = useRouteError();
 
-  return  error?.data || 'Oops, Something went wrong!'
+  return <div style={{textAlign: 'center'}}>
+         error?.data || 'Oops, Something went wrong!'
+    </div>
 }

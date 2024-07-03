@@ -36,7 +36,7 @@ const OrderSuccess = {
                                     <IconCircleXFilled style={{ fontSize: '50px' }} />
                                 </Text>
                                 <div style={{ textAlign: 'center' }}>
-                                    <Title order={2}>Payment unsuccessfull</Title>
+                                    <Title order={2}>Payment unsuccessful</Title>
                                     <Text>If any amount debited from your account will be refunded back in 3-5 days.</Text>
                                 </div>
                                 <Space h="sm" />

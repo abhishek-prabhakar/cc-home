@@ -423,7 +423,7 @@ const UserOrderHome = {
 
         const icon = <IconInfoCircle />;
 
-        return  <Alert variant="light" color="red" title="Payment was unsuccessfull" icon={icon} mb={'md'}>
+        return  <Alert variant="light" color="red" title="Payment was unsuccessful" icon={icon} mb={'md'}>
             <Text>We couldn't confirm the payment for this order. Kindly complete the payment immediately to avoid cancellation.</Text>
             <Space h="md"/>
             <Link to={Routes.get('PaymentGateway', {

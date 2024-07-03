@@ -316,9 +316,9 @@ const ProfileLayout = {
 }
 
 export function ErrorBoundary() {
-    return <div>
-        Oops, Something went wrong! Please reload the page.
-    </div>
+    return <div style={{textAlign: 'center'}}>
+    Oops, Something went wrong! Please reload the page.
+</div>
 }
 
 export default ProfileLayout.Index;

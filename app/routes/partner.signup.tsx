@@ -10,7 +10,7 @@ export default function PartnerSignupParent() {
 
 
 export function ErrorBoundary() {
-    return <div>
+    return <div style={{textAlign: 'center'}}>
         Oops, Something went wrong! Please reload the page.
     </div>
 }
