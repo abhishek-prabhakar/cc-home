@@ -1,3 +1,4 @@
+import { BookingStatus } from "@prisma/client";
 import {  LoaderArgs } from "@remix-run/node";
 import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
 import { useEffect } from "react";
@@ -19,6 +20,7 @@ export async function loader({ request }: LoaderArgs) {
             userId: userId
         },
         select: {
+            status: true,
             orderId: true,
             paymentRef: true,
             total: true,
@@ -31,7 +33,7 @@ export async function loader({ request }: LoaderArgs) {
         }
     });
 
-    if (!orderData.paymentRef) {
+    if (!orderData.paymentRef || orderData.status !== BookingStatus.PENDING) {
         throw new Error('error');
     }
 

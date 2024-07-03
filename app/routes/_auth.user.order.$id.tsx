@@ -12,6 +12,7 @@ import { ChatBox } from "~/components/ChatBox";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
+import OrderService from "~/service/order.service";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -56,10 +57,11 @@ async function razerPayPaymentStatus(userId:string,orderId:string){
             orderId
         },
         select:{
+            status: true,
             paymentRef: true
         }
     });
-    if(!rpPaymentRef?.paymentRef){
+    if(!rpPaymentRef?.paymentRef || rpPaymentRef.status!== BookingStatus.PENDING){
         return null;
     }
 
@@ -77,24 +79,8 @@ export async function action(args: ActionArgs) {
 
     switch (_action) {
         case 'cancel':
-            await db.booking.update({
-                where: {
-                    id
-                },
-                data: {
-                    status: BookingStatus.CANCELLED
-                }
-            });
-
-            await db.bookingService.updateMany({
-                where: {
-                    bookingId: id
-                },
-                data: {
-                    status: BookingStatus.CANCELLED
-                }
-            });
-            break;
+            await OrderService.cancelOrder(id);
+        break;
     }
 
     return true;
