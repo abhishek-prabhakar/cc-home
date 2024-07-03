@@ -398,7 +398,7 @@ const UserOrderHome = {
         return  <Suspense fallback={<Skeleton/>}>
             <Await resolve={data.chatGroup}>
             {
-                response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id}/> : <Card withBorder title="Chat is disabled">
+                response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id} disabled={false}/> : <Card withBorder title="Chat is disabled">
                         Contact support to enable chat for this order.
                 </Card>
             }

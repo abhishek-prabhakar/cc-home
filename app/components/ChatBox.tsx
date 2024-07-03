@@ -9,6 +9,7 @@ import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 type inputProps ={
     memberId: string;
     chatGroupId: string;
+    disabled: boolean
 }
 
 const CHAT_REFRESH_INTERVAL = 5000;
@@ -113,7 +114,7 @@ export function ChatBox(input: inputProps){
                 </ScrollArea>
                 </Box>
             <Space h="md"/>
-            <fetcher.Form onSubmit={submitForm}>
+           {!input.disabled? <fetcher.Form onSubmit={submitForm}>
             <Grid gutter={'xs'}>
                 <Grid.Col span={'auto'}>
                     <TextInput ref={inputRef} name="ccmsginput" autoComplete="false" placeholder="Type your message here..."/>
@@ -124,7 +125,7 @@ export function ChatBox(input: inputProps){
                     </ActionIcon>
                 </Grid.Col>
             </Grid>
-            </fetcher.Form>
+            </fetcher.Form>: ''}
         </Card>
     </Box>
 }

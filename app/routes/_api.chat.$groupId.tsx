@@ -1,4 +1,4 @@
-import { ChatThread_type } from "@prisma/client";
+import { BookingStatus, ChatThread_type } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
@@ -27,12 +27,21 @@ export async function action(args: ActionArgs){
             }]
         },
         select:{
-            id: true
+            id: true,
+            chatGroup:{
+                select:{
+                    booking:{
+                        select:{
+                            status: true
+                        }
+                    }
+                }
+            }
         }
     });
     
-
-    if(!message || !chatGroupId){
+    const invalidOrder = [BookingStatus.COMPLETED, BookingStatus.REJECTED, BookingStatus.CANCELLED].includes(member.chatGroup.booking.status as any);
+    if(!message || !chatGroupId || invalidOrder ){
         return false;
     }
 
