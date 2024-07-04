@@ -190,6 +190,11 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                             },
                             select: {
                                 cost: true
+                            },
+                            where:{
+                                vendor:{
+                                    isActive: true
+                                }
                             }
                         }
                     }

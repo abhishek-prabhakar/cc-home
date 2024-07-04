@@ -425,7 +425,7 @@ const OnBoardPage = {
     Index: () => {
         const data = useLoaderData<LoaderData>();
         const fetcher = useFetcher();
-        const [activeType, setJobType] = useState<string>('');
+        const [activeProfileType, setJobType] = useState<string>('');
         const [showProfileDialog, setProfileDialog] = useState<boolean>(false);
         const [serviceList, setServiceList] = useState<ServiceGroup[]>([]);
 
@@ -486,7 +486,7 @@ const OnBoardPage = {
                 </Grid.Col >
                 <Grid.Col span={12}></Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeType={activeType} /> : ''}
+                    {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeProfileType={activeProfileType} /> : ''}
                 </Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
                     {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
@@ -497,10 +497,40 @@ const OnBoardPage = {
             </Modal>
         </Container>;
     },
-    SelectCategory: ({ serviceList, activeType }: { activeType: string, serviceList: ServiceGroup[] }) => {
-        const [getServiceDialogData, setServiceDialogData] = useState<VendorServiceGroup | null | undefined>(null);
+    SelectCategory: ({ serviceList, activeProfileType }: { activeProfileType: string, serviceList: ServiceGroup[] }) => {
         const [activePanel, setActivePanelValue] = useState<string | null>(null);
-
+        
+        return <>
+            <Card withBorder shadow="xs" title="Choose your services">
+                <Stack>
+                    <div><Text fw={500}>Add one or more services from below</Text></div>
+                    {!serviceList.length && <Text>Sorry, no services found under this category</Text>}
+                    
+                    <Accordion value={activePanel} onChange={setActivePanelValue}>
+                    <OnBoardPage.SelectedServices />
+                    {serviceList.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
+                        <Accordion.Control>{item.name}</Accordion.Control>
+                        <Accordion.Panel>
+                            <OnBoardPage.UpdateGroupServiceCost
+                                activeProfileType={activeProfileType} 
+                                addService={true} 
+                                item={{ 
+                                id: 'NEW',
+                                vendorService: [],
+                                cost: 0,
+                                costExtraHour: 0,
+                                group: item
+                            }} />
+                        </Accordion.Panel>
+                    </Accordion.Item>)}
+                </Accordion> 
+                </Stack>
+            </Card>
+        </>
+    },
+    AddNewServiceDialog: ({ serviceList, activeProfileType }: { activeProfileType: string, serviceList: ServiceGroup[] }) =>{
+        const [getServiceDialogData, setServiceDialogData] = useState<VendorServiceGroup | null | undefined>(null);
+      
         function setService(data: string) {
             const group = serviceList.find(x => x.id === data);
             if (group) {
@@ -515,36 +545,10 @@ const OnBoardPage = {
                 setServiceDialogData(null);
             }
         }
-        
-        return <>
-            <Card withBorder shadow="xs" title="Choose your services">
-                <Stack>
-                    <div><Text fw={500}>Add one or more services from below</Text></div>
-                    {/* <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} allowDeselect={false} /> */}
-                    {/* {!serviceList.length && <Select.Option disabled>Sorry, no services found under this category</Select.Option>} */}
-                    
-                    <Accordion value={activePanel} onChange={setActivePanelValue}>
-                    <OnBoardPage.SelectedServices />
-                    {serviceList.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
-                        <Accordion.Control>{item.name}</Accordion.Control>
-                        <Accordion.Panel>
-                            <OnBoardPage.UpdateGroupServiceCost
-                                activeType={activeType} 
-                                addService={true} 
-                                item={{ 
-                                id: 'NEW',
-                                vendorService: [],
-                                cost: 0,
-                                costExtraHour: 0,
-                                group: item
-                            }} />
-                        </Accordion.Panel>
-                    </Accordion.Item>)}
-                </Accordion> 
-                </Stack>
-            </Card>
+        return     <>
+            <Select value={getServiceDialogData?.group?.id} style={{ width: '100%' }} size="large" placeholder="Choose..." onChange={(v) => setService(v || '')} data={serviceList.map(service => ({ value: service.id, label: service.name }))} allowDeselect={false} />
             <Modal title={getServiceDialogData?.group.name + ' - Services & Cost'} opened={!!getServiceDialogData?.id} onClose={() => setServiceDialogData(null)} >
-                {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeType={activeType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
+                {getServiceDialogData && <OnBoardPage.UpdateGroupServiceCost activeProfileType={activeProfileType} addService={true} item={getServiceDialogData} onClose={() => setServiceDialogData(null)} />}
             </Modal>
         </>
     },
@@ -612,7 +616,7 @@ const OnBoardPage = {
             </Flex>
         </Card>
     },
-    UpdateGroupServiceCost: ({ item, addService, activeType, onClose }: { item: VendorServiceGroup, addService?: boolean, activeType?: string, onClose?: Function }) => {
+    UpdateGroupServiceCost: ({ item, addService, activeProfileType, onClose }: { item: VendorServiceGroup, addService?: boolean, activeProfileType?: string, onClose?: Function }) => {
         const fetcher = useFetcher();
         const [enabledIds, setIds] = useState<string[]>([]);
 
@@ -644,7 +648,7 @@ const OnBoardPage = {
                 <Grid.Col span={{ base: 12, md: 6 }}>
                     <div><Title order={5}>Base Charge</Title></div>
                     <Input width={'100%'} leftSection="₹" required name="groupCost" type="number" min="1" defaultValue={item.cost} />
-                    <input type="hidden" name="categoryId" value={activeType} />
+                    <input type="hidden" name="categoryId" value={activeProfileType} />
                     <input type="hidden" name="serviceGroupId" value={item.group.id} />
                 </Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
