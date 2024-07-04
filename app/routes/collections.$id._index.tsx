@@ -1,4 +1,4 @@
-import { Badge, Button, Container, Divider, Flex, Grid, Image, Stack, Tabs, Text, Title } from "@mantine/core";
+import { Badge, Button, Container, Divider, Flex, Grid, Group, Image, Stack, Tabs, Text, Title } from "@mantine/core";
 import { LoaderArgs, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
@@ -90,7 +90,7 @@ const CollectionsPage = {
                                                 <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
                                             </Link>
                                             <div style={{ height: '26px' }}>
-                                                {service.VendorServiceGroup.length ? <Flex gap={'sm'} align={'end'}><Text size="sm">Starts from</Text><Badge color="yellow"><Currency value={service.VendorServiceGroup[0].cost}/></Badge></Flex>
+                                                {service.VendorServiceGroup.length ? <Group justify="center" gap={'sm'} align={'center'}><Text size="sm">Starts from</Text><Badge color="yellow"><Currency value={service.VendorServiceGroup[0].cost}/></Badge></Group>
                                                     : ''}
                                             </div>
                                         </Stack>
