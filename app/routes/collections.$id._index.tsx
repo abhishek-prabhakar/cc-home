@@ -6,13 +6,13 @@ import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import CollectionService from "~/service/collections.service";
+import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 
 
 export function loader(args: LoaderArgs) {
     const id = args.params.id;
 
-    // db.serviceGroupType
     if (!id) {
         throw ('error');
     }
@@ -90,7 +90,7 @@ const CollectionsPage = {
                                                 <Button fullWidth variant="outline" size="xs" radius="md">Browse</Button>
                                             </Link>
                                             <div style={{ height: '26px' }}>
-                                                {service.VendorServiceGroup.length ? <Flex gap={'sm'} align={'end'}><Text size="sm">Starts from</Text><Badge color="yellow">₹{service.VendorServiceGroup[0].cost}</Badge></Flex>
+                                                {service.VendorServiceGroup.length ? <Flex gap={'sm'} align={'end'}><Text size="sm">Starts from</Text><Badge color="yellow"><Currency value={service.VendorServiceGroup[0].cost}/></Badge></Flex>
                                                     : ''}
                                             </div>
                                         </Stack>
