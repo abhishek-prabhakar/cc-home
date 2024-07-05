@@ -179,7 +179,7 @@ export async function action({
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
 
-    /** Errors in notification shouldn't impact the order placement flow  */
+    /** Notification exceptions shouldn't impact the order placement flow  */
     try{
         await Promise.allSettled(notificationQueue);
     } catch(e){

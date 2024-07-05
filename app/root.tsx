@@ -17,7 +17,7 @@ import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
 import carouselStyles from 'react-photo-view/dist/react-photo-view.css';
 import { Footer } from "~/components/Footer";
-import { Ticker } from "~/components/Ticker";
+import { OfferTicker } from "~/components/OfferTicker";
 import { Header } from "./components/Header";
 import { HeaderNavListItem, RootLoaderData, User } from "./types";
 import { USER_SESSION_KEY, getSession, userCartCookie } from "./session.server";
@@ -202,7 +202,7 @@ export default function App() {
       <body>
         <MantineProvider theme={theme}>
           <Provider store={store}>
-            <Ticker />
+            <OfferTicker />
             <Box style={headerStyle}>
               <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.user}>

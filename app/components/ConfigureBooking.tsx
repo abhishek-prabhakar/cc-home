@@ -5,6 +5,7 @@ import { Form, Link } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { createRef, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import Routes from "~/routes.data";
 import { VendorServiceOption } from "~/types";
 
 const timeFormat = 'hh a';
@@ -100,7 +101,7 @@ function ConfigureBooking(service: { minHour: number, vendorServiceGroupId: stri
                     {serviceChecklist.includes(false) ? <Alert title="Please complete the above step to proceed." c="yellow" icon={<IconInfoCircle />} /> : ''}
                 </Grid.Col>
                 <Grid.Col>
-                    <Link to="/cart/checkout"><Button variant="outline">View Cart</Button></Link>
+                    <Link to={Routes.get('Cart')}><Button variant="outline">View Cart</Button></Link>
                 </Grid.Col>
                 <Grid.Col>
                     <Button disabled={serviceChecklist.includes(false)} variant="filled" type="submit">Add to Cart</Button>

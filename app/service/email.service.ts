@@ -1,14 +1,16 @@
 import EMAIL_DATA from "~/data/email.data";
-import { db } from "~/utils/database";
-
 const nodemailer = require("nodemailer");
+
+const SENDER_ID = 'team@celebriacollective.com';
+const PASSWORD = 'notyourdaddy69';
+
 const transporter = nodemailer.createTransport({
     host: 'smtpout.secureserver.net',
     port: 465,
     secure: true,
     auth: {
-        user: 'team@celebriacollective.com',
-        pass: 'notyourdaddy69'
+        user: SENDER_ID,
+        pass: PASSWORD
     },
 });
 type SendEmailInput = {
@@ -20,7 +22,7 @@ type SendEmailInput = {
 
 async function sendEmail(input: SendEmailInput) {
     await transporter.sendMail({
-        from: '"Celebria Collective" <team@celebriacollective.com>',
+        from: '"Celebria Collective" <'+SENDER_ID+'>',
         to: input.to,
         subject: input.subject,
         text: input.subject,

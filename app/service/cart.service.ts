@@ -5,8 +5,8 @@ import { BookingPaymentMode, BookingStatus, Coupons_chargeType, FareMode } from 
 import { db } from "~/utils/database";
 
 const GST_PERCENTAGE = 18;
-const FULL_PAYMENT_DISCOUNT = 5;
-const FULL_PAYMENT_MAX = 2000;
+const FULL_PAYMENT_DISCOUNT = 5; //in percentage
+const FULL_PAYMENT_DISCOUNT_MAX_VALUE = 2000;
 
 async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: string) {
     const vendor = await db.vendorServiceGroup.findFirst({
@@ -179,8 +179,8 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
 
 function calculateFullPaymentPromo(value: number) {
     const discount = (FULL_PAYMENT_DISCOUNT * value) / 100;
-    if (discount > FULL_PAYMENT_MAX) {
-        return FULL_PAYMENT_MAX;
+    if (discount > FULL_PAYMENT_DISCOUNT_MAX_VALUE) {
+        return FULL_PAYMENT_DISCOUNT_MAX_VALUE;
     } else {
         return discount;
     }

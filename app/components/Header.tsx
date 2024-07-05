@@ -10,6 +10,7 @@ import { ActionIcon, Avatar, Box, Button, Container, Divider, Flex, Grid, Group,
 import { IconShoppingCart, IconWorld } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import ComingSoonModal from "./ComingSoonModal";
+import Routes from "~/routes.data";
 
 const logoStyle: React.CSSProperties = { fontSize: '18px', textTransform: 'uppercase', color: 'black' }
 const userMenuStyle: React.CSSProperties = { width: '300px', background: 'white', borderRadius: '10px', boxShadow: '0 0 5px #e1e1e1', overflow: 'hidden' };
@@ -70,7 +71,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                     </Grid.Col>
                     <Grid.Col span={{ base: 'content', md: 3 }}>
                         <Flex gap={20} justify={'end'} align="center">
-                            <Link to="/cart/checkout">
+                            <Link to={Routes.get('Cart')}>
                                 <Indicator disabled={!cartCount} inline processing color="red" size={12} label={cartCount}>
                                     <ActionIcon variant="subtle"  >
                                         <IconShoppingCart />

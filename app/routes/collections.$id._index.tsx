@@ -80,8 +80,8 @@ const CollectionsPage = {
                                             <Link to={Routes.get('ServiceGroup', { id: item.keyName, subId: service.id })}>
                                                 <Title order={5}>{service.name}</Title>
                                             </Link>
-                                            <Text fw={500} c="dimmed" >Includes</Text>
                                             <div>
+                                                <Text fw="bolder" size="sm" c="dimmed" mb={5}>Includes:</Text>
                                                 {service.serviceGroupItem.map((description, key) => <div key={'d-' + key}>
                                                     <Text fw={500} c="dimmed">{description.service.name}.</Text>
                                                 </div>)}

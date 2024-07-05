@@ -50,7 +50,7 @@ const Cart = {
         const data = useLoaderData<typeof loader>();
 
         return <Container size={'xl'} >
-            <Title order={3}>Checkout</Title>
+            <Title order={3}>My Cart</Title>
             <Space h={'md'} />
             <Grid gutter={30} justify="space-between">
                 <Grid.Col span={{ base: 12, md: 4, lg: 8 }}>
@@ -69,7 +69,7 @@ const Cart = {
                                     {user ? <Form method="post" action="/order/checkout">
                                         <input type="hidden" name="source" value="cart" />
                                         <input type="hidden" name="cart" value={data.cartInput} />
-                                        <Button variant="filled" type="submit" fullWidth>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl="/cart/checkout" />}
+                                        <Button variant="filled" type="submit" fullWidth>Place order</Button></Form> : <UserLogin title="Login to continue" redirectUrl={Routes.get('Cart')} />}
                                 </Stack> : ''
                             }
                         </Await>

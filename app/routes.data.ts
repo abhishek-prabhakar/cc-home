@@ -5,7 +5,7 @@ const RoutesList = {
     CollectionsByVendor: '/collections/:id/:vendorType',
     Services: '/services/:id',
     ServiceGroup: '/services/:id/:subId',
-    Cart: '/cart/checkout',
+    Cart: '/cart',
     CartItem: '/cart/add/:id',
     CartAddEdit: '/cart/add/:venderServiceGroupId',
     VendorSignupForm: '/partner/signup/onboard/:id',
