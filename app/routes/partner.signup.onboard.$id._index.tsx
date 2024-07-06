@@ -700,7 +700,7 @@ const OnBoardPage = {
             <Flex gap={20}>
                 <Box>
                     <input type="hidden" name="vendorGroupId" value={item.id} />
-                    <Button loading={fetcher.state === 'submitting'} variant="filled" radius="xl" type="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
+                    <Button loading={['submitting','loading'].includes(fetcher.state)} variant="filled" radius="xl" type="submit" name="action" value={addService ? STEPS.SERVICE : STEPS.COST}>Save & Continue</Button>
                 </Box>
                 {!addService && <Box>
                     <Button variant="filled" color="red" radius="xl" type="submit" name="action" value={STEPS.REMOVE_SERVICE}>Remove</Button>
