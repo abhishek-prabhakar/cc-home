@@ -234,6 +234,6 @@ export function ErrorBoundary() {
   const error: any = useRouteError();
 
   return <div style={{textAlign: 'center'}}>
-         error?.data || 'Oops, Something went wrong!'
+         {error?.data || 'Oops, Something went wrong!'}
     </div>
 }
