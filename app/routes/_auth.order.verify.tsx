@@ -1,7 +1,10 @@
 import { ActionArgs, redirect } from "@remix-run/node";
-import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
+import EmailService from "~/service/email.service";
+import PaymentService from "~/service/payment.service";
+import WhatsappService from "~/service/whatsapp.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
+import { DateFormatter } from "~/utils/date.transform";
 
 export async function action({
     request,
@@ -26,7 +29,28 @@ export async function action({
         },
         select: {
             orderId: true,
-            paymentRef: true
+            paymentRef: true,
+            bookingService:{
+                select:{
+                    date: true,
+                    vendorServiceGroup:{
+                        select:{
+                            costByVendor: true,
+                            group:{
+                                select:{
+                                    name: true,
+                                }
+                            },
+                            vendor:{
+                                select:{
+                                    email: true,
+                                    mobileNumber: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
 
@@ -34,15 +58,40 @@ export async function action({
         return;
     }
 
-    const success = validatePaymentVerification({
-        order_id: orderData.paymentRef, payment_id: razorpayPaymentId
-    }, razorpaySignature, process.env.RPAY_SECRET || '');
+    const success = await PaymentService.validatePayment(orderData.paymentRef, razorpayPaymentId, razorpaySignature);
 
+    let redirectUrl;
     if (success) {
-        return redirect('/order/success?id=' + orderData.orderId);
+        redirectUrl = '/order/success?id=' + orderData.orderId;
     } else {
-        return redirect('/order/failed?id=' + orderData.orderId);
+        redirectUrl = '/order/failed?id=' + orderData.orderId;
     }
+
+    const notificationQueue:Promise<any>[] = [];
+
+    orderData.bookingService.forEach(item =>{
+        notificationQueue.push(EmailService.notifyVendorNewOrder({
+            email: item.vendorServiceGroup.vendor?.email,
+            date: DateFormatter.short(item.date),
+            serviceName: item.vendorServiceGroup.group.name,
+            orderId: orderData.orderId
+        }));
+        notificationQueue.push(WhatsappService.notifyVendorNewOrder({
+            to: item.vendorServiceGroup.vendor?.mobileNumber, 
+            orderId: orderData.orderId,
+            service: item.vendorServiceGroup.group.name,
+            date: DateFormatter.short(item.date),
+            cost: item.vendorServiceGroup.costByVendor
+        }));
+    });
+
+    try{
+        await Promise.allSettled(notificationQueue);
+    } catch(e){
+        console.log('Notification failed')
+    }
+
+    return  redirect(redirectUrl);
 }
 
 export function loader() {

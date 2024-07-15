@@ -1,4 +1,5 @@
 import Razorpay from "razorpay"
+import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
 
 
 const KEY_ID = process.env.RPAY_KEY || '';
@@ -27,10 +28,18 @@ async function getOrder(paymentRef: string) {
     return data;
 }
 
+async function validatePayment(orderId: string, paymentId: string, signature: string) {
+    return validatePaymentVerification({
+        order_id: orderId, 
+        payment_id: paymentId
+    }, signature, process.env.RPAY_SECRET || '');
+}
+
 
 const PaymentService = {
     createOrder,
-    getOrder
+    getOrder,
+    validatePayment
 }
 
 export default PaymentService;

@@ -155,19 +155,21 @@ export async function action({
 
             const vendor = await VendorQuery.getVendorContactsByUsername(item.vendorId);
             
-            notificationQueue.push(EmailService.notifyVendorNewOrder({
-                email: vendor?.email,
-                date: DateFormatter.short(cartItem.date),
-                serviceName: item.group.name,
-                orderId: orderId
-            }));
-            notificationQueue.push(WhatsappService.notifyVendorNewOrder({
-                to: vendor?.mobileNumber, 
-                orderId: orderId,
-                service: item.group.name,
-                date: DateFormatter.short(cartItem.date),
-                cost: item.cost
-            }));
+            if(paymentMode === BookingPaymentMode.FULL){
+                notificationQueue.push(EmailService.notifyVendorNewOrder({
+                    email: vendor?.email,
+                    date: DateFormatter.short(cartItem.date),
+                    serviceName: item.group.name,
+                    orderId: orderId
+                }));
+                notificationQueue.push(WhatsappService.notifyVendorNewOrder({
+                    to: vendor?.mobileNumber, 
+                    orderId: orderId,
+                    service: item.group.name,
+                    date: DateFormatter.short(cartItem.date),
+                    cost: item.cost
+                }));
+            }
             console.log(debug_point, i, 'z');
         }
         debug_point = '8';console.log(debug_point);
