@@ -172,7 +172,15 @@ export async function action({
         }
         debug_point = '8';console.log(debug_point);
 
-        notificationQueue.push(WhatsappService.orderConfirmation( loggedInUser.username, orderId, summary.estimation.final));
+        notificationQueue.push(
+            WhatsappService.orderConfirmationUser({
+                to: loggedInUser.username, 
+                orderId,
+                cost: summary.estimation.final,
+                date: DateFormatter.short(cartData[0].date),
+                serviceName: summary.groupData[0].group.name
+            })
+        );
         
         REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
     } catch(e){

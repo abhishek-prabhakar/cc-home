@@ -1,4 +1,6 @@
 import axios from "axios";
+import COMMON_DATA from "~/data/common.data";
+import Routes from "~/routes.data";
 
 const API_KEY = process.env.WHATSAPP_KEY;
 const END_POINT = " https://graph.facebook.com/v19.0/335976452932928/messages";
@@ -7,7 +9,8 @@ enum TEMPLATES {
     booking_confirmation_user = "booking_confirmation_user",
     order_confirmation = "order_confirmation",
     vendor_new_order = "vendor_new_order",
-    vendor_order_confirmation_regular  = "vendor_order_confirmation_regular "
+    vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
+    user_cancellation_vendor = "user_cancellation_vendor"
 }
 
 type Param = {
@@ -83,7 +86,13 @@ async function orderConfirmation(to: string, orderId: string, cost: number){
 }
 
 
-async function orderConfirmationUser(to: string, orderId: string, cost: number){
+async function orderConfirmationUser(input: {
+    to: string, 
+    orderId: string, 
+    cost: number,
+    date: string,
+    serviceName: string
+}){
     const params:Param[] = [ 
         {
             "type": "text",
@@ -95,7 +104,7 @@ async function orderConfirmationUser(to: string, orderId: string, cost: number){
         },
         {
             "type": "text",
-            "text": orderId
+            "text": input.orderId
             },
         {
             "type": "text",
@@ -107,7 +116,7 @@ async function orderConfirmationUser(to: string, orderId: string, cost: number){
             },
         {
             "type": "text",
-            "text": 'https://maps.app.goo.gl/XLnducGtHMcXSq8d7'
+            "text": ''+input.cost
         }];
 
         const interaction:Interaction[]= [{
@@ -117,12 +126,12 @@ async function orderConfirmationUser(to: string, orderId: string, cost: number){
             "parameters": [
                 {
                     "type": "payload",
-                    "payload": "https://www.celebriacollective.com/"
+                    "payload": Routes.get('UserManageOrder',{ id: input.orderId })
                 }
             ]
         }];   
 
-await Request.post({ template: TEMPLATES.booking_confirmation_user, to, params, interaction, lang:'en' });
+await Request.post({ template: TEMPLATES.booking_confirmation_user, to: input.to, params, interaction, lang:'en' });
 }
 
 
@@ -172,16 +181,37 @@ async function notifyVendorNewOrder(input: { to?: string, orderId: string, servi
     await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params, lang:  'en_US' });
 }
 
-async function notifyVendorOrderCancel(input: { to?: string, orderId: string, service: string, date: string }){
+async function notifyVendorOrderCancel(input: { to: string, orderId: string, service: string, date: string, time: string }){
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": input.orderId
+        },
+        {
+            "type": "text",
+            "text": input.service
+        },
+        {
+            "type": "text",
+            "text": input.date
+        },
+        {
+            "type": "text",
+            "text": input.time
+        },
+        {
+            "type": "text",
+            "text": "http://celebriacollective.com/partner/order/"+input.orderId+"/manage"
+        }];
 
+    await Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
 }
 
 
 const WhatsappService = {
-    orderConfirmation,
     orderConfirmationUser,
     notifyVendorNewOrder,
-    notifyVendorOrderCancel
+    notifyVendorOrderCancel,
 }
 
 export default WhatsappService;

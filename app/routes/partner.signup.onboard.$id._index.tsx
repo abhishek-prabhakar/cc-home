@@ -501,7 +501,7 @@ const OnBoardPage = {
         const [activePanel, setActivePanelValue] = useState<string | null>(null);
         
         return <>
-            <Card withBorder shadow="xs" title="Choose your services">
+            <Card id="section-services" withBorder shadow="xs" title="Choose your services">
                 <Stack>
                     <div><Text fw={500}>Add one or more services from below</Text></div>
                     {!serviceList.length && <Text>Sorry, no services found under this category</Text>}
@@ -627,9 +627,8 @@ const OnBoardPage = {
         }, [])
 
         useEffect(() => {
-            if (fetcher.data) {
-                if (onClose) { onClose(); }
-            }
+            if (fetcher.data && onClose) { onClose(); }
+            if(fetcher.data && addService){ scrollIntoSectionTop(); }
         }, [fetcher.data])
 
         function setEnabledList(id: string, enabled: boolean) {
@@ -641,8 +640,15 @@ const OnBoardPage = {
             setIds(ids);
         }
 
+        function scrollIntoSectionTop(){
+            if(addService){
+                const el = document.getElementById('section-services');
+                el?.scrollIntoView({  behavior: "smooth", block: "start" });
+            }
+        }
 
-        return <fetcher.Form method="post" action="">
+
+        return <fetcher.Form method="post" action="" >
             <Alert title="Kindly read all the inclusive services and set your base charge accordingly." variant="light" color="blue" icon={<IconInfoCircle />} /><br />
             <Grid gutter={20}>
                 <Grid.Col span={{ base: 12, md: 6 }}>

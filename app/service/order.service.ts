@@ -15,6 +15,7 @@ async function cancelOrder(id: string){
             bookingService:{
                 select:{
                     date: true,
+                    timeHour: true,
                     vendorServiceGroup:{
                         select:{
                             vendor:{
@@ -49,7 +50,8 @@ async function cancelOrder(id: string){
                 to: service.vendorServiceGroup.vendor.mobileNumber,
                 orderId: id,
                 service: service.vendorServiceGroup.group.name,
-                date: DateFormatter.short(service.date)
+                date: DateFormatter.short(service.date),
+                time: DateFormatter.timeHourTo12Hrs(service.timeHour)
             });
         })
         

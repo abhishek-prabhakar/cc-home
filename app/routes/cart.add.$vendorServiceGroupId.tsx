@@ -21,6 +21,7 @@ import { AddonGroupItem, CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { Carousel } from '@mantine/carousel';
+import LocationPicker from "~/components/LocationPicker";
 
 enum ActionType {
     ESTIMATION = 'ESTIMATION',
@@ -268,7 +269,7 @@ const Page = {
         }
 
         /*
-            emit the data only if the required addons are selected
+            emit the data only after the required addons are fulfilled
         */
         function propogateData(addonsIds:string[]){
             if(addonsIds.length < data.serviceGroup.selectableList.length){
@@ -466,6 +467,7 @@ const Page = {
                 <Input minLength={6} maxLength={6} value={address.pincode}
                     onChange={(e => updateForm({ pincode: e.target.value }))} />
             </Input.Wrapper>
+            <LocationPicker/>
         </Stack>;
 
     },

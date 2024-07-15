@@ -152,7 +152,7 @@ export async function loader({ request, params }: LoaderArgs) {
             }
         }).then(r => {
             if (!r) {
-                throw new Error("invalid order");
+                reject('invalid order');
 
             }
             else {
