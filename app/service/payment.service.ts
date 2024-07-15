@@ -9,7 +9,8 @@ const rpInstance = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
 
 async function createOrder(props: {
     amount: number,
-    orderId: string
+    orderId: string,
+    partialPay: boolean
 }) {
     const data = await rpInstance.orders.create({
         amount: props.amount,
@@ -18,7 +19,9 @@ async function createOrder(props: {
         notes: {
             key1: "value3",
             key2: "value2"
-        }
+        },
+        partial_payment: props.partialPay,
+        first_payment_min_amount: props.amount/2
     });
     return data;
 }

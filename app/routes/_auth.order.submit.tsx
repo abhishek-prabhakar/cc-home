@@ -73,15 +73,20 @@ export async function action({
         orderId = genOrderId(+loggedInUser.username);
         debug_point = '4';console.log(debug_point);
         let rpOrderRef: string = '';
-        if (paymentMode === BookingPaymentMode.FULL) {
+        if (paymentMode !== BookingPaymentMode.EMI) {
             const rpOrder = await PaymentService.createOrder({
                 amount: summary.estimation.final * 100,
-                orderId
+                orderId,
+                partialPay: paymentMode === BookingPaymentMode.PAY_LATER
             });
             rpOrderRef = rpOrder.id;
-            REDIRECT_SUCCESS = '/order/payment'
             debug_point = '5';console.log(debug_point);
         }
+
+        if(paymentMode === BookingPaymentMode.FULL){
+            REDIRECT_SUCCESS = '/order/payment';
+        }
+
         debug_point = '6';console.log(debug_point);
         const data = await db.booking.create({
             data: {
@@ -152,25 +157,6 @@ export async function action({
                 vendorId: item.vendorId
             });
             console.log(debug_point, i, 'y');
-
-            const vendor = await VendorQuery.getVendorContactsByUsername(item.vendorId);
-            
-            if(paymentMode === BookingPaymentMode.PAY_LATER){
-                notificationQueue.push(EmailService.notifyVendorNewOrder({
-                    email: vendor?.email,
-                    date: DateFormatter.short(cartItem.date),
-                    serviceName: item.group.name,
-                    orderId: orderId
-                }));
-                notificationQueue.push(WhatsappService.notifyVendorNewOrder({
-                    to: vendor?.mobileNumber, 
-                    orderId: orderId,
-                    service: item.group.name,
-                    date: DateFormatter.short(cartItem.date),
-                    cost: item.cost
-                }));
-            }
-            console.log(debug_point, i, 'z');
         }
         debug_point = '8';console.log(debug_point);
 

@@ -1,6 +1,6 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
 import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
-import { BookingStatus } from "@prisma/client";
+import { BookingPaymentMode, BookingStatus, PaymentMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { IconChecks, IconInfoCircle, IconProgress } from "@tabler/icons-react";
@@ -24,6 +24,7 @@ type UserBooking = {
     id: string,
     orderId: string,
     status: BookingStatus,
+    paymentMode: BookingPaymentMode,
     date: Date,
     coupon: string | null,
     tax: number,
@@ -111,6 +112,7 @@ export async function loader({ request, params }: LoaderArgs) {
                 total: true,
                 tax: true,
                 status: true,
+                paymentMode: true,
                 bookingService: {
                     select: {
                         id: true,
@@ -160,6 +162,7 @@ export async function loader({ request, params }: LoaderArgs) {
                     id: r?.id,
                     orderId: r.orderId,
                     status: r.status,
+                    paymentMode: r.paymentMode,
                     date: r.created_at,
                     coupon: r.coupon,
                     tax: r.tax,
@@ -266,7 +269,6 @@ const UserOrderHome = {
                 <Space h="md" />
                 <Grid>
             <Grid.Col span={{ base: 12, md: 8 }}>
-                <UserOrderHome.PaymentAlert/>
                 <UserOrderHome.Order />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
@@ -281,7 +283,9 @@ const UserOrderHome = {
 
         return <Suspense fallback={<Skeleton />}>
             <Await resolve={data.data}>
-                {orderData => <Card withBorder>
+                {orderData => <>
+                    <UserOrderHome.PaymentAlert mode={orderData.paymentMode} />
+                    <Card withBorder>
                     <Grid align={'middle'} gutter={20}>
                         <Grid.Col span="auto">
                             <Group>
@@ -378,7 +382,8 @@ const UserOrderHome = {
                             </Grid>
                         </Form>
                     </Modal>
-                </Card>
+                    </Card>
+                </>
                 }
             </Await>
         </Suspense>;
@@ -398,33 +403,52 @@ const UserOrderHome = {
         </Await>
         </Suspense>
     },
-    PaymentAlert: () =>{
+    PaymentAlert: (input: { mode: BookingPaymentMode }) =>{
         const data= useLoaderData<typeof loader>();
 
         if(data.paymentStatus?.amount_paid === data.paymentStatus?.amount){
             return <></>;
         }
 
-        const icon = <IconInfoCircle />;
+        if(input.mode === BookingPaymentMode.PAY_LATER && data.paymentStatus?.status === 'created'){
+            return <PaymentPendingCard orderId={data.orderId}/>
+        }
 
-        return  <Alert variant="light" color="red" title="Payment was unsuccessful" icon={icon} mb={'md'}>
-            <Text>We couldn't confirm the payment for this order. Kindly complete the payment immediately to avoid cancellation.</Text>
-            <Space h="md"/>
-            <Link to={Routes.get('PaymentGateway', {
-                id: data.orderId
-            })}>
-                <Button>Pay Now</Button>
-            </Link>
-        </Alert>
+        return  <PaymentFailedCard orderId={data.orderId}/>;
     }
 }
 
 export default UserOrderHome.Index;
 
 
-function Testt(p:{d: any}){
-    console.log(p.d)
-    return <div>sdf</div>
+function PaymentFailedCard(data:{orderId: string}){
+    const icon = <IconInfoCircle />;
+
+    return <Alert variant="light" color="red" title="Payment was unsuccessful" icon={icon} mb={'md'}>
+    <Text>We couldn't confirm the payment for this order. Kindly complete the payment immediately to avoid cancellation.</Text>
+    <Space h="md"/>
+    <Link to={Routes.get('PaymentGateway', {
+        id: data.orderId
+    })}>
+        <Button>Pay Now</Button>
+    </Link>
+</Alert>
+}
+
+function PaymentPendingCard(data:{orderId: string}){
+    const icon = <IconInfoCircle />;
+
+    return  <Alert variant="light" color="green" title="Complete your payment" icon={icon} mb={'md'}>
+    <Text>Since you choosed pay later, You have 3 days to pay 50% of the total amount.<br/>Kindly chat with your vendor about your requirement and proceed with payment once you are ready.</Text>
+    <Space h="md"/>
+    <Link to={Routes.get('PaymentGateway', {
+        id: data.orderId
+    })}>
+        <Button color={'green'}>Pay Now</Button>
+    </Link>
+    <Space h="md"/>
+    <Text  c="dimmed" size="sm">Kindly read our <Link to="/about/refund-policy">Cancellation & Refund Policy</Link></Text>
+    </Alert>
 }
 
 export function ErrorBoundary() {
