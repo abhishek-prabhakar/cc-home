@@ -155,7 +155,7 @@ export async function action({
 
             const vendor = await VendorQuery.getVendorContactsByUsername(item.vendorId);
             
-            if(paymentMode === BookingPaymentMode.FULL){
+            if(paymentMode === BookingPaymentMode.PAY_LATER){
                 notificationQueue.push(EmailService.notifyVendorNewOrder({
                     email: vendor?.email,
                     date: DateFormatter.short(cartItem.date),
