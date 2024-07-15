@@ -439,7 +439,7 @@ function PaymentPendingCard(data:{orderId: string}){
     const icon = <IconInfoCircle />;
 
     return  <Alert variant="light" color="green" title="Complete your payment" icon={icon} mb={'md'}>
-    <Text>Since you choosed pay later, You have 3 days to pay 50% of the total amount.<br/>Kindly chat with your vendor about your requirement and proceed with payment once you are ready.</Text>
+    <Text>Since you chose pay later, You have 3 days to pay 50% of the total amount.<br/>Kindly chat with your vendor about your requirement and proceed with payment once you are ready.</Text>
     <Space h="md"/>
     <Link to={Routes.get('PaymentGateway', {
         id: data.orderId
