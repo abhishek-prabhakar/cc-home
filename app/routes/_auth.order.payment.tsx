@@ -1,6 +1,7 @@
+import { Center, Loader, Stack, Text } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import {  LoaderArgs } from "@remix-run/node";
-import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { useActionData, useLoaderData, useNavigation, useSubmit } from "@remix-run/react";
 import { useEffect } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import PaymentService from "~/service/payment.service";
@@ -49,6 +50,7 @@ export default () => {
     const [Razorpay, isLoaded] = useRazorpay();
     const submit = useSubmit();
     const actionData = useActionData();
+    const navigation = useNavigation();
 
     useEffect(() => {
         if (!isLoaded || !loaderData) {
@@ -99,7 +101,12 @@ export default () => {
     }
 
 
-    return 'Processing your order. Please wait...'
+    return <Center h={200}>
+        <Stack justify="center" align="center">
+        <Loader  size={'lg'}/> 
+         <Text>{navigation.state === 'idle'? '': 'Processing your order. Please wait...' }</Text>
+         </Stack>
+         </Center>
 }
 
 
