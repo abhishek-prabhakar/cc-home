@@ -460,7 +460,7 @@ function PaymentPendingCard(data:{orderId: string}){
 function PayOnFieldCard(input:{ amount: number }){
     const icon = <IconCircleCheck />;
 
-    return  <Alert variant="light" color="green" title="We recived the partial payment" icon={icon} mb={'md'}>
+    return  <Alert variant="light" color="green" title="We recieved the partial payment" icon={icon} mb={'md'}>
     <Text>Pay rest of the amount after the service is done. </Text>
     <Space h="xs"/>
     <Title order={5}>Balance: <Currency value={input.amount/100}/> </Title>
