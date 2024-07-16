@@ -3,7 +3,7 @@ import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, M
 import { BookingPaymentMode, BookingStatus, PaymentMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
-import { IconChecks, IconInfoCircle, IconProgress } from "@tabler/icons-react";
+import { IconChecks, IconCircleCheck, IconInfoCircle, IconProgress } from "@tabler/icons-react";
 import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Orders } from "razorpay/dist/types/orders";
@@ -16,6 +16,7 @@ import ChatService from "~/service/chat.service";
 import OrderService from "~/service/order.service";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
+import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 import { StatusMarker } from "~/utils/statusMarker.map";
@@ -194,7 +195,7 @@ export async function loader({ request, params }: LoaderArgs) {
     } catch (e){
         paymentStatus = null;
     }
-
+console.log(paymentStatus)
     return defer({
         orderId,
         data,
@@ -414,6 +415,10 @@ const UserOrderHome = {
             return <PaymentPendingCard orderId={data.orderId}/>
         }
 
+        if(input.mode === BookingPaymentMode.PAY_LATER && data.paymentStatus && data.paymentStatus.amount_paid > 0){
+            return <PayOnFieldCard amount={data.paymentStatus.amount_due}/>
+        }
+
         return  <PaymentFailedCard orderId={data.orderId}/>;
     }
 }
@@ -446,6 +451,19 @@ function PaymentPendingCard(data:{orderId: string}){
     })}>
         <Button color={'green'}>Pay Now</Button>
     </Link>
+    <Space h="md"/>
+    <Text  c="dimmed" size="sm">Kindly read our <Link to="/about/refund-policy">Cancellation & Refund Policy</Link></Text>
+    </Alert>
+}
+
+
+function PayOnFieldCard(input:{ amount: number }){
+    const icon = <IconCircleCheck />;
+
+    return  <Alert variant="light" color="green" title="We recived the partial payment" icon={icon} mb={'md'}>
+    <Text>Pay rest of the amount after the service is done. </Text>
+    <Space h="xs"/>
+    <Title order={5}>Balance: <Currency value={input.amount/100}/> </Title>
     <Space h="md"/>
     <Text  c="dimmed" size="sm">Kindly read our <Link to="/about/refund-policy">Cancellation & Refund Policy</Link></Text>
     </Alert>

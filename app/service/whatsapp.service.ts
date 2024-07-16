@@ -203,7 +203,7 @@ async function notifyVendorOrderCancel(input: { to: string, orderId: string, ser
         },
         {
             "type": "text",
-            "text": "http://celebriacollective.com/partner/order/"+input.orderId+"/manage"
+            "text": "http://celebriacollective.com/vendor/order/manage/"+input.orderId
         }];
 
     await Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
