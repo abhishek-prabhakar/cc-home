@@ -19,7 +19,7 @@ function genOrderId(user: number) {
         return number % 100;
     }
     const date = new Date();
-    const orderId = ORDER_PREFIX + extractTwoDigit(date.getFullYear()) + date.getMonth() + extractTwoDigit(+user) + extractTwoDigit(Date.now());
+    const orderId = ORDER_PREFIX + extractTwoDigit(date.getFullYear()) + date.getMonth() + date.getDay() + extractTwoDigit(+user) + extractTwoDigit(Date.now());
 
     return orderId;
 }
