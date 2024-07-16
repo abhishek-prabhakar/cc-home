@@ -1,6 +1,7 @@
-import { Avatar, Badge, Card, Container, Grid, Space, Text, Title } from "@mantine/core";
+import { Alert, Avatar, Badge, Button, Card, Container, Grid, Group, Space, Text, Title } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { ChatBox } from "~/components/ChatBox";
 import { PATH } from "~/path.data";
 import ChatService from "~/service/chat.service";
@@ -103,6 +104,15 @@ export default function(){
                         </Grid.Col>
                     </Grid>
                 </Card>
+                <Space h="md"/>
+                <Alert variant="outline" color="yellow" title="RSVP your availability" icon={<IconInfoCircle/>}>
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. At officiis, quae tempore necessitatibus placeat saepe.
+                <Space h="md"/>
+                <Group>
+                    <Button variant="filled" color="green">Accept</Button>
+                    <Button variant="outline" color="red">Decline</Button>
+                </Group>
+                </Alert>
             </Grid.Col>
             <Grid.Col span={{base: 12, md: 4}}>
                 <ChatBox title="Chat with customer" chatGroupId={chatGroup?.id || ''} memberId={chatGroup?.ChatGroupMember[0]?.id || ''} disabled={chatGroup?.isDisabled || false}/>
