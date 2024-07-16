@@ -467,7 +467,6 @@ const Page = {
                 <Input minLength={6} maxLength={6} value={address.pincode}
                     onChange={(e => updateForm({ pincode: e.target.value }))} />
             </Input.Wrapper>
-            <LocationPicker/>
         </Stack>;
 
     },
