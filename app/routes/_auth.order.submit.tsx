@@ -166,6 +166,7 @@ export async function action({
                 orderId,
                 cost: summary.estimation.final,
                 date: DateFormatter.short(cartData[0].date),
+                time: DateFormatter.timeHourTo12Hrs(cartData[0].timeHour),
                 serviceName: summary.groupData[0].group.name
             })
         );

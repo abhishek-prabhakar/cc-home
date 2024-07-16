@@ -10,7 +10,8 @@ enum TEMPLATES {
     order_confirmation = "order_confirmation",
     vendor_new_order = "vendor_new_order",
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
-    user_cancellation_vendor = "user_cancellation_vendor"
+    user_cancellation_vendor = "user_cancellation_vendor",
+    booking_rejection_user = "booking_rejection_user"
 }
 
 type Param = {
@@ -91,6 +92,7 @@ async function orderConfirmationUser(input: {
     orderId: string, 
     cost: number,
     date: string,
+    time: string,
     serviceName: string
 }){
     const params:Param[] = [ 
@@ -100,7 +102,7 @@ async function orderConfirmationUser(input: {
         },
         {
             "type": "text",
-            "text": 'Photo Shoot'
+            "text": input.serviceName
         },
         {
             "type": "text",
@@ -108,12 +110,12 @@ async function orderConfirmationUser(input: {
             },
         {
             "type": "text",
-            "text": '24/06/2024'
+            "text": input.date
         },
         {
             "type": "text",
-            "text": '10 AM'
-            },
+            "text": input.time
+        },
         {
             "type": "text",
             "text": ''+input.cost
@@ -207,11 +209,16 @@ async function notifyVendorOrderCancel(input: { to: string, orderId: string, ser
     await Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
 }
 
+function notifyUserOnOrderReject(){
+
+}
+
 
 const WhatsappService = {
     orderConfirmationUser,
     notifyVendorNewOrder,
     notifyVendorOrderCancel,
+    notifyUserOnOrderReject
 }
 
 export default WhatsappService;
