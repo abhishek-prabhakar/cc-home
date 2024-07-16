@@ -104,7 +104,7 @@ export async function action({
             }
         });
 
-        const chatGroup = await ChatService.createChatGroup(orderId);
+        const chatGroup = await ChatService.createChatGroup(data.id);
         
         await ChatService.addUserAsChatGroupMember({
             chatGroupId: chatGroup.id,

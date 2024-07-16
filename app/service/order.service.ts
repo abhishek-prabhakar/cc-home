@@ -2,6 +2,7 @@ import { BookingStatus } from "@prisma/client";
 import { db } from "~/utils/database";
 import WhatsappService from "./whatsapp.service";
 import { DateFormatter } from "~/utils/date.transform";
+import ChatService from "./chat.service";
 
 async function cancelOrder(id: string){
    const orderInfo =  await db.booking.update({
@@ -43,6 +44,8 @@ async function cancelOrder(id: string){
             status: BookingStatus.CANCELLED
         }
     });
+
+    await ChatService.disableChatGroup(id);
 
     try{
         orderInfo.bookingService.forEach(async service =>{

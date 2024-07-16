@@ -9,7 +9,8 @@ import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 type inputProps ={
     memberId: string;
     chatGroupId: string;
-    disabled: boolean
+    disabled: boolean;
+    title?: string
 }
 
 const CHAT_REFRESH_INTERVAL = 5000;
@@ -23,6 +24,7 @@ export function ChatBox(input: inputProps){
     const viewport = useRef<HTMLDivElement>(null);
 
     const CHAT_ENDPOINT = '/chat/'+input.chatGroupId;
+    const title = input.title || 'Chat with your vendor';
    
     useEffect(() =>{
         if(refresh){
@@ -96,7 +98,7 @@ export function ChatBox(input: inputProps){
 
     return <Box>
         <Card withBorder>
-            <Title order={5}>Chat with your vendor</Title>
+            <Title order={5}>{title}</Title>
             <Space h="md"/>
             <Divider/>
             <Space h="md"/>

@@ -38,31 +38,93 @@ async function addVendorAsChatGroupMember(input: {
     });
 }
 
-async function getChatgroup(orderId: string, userId: string){
+async function getChatgroupByOrderId(orderId: string, userId: string){
     return await db.chatGroup.findFirst({
         where:{
-            bookingId:orderId,
+            booking:{
+                orderId
+            }
         },
         select:{
             id: true,
+            isDisabled: true,
             ChatGroupMember:{
                 select:{
                     id: true
                 },
                 take: 1,
                 where:{
-                    userId
+                    OR:[
+                        {
+                            userId
+                        },
+                        {
+                            vendorId: userId
+                        }
+                    ]
                 }
             }
         }
     });
 }
 
+
+async function getChatgroupByBookingId(bookingId: string, userId: string){
+    return await db.chatGroup.findFirst({
+        where:{
+            bookingId,
+        },
+        select:{
+            id: true,
+            isDisabled: true,
+            ChatGroupMember:{
+                select:{
+                    id: true
+                },
+                take: 1,
+                where:{
+                    OR:[
+                        {
+                            userId
+                        },
+                        {
+                            vendorId: userId
+                        }
+                    ]
+                }
+            }
+        }
+    });
+}
+
+async function disableChatGroup(orderId: string){
+     await db.chatGroupMember.updateMany({
+        where:{
+            chatGroup:{
+                bookingId: orderId
+            }
+        },
+        data:{
+            isDisabled: true,
+        }
+    });
+    await  await db.chatGroup.updateMany({
+        where:{
+            bookingId: orderId
+        },
+        data:{
+            isDisabled: true,
+        }
+    });
+}
+
 const ChatService = {
-    getChatgroup,
+    getChatgroupByBookingId,
+    getChatgroupByOrderId,
     createChatGroup,
     addUserAsChatGroupMember,
-    addVendorAsChatGroupMember
+    addVendorAsChatGroupMember,
+    disableChatGroup
 }
 
 export default ChatService;

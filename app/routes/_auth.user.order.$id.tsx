@@ -187,7 +187,7 @@ export async function loader({ request, params }: LoaderArgs) {
         })
     });
 
-    const chatGroup = await ChatService.getChatgroup(orderId,userId);
+    const chatGroup = await ChatService.getChatgroupByOrderId(orderId,userId);
   
     let paymentStatus:Orders.RazorpayOrder | null = null;
     try{
@@ -195,7 +195,7 @@ export async function loader({ request, params }: LoaderArgs) {
     } catch (e){
         paymentStatus = null;
     }
-console.log(paymentStatus)
+
     return defer({
         orderId,
         data,
@@ -394,7 +394,7 @@ const UserOrderHome = {
         return  <Suspense fallback={<Skeleton/>}>
             <Await resolve={data.chatGroup}>
             {
-                response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id} disabled={false}/> : <Card withBorder title="Chat is disabled">
+                response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id} disabled={response.isDisabled}/> : <Card withBorder title="Chat is disabled">
                         Contact support to enable chat for this order.
                 </Card>
             }
