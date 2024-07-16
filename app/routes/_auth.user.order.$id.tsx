@@ -345,7 +345,7 @@ const UserOrderHome = {
                                 </Group>
                                 <Title order={5}>{service.name}</Title>
                                 <Text>
-                                    Date: {DateFormatter.short(service.date)}, at {service.timeHour} ({service.duration} hours)
+                                    Date: {DateFormatter.short(service.date)}, at {DateFormatter.timeHourTo12Hrs(service.timeHour)} ({service.duration} hours)
                                 </Text>
                                 <Text>
                                     Venue: {service.location}
