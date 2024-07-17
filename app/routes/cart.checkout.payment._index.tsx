@@ -40,6 +40,8 @@ const PaymentMethodList: PaymentType[] = [
 ];
 
 const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
+
+// Few services may not have fixed price. The total cost will be calculated during the field day.
 const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
 
 async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode) {
