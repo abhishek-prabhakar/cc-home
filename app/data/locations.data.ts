@@ -1,18 +1,18 @@
 export const locationList = [
     {
         label: 'Bangalore',
-        key: '0',
+        key: 'BLR',
         available: true
     },
     {
         label: 'Mumbai',
-        key: '1',
+        key: 'BOM',
         available: false
 
     },
     {
         label: 'Delhi',
-        key: '2',
+        key: 'DEL',
         available: false
     },
 ];

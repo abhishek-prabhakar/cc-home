@@ -225,7 +225,10 @@ const ProfileLayout = {
                                 <Divider size="md" w={'10%'} />
                                 <Box>
                                     <Text c="dimmed">Starts from:</Text>
-                                    <Title order={3}><NumberFormatter prefix={COMMON_DATA.currency} value={activeService?.cost} thousandSeparator /></Title>
+                                    <Group>
+                                        <Title order={3}><Currency value={activeService?.cost}/></Title>
+                                        <Text>or Pay <b><Currency value={(activeService?.cost || 0) * COMMON_DATA.PAY_LATER_SLAB_PERCENTAGE/100}/></b> now & rest later</Text>
+                                    </Group>
                                 </Box>
                                 <Text fw={500}>Services Included:</Text>
 

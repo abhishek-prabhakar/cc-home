@@ -3,6 +3,7 @@ import { BookingPaymentMode } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
 import { Await, Form, useActionData, useFetcher, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
+import COMMON_DATA from "~/data/common.data";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
 import { CartInput } from "~/types";
@@ -20,7 +21,7 @@ const PaymentMethodList: PaymentType[] = [
     {
         id: BookingPaymentMode.PAY_LATER,
         title: 'Pay later',
-        description: 'Pay 50% within 3 days of booking, and the rest after the completion of service.',
+        description: 'Pay '+COMMON_DATA.PAY_LATER_SLAB_PERCENTAGE+'% within 3 days of booking, and the rest after the completion of service.',
         disabled: false
     },
     {

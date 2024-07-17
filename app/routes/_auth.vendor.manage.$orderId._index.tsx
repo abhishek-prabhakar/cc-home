@@ -6,6 +6,7 @@ import { ChatBox } from "~/components/ChatBox";
 import { PATH } from "~/path.data";
 import ChatService from "~/service/chat.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
+import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 
@@ -56,6 +57,8 @@ export async function loader(args: LoaderArgs){
             date: true,
             timeHour: true,
             status: true,
+            originalCost: true,
+            cost: true,
             vendorServiceGroup:{
                 select:{
                     vendorId: true,
@@ -90,17 +93,18 @@ export default function(){
         <Grid>
             <Grid.Col span={{base: 12, md: 8}}>
                 <Card withBorder>
-                    <Grid>
+                    <Grid align="center">
                         <Grid.Col span={'content'}>
                             <Avatar variant="filled" radius="md" size="lg" src={PATH.THUMB_URL+ orderData.vendorServiceGroup.group.imageName} />
                         </Grid.Col>
                         <Grid.Col span={'auto'}>
-                            <Title order={5}>{orderData.vendorServiceGroup.group.name}</Title>
+                            <Group>
+                                <Title order={5}>{orderData.vendorServiceGroup.group.name}</Title>
+                                <Badge>{orderData.status}</Badge>
+                            </Group>
                             <Text>Date: {DateFormatter.short(orderData.date)}</Text>
                             <Text>Time: {DateFormatter.timeHourTo12Hrs(orderData.timeHour)}</Text>
-                        </Grid.Col>
-                        <Grid.Col span={'content'}>
-                            <Badge>{orderData.status}</Badge>
+                            <Text>Cost: <Currency value={orderData.cost}/></Text>
                         </Grid.Col>
                     </Grid>
                 </Card>
