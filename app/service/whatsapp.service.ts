@@ -137,14 +137,10 @@ await Request.post({ template: TEMPLATES.booking_confirmation_user, to: input.to
 }
 
 
-async function notifyVendorNewOrder(input: { to?: string, orderId: string, service: string, date: string, cost: number }){
+async function notifyVendorNewOrder(input: { to?: string, orderId: string, service: string, date: string, time: string, cost: number }){
     if(!input.to){
         return;
     }
-    // {
-    //     "type": "text",
-    //     "text": 'Customer'
-    // },
   
         const params:Param[] = [ 
             {
@@ -157,30 +153,26 @@ async function notifyVendorNewOrder(input: { to?: string, orderId: string, servi
             },
             {
                 "type": "text",
-                "text": input.date
+                "text": input.date + ' at '+ input.time
             },
             {
                 "type": "text",
                 "text": '₹'+input.cost
-            },
-            {
-                "type": "text",
-                "text": "http://celebriacollective.com/partner/order/"+input.orderId+"/manage"
             }];
 
-    // const interaction:Interaction[]= [{
-    //             "type": "button",
-    //             "sub_type": "custom",
-    //             "index": "0",
-    //             "parameters": [
-    //                 {
-    //                     "type": "payload",
-    //                     "payload":input.orderId
-    //                 }
-    //             ]
-    //         }];   
+            const interaction:Interaction[]= [{
+                "type": "button",
+                "sub_type": "url",
+                "index": "0",
+                "parameters": [
+                    {
+                        "type": "payload",
+                        "payload": Routes.get('VendorManageOrder',{ id: input.orderId })
+                    }
+                ]
+            }];    
 
-    await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params, lang:  'en_US' });
+    await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params,interaction, lang:  'en_US' });
 }
 
 async function notifyVendorOrderCancel(input: { to: string, orderId: string, service: string, date: string, time: string }){
