@@ -33,6 +33,7 @@ export async function action({
             bookingService:{
                 select:{
                     date: true,
+                    timeHour: true,
                     vendorServiceGroup:{
                         select:{
                             costByVendor: true,
@@ -81,7 +82,8 @@ export async function action({
             orderId: orderData.orderId,
             service: item.vendorServiceGroup.group.name,
             date: DateFormatter.short(item.date),
-            cost: item.vendorServiceGroup.costByVendor
+            cost: item.vendorServiceGroup.costByVendor,
+            time: DateFormatter.timeHourTo12Hrs(item.timeHour)
         }));
     });
 
