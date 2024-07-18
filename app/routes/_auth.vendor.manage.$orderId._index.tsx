@@ -20,7 +20,9 @@ export async function loader(args: LoaderArgs){
     const orderId = args.params.orderId;
 
     if (!userId || !orderId) {
-        throw new Error('Page not found');
+        throw new Response('Page not found',{
+			status: 404,
+		});
     }
 
     const user = await db.user.findFirstOrThrow({

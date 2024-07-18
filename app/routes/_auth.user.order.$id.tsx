@@ -94,8 +94,9 @@ export async function loader({ request, params }: LoaderArgs) {
     const session = await getSession(request.headers.get("Cookie"));
     const userId = session.get(USER_SESSION_KEY);
     if(!orderId || !userId){
-        throw new Error('invalid order');
-        return;
+        throw new Response('Invalid data',{
+			status: 500,
+		});
     }
 
     const data = new Promise<UserBooking>(function (resolve, reject) {

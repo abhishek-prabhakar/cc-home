@@ -112,7 +112,9 @@ export async function loader(args: LoaderArgs) {
     const savedData = currentCart?.find(x => x.vendorServiceGroupId === id);
 
     if (!id) {
-        throw new Error("Invalid service");
+        throw new Response('Invalid service',{
+			status: 500,
+		});
     }
 
     const service = await VendorQuery.getVendorServiceGroupBasicInfo(id);

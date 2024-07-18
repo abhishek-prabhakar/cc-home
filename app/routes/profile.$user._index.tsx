@@ -57,7 +57,9 @@ export async function action(args: ActionArgs) {
 export async function loader({ params, request }: LoaderArgs) {
     const username = params.user;
     if (!username) {
-        new Error("404");
+        throw new Response('Page not found',{
+			status: 404,
+		});
     };
 
     const searchParams = new URL(request.url).searchParams;

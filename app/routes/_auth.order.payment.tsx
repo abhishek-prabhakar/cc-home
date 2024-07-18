@@ -35,12 +35,16 @@ export async function loader({ request }: LoaderArgs) {
     });
 
     if (!orderData.paymentRef || orderData.status !== BookingStatus.PENDING) {
-        throw new Error('error');
+        throw new Response('Invalid data',{
+			status: 500,
+		});
     }
 
     const data = await PaymentService.getOrder(orderData.paymentRef);
     if (data.amount_paid === orderData.total * 100) {
-        throw new Error('error');
+        throw new Response('No pending order found',{
+			status: 500,
+		});
     }
     return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
 }

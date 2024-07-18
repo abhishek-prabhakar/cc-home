@@ -7,7 +7,9 @@ import generateUuid from "~/utils/uuid.generator";
 
 function Stories(username?: string) {
     if (!username) {
-        throw new Error("invalid user");
+        throw new Response('vendor not found',{
+			status: 500,
+		});
     }
     return db.vendorPortfolio.findMany({
         select: {
@@ -59,7 +61,9 @@ function portfolioByAlbumId(input: { username: string, albumId?: string | null }
 
 function portfolioByUsername(username?: string) {
     if (!username) {
-        throw new Error("invalid user");
+        throw new Response('User not found',{
+			status: 500,
+		});
     }
 
     return db.vendorPortfolio.findMany({
