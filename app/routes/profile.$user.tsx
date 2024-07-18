@@ -170,7 +170,7 @@ const ProfileLayout = {
             } else {
                 setActive(list[0]);
             }
-        }, []);
+        }, [preSelectedGroupId]);
 
         function setActiveService(id: string | null) {
             const item = flatList.find(x => x.vendorServiceGroupId === id);

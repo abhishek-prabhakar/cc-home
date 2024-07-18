@@ -1,7 +1,7 @@
 import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, Overlay, ScrollArea, Space, Stack, Text, Title, px, rem } from "@mantine/core";
 import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
-import { Await, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { Await, Link, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Masonry from 'react-masonry-css'
 import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
@@ -15,8 +15,9 @@ import { CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { VendorQuery } from "~/service/vendor.service";
 import VideoPreviewItem from "~/components/VideoPreviewItem";
 import { useMediaQuery } from "@mantine/hooks";
+import Routes from "~/routes.data";
 
-type ProfileService = { name: string, description: string };
+type ProfileService = { id: string,name: string, description: string };
 type Story = {
     url?: string;
     seeMore?: Function;
@@ -123,6 +124,7 @@ export async function loader({ params, request }: LoaderArgs) {
             select: {
                 group: {
                     select: {
+                        id: true,
                         name: true,
                         description: true
                     }
@@ -135,7 +137,7 @@ export async function loader({ params, request }: LoaderArgs) {
                 }
             }
         }).then(r => {
-            resolve(r.map(x => ({ name: x.group.name, description: 'Starts from: ₹' + x.cost })));
+            resolve(r.map(x => ({ id: x.group.id, name: x.group.name, description: 'Starts from: ₹' + x.cost })));
         }).catch(e => {
             reject('Connection failed');
         });
@@ -298,8 +300,8 @@ const ProfileHome = {
                 <Await resolve={data.services}>
                     {services =>
                         <Stack>
-                            {services.map((x, i) => <Group gap="xs">
-                                <Text>{x.name}</Text>
+                            {services.map((x, i) => <Group gap="xs" key={x.id}>
+                                <Link to={Routes.get('VendorProfileWithService',{id: data.username, sGrpId: x.id })+'#book-now-section'}><Text>{x.name}</Text></Link>
                                 <Text c="dimmed" size="sm">{x.description}</Text>
                             </Group>
                             )}

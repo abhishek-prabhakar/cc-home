@@ -11,7 +11,8 @@ const RoutesList = {
     VendorSignupForm: '/partner/signup/onboard/:id',
     CheckoutPayment: '/cart/checkout/payment',
     PaymentGateway: '/order/payment?id=:id',
-    UserManageOrder: '/user/order/:id'
+    UserManageOrder: '/user/order/:id',
+    VendorManageOrder: '/vendor/manage/:id'
 }
 
 type RoutesKeys = keyof typeof RoutesList;
