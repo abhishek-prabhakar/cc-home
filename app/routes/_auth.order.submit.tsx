@@ -130,6 +130,7 @@ export async function action({
                     status: BookingStatus.PENDING,
                     cost: item.cost,
                     originalCost: item.cost,
+                    vendorCost: item.costByVendor,
                     date: cartItem.date,
                     timeHour: cartItem.timeHour,
                     duration: cartItem.duration,

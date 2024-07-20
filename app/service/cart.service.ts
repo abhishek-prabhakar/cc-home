@@ -65,6 +65,7 @@ async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, pay
         select:{
             id:true,
             cost: true,
+            costByVendor: true,
             vendorId: true,
             group:{
                 select:{

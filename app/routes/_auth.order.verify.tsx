@@ -34,9 +34,9 @@ export async function action({
                 select:{
                     date: true,
                     timeHour: true,
+                    vendorCost: true,
                     vendorServiceGroup:{
                         select:{
-                            costByVendor: true,
                             group:{
                                 select:{
                                     name: true,
@@ -82,7 +82,7 @@ export async function action({
             orderId: orderData.orderId,
             service: item.vendorServiceGroup.group.name,
             date: DateFormatter.short(item.date),
-            cost: item.vendorServiceGroup.costByVendor,
+            cost: item.vendorCost,
             time: DateFormatter.timeHourTo12Hrs(item.timeHour)
         }));
     });
