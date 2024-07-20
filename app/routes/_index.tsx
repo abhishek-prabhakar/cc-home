@@ -280,7 +280,7 @@ const Home = {
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
                         <Await resolve={fetcher.data}>
-                          {response =>searchValue && response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
+                          {response =>searchValue && response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
                             {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType.name}</Text>
                           </div>)}{!response.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
                         </Await>
@@ -472,7 +472,6 @@ const Home = {
       <Modal title={'Browse ' + modalData?.title} opened={!!modalData} onClose={handleCancel} centered>
         <Grid gutter={20}>
           {modalData?.serviceGroup.map((item, index) => <>
-
             {!item.isCollection && (index - 1 < 0 || item.isCollection !== modalData.serviceGroup[index - 1].isCollection) ? <Grid.Col span={{ base: 12 }} key={item.id + 'col-' + index}><Title order={5}>Other services</Title></Grid.Col> : ''}
             {item.isCollection && false ? <Grid.Col span={12} key={item.id}>
               <Link to={item.path}>

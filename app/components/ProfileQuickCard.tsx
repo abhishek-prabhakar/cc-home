@@ -60,7 +60,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
       <Space h={'md'} />
       <PhotoProvider>
         <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
-          {portfolio?.map((imageItem, i) => <Box style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
+          {portfolio?.map((imageItem, i) => <Box key={i} style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
             {imageItem.type === 'youtube' ? <VideoPreviewItem ytId={imageItem.value} /> :
               <PhotoView src={PATH.RESOURCE_URL + imageItem.value}>
                 <Image

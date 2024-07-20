@@ -35,7 +35,7 @@ import Skeleton from "./components/Skeleton";
 import { OPENREPLY_KEY, startTracker } from "./tracker";
 import '@mantine/carousel/styles.css';
 import {SpeedInsights} from "@vercel/speed-insights/remix";
-import { initFBPixel, setPageAnalytics } from "./service/analytics.service";
+import Analytics from "./components/Analytics";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -169,19 +169,6 @@ export default function App() {
   const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (data.ENV.openReplyprojectKey) {
-      // startTracker({
-      //   projectKey: data.ENV.openReplyprojectKey
-      // });
-    }
-
-    if(data.ENV.FB_PIXEL_ID){
-      initFBPixel(data.ENV.FB_PIXEL_ID);
-      setPageAnalytics();
-    }
-  }, [])
-
   return (
     <html lang="en">
       <head>
@@ -226,6 +213,8 @@ export default function App() {
           <Scripts />
           <LiveReload />
           <SpeedInsights/>
+          <Analytics.Pixel pixelId={data.ENV.FB_PIXEL_ID}/>
+          <Analytics.OpenReply projectkey={ data.ENV.openReplyprojectKey}/>
         </MantineProvider>
       </body>
     </html>

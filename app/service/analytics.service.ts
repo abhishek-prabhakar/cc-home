@@ -1,5 +1,3 @@
-// import ReactPixel from 'react-facebook-pixel';
-
 const advancedMatching = undefined; // optional, more info: https://developers.facebook.com/docs/facebook-pixel/advanced/advanced-matching
 const options = {
   autoConfig: true, // set pixel's autoConfig. More info: https://developers.facebook.com/docs/facebook-pixel/advanced/
@@ -19,7 +17,7 @@ function initFBPixel(PIXEL_ID: string){
 
 
 async function setPageAnalytics(){
-    ReactPixel.pageView();
+    ReactPixel?.pageView();
 }
 
 export  {  initFBPixel, setPageAnalytics };
