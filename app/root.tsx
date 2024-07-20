@@ -35,6 +35,7 @@ import Skeleton from "./components/Skeleton";
 import { OPENREPLY_KEY, startTracker } from "./tracker";
 import '@mantine/carousel/styles.css';
 import {SpeedInsights} from "@vercel/speed-insights/remix";
+import { initFBPixel, setPageAnalytics } from "./service/analytics.service";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -158,7 +159,8 @@ export async function loader({ request }: LoaderArgs) {
     pages,
     cartCount: userCart?.length || 0,
     ENV: {
-      openReplyprojectKey: process.env.NODE_ENV === "production" ? OPENREPLY_KEY : null
+      openReplyprojectKey: process.env.NODE_ENV === "production" ? OPENREPLY_KEY : null,
+      FB_PIXEL_ID: process.env.NODE_ENV === "production" ? '350261611458429' : null
     }
   });
 }
@@ -167,12 +169,16 @@ export default function App() {
   const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
-
   useEffect(() => {
     if (data.ENV.openReplyprojectKey) {
-      startTracker({
-        projectKey: data.ENV.openReplyprojectKey
-      });
+      // startTracker({
+      //   projectKey: data.ENV.openReplyprojectKey
+      // });
+    }
+
+    if(data.ENV.FB_PIXEL_ID){
+      initFBPixel(data.ENV.FB_PIXEL_ID);
+      setPageAnalytics();
     }
   }, [])
 
