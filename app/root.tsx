@@ -189,6 +189,7 @@ export default function App() {
         <meta property="twitter:description" content="Book a service with us! Find photographers, videographers and makeup artists" />
         <meta property="twitter:image" content="https://celebriacollective.com/assets/og-img.jpg" />
 
+        <meta name="facebook-domain-verification" content="8ozo7sh586esta23ov0bh2slajstw4"/>
         <ColorSchemeScript />
         {/* <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script> */}
       </head>
