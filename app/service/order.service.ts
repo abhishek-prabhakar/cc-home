@@ -5,10 +5,10 @@ import { DateFormatter } from "~/utils/date.transform";
 import ChatService from "./chat.service";
 import Notification from "./notification.service";
 
-async function cancelOrder(id: string){
+async function cancelOrder(bookingId: string){
    const orderInfo =  await db.booking.update({
         where: {
-            id
+            id: bookingId
         },
         data: {
             status: BookingStatus.CANCELLED
@@ -40,14 +40,14 @@ async function cancelOrder(id: string){
 
     await db.bookingService.updateMany({
         where: {
-            bookingId: id
+            bookingId: bookingId
         },
         data: {
             status: BookingStatus.CANCELLED
         }
     });
 
-    await ChatService.disableChatGroup(id);
+    await ChatService.disableChatGroup(bookingId);
 
     const notification = new Notification();
     orderInfo.bookingService.forEach(async service =>{
@@ -97,6 +97,7 @@ async function vendorRejectOrder(params: {
             timeHour: true,
             vendorServiceGroup:{
                 select:{
+                    vendorId: true,
                     vendor:{
                         select:{
                             username: true
@@ -122,6 +123,7 @@ async function vendorRejectOrder(params: {
         }
     });
 
+    await ChatService.disableChatForVendor(data.bookingId, data.vendorServiceGroup.vendorId);
     await autoUpdateBookingStatus(data.bookingId);
 
     const notification = new Notification();
@@ -156,6 +158,7 @@ async function  autoUpdateBookingStatus(bookingId: string) {
     switch(true){
         case isOrderCancelled:
             await updateBookingStatue(bookingId, BookingStatus.REJECTED);
+            await ChatService.disableChatGroup(bookingId);
         break;
         case isOrderAccepted:
             await updateBookingStatue(bookingId, BookingStatus.ACCEPTED);

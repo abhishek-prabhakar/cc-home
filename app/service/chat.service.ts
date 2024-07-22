@@ -118,13 +118,31 @@ async function disableChatGroup(bookingId: string){
     });
 }
 
+
+async function disableChatForVendor(bookingId: string, vendorId: string){
+    await db.chatGroupMember.updateMany({
+       where:{
+            vendorId,
+            chatGroup:{
+               bookingId: bookingId
+            }
+       },
+       data:{
+           isDisabled: true,
+       }
+   });
+}
+
+
+
 const ChatService = {
     getChatgroupByBookingId,
     getChatgroupByOrderId,
     createChatGroup,
     addUserAsChatGroupMember,
     addVendorAsChatGroupMember,
-    disableChatGroup
+    disableChatGroup,
+    disableChatForVendor
 }
 
 export default ChatService;
