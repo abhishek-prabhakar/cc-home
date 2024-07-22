@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Card, Divider, Grid, Loader, LoadingOverlay, ScrollArea, Space, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Card, Divider, Grid, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
 import { IconSend } from "@tabler/icons-react";
@@ -135,7 +135,7 @@ export function ChatBox(input: inputProps){
                     </ActionIcon>
                 </Grid.Col>
             </Grid>
-            </fetcher.Form>: ''}
+            </fetcher.Form>: <Text c="dimmed">Messaging is disabled.</Text>}
         </Card>
     </Box>
 }
