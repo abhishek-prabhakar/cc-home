@@ -8,10 +8,10 @@ const END_POINT = " https://graph.facebook.com/v19.0/335976452932928/messages";
 enum TEMPLATES {
     booking_confirmation_user = "booking_confirmation_user",
     order_confirmation = "order_confirmation",
-    vendor_new_order = "vendor_new_order",
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
     user_cancellation_vendor = "user_cancellation_vendor",
-    booking_rejection_user = "booking_rejection_user"
+    booking_rejection_user = "booking_rejection_user",
+    vendor_cancellation_user = "vendor_cancellation_user"
 }
 
 type Param = {
@@ -138,9 +138,9 @@ await Request.post({ template: TEMPLATES.booking_confirmation_user, to: input.to
 
 
 async function notifyVendorNewOrder(input: { to?: string, orderId: string, service: string, date: string, time: string, cost: number }){
-    if(!input.to){
-        return;
-    }
+        if(!input.to){
+            return;
+        }
   
         const params:Param[] = [ 
             {
@@ -192,17 +192,59 @@ async function notifyVendorOrderCancel(input: { to: string, orderId: string, ser
         {
             "type": "text",
             "text": input.time
-        },
-        {
-            "type": "text",
-            "text": "http://celebriacollective.com/vendor/order/manage/"+input.orderId
         }];
 
     await Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
 }
 
-function notifyUserOnOrderReject(){
+async function notifyUserOnOrderReject(input:{
+    to: string,
+    orderId: string,
+    vendorName: string,
+    service: string,
+    date: string,
+    time: string
+}){
+    
+    if(!input.to){
+        return;
+    }
 
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": " "
+        },
+        {
+            "type": "text",
+            "text": input.vendorName
+        },
+        {
+            "type": "text",
+            "text": input.service
+        },
+        {
+            "type": "text",
+            "text": input.date
+        },
+        {
+            "type": "text",
+            "text": input.time
+        }];
+
+        const interaction:Interaction[]= [{
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+                {
+                    "type": "payload",
+                    "payload": Routes.get('UserManageOrder',{ id: input.orderId })
+                }
+            ]
+        }];    
+
+ await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
 
@@ -212,5 +254,7 @@ const WhatsappService = {
     notifyVendorOrderCancel,
     notifyUserOnOrderReject
 }
+
+
 
 export default WhatsappService;

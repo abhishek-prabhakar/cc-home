@@ -1,5 +1,6 @@
 import { ActionArgs, redirect } from "@remix-run/node";
 import EmailService from "~/service/email.service";
+import Notification from "~/service/notification.service";
 import PaymentService from "~/service/payment.service";
 import WhatsappService from "~/service/whatsapp.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
@@ -62,18 +63,18 @@ export async function action({
     const success = await PaymentService.validatePayment(orderData.paymentRef, razorpayPaymentId, razorpaySignature);
 
     let redirectUrl;
-    const notificationQueue:Promise<any>[] = [];
+    const notification = new Notification();
 
     if (success) {
         redirectUrl = '/order/success?id=' + orderData.orderId;
         orderData.bookingService.forEach(item =>{
-            notificationQueue.push(EmailService.notifyVendorNewOrder({
+            notification.email(EmailService.notifyVendorNewOrder({
                 email: item.vendorServiceGroup.vendor?.email,
                 date: DateFormatter.short(item.date),
                 serviceName: item.vendorServiceGroup.group.name,
                 orderId: orderData.orderId
             }));
-            notificationQueue.push(WhatsappService.notifyVendorNewOrder({
+            notification.whatsapp(WhatsappService.notifyVendorNewOrder({
                 to: item.vendorServiceGroup.vendor?.mobileNumber, 
                 orderId: orderData.orderId,
                 service: item.vendorServiceGroup.group.name,
@@ -86,13 +87,7 @@ export async function action({
         redirectUrl = '/order/failed?id=' + orderData.orderId;
     }
 
-   
-
-    try{
-        await Promise.allSettled(notificationQueue);
-    } catch(e){
-        console.log('Notification failed')
-    }
+    await notification.publish();
 
     return  redirect(redirectUrl);
 }

@@ -92,7 +92,7 @@ export async function action(args: ActionArgs) {
 export async function loader({ request, params }: LoaderArgs) {
     const orderId = params.id;
     const session = await getSession(request.headers.get("Cookie"));
-    const userId = session.get(USER_SESSION_KEY);
+    const userId = await session.get(USER_SESSION_KEY);
     if(!orderId || !userId){
         throw new Response('Invalid data',{
 			status: 500,
