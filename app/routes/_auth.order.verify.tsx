@@ -31,6 +31,12 @@ export async function action({
         select: {
             orderId: true,
             paymentRef: true,
+            total: true,
+            user:{
+                select:{
+                    username: true
+                }
+            },
             bookingService:{
                 select:{
                     date: true,
@@ -83,6 +89,16 @@ export async function action({
                 time: DateFormatter.timeHourTo12Hrs(item.timeHour)
             }));
         });
+        notification.whatsapp(
+            WhatsappService.orderConfirmationUser({
+                to: orderData.user.username, 
+                orderId,
+                cost: orderData.total,
+                date: DateFormatter.short(orderData.bookingService[0].date),
+                time: DateFormatter.timeHourTo12Hrs(orderData.bookingService[0].timeHour),
+                serviceName: orderData.bookingService[0].vendorServiceGroup.group.name
+            })
+        );
     } else {
         redirectUrl = '/order/failed?id=' + orderData.orderId;
     }

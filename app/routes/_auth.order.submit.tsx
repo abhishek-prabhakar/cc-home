@@ -3,6 +3,7 @@ import { ActionArgs, redirect } from "@remix-run/node";
 import { CartService } from "~/service/cart.service";
 import ChatService from "~/service/chat.service";
 import EmailService from "~/service/email.service";
+import Notification from "~/service/notification.service";
 import PaymentService from "~/service/payment.service";
 import { VendorQuery } from "~/service/vendor.service";
 import WhatsappService from "~/service/whatsapp.service";
@@ -39,7 +40,7 @@ export async function action({
     let REDIRECT_SUCCESS = '/order/success';
     let debug_point = 'starting';
     console.log(debug_point);
-    const notificationQueue:Promise<any>[] = [];
+    const notification = new Notification();
 
     try{
         if (!userId) {
@@ -160,29 +161,13 @@ export async function action({
             console.log(debug_point, i, 'y');
         }
         debug_point = '8';console.log(debug_point);
-
-        notificationQueue.push(
-            WhatsappService.orderConfirmationUser({
-                to: loggedInUser.username, 
-                orderId,
-                cost: summary.estimation.final,
-                date: DateFormatter.short(cartData[0].date),
-                time: DateFormatter.timeHourTo12Hrs(cartData[0].timeHour),
-                serviceName: summary.groupData[0].group.name
-            })
-        );
         
         REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
     } catch(e){
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
 
-    /** Notification exceptions shouldn't impact the order placement flow  */
-    try{
-        await Promise.allSettled(notificationQueue);
-    } catch(e){
-        console.log('Notification failed')
-    }
+    await notification.publish();
 
     const headers: [string, string][] = [
         ["Set-Cookie", await cartCheckoutCookie.serialize(null)]
