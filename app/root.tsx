@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
   useFetcher,
   useLoaderData,
   useNavigation,
@@ -228,6 +229,14 @@ export function HydrateFallback() {
 
 export function ErrorBoundary() {
   const error: any = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return <div style={{textAlign: 'center'}}>
+      {error?.status}<br/>
+     {error?.data} <br/>
+      {error?.statusText}
+  </div>
+  }
 
   return <div style={{textAlign: 'center'}}>
          {error?.data || 'Oops, Something went wrong!'}

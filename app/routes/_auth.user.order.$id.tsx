@@ -2,7 +2,7 @@ import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
 import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingPaymentMode, BookingStatus, PaymentMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
-import { Await, Form, Link, useLoaderData } from "@remix-run/react";
+import { Await, Form, Link, useLoaderData, useRouteError } from "@remix-run/react";
 import { IconChecks, IconCircleCheck, IconInfoCircle, IconProgress } from "@tabler/icons-react";
 import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
@@ -468,10 +468,4 @@ function PayOnFieldCard(input:{ amount: number }){
     <Space h="md"/>
     <Text  c="dimmed" size="sm">Kindly read our <Link to="/about/refund-policy">Cancellation & Refund Policy</Link></Text>
     </Alert>
-}
-
-export function ErrorBoundary() {
-    return <div>
-        Invalid data
-    </div>
 }
