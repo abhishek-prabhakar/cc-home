@@ -61,8 +61,80 @@ async function cancelOrder(id: string){
     } catch (e){}
 }
 
+async function vendorAcceptOrder(params: {
+    id: string
+}) {
+   const data = await db.bookingService.update({
+        data:{
+            status: BookingStatus.ACCEPTED
+        },
+        where:{
+            id: params.id
+        }
+    });
+
+    await autoUpdateBookingStatus(data.bookingId);
+
+}
+
+
+async function vendorRejectOrder(params: {
+    id: string
+}) {
+   const data = await db.bookingService.update({
+        data:{
+            status: BookingStatus.REJECTED
+        },
+        where:{
+            id: params.id
+        }
+    });
+
+    await autoUpdateBookingStatus(data.bookingId);
+
+}
+
+async function  autoUpdateBookingStatus(bookingId: string) {
+    const allServices = await db.bookingService.findMany({
+        where:{
+            bookingId: bookingId
+        },
+        select:{
+            status: true
+        }
+    });
+
+    const statusList = allServices.map(x => x.status);
+
+    const isOrderCancelled = statusList.filter((x:any) => [BookingStatus.CANCELLED, BookingStatus.REJECTED].includes(x)).length === statusList.length;
+    const isOrderAccepted = statusList.filter((x:any) => [BookingStatus.ACCEPTED, BookingStatus.CANCELLED, BookingStatus.REJECTED].includes(x)).length === statusList.length;
+
+    switch(true){
+        case isOrderCancelled:
+            await updateBookingStatue(bookingId, BookingStatus.REJECTED);
+        break;
+        case isOrderAccepted:
+            await updateBookingStatue(bookingId, BookingStatus.ACCEPTED);
+        break;
+    }
+
+}
+
+async function updateBookingStatue(bookingId:string, status: BookingStatus) {
+        await db.booking.update({
+            data:{
+                status
+            },
+            where:{
+                id: bookingId
+            }
+        })
+}
+
 const OrderService = {
-    cancelOrder
+    cancelOrder,
+    vendorAcceptOrder,
+    vendorRejectOrder
 }
 
 

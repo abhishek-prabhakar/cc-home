@@ -1,30 +1,18 @@
-import { Alert, Avatar, Badge, Button, Card, Container, Grid, Group, Space, Text, Title } from "@mantine/core";
-import { LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Alert, Avatar, Badge, Box, Button, Card, Container, Grid, Group, LoadingOverlay, Space, Text, Title } from "@mantine/core";
+import { BookingStatus } from "@prisma/client";
+import { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { ChatBox } from "~/components/ChatBox";
 import { PATH } from "~/path.data";
 import ChatService from "~/service/chat.service";
+import OrderService from "~/service/order.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { DateFormatter } from "~/utils/date.transform";
 
-
-
-export async function loader(args: LoaderArgs){
-    const session = await getSession(
-        args.request.headers.get("Cookie")
-    );
-    const userId = session.get(USER_SESSION_KEY);
-    const orderId = args.params.orderId;
-
-    if (!userId || !orderId) {
-        throw new Response('Page not found',{
-			status: 404,
-		});
-    }
-
+async function getAssociatedVendorIdByUser(userId: string){
     const user = await db.user.findFirstOrThrow({
         select:{
             username: true
@@ -43,6 +31,76 @@ export async function loader(args: LoaderArgs){
         }
     });
 
+    return vendor.map(x => x.id);
+}
+
+export async function action(args:ActionArgs) {
+    const session = await getSession(
+        args.request.headers.get("Cookie")
+    );
+    const userId = session.get(USER_SESSION_KEY);
+    const orderId = args.params.orderId;
+
+    if (!userId || !orderId) {
+        throw new Response('Page not found',{
+			status: 404,
+		});
+    }
+
+    const formData = await args.request.formData();
+    const orderStatus = formData.get('orderStatus');
+
+
+    const vendorIds = await getAssociatedVendorIdByUser(userId);
+    const booking = await db.bookingService.findFirstOrThrow({
+        where:{
+            Booking:{
+                orderId
+            },
+            vendorServiceGroup:{
+                vendorId: {
+                    in: vendorIds
+                }
+            }
+        },
+        select:{
+            id: true
+        }
+    });
+
+    switch(orderStatus){
+        case BookingStatus.ACCEPTED: 
+            await OrderService.vendorAcceptOrder({
+                id: booking.id
+            });
+        break;
+        case BookingStatus.REJECTED: 
+            await OrderService.vendorRejectOrder({
+                id: booking.id
+            });
+        break;
+    }
+
+    return true;
+   
+}
+
+
+export async function loader(args: LoaderArgs){
+    const session = await getSession(
+        args.request.headers.get("Cookie")
+    );
+    const userId = session.get(USER_SESSION_KEY);
+    const orderId = args.params.orderId;
+
+    if (!userId || !orderId) {
+        throw new Response('Page not found',{
+			status: 404,
+		});
+    }
+
+   const vendorIds = await getAssociatedVendorIdByUser(userId);
+   
     const orderData =  await db.bookingService.findFirstOrThrow({
         where:{
             Booking:{
@@ -50,7 +108,7 @@ export async function loader(args: LoaderArgs){
             },
             vendorServiceGroup:{
                 vendorId: {
-                    in: vendor.map(x => x.id)
+                    in: vendorIds
                 }
             }
         },
@@ -87,6 +145,7 @@ export async function loader(args: LoaderArgs){
 
 export default function(){
     const {orderData, chatGroup} = useLoaderData<typeof loader>();
+    const navigation = useNavigation();
 
     return <Container size={'xl'}>
         <Title order={5} c={'gray'}>Manage Booking</Title>
@@ -114,10 +173,15 @@ export default function(){
                 <Alert variant="outline" color="yellow" title="RSVP your availability" icon={<IconInfoCircle/>}>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. At officiis, quae tempore necessitatibus placeat saepe.
                 <Space h="md"/>
-                <Group>
-                    <Button variant="filled" color="green">Accept</Button>
-                    <Button variant="outline" color="red">Decline</Button>
-                </Group>
+                <Box pos="relative">
+                <LoadingOverlay visible={navigation.state !== 'idle'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                    <Form action="" method="post">
+                    <Group>
+                        <Button type="submit" name="orderStatus" value={BookingStatus.ACCEPTED} variant="filled" color="green">Accept</Button>
+                        <Button type="submit" name="orderStatus" value={BookingStatus.REJECTED} variant="outline" color="red">Decline</Button>
+                    </Group>
+                    </Form>
+                </Box>
                 </Alert>
             </Grid.Col>
             <Grid.Col span={{base: 12, md: 4}}>
