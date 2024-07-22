@@ -97,11 +97,11 @@ async function getChatgroupByBookingId(bookingId: string, userId: string){
     });
 }
 
-async function disableChatGroup(orderId: string){
+async function disableChatGroup(bookingId: string){
      await db.chatGroupMember.updateMany({
         where:{
             chatGroup:{
-                bookingId: orderId
+                bookingId: bookingId
             }
         },
         data:{
@@ -110,7 +110,7 @@ async function disableChatGroup(orderId: string){
     });
     await  await db.chatGroup.updateMany({
         where:{
-            bookingId: orderId
+            bookingId: bookingId
         },
         data:{
             isDisabled: true,
