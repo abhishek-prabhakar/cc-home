@@ -34,8 +34,12 @@ export function ChatBox(input: inputProps){
     },[refresh]);
 
     useEffect(() =>{
-        setIncomingMsg(fetcher.data?.threads);
         setRefresh(true);
+        if(!fetcher.data){
+            return;
+        }
+
+        setIncomingMsg(fetcher.data?.threads);
         if(!pageReady){
             setPageReady(true);
         }
