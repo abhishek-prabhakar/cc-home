@@ -1,6 +1,6 @@
 import { Alert, Avatar, Badge, Box, Button, Card, Container, Grid, Group, LoadingOverlay, Space, Text, Title } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
-import { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { ChatBox } from "~/components/ChatBox";
@@ -85,6 +85,50 @@ export async function action(args:ActionArgs) {
    
 }
 
+async function loaderResponse(userId: string, orderId:string){
+   const vendorIds = await getAssociatedVendorIdByUser(userId);
+   
+   const orderData =  await db.bookingService.findFirstOrThrow({
+       where:{
+           Booking:{
+               orderId
+           },
+           vendorServiceGroup:{
+               vendorId: {
+                   in: vendorIds
+               }
+           }
+       },
+       select:{
+           id: true,
+           date: true,
+           timeHour: true,
+           status: true,
+           originalCost: true,
+           cost: true,
+           vendorServiceGroup:{
+               select:{
+                   vendorId: true,
+                   group:{
+                       select:{
+                           name: true,
+                           imageName: true
+                       }
+                   }
+               }
+           },
+           Booking:{
+               select:{
+                   orderId: true,
+               }
+           }
+       }
+   });
+
+  const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData.vendorServiceGroup.vendorId);   
+
+   return {orderData,chatGroup};
+}
 
 export async function loader(args: LoaderArgs){
     const session = await getSession(
@@ -93,58 +137,21 @@ export async function loader(args: LoaderArgs){
     const userId = session.get(USER_SESSION_KEY);
     const orderId = args.params.orderId;
 
-    if (!userId || !orderId) {
+    if(!userId){
+        return redirect('/user/login?redirectUrl=/vendor/manage/'+orderId);
+    }
+
+    if (!orderId) {
         throw new Response('Page not found',{
 			status: 404,
 		});
     }
 
-   const vendorIds = await getAssociatedVendorIdByUser(userId);
-   
-    const orderData =  await db.bookingService.findFirstOrThrow({
-        where:{
-            Booking:{
-                orderId
-            },
-            vendorServiceGroup:{
-                vendorId: {
-                    in: vendorIds
-                }
-            }
-        },
-        select:{
-            id: true,
-            date: true,
-            timeHour: true,
-            status: true,
-            originalCost: true,
-            cost: true,
-            vendorServiceGroup:{
-                select:{
-                    vendorId: true,
-                    group:{
-                        select:{
-                            name: true,
-                            imageName: true
-                        }
-                    }
-                }
-            },
-            Booking:{
-                select:{
-                    orderId: true,
-                }
-            }
-        }
-    });
-
-   const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData.vendorServiceGroup.vendorId);   
-
-    return {orderData,chatGroup};
+    return await loaderResponse(userId, orderId);
 }
 
 export default function(){
-    const {orderData, chatGroup} = useLoaderData<typeof loader>();
+    const {orderData, chatGroup} = useLoaderData<typeof loaderResponse>();
     const navigation = useNavigation();
 
     return <Container size={'xl'}>
