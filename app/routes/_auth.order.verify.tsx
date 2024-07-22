@@ -62,30 +62,31 @@ export async function action({
     const success = await PaymentService.validatePayment(orderData.paymentRef, razorpayPaymentId, razorpaySignature);
 
     let redirectUrl;
+    const notificationQueue:Promise<any>[] = [];
+
     if (success) {
         redirectUrl = '/order/success?id=' + orderData.orderId;
+        orderData.bookingService.forEach(item =>{
+            notificationQueue.push(EmailService.notifyVendorNewOrder({
+                email: item.vendorServiceGroup.vendor?.email,
+                date: DateFormatter.short(item.date),
+                serviceName: item.vendorServiceGroup.group.name,
+                orderId: orderData.orderId
+            }));
+            notificationQueue.push(WhatsappService.notifyVendorNewOrder({
+                to: item.vendorServiceGroup.vendor?.mobileNumber, 
+                orderId: orderData.orderId,
+                service: item.vendorServiceGroup.group.name,
+                date: DateFormatter.short(item.date),
+                cost: item.vendorCost,
+                time: DateFormatter.timeHourTo12Hrs(item.timeHour)
+            }));
+        });
     } else {
         redirectUrl = '/order/failed?id=' + orderData.orderId;
     }
 
-    const notificationQueue:Promise<any>[] = [];
-
-    orderData.bookingService.forEach(item =>{
-        notificationQueue.push(EmailService.notifyVendorNewOrder({
-            email: item.vendorServiceGroup.vendor?.email,
-            date: DateFormatter.short(item.date),
-            serviceName: item.vendorServiceGroup.group.name,
-            orderId: orderData.orderId
-        }));
-        notificationQueue.push(WhatsappService.notifyVendorNewOrder({
-            to: item.vendorServiceGroup.vendor?.mobileNumber, 
-            orderId: orderData.orderId,
-            service: item.vendorServiceGroup.group.name,
-            date: DateFormatter.short(item.date),
-            cost: item.vendorCost,
-            time: DateFormatter.timeHourTo12Hrs(item.timeHour)
-        }));
-    });
+   
 
     try{
         await Promise.allSettled(notificationQueue);
