@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Box, Card, Divider, Grid, LoadingOverlay, ScrollArea, Space, Stack, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Card, Divider, Grid, Loader, LoadingOverlay, ScrollArea, Space, Stack, TextInput, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
 import { IconSend } from "@tabler/icons-react";
@@ -20,6 +20,7 @@ export function ChatBox(input: inputProps){
     const [threads, setThreads] = useState<ChatOutputThread[]>([]);
     const [pendingThreads, setPendingThreads] = useState<string[]>([]);
     const [refresh, setRefresh] = useState(false);
+    const [pageReady, setPageReady] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const viewport = useRef<HTMLDivElement>(null);
 
@@ -35,6 +36,9 @@ export function ChatBox(input: inputProps){
     useEffect(() =>{
         setIncomingMsg(fetcher.data?.threads);
         setRefresh(true);
+        if(!pageReady){
+            setPageReady(true);
+        }
     },[fetcher.data]);
 
     function dataPolling(){
@@ -103,7 +107,7 @@ export function ChatBox(input: inputProps){
             <Divider/>
             <Space h="md"/>
             <Box pos={'relative'} mx={'-18px'}>
-                <LoadingOverlay visible={!threads.length} zIndex={1} />
+                <LoadingOverlay visible={!threads.length} zIndex={1} loaderProps={{ children: pageReady && !threads.length?'Start a conversation': <Loader color="blue" type="bars" /> }} />
                 <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars  type="always" px={10}>
                             <Stack gap={'xs'}>
                                 {threads.map(item => <Grid gutter={0}  key={item.created_at.toString()} justify={item.memberId === input.memberId? 'end': 'start'}>
