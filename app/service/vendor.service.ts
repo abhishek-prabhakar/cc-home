@@ -123,11 +123,6 @@ function getFilteredVendors(params: {
                     },
                     select: {
                         cost: true,
-                        BookingService: {
-                            select: {
-                                rating: true
-                            }
-                        },
                         vendor: {
                             select: {
                                 id: true,
@@ -210,7 +205,7 @@ function getFilteredVendors(params: {
                         portfolio: x.vendor.vendorPortfolio.map((x) =>
                             ({ type: x.fileType, value: x.fileName })
                         ),
-                        rating: x.BookingService.reduce((s, i) => s + i.rating, 0),
+                        rating: 0,
                         tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
                         startsFrom: x.cost || 0,
                         profileImg: x.vendor.profileImageName
