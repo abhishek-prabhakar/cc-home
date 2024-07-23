@@ -4,7 +4,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "start": "netlify serve",
+    "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
     "dbpull": "prisma db pull",
     "format": "prisma format",
