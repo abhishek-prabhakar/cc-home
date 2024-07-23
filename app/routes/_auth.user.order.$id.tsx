@@ -209,48 +209,48 @@ export async function loader({ request, params }: LoaderArgs) {
 const orderStatusCheckList: {
     color?: string,
     children: string,
-    dot: JSX.Element,
+    dot: () => JSX.Element,
     filter: BookingStatus[]
 }[] = [
         {
             color: 'red',
             children: 'Order Cancelled',
-            dot: <IconCircleX />,
+            dot: () =>  <IconCircleX />,
             filter: [BookingStatus.CANCELLED]
         },
         {
             color: 'red',
-            dot: <IconCircleX />,
+            dot: () => <IconCircleX />,
             children: 'Sorry, Your order couldn\'t confirm due to unservicable.',
             filter: [BookingStatus.REJECTED]
         },
         {
             color: 'gold',
-            dot: <IconAlertCircleFilled />,
+            dot:() =>  <IconAlertCircleFilled />,
             children: 'Vendors has been notified.',
             filter: [BookingStatus.PENDING]
         },
         {
             color: 'green',
-            dot: <IconChecks />,
+            dot: () => <IconChecks />,
             children: 'Order Confirmed',
             filter: [BookingStatus.ACCEPTED, BookingStatus.IN_PROGRESS, BookingStatus.COMPLETED]
         },
         {
             color: 'yellow',
-            dot: <IconProgress />,
+            dot: () => <IconProgress />,
             children: 'Service is in progress',
             filter: [BookingStatus.IN_PROGRESS]
         },
         {
             color: '#00CCFF',
-            dot: <SmileOutlined />,
+            dot: () => <SmileOutlined />,
             children: 'Finished',
             filter: [BookingStatus.COMPLETED]
         },
         {
             color: 'green',
-            dot: <IconCreditCardRefund />,
+            dot:() =>  <IconCreditCardRefund />,
             children: 'Refund processed',
             filter: [BookingStatus.REJECTED, BookingStatus.CANCELLED]
         },
@@ -326,7 +326,7 @@ const UserOrderHome = {
                                 radius="xl"
                                 size={24}
                             >
-                                {item.dot}
+                                <item.dot/>
                             </ThemeIcon>}></Timeline.Item>)}
                             {![BookingStatus.CANCELLED, BookingStatus.REJECTED, BookingStatus.COMPLETED].some(x => x === orderData.status) ? <Timeline.Item title="Waiting for updates..."></Timeline.Item> : <></>}
                         </Timeline>
