@@ -4,7 +4,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "remix-serve build",
     "typecheck": "tsc",
     "dbpull": "prisma db pull",
     "format": "prisma format",
