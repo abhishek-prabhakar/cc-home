@@ -30,6 +30,7 @@ export type VendorProfile = {
     avatar?: string;
     bio?: string | null;
     baseCharge: number;
+    rating: number
 }
 
 export type VendorPortfolio = {

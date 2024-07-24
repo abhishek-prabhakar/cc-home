@@ -1,13 +1,12 @@
-import { CameraOutlined, CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Flex, Grid, Group, Image, Loader, Modal, Overlay, ScrollArea, Space, Stack, Text, Title, px, rem } from "@mantine/core";
-import { ActionArgs, LoaderArgs, TypedDeferredData, defer } from "@remix-run/node";
+import { Box, Button, Card, Divider, Flex, Grid, Group, Image,  Modal, Overlay, Rating,  Space, Stack, Text, Title, px, rem } from "@mantine/core";
+import { ActionArgs, LoaderArgs,  defer } from "@remix-run/node";
 import { Await, Link, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Masonry from 'react-masonry-css'
-import { PhotoProvider, PhotoSlider, PhotoView } from "react-photo-view";
+import { PhotoProvider,  PhotoView } from "react-photo-view";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
-import { PortfolioItem, Vendor, VendorPortfolio, VendorProfile, VendorService, VendorServicePublic } from "~/types";
+import { PortfolioItem, VendorProfile, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
 import Stories from 'react-insta-stories';
 
@@ -175,17 +174,30 @@ const elementSize = 400;
 
 const ProfileHome = {
     Index: () => {
-        const data = useLoaderData<typeof loader>();
         const outletContext = useOutletContext<OutletContextData>();
 
         return <>
             <ProfileHome.Stories />
             <Space h="xl" />
             <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Stack gap={0}>
-                    <Text fw={700}>50+</Text>
-                    <Text c="dimmed">Happy clients</Text>
-                </Stack>
+                <Grid align="center" gutter="lg">
+                    <Grid.Col span={'content'}>
+                        <Stack gap={0}>
+                            <Text fw={700}>50+</Text>
+                            <Text c="dimmed">Happy clients</Text>
+                        </Stack>
+                    </Grid.Col>
+                    <Grid.Col span={'content'}>
+                        <Divider h={50} orientation="vertical"/>
+                    </Grid.Col>
+                    <Grid.Col span={'auto'}>
+                        <Box pos="relative">
+                            <Rating value={outletContext?.profileData?.rating} fractions={3} readOnly={true} size="sm" />
+                            <Overlay color="#fff" backgroundOpacity={0} />
+                        </Box>
+                        <Text c="dimmed">{outletContext?.profileData?.rating} ratings</Text>
+                    </Grid.Col>
+                </Grid>
                 <Space h="md" />
                 <Divider />
                 <Space h="md" />
@@ -294,7 +306,6 @@ const ProfileHome = {
         const data = useLoaderData<typeof loader>();
 
         return <Stack>
-
             <Text fw={700}>Popular Services</Text>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.services}>

@@ -128,6 +128,7 @@ function getFilteredVendors(params: {
                                 id: true,
                                 username: true,
                                 profileImageName: true,
+                                ratingScore: true,
                                 services: {
                                     select: {
                                         service: {
@@ -205,7 +206,7 @@ function getFilteredVendors(params: {
                         portfolio: x.vendor.vendorPortfolio.map((x) =>
                             ({ type: x.fileType, value: x.fileName })
                         ),
-                        rating: 0,
+                        rating: x.vendor.ratingScore,
                         tag: x.vendor.vendorPortfolio.length ? 'Popular' : undefined,
                         startsFrom: x.cost || 0,
                         profileImg: x.vendor.profileImageName
@@ -263,6 +264,7 @@ function getVendorByUsername(username: string) {
                 coverImageName: true,
                 profileImageName: true,
                 bio: true,
+                ratingScore: true,
                 vendorType: {
                     select: {
                         name: true
@@ -294,7 +296,8 @@ function getVendorByUsername(username: string) {
                     avatar: r.profileImageName ? PATH.RESOURCE_URL + r.profileImageName : PATH.AVATAR_PLACEHOLDER,
                     coverImageName: r.coverImageName ? PATH.RESOURCE_URL + r.coverImageName : '',
                     bio: r.bio,
-                    baseCharge: r.VendorServiceGroup[0]?.cost || 0
+                    baseCharge: r.VendorServiceGroup[0]?.cost || 0,
+                    rating: r.ratingScore
                 });
             } else {
                 resolve(null);

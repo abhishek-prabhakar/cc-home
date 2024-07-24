@@ -38,9 +38,9 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
             <Box pos="relative">
               <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
               <Overlay color="#fff" backgroundOpacity={0} />
-              </Box>
+            </Box>
             <Text c="dimmed">
-              ({rating} reviews)
+             {rating? `(${rating} reviews)`: ''}
             </Text>
           </Group>
         </Grid.Col>

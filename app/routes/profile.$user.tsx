@@ -247,7 +247,7 @@ const ProfileLayout = {
 
                                 {
                                 activeService?.addons.length ? <Stack gap="xs">
-                                    <Text fw={500}>Additional (To be added in the next stage)</Text>
+                                    <Text fw={500}>Available Customization</Text>
                                     <List>
                                         {activeService?.addons.map(item => <List.Item key={item.id}>{item.title}</List.Item>)}
                                     </List>
