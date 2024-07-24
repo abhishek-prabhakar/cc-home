@@ -195,7 +195,7 @@ const ProfileHome = {
                             <Rating value={outletContext?.profileData?.rating} fractions={3} readOnly={true} size="sm" />
                             <Overlay color="#fff" backgroundOpacity={0} />
                         </Box>
-                        <Text c="dimmed">{outletContext?.profileData?.rating} ratings</Text>
+                        <Text c="dimmed">{outletContext?.profileData?.rating} Ratings</Text>
                     </Grid.Col>
                 </Grid>
                 <Space h="md" />

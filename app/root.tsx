@@ -35,7 +35,6 @@ import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
 import { OPENREPLY_KEY, startTracker } from "./tracker";
 import '@mantine/carousel/styles.css';
-import {SpeedInsights} from "@vercel/speed-insights/remix";
 import Analytics from "./components/Analytics";
 
 export const links: LinksFunction = () => [
@@ -214,7 +213,6 @@ export default function App() {
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
-          <SpeedInsights/>
           <Analytics.Pixel pixelId={data.ENV.FB_PIXEL_ID}/>
           <Analytics.OpenReply projectkey={ data.ENV.openReplyprojectKey}/>
         </MantineProvider>
