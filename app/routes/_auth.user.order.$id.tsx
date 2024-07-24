@@ -94,9 +94,7 @@ export async function loader({ request, params }: LoaderArgs) {
     const session = await getSession(request.headers.get("Cookie"));
     const userId = await session.get(USER_SESSION_KEY);
     if(!orderId || !userId){
-        throw new Response('Invalid data',{
-			status: 500,
-		});
+        return null;
     }
 
     const data = new Promise<UserBooking>(function (resolve, reject) {
@@ -284,8 +282,8 @@ const UserOrderHome = {
         const [showModal, setModal] = useState(false);
 
         return <Suspense fallback={<Skeleton />}>
-            <Await resolve={data.data}>
-                {orderData => <>
+            <Await resolve={data?.data}>
+                {orderData => !orderData? <></> :<>
                     <UserOrderHome.PaymentAlert mode={orderData.paymentMode} />
                     <Card withBorder>
                     <Grid align={'middle'} gutter={20}>
@@ -393,7 +391,7 @@ const UserOrderHome = {
     ChatBox: () =>{
         const data = useLoaderData<typeof loader>();
         return  <Suspense fallback={<Skeleton/>}>
-            <Await resolve={data.chatGroup}>
+            <Await resolve={data?.chatGroup}>
             {
                 response => response?.id && response?.ChatGroupMember?.length ?  <ChatBox chatGroupId={response?.id} memberId={response?.ChatGroupMember[0]?.id} disabled={response.isDisabled}/> : <Card withBorder title="Chat is disabled">
                         Contact support to enable chat for this order.
@@ -408,19 +406,19 @@ const UserOrderHome = {
     PaymentAlert: (input: { mode: BookingPaymentMode }) =>{
         const data= useLoaderData<typeof loader>();
 
-        if(data.paymentStatus?.amount_paid === data.paymentStatus?.amount){
+        if(data?.paymentStatus?.amount_paid === data?.paymentStatus?.amount){
             return <></>;
         }
 
-        if(input.mode === BookingPaymentMode.PAY_LATER && data.paymentStatus?.status === 'created'){
+        if(input.mode === BookingPaymentMode.PAY_LATER && data?.paymentStatus?.status === 'created'){
             return <PaymentPendingCard orderId={data.orderId}/>
         }
 
-        if(input.mode === BookingPaymentMode.PAY_LATER && data.paymentStatus && data.paymentStatus.amount_paid > 0){
-            return <PayOnFieldCard amount={data.paymentStatus.amount_due}/>
+        if(input.mode === BookingPaymentMode.PAY_LATER && data?.paymentStatus && data?.paymentStatus.amount_paid > 0){
+            return <PayOnFieldCard amount={data?.paymentStatus.amount_due}/>
         }
 
-        return  <PaymentFailedCard orderId={data.orderId}/>;
+        return  <PaymentFailedCard orderId={data?.orderId || ''}/>;
     }
 }
 

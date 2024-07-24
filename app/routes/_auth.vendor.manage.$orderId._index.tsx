@@ -138,7 +138,7 @@ export async function loader(args: LoaderArgs){
     const orderId = args.params.orderId;
 
     if(!userId){
-        return redirect('/user/login?redirectUrl=/vendor/manage/'+orderId);
+        return null;
     }
 
     if (!orderId) {

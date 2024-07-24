@@ -612,7 +612,7 @@ const OnBoardPage = {
             </Table>
             <Divider />
             <Flex justify={'end'} pt={24}>
-                <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Contiue</Button></Link>
+                <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Submit Application</Button></Link>
             </Flex>
         </Card>
     },

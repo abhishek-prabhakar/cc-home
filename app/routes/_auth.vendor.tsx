@@ -12,9 +12,7 @@ export async function loader(args: LoaderArgs): Promise<boolean> {
     const userId = session.get(USER_SESSION_KEY);
 
     if (!userId) {
-        throw new Response('Page not found',{
-			status: 404,
-		});
+        return false;
     }
 
     const user = await db.user.findFirstOrThrow({
