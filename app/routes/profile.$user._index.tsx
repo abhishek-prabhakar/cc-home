@@ -155,67 +155,87 @@ export async function loader({ params, request }: LoaderArgs) {
         VendorQuery.Stories(username).then(r => resolve(r));
     });
 
+
+   const reviews = await db.bookingService.count({
+        where:{
+            vendorServiceGroup:{
+                vendor:{
+                    username
+                }
+            },
+            rating:{
+                gt: 0
+            }
+        }
+    });
+
     return defer({
         preselectedServiceGrpId,
         username: username,
         portfolio: portfolio,
         featuredPortfolio,
         services,
-        stories
+        stories,
+        reviews
     });
 }
 
 
 
 const viewAllProjectsStyles: React.CSSProperties = { display: 'flex', justifyContent: 'center', overflow: "hidden", height: '50px', position: 'relative', boxShadow: '0px -40px 30px #fff' };
-const quoteStyle: React.CSSProperties = { fontSize: '30px', color: '#009e66' };
-
-const elementSize = 400;
 
 const ProfileHome = {
     Index: () => {
         const outletContext = useOutletContext<OutletContextData>();
+        const data = useLoaderData<typeof loader>();
 
         return <>
             <ProfileHome.Stories />
             <Space h="xl" />
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-                <Grid align="center" gutter="lg">
-                    <Grid.Col span={'content'}>
-                        <Stack gap={0}>
-                            <Text fw={700}>50+</Text>
-                            <Text c="dimmed">Happy clients</Text>
-                        </Stack>
-                    </Grid.Col>
-                    <Grid.Col span={'content'}>
-                        <Divider h={50} orientation="vertical"/>
-                    </Grid.Col>
-                    <Grid.Col span={'auto'}>
-                        <Box pos="relative">
-                            <Rating value={outletContext?.profileData?.rating} fractions={3} readOnly={true} size="sm" />
-                            <Overlay color="#fff" backgroundOpacity={0} />
-                        </Box>
-                        <Text c="dimmed">{outletContext?.profileData?.rating} Ratings</Text>
-                    </Grid.Col>
-                </Grid>
-                <Space h="md" />
-                <Divider />
-                <Space h="md" />
-                <Grid gutter={'xl'}>
-                    <Grid.Col span={{ base: 12, md: 8 }}>
-                        <Title order={4} c={'var(--ui-color-primary)'}>About me</Title>
-                        <Space h="sm" />
-                        <Divider size="lg" w="50px" style={{
-                            borderColor: '#2a2a2a'
-                        }} />
+            <Suspense fallback={<Skeleton/>}>
+                <Await resolve={data.reviews}>
+                    {
+                    (reviews) => <Card shadow="sm" padding="lg" radius="md" withBorder>
+                        <Grid align="center" gutter="lg">
+                            <Grid.Col span={'content'}>
+                                <Stack gap={0}>
+                                    <Text fw={700}>50+</Text>
+                                    <Text c="dimmed">Happy clients</Text>
+                                </Stack>
+                            </Grid.Col>
+                            <Grid.Col span={'content'}>
+                                <Divider h={50} orientation="vertical"/>
+                            </Grid.Col>
+                            <Grid.Col span={'auto'}>
+                                {outletContext?.profileData?.rating? <><Box pos="relative">
+                                    <Rating value={outletContext?.profileData?.rating} fractions={3} readOnly={true} size="sm" />
+                                    <Overlay color="#fff" backgroundOpacity={0} />
+                                </Box>
+                                <Text c="dimmed">{reviews} reviews</Text>
+                                </>: <Text c="dimmed">Not rated yet.</Text>}
+                            </Grid.Col>
+                        </Grid>
                         <Space h="md" />
-                        <Text>{outletContext?.profileData?.bio}</Text>
-                    </Grid.Col>
-                    <Grid.Col span={{ base: 12, md: 4 }}>
-                        <ProfileHome.Services />
-                    </Grid.Col>
-                </Grid>
-            </Card>
+                        <Divider />
+                        <Space h="md" />
+                        <Grid gutter={'xl'}>
+                            <Grid.Col span={{ base: 12, md: 8 }}>
+                                <Title order={4} c={'var(--ui-color-primary)'}>About me</Title>
+                                <Space h="sm" />
+                                <Divider size="lg" w="50px" style={{
+                                    borderColor: '#2a2a2a'
+                                }} />
+                                <Space h="md" />
+                                <Text>{outletContext?.profileData?.bio}</Text>
+                            </Grid.Col>
+                            <Grid.Col span={{ base: 12, md: 4 }}>
+                                <ProfileHome.Services />
+                            </Grid.Col>
+                        </Grid>
+                    </Card>
+                    }
+                </Await>
+            </Suspense>
             <Space h="md" />
 
             <Space h="md" />

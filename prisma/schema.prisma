@@ -54,6 +54,7 @@ model Vendor {
   socialUrl          String?
   bio                String?              @db.MediumText
   ratingScore        Int                  @default(0)
+  profileType        String?
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])
@@ -107,7 +108,7 @@ model VendorFiles {
 
 model Booking {
   id             String             @id
-  orderId        String
+  orderId        String             @unique
   userId         String
   status         BookingStatus
   total          Int
