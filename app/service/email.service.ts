@@ -1,4 +1,4 @@
-import EMAIL_DATA from "~/data/email.data";
+import adminData from "~/data/admin.data";
 const nodemailer = require("nodemailer");
 
 const SENDER_ID = 'team@celebriacollective.com';
@@ -60,7 +60,7 @@ async function notifyVendorNewOrder(input: {
     });
 
     await sendEmail({
-        to: EMAIL_DATA.ADMIN_EMAIL,
+        to: adminData.EMAIL_DATA.ADMIN_EMAIL,
         subject,
         html,
         text

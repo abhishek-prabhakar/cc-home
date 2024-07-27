@@ -1,5 +1,6 @@
 import { BookingPaymentMode, BookingStatus } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
+import adminData from "~/data/admin.data";
 import { CartService } from "~/service/cart.service";
 import ChatService from "~/service/chat.service";
 import EmailService from "~/service/email.service";
@@ -167,6 +168,9 @@ export async function action({
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
 
+    notification.whatsapp(WhatsappService.notifyAdminNewOrder({
+        orderId: orderId,
+    }));
     await notification.publish();
 
     const headers: [string, string][] = [

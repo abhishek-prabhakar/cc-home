@@ -5,7 +5,9 @@ import { Form, useLocation } from "@remix-run/react";
 import { useState } from "react";
 import FileUploader from "~/components/FileUploader";
 import { PATH } from "~/path.data";
+import Notification from "~/service/notification.service";
 import { VendorQuery } from "~/service/vendor.service";
+import WhatsappService from "~/service/whatsapp.service";
 import { vendorSignupCookie } from "~/session.server";
 import { db } from "~/utils/database";
 import usernameTransformer from "~/utils/username.transformer";
@@ -62,6 +64,10 @@ export async function action(args: ActionArgs) {
                     });
 
                     const currentVendor: string = data.id;
+                    const notification = new Notification();
+                    notification.whatsapp(WhatsappService.notifyAdmin('New vendor signup: ' + fullName));
+                    notification.publish();
+                    
                     return redirect('/partner/signup/onboard/' + data.id, {
                         headers: {
                             "Set-Cookie": await vendorSignupCookie.serialize(currentVendor),

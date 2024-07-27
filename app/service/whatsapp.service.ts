@@ -1,4 +1,5 @@
 import axios from "axios";
+import adminData from "~/data/admin.data";
 import COMMON_DATA from "~/data/common.data";
 import Routes from "~/routes.data";
 
@@ -11,7 +12,8 @@ enum TEMPLATES {
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
     user_cancellation_vendor = "user_cancellation_vendor",
     booking_rejection_user = "booking_rejection_user",
-    vendor_cancellation_user = "vendor_cancellation_user"
+    vendor_cancellation_user = "vendor_cancellation_user",
+    notify_admin = "notify_admin"
 }
 
 type Param = {
@@ -247,12 +249,32 @@ async function notifyUserOnOrderReject(input:{
  await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
+async function notifyAdminNewOrder(input:{
+    orderId: string,
+}) {
+    await notifyAdmin('You have a new order: ' + input.orderId);
+}
+
+async function  notifyAdmin(message:string) {
+    
+    const to = adminData.PHONE_DATA.ADMIN_PHONE;
+    
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": message
+        }];
+
+ await Request.post({template: TEMPLATES.booking_rejection_user, to: to, params, lang:  'en' });
+}
 
 const WhatsappService = {
     orderConfirmationUser,
     notifyVendorNewOrder,
     notifyVendorOrderCancel,
-    notifyUserOnOrderReject
+    notifyUserOnOrderReject,
+    notifyAdminNewOrder,
+    notifyAdmin
 }
 
 
