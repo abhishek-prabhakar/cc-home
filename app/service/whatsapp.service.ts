@@ -249,12 +249,6 @@ async function notifyUserOnOrderReject(input:{
  await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
-async function notifyAdminNewOrder(input:{
-    orderId: string,
-}) {
-    await notifyAdmin('You have a new order: ' + input.orderId);
-}
-
 async function  notifyAdmin(message:string) {
     
     const to = adminData.PHONE_DATA.ADMIN_PHONE;
@@ -265,7 +259,7 @@ async function  notifyAdmin(message:string) {
             "text": message
         }];
 
- await Request.post({template: TEMPLATES.booking_rejection_user, to: to, params, lang:  'en' });
+ await Request.post({template: TEMPLATES.notify_admin, to: to, params, lang:  'en' });
 }
 
 const WhatsappService = {
@@ -273,7 +267,6 @@ const WhatsappService = {
     notifyVendorNewOrder,
     notifyVendorOrderCancel,
     notifyUserOnOrderReject,
-    notifyAdminNewOrder,
     notifyAdmin
 }
 

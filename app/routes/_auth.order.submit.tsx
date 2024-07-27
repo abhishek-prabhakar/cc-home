@@ -168,9 +168,7 @@ export async function action({
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
 
-    notification.whatsapp(WhatsappService.notifyAdminNewOrder({
-        orderId: orderId,
-    }));
+    notification.admin('You have a new order: ' + orderId);
     await notification.publish();
 
     const headers: [string, string][] = [

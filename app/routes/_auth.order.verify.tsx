@@ -99,7 +99,7 @@ export async function action({
                 serviceName: orderData.bookingService[0].vendorServiceGroup.group.name
             })
         );
-        notification.whatsapp(WhatsappService.notifyAdmin('Payment recived for ' + orderId));
+        notification.admin('Payment recieved for ' + orderId);
     } else {
         redirectUrl = '/order/failed?id=' + orderData.orderId;
     }

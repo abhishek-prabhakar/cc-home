@@ -65,9 +65,9 @@ export async function action(args: ActionArgs) {
 
                     const currentVendor: string = data.id;
                     const notification = new Notification();
-                    notification.whatsapp(WhatsappService.notifyAdmin('New vendor signup: ' + fullName));
+                    notification.admin('New vendor signup: ' + fullName);
                     notification.publish();
-                    
+
                     return redirect('/partner/signup/onboard/' + data.id, {
                         headers: {
                             "Set-Cookie": await vendorSignupCookie.serialize(currentVendor),

@@ -16,6 +16,9 @@ class Notification {
         this.notificationQueue.push(type);
     }
 
+    public admin(message: string){
+        this.notificationQueue.push(WhatsappService.notifyAdmin(message));
+    }
 
     public async publish(){
         try{
