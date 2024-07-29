@@ -13,7 +13,7 @@ enum TEMPLATES {
     user_cancellation_vendor = "user_cancellation_vendor",
     booking_rejection_user = "booking_rejection_user",
     vendor_cancellation_user = "vendor_cancellation_user",
-    notify_admin = "notify_admin"
+    admin_notify = "admin_notify"
 }
 
 type Param = {
@@ -48,8 +48,7 @@ const Request = {
                 {
                     "type": "body",
                     "parameters": params
-                },
-                ...interaction
+                }
             ],
         },
         };
@@ -251,7 +250,7 @@ async function notifyUserOnOrderReject(input:{
 
 async function  notifyAdmin(message:string) {
     
-    const to = adminData.PHONE_DATA.ADMIN_PHONE;
+    const to =  adminData.PHONE_DATA.ADMIN_PHONE;
     
     const params:Param[] = [ 
         {
@@ -259,7 +258,7 @@ async function  notifyAdmin(message:string) {
             "text": message
         }];
 
- await Request.post({template: TEMPLATES.notify_admin, to: to, params, lang:  'en' });
+ await Request.post({template: TEMPLATES.admin_notify, to: to, params, lang:  'en_US' });
 }
 
 const WhatsappService = {
