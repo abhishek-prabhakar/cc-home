@@ -707,7 +707,7 @@ const OnBoardPage = {
         }
 
         function saveForm() {
-            if (!profileData?.jobType || !profileData.username) {
+            if (!profileData?.jobType || !profileData.username || !profileData.location) {
                 return
             }
             submit(
