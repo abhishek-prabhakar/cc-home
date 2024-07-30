@@ -1,5 +1,5 @@
 import { CheckCircleFilled, CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box, ThemeIcon, Group } from "@mantine/core";
+import { Accordion, Alert, Button, Card, Checkbox, Divider, Flex, Grid, Input, Loader, Modal, Select, Stack, Text, Title, Table, Container, Box, ThemeIcon, Group, Space } from "@mantine/core";
 import { FareMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, Link, useFetcher, useLoaderData, useLocation, useRouteError, useSubmit } from "@remix-run/react";
@@ -7,6 +7,7 @@ import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileUploader from "~/components/FileUploader";
+import { LOCATION_CODE, locationList, locationMap } from "~/data/locations.data";
 import { PATH } from "~/path.data";
 import { ServiceQuery } from "~/service/services.service";
 import { vendorSignupCookie } from "~/session.server";
@@ -45,43 +46,6 @@ type VendorServiceGroup = {
     group: ServiceGroup;
 }
 
-type LoaderData = {
-    profile: {
-        id: string;
-        name: string;
-        mobileNumber: string;
-        email: string;
-        usernameSuggestion?: string | null,
-        username: string,
-        vendorType?: {
-            id: string;
-            name: string;
-        } | null;
-        VendorServiceGroup: VendorServiceGroup[],
-        services: {
-            id: string;
-            serviceId: string;
-            duration: number;
-            cost: number;
-            fareMode: FareMode;
-            service: {
-                name: string;
-                minHour: number;
-            };
-        }[];
-    },
-    categories: {
-        id: string;
-        name: string;
-        serviceGroups: ServiceGroup[];
-    }[],
-    files: {
-        id: string;
-        fileType: string;
-        fileName: string;
-    }[]
-}
-
 enum STEPS {
     PROFILE = "PROFILE",
     SERVICE = 'SERVICE',
@@ -116,6 +80,7 @@ export async function action(args: ActionArgs) {
             {
                 const categoryId = formData.get('categoryId')?.toString();
                 const username = formData.get('username')?.toString();
+                const locationCode = formData.get('location')?.toString();
 
                 try {
                     await db.vendorService.deleteMany({
@@ -145,7 +110,8 @@ export async function action(args: ActionArgs) {
                         },
                         data: {
                             username,
-                            categoryId
+                            categoryId,
+                            location: locationCode
                         }
                     });
                 } catch (e) { };
@@ -303,6 +269,7 @@ async function loadApplicationForm(applicationId?: string | null) {
             mobileNumber: true,
             usernameSuggestion: true,
             username: true,
+            location: true,
             vendorType: {
                 select: {
                     name: true,
@@ -423,7 +390,7 @@ export async function loader(args: LoaderArgs) {
 
 const OnBoardPage = {
     Index: () => {
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loadApplicationForm>();
         const fetcher = useFetcher();
         const [activeProfileType, setJobType] = useState<string>('');
         const [showProfileDialog, setProfileDialog] = useState<boolean>(false);
@@ -436,17 +403,17 @@ const OnBoardPage = {
         }, [fetcher.data]);
 
         useEffect(() => {
-            setActiveGroup(data.profile.vendorType?.id || '');
+            setActiveGroup(data?.profile.vendorType?.id || '');
             hideEditProfileDialog();
-        }, [data.categories])
+        }, [data?.categories])
 
         useEffect(() => {
-            setActiveGroup(data.profile.vendorType?.id || '')
+            setActiveGroup(data?.profile.vendorType?.id || '')
         }, [])
 
         function setActiveGroup(id: string) {
             setJobType(id);
-            const list = data.categories.find(x => x.id === id);
+            const list = data?.categories.find(x => x.id === id);
             setServiceList(list?.serviceGroups || []);
         }
 
@@ -474,7 +441,13 @@ const OnBoardPage = {
                                     <div><Text fw={500}>Profile Type: </Text></div>
                                     <Flex gap={'md'}>
                                         <Text fw={500}>{data.profile?.vendorType?.name}</Text>
-                                        <Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text></Flex>
+                                        <Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text>
+                                    </Flex>
+                                    <Space h={'md'}/>
+                                    <Flex gap={'md'}>
+                                        <Text fw={500}>Location: {data.profile.location? locationMap[data.profile.location as LOCATION_CODE] : ''}</Text>
+                                        <Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text>
+                                    </Flex>
                                 </Grid.Col >
                                 <Grid.Col span={{ base: 12, md: 6 }}>
                                     <Text fw={500}>Public name:</Text>
@@ -489,7 +462,7 @@ const OnBoardPage = {
                     {serviceList.length ? <OnBoardPage.SelectCategory serviceList={serviceList} activeProfileType={activeProfileType} /> : ''}
                 </Grid.Col >
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    {data.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents data={data} /> : ''}
+                    {data?.profile.VendorServiceGroup?.length ? <OnBoardPage.Documents files={data.files} /> : ''}
                 </Grid.Col >
             </Grid>
             <Modal title='Modify Profile' opened={showProfileDialog} onClose={() => hideEditProfileDialog()} >
@@ -553,16 +526,16 @@ const OnBoardPage = {
         </>
     },
     SelectedServices: () => {
-        const data = useLoaderData<LoaderData>();
+        const data = useLoaderData<typeof loadApplicationForm>();
 
-        return  data.profile.VendorServiceGroup.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
+        return  data?.profile.VendorServiceGroup.map((item, index) => <Accordion.Item value={item.id} key={item.id} >
                 <Accordion.Control icon={<ThemeIcon size="xs" radius="xl" color="green"><CheckOutlined/></ThemeIcon>}>{item.group.name}</Accordion.Control>
                 <Accordion.Panel>
                     <OnBoardPage.UpdateGroupServiceCost item={item} />
                 </Accordion.Panel>
             </Accordion.Item>)
     },
-    Documents: ({ data }: { data: LoaderData }) => {
+    Documents: ({ files }: { files:  {id: string, fileType: string, fileName: string}[] }) => {
         const fetcher = useFetcher();
         const [fileType, setFileType] = useState<string | null>();
 
@@ -603,7 +576,7 @@ const OnBoardPage = {
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                    {data.files.map(element => <Table.Tr key={element.id}>
+                    {files?.map(element => <Table.Tr key={element.id}>
                         <Table.Td>{element.fileType}</Table.Td>
                         <Table.Td><a href={PATH.RESOURCE_URL+element.fileName} target="_BLANK">View file</a></Table.Td>
                         <Table.Td></Table.Td>
@@ -612,7 +585,7 @@ const OnBoardPage = {
             </Table>
             <Divider />
             <Flex justify={'end'} pt={24}>
-                <Link to="success"><Button variant="filled" radius="xl" disabled={!data.files.length}>Submit Application</Button></Link>
+                <Link to="success"><Button variant="filled" radius="xl" disabled={!files.length}>Submit Application</Button></Link>
             </Flex>
         </Card>
     },
@@ -717,10 +690,10 @@ const OnBoardPage = {
     EditProfileForm: ({ onSuccess }: { onSuccess: Function }) => {
         const data = useLoaderData<typeof loadApplicationForm>();
         const submit = useSubmit();
-        const [profileData, setData] = useState<{ jobType?: string, username?: string }>({ jobType: data?.profile.vendorType?.id, username: data?.profile.username });
+        const [profileData, setData] = useState<{ jobType?: string, username?: string, location: string }>({ jobType: data?.profile.vendorType?.id, username: data?.profile.username, location: data?.profile.location || LOCATION_CODE.BLR });
         const [showWarnMsg, setWarnMsg] = useState(false);
 
-        function updateData(newData: { [key in ('jobType' | 'username')]?: string }) {
+        function updateData(newData: { [key in ('jobType' | 'username' | 'location')]?: string }) {
             const currentType = data?.profile?.vendorType?.id;
             if (newData) {
                 setData({ ...profileData, ...newData });
@@ -741,7 +714,8 @@ const OnBoardPage = {
                 {
                     action: STEPS.PROFILE,
                     username: profileData?.username || '',
-                    categoryId: profileData?.jobType || ''
+                    categoryId: profileData?.jobType || '',
+                    location: profileData.location
                 }, {
                 method: 'post',
             });
@@ -750,8 +724,8 @@ const OnBoardPage = {
         return <Grid gutter={20}>
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack style={{ width: '100%' }}>
-                    <Text fw={500}>Profile Category:</Text>
-                    <Select value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
+                    <Select allowDeselect={false} label={<Text fw={500}>Profile Category:</Text>} value={profileData.jobType} defaultValue={data?.profile?.vendorType?.id} onChange={value => updateData({ jobType: value || '' })} placeholder="Select a category" style={{ width: '100%' }} data={data?.categories.map(item => ({ value: item.id, label: item.name }))} />
+                    <Select allowDeselect={false} label={<Text fw={500}>Location:</Text>} value={profileData.location} defaultValue={data?.profile?.location} placeholder="Select your location" style={{ width: '100%' }}  onChange={value => updateData({ location: value || '' })} data={locationList.map(item => ({ value: item.key, label: item.label }))} />
                 </Stack>
             </Grid.Col >
             <Grid.Col span={{ base: 12, md: 6 }}>

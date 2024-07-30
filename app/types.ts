@@ -22,7 +22,7 @@ export type VendorProfile = {
     username: string,
     id: string,
     fullName: string,
-    location: string
+    location: string | null,
     gender: string;
     type: string;
     coverImageName?: string | null;

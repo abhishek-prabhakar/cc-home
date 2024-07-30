@@ -263,6 +263,7 @@ function getVendorByUsername(username: string) {
                 primaryColor: true,
                 coverImageName: true,
                 profileImageName: true,
+                location: true,
                 bio: true,
                 ratingScore: true,
                 vendorType: {
@@ -289,7 +290,7 @@ function getVendorByUsername(username: string) {
                     id: r.id,
                     username: r.username,
                     fullName: r.username,
-                    location: '',
+                    location: r.location,
                     gender: '',
                     type: r.vendorType?.name || '',
                     primaryColor: r.primaryColor,

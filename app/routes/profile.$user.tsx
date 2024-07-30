@@ -19,6 +19,7 @@ import Currency from "~/utils/currency.transformer";
 import { IconPoint } from "@tabler/icons-react";
 import { IconCircleArrowDownFilled } from "@tabler/icons-react";
 import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
+import { LOCATION_CODE, locationMap } from "~/data/locations.data";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -124,7 +125,7 @@ const ProfileLayout = {
                                 </Flex>
                                 <Flex align={'center'} gap={'xs'}>
                                     <IconMapPin style={{ color: 'gray' }} size={'18px'} />
-                                    <Text fw={500}>{profile?.location} Bangalore</Text>
+                                    <Text fw={500}>{locationMap[profile?.location as LOCATION_CODE] || 'N/A' }</Text>
                                 </Flex>
                             </Stack>
                             <Space h="md" />
