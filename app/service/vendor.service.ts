@@ -241,6 +241,7 @@ function signup(props: {
             mobileNumber: props.mobileNumber,
             email: props.email,
             username: props.username,
+            usernameSuggestion: props.username,
             source: UserSource.MANUAL,
             isActive: false,
             socialUrl: props.socialUrl,
