@@ -54,7 +54,7 @@ model Vendor {
   socialUrl          String?
   bio                String?              @db.MediumText
   ratingScore        Int                  @default(0)
-  profileType        String?
+  profileType        vendors_profileType? @default(BASIC)
   vendorPortfolio    VendorPortfolio[]
   services           VendorService[]
   vendorType         VendorType?          @relation(fields: [categoryId], references: [id])
@@ -477,4 +477,9 @@ enum Coupons_chargeType {
 enum ChatThread_type {
   TEXT
   IMAGE
+}
+
+enum vendors_profileType {
+  BASIC
+  PRO
 }
