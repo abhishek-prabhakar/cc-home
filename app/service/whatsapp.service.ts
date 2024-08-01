@@ -13,7 +13,8 @@ enum TEMPLATES {
     user_cancellation_vendor = "user_cancellation_vendor",
     booking_rejection_user = "booking_rejection_user",
     vendor_cancellation_user = "vendor_cancellation_user",
-    admin_notify = "admin_notify"
+    admin_notify = "admin_notify",
+    new_chat_msg= "new_chat_msg"
 }
 
 type Param = {
@@ -248,6 +249,32 @@ async function notifyUserOnOrderReject(input:{
  await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
+async function  notifyOnNewChat(to: string, fromName: string, message:string, url: string) {
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": fromName
+        },
+        {
+            "type": "text",
+            "text": message
+        }];
+
+        const interaction:Interaction[]= [{
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+                {
+                    "type": "payload",
+                    "payload": url
+                }
+            ]
+        }];   
+
+ await Request.post({template: TEMPLATES.new_chat_msg, to: to, params,interaction, lang:  'en_US' });
+}
+
 async function  notifyAdmin(message:string) {
     
     const to =  adminData.PHONE_DATA.ADMIN_PHONE;
@@ -266,7 +293,8 @@ const WhatsappService = {
     notifyVendorNewOrder,
     notifyVendorOrderCancel,
     notifyUserOnOrderReject,
-    notifyAdmin
+    notifyAdmin,
+    notifyOnNewChat
 }
 
 

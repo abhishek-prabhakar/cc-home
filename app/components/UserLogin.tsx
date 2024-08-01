@@ -36,7 +36,7 @@ const UserLogin = {
         return <>{inlineMode && showVerifyUserDialog ? '' : <Form onSubmit={handleSubmit(startUserLogin)}>
             <Stack>
                 <Title order={5}>{title}</Title>
-                <Controller name="phone" control={control} render={({ field }) => <Input leftSection="+91" placeholder="Enter your phone number." required {...field} />} />
+                <Controller name="phone" control={control} render={({ field }) => <Input leftSection="+91" placeholder="Enter your phone number." minLength={10} maxLength={10} required {...field} />} />
                 <Button variant="filled" type="submit" loading={isBusy}>Login</Button>
             </Stack>
         </Form>}

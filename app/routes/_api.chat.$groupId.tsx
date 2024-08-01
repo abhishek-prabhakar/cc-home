@@ -1,5 +1,8 @@
 import { BookingStatus, ChatThread_type } from "@prisma/client";
 import { ActionArgs, LoaderArgs } from "@remix-run/node";
+import Routes from "~/routes.data";
+import Notification from "~/service/notification.service";
+import WhatsappService from "~/service/whatsapp.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 import { db } from "~/utils/database";
@@ -32,9 +35,15 @@ export async function action(args: ActionArgs){
                 select:{
                     booking:{
                         select:{
+                            orderId: true,
                             status: true
                         }
-                    }
+                    },
+                }
+            },
+            vendor:{
+                select:{
+                    username: true
                 }
             }
         }
@@ -45,6 +54,31 @@ export async function action(args: ActionArgs){
         return false;
     }
 
+    const recipient =  await db.chatGroupMember.findMany({
+        where:{
+            chatGroupId,
+            OR:[{
+                userId: { not: currentUserId }
+            },{
+                vendorId: { not: currentUserId }
+            }]
+        },
+        select:{
+            vendor:{
+                select:{
+                    mobileNumber: true
+                }
+            },
+            user:{
+                select:{
+                    username: true
+                }
+            }
+        }
+    });
+
+    
+
     await db.chatThread.create({
         data:{
             id: generateUuid(),
@@ -54,6 +88,21 @@ export async function action(args: ActionArgs){
             type: msgType
         }
     });
+
+
+    const notification = new Notification();
+    recipient.forEach(x =>{
+        const toNum = x.user?.username || x.vendor?.mobileNumber;
+        const fromName =  member.vendor?.username || 'Customer';
+        let url = '/';
+        if(x.vendor?.mobileNumber){
+            url= Routes.get('UserManageOrder', {id: member?.chatGroup?.booking?.orderId });
+        } else{
+            url= Routes.get('VendorManageOrder', {id: member?.chatGroup?.booking?.orderId });
+        }
+        if(toNum){ notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, message, url)); }
+    });
+    await notification.publish();
 
     return true;
 }
