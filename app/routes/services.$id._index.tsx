@@ -305,6 +305,13 @@ const Page = {
       navigate(`${location.pathname}?${params.toString()}`);
     }
 
+    function clearFilter(){
+      setCategoryFilters([]);
+      const params = new URLSearchParams(location.search);
+      params.set("page", "0");
+      navigate(`${location.pathname}?${params.toString()}`);
+    }
+
     function toggleFilterDrawer(){
       setFilterDrawer(!openFilterDrawer);
     }
@@ -335,7 +342,10 @@ const Page = {
           <Grid.Col span={12} visibleFrom="md">
             <div className="filters-section-wrapper _sticky-top">
               <div className="section-title">
-              <Text size="lg" fw={500}>Filter:</Text>
+              <Group justify="space-between">
+                <Text size="lg" fw={500}>Filter:</Text>
+                {getCategoryFitlers?.length? <Badge style={{cursor: "pointer"}}  onClick={clearFilter} variant="outline" color="red" size="xs">Clear all</Badge> : <></>}
+              </Group>
               </div>
               {filterList}
             </div>
