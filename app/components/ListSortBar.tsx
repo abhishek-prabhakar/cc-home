@@ -29,11 +29,11 @@ function ListSortBar({ onSort }: { onSort: (v: string | null) => void }) {
     return <div style={sortPanelStyles}>
         <Group align={'center'} gap={'sm'}>
             <Text c="dimmed" size="sm">Sort By:</Text>
-            <Select
+            <Select placeholder="Default"
                 defaultValue="0"
                 onChange={x => setValue(x)}
                 data={list}
-                unselectable="on"
+                allowDeselect={false}
             />
         </Group>
     </div>
