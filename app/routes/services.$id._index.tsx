@@ -1,4 +1,4 @@
-import { Accordion, Badge, Checkbox, Container, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Checkbox, Container, Drawer, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import {
   TypedDeferredData,
   defer,
@@ -244,7 +244,9 @@ const Page = {
         <Stack gap={'lg'}>
           {/* <Banner.Default /> */}
           <Grid gutter={{ base: 20,  md: 40}}>
-            <Page.Filters />
+            <Grid.Col span={{base: 12, md: 4, lg: 3 }}>
+              <Page.Filters />
+            </Grid.Col>
             <Grid.Col span={{ base: 12, md: 8, lg: 9 }}>
               <Stack gap={'lg'}>
                 <Stack>
@@ -276,6 +278,7 @@ const Page = {
     const navigate = useNavigate();
     const location = useLocation();
     const [getCategoryFitlers, setCategoryFilters] = useState<string[]>([]);
+    const [openFilterDrawer, setFilterDrawer] = useState(false);
 
     useEffect(() => {
       const params = new URLSearchParams(location.search);
@@ -302,29 +305,46 @@ const Page = {
       navigate(`${location.pathname}?${params.toString()}`);
     }
 
-    return (
-      <>
-        <Grid.Col span={{ base: 12 }} hiddenFrom="md">
-          <div className="filters-section-wrapper">
-            <div className="section-title">Filter:</div>
-          </div>
-        </Grid.Col>
-        <Grid.Col span={{ md: 4, lg: 3 }} visibleFrom="md">
-          <div className="filters-section-wrapper _sticky-top">
-            <div className="section-title">Filter:</div>
-            <Suspense fallback={<Skeleton />}>
-              <Await resolve={data.filters}>
-                {(filters) => (
-                  <Accordion>
-                   <Page.FilterAccordianItem  activeFilters={getCategoryFitlers} filters={filters} onChange={toggleCategoryFilterItem}/>
-                  </Accordion>
-                )}
-              </Await>
-            </Suspense>
-          </div>
-        </Grid.Col>
-      </>
-    );
+    function toggleFilterDrawer(){
+      setFilterDrawer(!openFilterDrawer);
+    }
+
+    const filterList =  <Suspense fallback={<Skeleton />}>
+    <Await resolve={data.filters}>
+      {(filters) => (
+        <Accordion>
+        <Page.FilterAccordianItem  activeFilters={getCategoryFitlers} filters={filters} onChange={toggleCategoryFilterItem}/>
+        </Accordion>
+      )}
+    </Await>
+  </Suspense>;
+
+    return <>
+        <Grid gutter={0}>
+          <Grid.Col span={12} hiddenFrom="md">
+            <div className="filters-section-wrapper" onClick={toggleFilterDrawer}>
+              <div className="section-title">
+                <Group>
+                  <Text fw={500}>Filter:</Text>
+                  {getCategoryFitlers?.length? <Badge variant="outline" color="yellow">{getCategoryFitlers.length} applied</Badge>  : <></>}
+                  <Text c="dimmed">Click here to modify</Text>
+                  </Group>
+                </div>
+            </div>
+          </Grid.Col>
+          <Grid.Col span={12} visibleFrom="md">
+            <div className="filters-section-wrapper _sticky-top">
+              <div className="section-title">
+              <Text size="lg" fw={500}>Filter:</Text>
+              </div>
+              {filterList}
+            </div>
+          </Grid.Col>
+        </Grid>
+        <Drawer opened={openFilterDrawer} onClose={toggleFilterDrawer} title="Apply Filters">
+          {filterList}
+        </Drawer>
+      </>;
   },
   Results: ({
     vendors,
