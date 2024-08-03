@@ -34,6 +34,7 @@ function ListSortBar({ onSort }: { onSort: (v: string | null) => void }) {
                 onChange={x => setValue(x)}
                 data={list}
                 allowDeselect={false}
+                w={150}
             />
         </Group>
     </div>
