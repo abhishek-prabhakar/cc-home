@@ -15,16 +15,9 @@ import { VendorQuery } from "~/service/vendor.service";
 import VideoPreviewItem from "~/components/VideoPreviewItem";
 import { useMediaQuery } from "@mantine/hooks";
 import Routes from "~/routes.data";
+import StoriesStrip, { Story } from "~/components/StoriesStrip";
 
 type ProfileService = { id: string,name: string, description: string };
-type Story = {
-    url?: string;
-    seeMore?: Function;
-    type?: string;
-    duration?: number;
-    styles?: object;
-    preloadResource?: boolean;
-}
 enum ActionType {
     STORIES = 'STORIES'
 };
@@ -272,54 +265,10 @@ const ProfileHome = {
                         album => album?.length ? <>
                             <Text fw={500}>Stories</Text>
                             <Space h="sm" />
-                            <CarouselProvider
-                                naturalSlideWidth={300}
-                                naturalSlideHeight={400}
-                                totalSlides={album.length}
-                                visibleSlides={sliderCount()}
-                                isIntrinsicHeight={true}
-                                step={sliderCount()} dragStep={sliderCount()}
-                                className="carousel-slider-wrapper"
-                            >
-
-                                <Slider>
-                                    {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
-                                        <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
-                                            <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
-                                                <div style={{ position: 'relative', cursor: 'pointer' }}>
-                                                    <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
-                                                    <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
-                                                    <Overlay
-                                                        gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
-                                                        opacity={0.85}
-                                                        p={{base: 'xs', md:  'md'}}
-                                                    >
-                                                        <Flex align={'end'} h="100%">
-                                                            <Text fw={500} c="white">{item.serviceGroup?.name || 'Highlights'}</Text>
-                                                        </Flex>
-                                                    </Overlay>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Slide>)}
-                                </Slider>
-                            </CarouselProvider>
+                            <StoriesStrip album={album} stories={stories} onLoadStories={loadStories} />
                         </> : ''}
                 </Await>
             </Suspense>
-            <Modal.Root opened={!!stories.length} onClose={() => setStories([])} p={0} centered>
-                <Modal.Overlay />
-                <Modal.Content p={0}>
-                    <Modal.Body p={0}>
-                        {stories.length ? <Stories
-                            stories={stories}
-                            defaultInterval={1500}
-                            width={'inherit'}
-                            height={'80vh'}
-                        /> : 'Nothing to display'}
-                    </Modal.Body>
-                </Modal.Content>
-            </Modal.Root>
         </>;
     },
     Services: () => {
