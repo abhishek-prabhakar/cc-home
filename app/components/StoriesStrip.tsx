@@ -38,15 +38,13 @@ function StoriesStrip({album,stories, onLoadStories}:props){
     
 
     function loadStories(id: string | null) {
-        // fetcher.submit({
-        //     actionType: ActionType.STORIES,
-        //     albumId: id || ''
-        // }, {
-        //     method: 'post'
-        // });
         if(id){
             onLoadStories(id);
         }
+    }
+
+    function closeStory(){
+        setStories([]);
     }
 
     return <>
@@ -84,15 +82,17 @@ function StoriesStrip({album,stories, onLoadStories}:props){
         <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
         <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
     </CarouselProvider>
-    <Modal.Root opened={!!storiesList.length} onClose={() => setStories([])} p={0} centered>
+    <Modal.Root opened={!!storiesList.length} onClose={closeStory} p={0} centered>
                 <Modal.Overlay />
                 <Modal.Content w={472} p={0}>
                     <Modal.Body p={0}>
                         {stories.length ? <Stories
                             stories={stories}
                             defaultInterval={1500}
+                            keyboardNavigation={true}
                             width={'100%'}
                             height={'80vh'}
+                            onAllStoriesEnd={closeStory}
                         /> : 'Nothing to display'}
                     </Modal.Body>
                 </Modal.Content>
