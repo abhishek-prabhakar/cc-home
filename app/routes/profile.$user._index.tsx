@@ -242,7 +242,7 @@ const ProfileHome = {
         const [stories, setStories] = useState<Story[]>([]);
 
         useEffect(() => {
-            const list = fetcher.data?.map<Story>(x => ({ url: PATH.THUMB_URL + x.fileName })) || [];
+            const list = fetcher.data?.map<Story>(x => ({ url: PATH.RESOURCE_URL + x.fileName })) || [];
             setStories(list);
         }, [fetcher?.data])
 

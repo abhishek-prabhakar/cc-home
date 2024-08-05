@@ -1,10 +1,11 @@
-import { Flex, Image, Modal, Overlay, Text, px } from "@mantine/core";
+import { Flex, Image, Modal, Overlay, Text, px, rem } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { useEffect, useState } from "react";
 import { PATH } from "~/path.data";
 import Stories from 'react-insta-stories';
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 type Story = {
     url?: string;
@@ -28,24 +29,33 @@ type props = {
 
 function StoriesStrip({album,stories, onLoadStories}:props){
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
-    const [storiesList, setStories] = useState<Story[]>([]);
+    const [storiesList, setStories] = useState<{[key in string] : Story[] }>({});
 
     useEffect(() =>{
-        setStories(stories);
+        if(stories){
+            const k = Object.keys(storiesList);
+            const lastK= k[k.length -1 ];
+            setStories({...storiesList, [lastK]: stories});
+            console.log(lastK, stories)
+        }
     },[stories])
 
     function sliderCount() { return isWideScreen ? 6 : 3; }
     
 
     function loadStories(id: string | null) {
-        if(id){
+        if(id && !storiesList[id]?.length){
+            setStories({...storiesList,[id]:[] });
             onLoadStories(id);
         }
     }
 
     function closeStory(){
-        setStories([]);
+        return;
+        // setStories([]);
     }
+
+    const WIDTH = 400;
 
     return <>
         <CarouselProvider
@@ -60,6 +70,23 @@ function StoriesStrip({album,stories, onLoadStories}:props){
 
         <Slider>
             {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
+            <PhotoProvider 
+                maskClosable={false}
+                maskOpacity={0.5}
+                toolbarRender={() => <div>Close</div>}
+                >
+                <PhotoView  width={WIDTH} height={500}
+                render={({ scale, attrs }) => { 
+                    return item.serviceGroupId && storiesList[item.serviceGroupId]?.length ? <Stories
+                        stories={stories}
+                        defaultInterval={1500}
+                        keyboardNavigation={true}
+                        width={WIDTH}
+                        height={500}
+                        onAllStoriesEnd={closeStory}
+                        storyStyles={{width: WIDTH, height: 500, objectFit: 'contain'}}
+                    /> : 'loading...'
+                }}> 
                 <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
                     <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
                         <div style={{ position: 'relative', cursor: 'pointer' }}>
@@ -77,26 +104,45 @@ function StoriesStrip({album,stories, onLoadStories}:props){
                         </div>
                     </div>
                 </div>
+                </PhotoView>
+            </PhotoProvider>
             </Slide>)}
         </Slider>
         <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
         <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
     </CarouselProvider>
-    <Modal.Root opened={!!storiesList.length} onClose={closeStory} p={0} centered>
+    {/* <PhotoProvider maskClosable={false}>
+        <PhotoView  width={500} height={500}
+        render={({ scale, attrs }) => { 
+            return storiesList.length ? <Stories
+                stories={stories}
+                defaultInterval={1500}
+                keyboardNavigation={true}
+                width={500}
+                height={500}
+                onAllStoriesEnd={closeStory}
+                storyStyles={{width: rem(472)}}
+            /> : 'Nothing to display'
+         }}>
+            <div>sdf</div>
+        </PhotoView>
+    </PhotoProvider> */}
+    {/* <Modal.Root opened={!!storiesList.length} onClose={closeStory} p={0} centered>
                 <Modal.Overlay />
                 <Modal.Content w={472} p={0}>
                     <Modal.Body p={0}>
-                        {stories.length ? <Stories
+                        {storiesList.length ? <Stories
                             stories={stories}
                             defaultInterval={1500}
                             keyboardNavigation={true}
                             width={'100%'}
                             height={'80vh'}
                             onAllStoriesEnd={closeStory}
+                            storyStyles={{width: rem(472)}}
                         /> : 'Nothing to display'}
                     </Modal.Body>
                 </Modal.Content>
-            </Modal.Root>
+            </Modal.Root> */}
 </>
 }
 
