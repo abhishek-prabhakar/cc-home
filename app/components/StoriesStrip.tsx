@@ -29,14 +29,15 @@ type props = {
 
 function StoriesStrip({album,stories, onLoadStories}:props){
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
-    const [storiesList, setStories] = useState<{[key in string] : Story[] }>({});
+    // const [storiesList, setStories] = useState<{[key in string] : Story[] }>({});
+    const [storiesList, setStories] = useState< Story[]>([]);
 
     useEffect(() =>{
         if(stories){
-            const k = Object.keys(storiesList);
-            const lastK= k[k.length -1 ];
-            setStories({...storiesList, [lastK]: stories});
-            console.log(lastK, stories)
+            // const k = Object.keys(storiesList);
+            // const lastK= k[k.length -1 ];
+            // setStories({...storiesList, [lastK]: stories});
+            setStories(stories);
         }
     },[stories])
 
@@ -44,15 +45,17 @@ function StoriesStrip({album,stories, onLoadStories}:props){
     
 
     function loadStories(id: string | null) {
-        if(id && !storiesList[id]?.length){
-            setStories({...storiesList,[id]:[] });
+        // if(id && !storiesList[id]?.length){
+        //     setStories({...storiesList,[id]:[] });
+        //     onLoadStories(id);
+        // }
+        if(id){
             onLoadStories(id);
         }
     }
 
     function closeStory(){
-        return;
-        // setStories([]);
+        setStories([]);
     }
 
     const WIDTH = 400;
@@ -70,7 +73,46 @@ function StoriesStrip({album,stories, onLoadStories}:props){
 
         <Slider>
             {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
-            <PhotoProvider 
+            <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
+                    <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
+                        <div style={{ position: 'relative', cursor: 'pointer' }}>
+                            <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
+                            <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
+                            <Overlay
+                                gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
+                                opacity={0.85}
+                                p={{base: 'xs', md:  'md'}}
+                            >
+                                <Flex align={'end'} h="100%">
+                                    <Text fw={500} c="white">{item?.name || item.serviceGroup?.name || 'Highlights'}</Text>
+                                </Flex>
+                            </Overlay>
+                        </div>
+                    </div>
+                </div>
+            </Slide>)}
+        </Slider>
+        <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+        <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
+    </CarouselProvider>
+    {/* <PhotoProvider maskClosable={false}>
+        <PhotoView  width={500} height={500}
+        render={({ scale, attrs }) => { 
+            return storiesList.length ? <Stories
+                stories={stories}
+                defaultInterval={1500}
+                keyboardNavigation={true}
+                width={500}
+                height={500}
+                onAllStoriesEnd={closeStory}
+                storyStyles={{width: rem(472)}}
+            /> : 'Nothing to display'
+         }}>
+            <div>sdf</div>
+        </PhotoView>
+    </PhotoProvider> */}
+{/* 
+<PhotoProvider 
                 maskClosable={false}
                 maskOpacity={0.5}
                 toolbarRender={() => <div>Close</div>}
@@ -106,28 +148,8 @@ function StoriesStrip({album,stories, onLoadStories}:props){
                 </div>
                 </PhotoView>
             </PhotoProvider>
-            </Slide>)}
-        </Slider>
-        <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
-        <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
-    </CarouselProvider>
-    {/* <PhotoProvider maskClosable={false}>
-        <PhotoView  width={500} height={500}
-        render={({ scale, attrs }) => { 
-            return storiesList.length ? <Stories
-                stories={stories}
-                defaultInterval={1500}
-                keyboardNavigation={true}
-                width={500}
-                height={500}
-                onAllStoriesEnd={closeStory}
-                storyStyles={{width: rem(472)}}
-            /> : 'Nothing to display'
-         }}>
-            <div>sdf</div>
-        </PhotoView>
-    </PhotoProvider> */}
-    {/* <Modal.Root opened={!!storiesList.length} onClose={closeStory} p={0} centered>
+             */}
+    <Modal.Root opened={!!storiesList.length} onClose={closeStory} p={0} centered>
                 <Modal.Overlay />
                 <Modal.Content w={472} p={0}>
                     <Modal.Body p={0}>
@@ -142,7 +164,7 @@ function StoriesStrip({album,stories, onLoadStories}:props){
                         /> : 'Nothing to display'}
                     </Modal.Body>
                 </Modal.Content>
-            </Modal.Root> */}
+            </Modal.Root>
 </>
 }
 
