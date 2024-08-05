@@ -239,7 +239,6 @@ const ProfileHome = {
     Stories: () => {
         const data = useLoaderData<typeof loader>();
         const fetcher = useFetcher<typeof action>();
-        const isWideScreen = useMediaQuery('(min-width: 56.25em)');
         const [stories, setStories] = useState<Story[]>([]);
 
         useEffect(() => {
@@ -255,8 +254,6 @@ const ProfileHome = {
                 method: 'post'
             });
         }
-
-        function sliderCount() { return isWideScreen ? 6 : 3; }
 
         return <>
             <Suspense fallback={<Skeleton />}>
