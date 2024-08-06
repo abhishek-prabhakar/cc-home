@@ -452,7 +452,10 @@ const OnBoardPage = {
                                 <Grid.Col span={{ base: 12, md: 6 }}>
                                     <Text fw={500}>Public name:</Text>
                                     <div><Text c="dimmed">User will see this instead of your real name</Text></div>
-                                    <Flex gap={'md'}><Text fw={500}>{data.profile?.username}</Text><Text fw={500} onClick={showEditProfileDialog}><Button variant="outline" size="xs" radius="xl">Update</Button></Text></Flex>
+                                    <Flex gap={'md'}>
+                                        <Text fw={500}>{data.profile?.username}</Text>
+                                        {/* <Button variant="outline" size="xs" radius="xl" onClick={showEditProfileDialog}>Update</Button> */}
+                                    </Flex>
                                 </Grid.Col >
                             </Grid> : <OnBoardPage.EditProfileForm onSuccess={hideEditProfileDialog} />}
                     </Card>
@@ -731,8 +734,9 @@ const OnBoardPage = {
             <Grid.Col span={{ base: 12, md: 6 }}>
                 <Stack>
                     <Text fw={500}>Public name:</Text>
-                    <Select allowDeselect={false} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || [{ value: data?.profile?.username || '', label: data?.profile?.username || '' }]} />
-                    <div><Text size="sm" c="dimmed">User will see this instead of your real name</Text></div>
+                    <Text size="md" fw={500}>{profileData.username}</Text>
+                    {/* <Select allowDeselect={false} defaultValue={data?.profile?.username} onChange={value => updateData({ username: value || '' })} placeholder="Select a username" data={data?.profile.usernameSuggestion?.split(',').map((item) => ({ value: item, label: item })) || [{ value: data?.profile?.username || '', label: data?.profile?.username || '' }]} /> */}
+                    <div><Text size="sm" c="dimmed">User will see this instead of your real name. Contact support centre to update this.</Text></div>
                 </Stack>
             </Grid.Col >
             <Grid.Col span={12}>
