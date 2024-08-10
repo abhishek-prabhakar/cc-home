@@ -109,52 +109,6 @@ export default function () {
                 <p>Exceptional Circumstances: Celebria Collective reserves the right to assess refunds on a case-by-case basis for exceptional circumstances not covered by the standard policy.</p>
             </li>
             <li>
-                <Title order={5}>Cancellation by Vendors:</Title>
-
-                Cancellation More Than 14 Days Before the Service Date:
-
-                Vendors must notify Celebria Collective and the user at least 14 days in advance if they need to cancel a booking.
-                Users will have the option to reschedule with another vendor from our platform at no additional cost.
-                No penalties will be applied to the vendor.
-
-                Cancellation Between 7 to 14 Days Before the Service Date:
-
-                Vendors must notify Celebria Collective and the user between 7 to 14 days in advance if they need to cancel a booking.
-                Users will be offered a full refund or the option to reschedule with another vendor from our platform at no additional cost.
-                Vendors will receive a warning for the cancellation, and a second cancellation within 6 months may lead to a temporary suspension from the platform.
-                Cancellation Less Than 7 Days Before the Service Date:
-
-                Vendors must notify Celebria Collective and the user as soon as possible if they need to cancel a booking less than 7 days before the service date.
-                Celebria Collective will arrange for a backup vendor to ensure the service is delivered as scheduled.
-                Users will have the option to accept the backup vendor or receive a full refund.
-                Vendors may incur a penalty fee for last-minute cancellations and will receive a warning. Repeated last-minute cancellations may result in suspension or removal from the platform.
-                Emergency Cancellations:
-
-                Immediate Notification:
-                In case of emergencies (e.g., personal health issues, family emergencies), vendors must notify Celebria Collective and the user immediately.
-                Celebria Collective will make every effort to arrange for a backup vendor.
-                Users will have the option to accept the backup vendor or receive a full refund.
-                Vendors will be evaluated on a case-by-case basis to determine if penalties apply.
-                Backup Vendors:
-
-                <p>Celebria Collective will maintain a roster of qualified backup vendors to ensure continuity of service in case of cancellations.
-                Users will be informed of the backup vendor’s details and qualifications to ensure they are comfortable with the substitution.
-                Impact on Vendor Ratings:</p>
-
-               <Title order={5}>Transparency:</Title>
-                <p>All cancellations will be transparently recorded and may impact the vendor's rating on the platform.
-                Users will be informed of the reason for the cancellation and the measures taken to provide a backup vendor.
-                User Compensation:</p>
-
-                <Title order={5}>Inconvenience Compensation:</Title>
-                <p>Users affected by last-minute cancellations (less than 7 days) will receive a discount on their next booking as a token of appreciation for their understanding.
-                Vendor Support:</p>
-
-                <Title order={5}>Guidance and Training:</Title>
-                <p>Celebria Collective will provide guidance and training to vendors to help them manage their schedules and minimize cancellations.
-                Vendors are encouraged to reach out to Celebria Collective support for assistance in managing bookings and any potential scheduling conflicts.</p>
-            </li>
-            <li>
                 <Title order={5}> Policy Changes:</Title>
                 <p>Celebria Collective reserves the right to update this policy periodically. Vendors will be notified of any significant changes through the platform or email.
                 By joining Celebria Collective, vendors agree to adhere to this cancellation policy and strive to provide exceptional service to our users.</p>
