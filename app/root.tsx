@@ -28,7 +28,7 @@ import store from './store/store';
 import { Suspense, useEffect, useState } from "react";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space, Alert } from "@mantine/core";
+import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space, Alert, Progress } from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
@@ -206,7 +206,8 @@ export default function App() {
             </Box>
             <div style={{ paddingTop: '40px', position: 'relative' }}>
               <Outlet />
-              <LoadingOverlay visible={navigation.state === 'loading'} overlayProps={{ radius: "sm", blur: 2 }} />
+              <Box hidden={navigation.state !== 'loading'} pos='fixed' bottom={0} left={0} w={'100%'}><Progress color="gray" size="md" value={100} animated /></Box>
+              {/* <LoadingOverlay visible={navigation.state === 'loading'} overlayProps={{ radius: "sm", blur: 2 }} /> */}
             </div>
             <Footer />
           </Provider>
