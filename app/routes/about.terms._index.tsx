@@ -103,20 +103,20 @@ Celebria Collective is an intermediary platform that connects users with photogr
 
 <p><strong>3. User Accounts</strong></p>
 Account Creation: To use certain features, you may need to create an account. You must provide accurate and complete information and keep your account details up-to-date.
-Account Responsibility: You are responsible for maintaining the confidentiality of your account information, including your password. Any activity under your account is your responsibility.
-Termination: We reserve the right to terminate or suspend your account if we suspect any violation of these terms.
+<br/>Account Responsibility: You are responsible for maintaining the confidentiality of your account information, including your password. Any activity under your account is your responsibility.
+<br/>Termination: We reserve the right to terminate or suspend your account if we suspect any violation of these terms.
 <p><strong>4. Vendor and User Obligations</strong></p>
 Vendors: Vendors must provide accurate information about their services, including pricing, availability, and any other relevant details. Vendors retain ownership of their content (photos, videos, etc.), but by using Celebria Collective, they grant us the right to display this content on our platform.
-Users: Users must provide accurate booking information and adhere to the cancellation policy. Users agree to use the services in a lawful manner and not engage in any fraudulent activities.
+<br/>Users: Users must provide accurate booking information and adhere to the cancellation policy. Users agree to use the services in a lawful manner and not engage in any fraudulent activities.
 <p><strong>5. Booking and Payments</strong></p>
 Booking Process: When a user books a service through the platform, the vendor will receive a notification to accept or reject the booking. Booking details, including date, time, and location, will be shared with both parties.
-Payments: Users must complete payments as per the booking terms. The booking will only be confirmed upon full payment.
+<br/>Payments: Users must complete payments as per the booking terms. The booking will only be confirmed upon full payment.
 Refunds and Cancellations: 
 <p><strong>6. Cancellation and Refund Policy</strong></p>
 Please refer to our Cancellation and Refund Policy for details on cancellations and refunds.
 <p><strong>7. Content Ownership</strong></p>
 Vendor Content: Vendors retain ownership of all photos, videos, and other content they upload. Celebria Collective does not claim ownership of this content. However, vendors grant Celebria Collective the right to use this content on the platform.
-Content Removal: If you believe that your content has been used without permission, please contact us. We will take down any content upon request, provided you can prove ownership.
+<br/>Content Removal: If you believe that your content has been used without permission, please contact us. We will take down any content upon request, provided you can prove ownership.
 <p><strong>8. Privacy Policy</strong></p>
 Your use of the platform is also governed by our Privacy Policy. We take your privacy seriously and are committed to protecting your personal information.
 
