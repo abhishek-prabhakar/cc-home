@@ -49,7 +49,8 @@ const Request = {
                 {
                     "type": "body",
                     "parameters": params
-                }
+                },
+                ...interaction
             ],
         },
         };
