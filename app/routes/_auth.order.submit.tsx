@@ -40,7 +40,6 @@ export async function action({
     let orderId:string = '';
     let REDIRECT_SUCCESS = '/order/success';
     let debug_point = 'starting';
-    console.log(debug_point);
     const notification = new Notification();
 
     try{
@@ -64,7 +63,6 @@ export async function action({
             return redirect('/cart/checkout');
         }
         debug_point = '2';
-        console.log(debug_point);
 
         if (!cartData?.length) {
             return;
@@ -73,7 +71,7 @@ export async function action({
         debug_point = '3';
         const summary = await CartService.cartEstimationForCheckout(cartData, coupon, paymentMode);
         orderId = genOrderId(+loggedInUser.username);
-        debug_point = '4';console.log(debug_point);
+        debug_point = '4';
         let rpOrderRef: string = '';
         if (paymentMode !== BookingPaymentMode.EMI) {
             const rpOrder = await PaymentService.createOrder({
@@ -82,14 +80,14 @@ export async function action({
                 partialPay: paymentMode === BookingPaymentMode.PAY_LATER
             });
             rpOrderRef = rpOrder.id;
-            debug_point = '5';console.log(debug_point);
+            debug_point = '5';
         }
 
         if(paymentMode === BookingPaymentMode.FULL){
             REDIRECT_SUCCESS = '/order/payment';
         }
 
-        debug_point = '6';console.log(debug_point);
+        debug_point = '6';
         const data = await db.booking.create({
             data: {
                 id: generateUuid(),
@@ -113,7 +111,7 @@ export async function action({
             userId: loggedInUser.id
         });
 
-        debug_point = '7';console.log(debug_point);
+        debug_point = '7';
         for (let i = 0; i < summary.groupData.length; i++) {
             const item = summary.groupData[i];
             const cartItem = cartData.find(x => x.vendorServiceGroupId === item.id);
@@ -143,7 +141,6 @@ export async function action({
                     locationLon: cartItem.locationLon
                 }
             });
-            console.log(debug_point, i, 'x');
             await db.bookingAddons.createMany({
                 data: addons.map(x => ({
                     id: generateUuid(),
@@ -159,9 +156,8 @@ export async function action({
                 chatGroupId: chatGroup.id,
                 vendorId: item.vendorId
             });
-            console.log(debug_point, i, 'y');
         }
-        debug_point = '8';console.log(debug_point);
+        debug_point = '8';
         
         REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
     } catch(e){

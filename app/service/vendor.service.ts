@@ -686,7 +686,7 @@ function topRatedVendorsByType(vendorType: string) {
         image: string
     }[]>(function (resolve, reject) {
         db.vendor.findMany({
-            take: 6,
+            take: 8,
             where: {
                 isActive: true,
                 vendorType: {

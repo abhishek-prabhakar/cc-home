@@ -169,7 +169,7 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
             }
             break;
     }
-
+    discount = Math.round(discount);
 
     return {
         code: couponData?.code,
@@ -179,7 +179,7 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
 }
 
 function calculateFullPaymentPromo(value: number) {
-    const discount = (FULL_PAYMENT_DISCOUNT * value) / 100;
+    const discount = Math.round((FULL_PAYMENT_DISCOUNT * value) / 100);
     if (discount > FULL_PAYMENT_DISCOUNT_MAX_VALUE) {
         return FULL_PAYMENT_DISCOUNT_MAX_VALUE;
     } else {
@@ -202,7 +202,7 @@ async function cartCalculateCost(groupCosts: number[], addonsCost: number[], cou
     }
 
     const finalTotal = total - discount - additionalPromo;
-    const tax = (gst * finalTotal) / 100;
+    const tax = Math.round((gst * finalTotal) / 100);
 
     return {
         total,
