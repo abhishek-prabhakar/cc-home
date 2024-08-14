@@ -24,7 +24,8 @@ async function getAssociatedVendorIdByUser(userId: string){
 
     const vendor =  await db.vendor.findMany({
         where:{
-            mobileNumber: user.username
+            mobileNumber: user.username,
+            isActive: true
         },
         select:{
             id: true

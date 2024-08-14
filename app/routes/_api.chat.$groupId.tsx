@@ -20,13 +20,40 @@ export async function action(args: ActionArgs){
     const message = formData.get('message')?.toString();
     const msgType = formData.get('type')?.toString() as ChatThread_type;
 
+    if(!currentUserId){   throw new Response('Not found',{
+        status: 404,
+    }); }
+
+    const currentUserInfo = await db.user.findFirstOrThrow({
+        where:{
+            id: currentUserId
+        },
+        select:{
+            username: true
+        }
+    });
+
+    const vendorInfo = await db.vendor.findMany({
+        where:{
+            mobileNumber: currentUserInfo.username
+        },
+        select:{
+            id: true
+        }
+    });
+    const memberLookupIds = vendorInfo.map(x => x.id).concat([currentUserId])
+    
     const member =  await db.chatGroupMember.findFirstOrThrow({
         where:{
             chatGroupId,
             OR:[{
-                userId: currentUserId
+                userId: {
+                    in: memberLookupIds
+                }
             },{
-                vendorId: currentUserId
+                vendorId: {
+                    in: memberLookupIds
+                }
             }]
         },
         select:{
@@ -58,9 +85,9 @@ export async function action(args: ActionArgs){
         where:{
             chatGroupId,
             OR:[{
-                userId: { not: currentUserId }
+                userId: { notIn: memberLookupIds }
             },{
-                vendorId: { not: currentUserId }
+                vendorId: { notIn: memberLookupIds }
             }]
         },
         select:{
@@ -100,6 +127,7 @@ export async function action(args: ActionArgs){
         } else{
             url= Routes.get('VendorManageOrder', {id: member?.chatGroup?.booking?.orderId });
         }
+        console.log(toNum, message)
         if(toNum){ notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, message, url)); }
     });
     await notification.publish();
