@@ -1,4 +1,4 @@
-import { Alert, Avatar, Badge, Box, Button, Card, Container, Grid, Group, LoadingOverlay, Space, Text, Title } from "@mantine/core";
+import { Alert, Avatar, Badge, Box, Button, Card, Container, Divider, Grid, Group, LoadingOverlay, PinInput, Space, Text, Title } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
@@ -151,50 +151,73 @@ export async function loader(args: LoaderArgs){
     return await loaderResponse(userId, orderId);
 }
 
-export default function(){
-    const {orderData, chatGroup} = useLoaderData<typeof loaderResponse>();
-    const navigation = useNavigation();
-
-    return <Container size={'xl'}>
-        <Title order={5} c={'gray'}>Manage Booking</Title>
-        <Title order={4}>Order Id: {orderData.Booking.orderId}</Title>
-        <Space h="md"/>
-        <Grid>
-            <Grid.Col span={{base: 12, md: 8}}>
-                <Card withBorder>
-                    <Grid align="center">
-                        <Grid.Col span={'content'}>
-                            <Avatar variant="filled" radius="md" size="lg" src={PATH.THUMB_URL+ orderData.vendorServiceGroup.group.imageName} />
-                        </Grid.Col>
-                        <Grid.Col span={'auto'}>
-                            <Group>
-                                <Title order={5}>{orderData.vendorServiceGroup.group.name}</Title>
-                                <Badge>{orderData.status}</Badge>
-                            </Group>
-                            <Text>Date: {DateFormatter.short(orderData.date)}</Text>
-                            <Text>Time: {DateFormatter.timeHourTo12Hrs(orderData.timeHour)}</Text>
-                            <Text>Cost: <Currency value={orderData.cost}/></Text>
-                        </Grid.Col>
-                    </Grid>
-                </Card>
-                <Space h="md"/>
-                <Alert variant="outline" color="yellow" title="RSVP your availability" icon={<IconInfoCircle/>}>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. At officiis, quae tempore necessitatibus placeat saepe.
-                <Space h="md"/>
-                <Box pos="relative">
-                <LoadingOverlay visible={navigation.state !== 'idle'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-                    <Form action="" method="post">
-                    <Group>
-                        <Button type="submit" name="orderStatus" value={BookingStatus.ACCEPTED} variant="filled" color="green">Accept</Button>
-                        <Button type="submit" name="orderStatus" value={BookingStatus.REJECTED} variant="outline" color="red">Decline</Button>
-                    </Group>
-                    </Form>
-                </Box>
-                </Alert>
-            </Grid.Col>
-            <Grid.Col span={{base: 12, md: 4}}>
-                <ChatBox title="Chat with customer" chatGroupId={chatGroup?.id || ''} memberId={chatGroup?.ChatGroupMember[0]?.id || ''} disabled={chatGroup?.isDisabled || false}/>
-            </Grid.Col>
-        </Grid>
-    </Container>
+const Page = {
+    Index: () =>{
+        const {orderData, chatGroup} = useLoaderData<typeof loaderResponse>();
+        const navigation = useNavigation();
+    
+        return <Container size={'xl'}>
+            <Title order={5} c={'gray'}>Manage Booking</Title>
+            <Title order={4}>Order Id: {orderData.Booking.orderId}</Title>
+            <Space h="md"/>
+            <Grid>
+                <Grid.Col span={{base: 12, md: 8}}>
+                    <Card withBorder>
+                        <Grid align="center">
+                            <Grid.Col span={'content'}>
+                                <Avatar variant="filled" radius="md" size="lg" src={PATH.THUMB_URL+ orderData.vendorServiceGroup.group.imageName} />
+                            </Grid.Col>
+                            <Grid.Col span={'auto'}>
+                                <Group>
+                                    <Title order={5}>{orderData.vendorServiceGroup.group.name}</Title>
+                                    <Badge>{orderData.status}</Badge>
+                                </Group>
+                                <Text>Date: {DateFormatter.short(orderData.date)}</Text>
+                                <Text>Time: {DateFormatter.timeHourTo12Hrs(orderData.timeHour)}</Text>
+                                <Text>Cost: <Currency value={orderData.cost}/></Text>
+                            </Grid.Col>
+                        </Grid>
+                    </Card>
+                    <Space h="md"/>
+                    <Alert variant="outline" color="yellow" title="RSVP your availability" icon={<IconInfoCircle/>}>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. At officiis, quae tempore necessitatibus placeat saepe.
+                    <Space h="md"/>
+                    <Box pos="relative">
+                    <LoadingOverlay visible={navigation.state !== 'idle'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                       {orderData.status === BookingStatus.PENDING? <Form action="" method="post">
+                        <Group>
+                            <Button type="submit" name="orderStatus" value={BookingStatus.ACCEPTED} variant="filled" color="green">Accept</Button>
+                            <Button type="submit" name="orderStatus" value={BookingStatus.REJECTED} variant="outline" color="red">Decline</Button>
+                        </Group>
+                        </Form>: 'Thank you for your update.'}
+                    </Box>
+                    </Alert>
+                    <Space h={'lg'}/>
+                    {orderData.status === BookingStatus.ACCEPTED? <Page.StartService/>: ''}
+                </Grid.Col>
+                <Grid.Col span={{base: 12, md: 4}}>
+                    <Page.ChatSection chatGroupId={chatGroup?.id || ''} memberId={chatGroup?.ChatGroupMember[0]?.id || ''} isDisabled={chatGroup?.isDisabled || false} />
+                </Grid.Col>
+            </Grid>
+        </Container>;
+    },
+    ChatSection:(props:{ chatGroupId: string, memberId: string, isDisabled: boolean}) =>{
+        return  <ChatBox title="Chat with customer" chatGroupId={props.chatGroupId} memberId={props.memberId} disabled={props.isDisabled}/>
+    },
+    StartService: () =>{
+        return <Card withBorder>
+            <Title order={5}>Start Service</Title>
+            <Divider/>
+            <Space h={'lg'}/>
+            <Text>Enter customer OTP to begin service.</Text>
+            <PinInput/>
+            <Space h={'lg'}/>
+            <Group>
+                <Button variant="outline" size="xs">Resend OTP</Button>
+                <Button  size="xs">Verify & Start Service</Button>
+            </Group>
+        </Card>
+    }
 }
+
+export default Page.Index;
