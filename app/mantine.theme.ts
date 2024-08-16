@@ -1,4 +1,5 @@
-import { Container, MantineColorsTuple, MantineProvider, MantineTheme, MantineThemeColors, createTheme, rem } from '@mantine/core';
+import { Card, Container, MantineColorsTuple, MantineProvider, MantineTheme, MantineThemeColors, createTheme, rem } from '@mantine/core';
+import classes from './mantine.module.css';
 
 const CONTAINER_SIZES: Record<string, string> = {
     xxs: rem(300),
@@ -39,7 +40,12 @@ const theme = createTheme({
                     xxl: rem(900),
                 },
             }
-        }
+        },
+        Card: Card.extend({
+            classNames: {
+				root: classes.cardRoot,
+			},
+        })
     },
 });
 

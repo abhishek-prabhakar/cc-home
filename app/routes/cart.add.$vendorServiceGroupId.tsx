@@ -563,7 +563,7 @@ const Page = {
                                 <Space h="md" />
                                 <Stack>
                                     <Text>Forgot something?</Text>
-                                    <Button variant="outline" onClick={addToCart}>Checkout Later</Button>
+                                    <Button variant="outline" onClick={addToCart}>Add to cart</Button>
                                 </Stack>
                             </>}
                     </Grid.Col>

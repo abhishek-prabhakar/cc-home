@@ -1,0 +1,31 @@
+.cardRoot{
+    &[data-variant='coupon'] {
+        background: linear-gradient(0deg, #DF5092 10%, #C96AAB 90%);
+        color: var(--mantine-color-white);
+        
+        [data-first-section='true']{
+            position: relative;
+            border-bottom: 2px dashed #A73181;
+            margin-bottom: 10px;
+            --border-radius: 15px;
+            &::before,&::after{
+                position: absolute;
+                bottom: -15px;
+                width: 10px;
+                height: 24px;
+                background-color: white;
+                content: '';
+            }
+            &::before{
+                left: 0;
+                border-top-right-radius: var(--border-radius);
+                border-bottom-right-radius: var(--border-radius);
+            }
+            &::after{
+                right: 0;
+                border-top-left-radius: var(--border-radius);
+                border-bottom-left-radius: var(--border-radius);
+            }
+        }
+    }
+}

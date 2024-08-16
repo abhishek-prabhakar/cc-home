@@ -1,4 +1,4 @@
-import { Box, Button, Card, Divider, Flex, Grid, Group, Image,  Modal, Overlay, Rating,  Space, Stack, Text, Title, px, rem } from "@mantine/core";
+import { Box, Button, Card, Center, Divider,  Grid, Group, Image,   Overlay, Rating,  SimpleGrid,  Space, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs,  defer } from "@remix-run/node";
 import { Await, Link, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -8,14 +8,13 @@ import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { PortfolioItem, VendorProfile, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
-import Stories from 'react-insta-stories';
-
-import { CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { VendorQuery } from "~/service/vendor.service";
 import VideoPreviewItem from "~/components/VideoPreviewItem";
-import { useMediaQuery } from "@mantine/hooks";
 import Routes from "~/routes.data";
 import StoriesStrip, { Story } from "~/components/StoriesStrip";
+import { DiscountType } from "@prisma/client";
+import Currency from "~/utils/currency.transformer";
+import { IconDiscount2 } from "@tabler/icons-react";
 
 type ProfileService = { id: string,name: string, description: string };
 enum ActionType {
@@ -162,6 +161,8 @@ export async function loader({ params, request }: LoaderArgs) {
         }
     });
 
+    const packageDeals = VendorQuery.packageDeals(username);
+
     return defer({
         preselectedServiceGrpId,
         username: username,
@@ -169,7 +170,8 @@ export async function loader({ params, request }: LoaderArgs) {
         featuredPortfolio,
         services,
         stories,
-        reviews
+        reviews,
+        packageDeals
     });
 }
 
@@ -229,9 +231,9 @@ const ProfileHome = {
                     }
                 </Await>
             </Suspense>
-            <Space h="md" />
-
-            <Space h="md" />
+            <Space h="xl" />
+            <ProfileHome.Packages/>
+            <Space h="xl" />
             <ProfileHome.Gallery />
             {/* <ProfileHome.Testimonials /> */}
         </>;
@@ -352,6 +354,42 @@ const ProfileHome = {
                 </div>
             </div>
         </Stack>;
+    },
+    Packages: () =>{
+        const data = useLoaderData<typeof loader>();
+
+        return <Suspense fallback={<Skeleton/>}>
+            <Await resolve={data.packageDeals}>
+                {response => response.length? <Box>
+                    <Group align="start">
+                        <IconDiscount2/>
+                        <Box>
+                            <Title order={4}>Deals & Offers</Title>
+                            <Text>Save more with combo packs.</Text>
+                        </Box>
+                    </Group>
+                    <Space h={'md'}/>
+                    <SimpleGrid cols={3}>
+                        {response.map(item => <Card key={item.id} variant="coupon" radius={'lg'}>
+                            <Card.Section p={'lg'}>
+                                <Stack align="center" justify="center" gap={0}>
+                                    <Title order={5} tt={'uppercase'}>{item.name}</Title>
+                                    <Space h={'md'}/>
+                                    <Title order={1}>{item.discountType === DiscountType.FLAT? <Currency value={item.discountValue}/>: item.discountValue+'%'}</Title>
+                                    <Title order={3}>OFF</Title>
+                                    <Space h={'md'}/>
+                                    <Text ta={'center'} size="sm" fw={'bold'}>SERVICES INCLUDED</Text>
+                                    <Text ta={'center'} size="sm">{item.PackageItem.map(x => x.ServiceGroup.name).join(' + ')}</Text>
+                                </Stack>
+                            </Card.Section>
+                            <Center>
+                                <Link to={Routes.get('VendorPackage',{ username: data.username, id: item.keyName})}><Button size="sm" radius="xl">Redeem</Button></Link>
+                            </Center>
+                        </Card>) }
+                    </SimpleGrid> 
+                    </Box>: <></>}
+            </Await>
+        </Suspense>
     },
     Testimonials: () => {
         return <div className="container">

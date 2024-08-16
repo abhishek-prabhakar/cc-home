@@ -207,9 +207,9 @@ const Page = {
     StartService: () =>{
         return <Card withBorder>
             <Title order={5}>Start Service</Title>
-            <Divider/>
-            <Space h={'lg'}/>
+            <Space h={'sm'}/>
             <Text>Enter customer OTP to begin service.</Text>
+            <Space h={'sm'}/>
             <PinInput/>
             <Space h={'lg'}/>
             <Group>

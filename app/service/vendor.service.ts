@@ -1,4 +1,4 @@
-import { UserSource } from "@prisma/client";
+import { DiscountType, UserSource } from "@prisma/client";
 import { PATH } from "~/path.data";
 import { AddonGroupItem, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
@@ -782,6 +782,117 @@ async function getVendorContactsByUsername(username: string) {
     });
 }
 
+async function packageDeals(username: string) {
+    const profiles = await getLinkedProfiles(username);
+    const usernames = profiles.map(x => x.username);
+    const vendorsServicegroupIds = await db.vendorServiceGroup.findMany({
+        select:{
+            groupId: true
+        },
+        where:{
+            group:{
+                isActive: true
+            },
+            vendor:{
+                username:{
+                    in: usernames
+                }
+            }
+        }
+    });
+    const groupIds = vendorsServicegroupIds.map(x => x.groupId);
+    const packages = await db.package.findMany({
+        select:{
+            id: true,
+            name: true,
+            keyName: true,
+            discountType: true,
+            discountValue: true,
+            PackageItem:{
+                select:{
+                    ServiceGroup:{
+                        select:{
+                            name: true
+                        }
+                    }
+                },
+                where:{
+                    serviceGroupId:{
+                        in: groupIds
+                    }
+                }
+            }
+        }
+    });
+
+    return packages.filter(x => x.PackageItem.length > 2);
+}
+
+
+async function packageById(username: string, keyName: string) {
+    const profiles = await getLinkedProfiles(username);
+    const usernames = profiles.map(x => x.username);
+
+    const packageData = await db.package.findFirstOrThrow({
+        select:{
+            id: true,
+            name: true,
+            discountType: true,
+            discountValue: true,
+            PackageItem:{
+                select:{
+                    serviceGroupId: true
+                }
+            }
+        },
+        where:{
+            keyName
+        }
+    });
+
+    const groupIds = packageData.PackageItem.map(x => x.serviceGroupId);
+
+    const services = await db.vendorServiceGroup.findMany({
+        select:{
+            groupId: true,
+            cost: true,
+            costExtraHour: true,
+            group:{
+                select:{
+                    name: true,
+                    minHour: true,
+                    commitFullDay: true,
+                    imageName: true,
+                },
+            },
+            vendorService:{
+                select:{
+                    service:{
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+        },
+        where:{
+            vendor:{
+                username:{
+                    in: usernames
+                }
+            },
+            group:{
+                isActive: true
+            },
+            groupId:{
+                in: groupIds
+            }
+        }
+    });
+
+    return {packageData, services };
+}
+
 export const VendorQuery = {
     Stories,
     portfolioByAlbumId,
@@ -795,5 +906,7 @@ export const VendorQuery = {
     getVendorServiceGroupBasicInfo,
     getLinkedProfiles,
     topRatedVendorsByType,
-    getVendorContactsByUsername
+    getVendorContactsByUsername,
+    packageDeals,
+    packageById
 }

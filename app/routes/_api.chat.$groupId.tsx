@@ -123,9 +123,9 @@ export async function action(args: ActionArgs){
         const fromName =  member.vendor?.username || 'Customer';
         let url = '/';
         if(x.vendor?.mobileNumber){
-            url= Routes.get('UserManageOrder', {id: member?.chatGroup?.booking?.orderId });
-        } else{
             url= Routes.get('VendorManageOrder', {id: member?.chatGroup?.booking?.orderId });
+        } else{
+            url= Routes.get('UserManageOrder', {id: member?.chatGroup?.booking?.orderId });
         }
         console.log(toNum, message)
         if(toNum){ notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, message, url)); }
