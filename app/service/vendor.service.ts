@@ -875,6 +875,13 @@ async function packageById(username: string, keyName: string) {
                 }
             }
         },
+        orderBy:{
+            vendor:{
+                vendorType: {
+                    name: 'asc'
+                }
+            },
+        },
         where:{
             vendor:{
                 username:{
