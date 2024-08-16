@@ -369,7 +369,7 @@ const ProfileHome = {
                         </Box>
                     </Group>
                     <Space h={'md'}/>
-                    <SimpleGrid cols={3}>
+                    <SimpleGrid cols={{base: 1, md:3 }}>
                         {response.map(item => <Card key={item.id} variant="coupon" radius={'lg'}>
                             <Card.Section p={'lg'}>
                                 <Stack align="center" justify="center" gap={0}>
