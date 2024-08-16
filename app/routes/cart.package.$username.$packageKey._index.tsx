@@ -1,14 +1,16 @@
 import { Avatar, Badge, Box, Button, Card, Center, Container, Divider, Grid, Image, List, ListItem, Overlay, Pill, Popover, SimpleGrid, Space, Text, Title } from "@mantine/core";
 import { DiscountType } from "@prisma/client";
-import { LoaderArgs, defer } from "@remix-run/node";
-import { Await, useLoaderData } from "@remix-run/react";
+import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
+import { Await, Form, useLoaderData, useNavigation, useSubmit } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
+import { CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 
 type Service = {
+    id: string;
     groupId: string;
     cost: number;
     costExtraHour: number;
@@ -36,7 +38,7 @@ export function loader(args:LoaderArgs){
 
     const data = VendorQuery.packageById(vendorUsername, packageId);
     const vendorDetails = VendorQuery.getVendorBasicInfo(vendorUsername);
-    return defer({ vendorDetails, package: data });
+    return defer({ packageId, vendorDetails, package: data });
 }
 
 const Page = {
@@ -82,21 +84,47 @@ const Page = {
                         )}
                         </Grid>
                         <Space h={'xl'}/>
-                        <Page.SummaryBar name={response.packageData.name} discountType={response.packageData.discountType} discountValue={response.packageData.discountValue} services={response.services}/>
+                        <Page.SummaryBar packageId={data.packageId} name={response.packageData.name} discountType={response.packageData.discountType} discountValue={response.packageData.discountValue} services={response.services}/>
                     </Box>}
                 </Await>
             </Suspense>
         </Container>
     },
-    SummaryBar:function({name, services, discountType, discountValue}: {name: string, discountType: DiscountType, discountValue:number, services : Service[]}){
+    SummaryBar:function({packageId, name, services, discountType, discountValue}: {packageId: string, name: string, discountType: DiscountType, discountValue:number, services : Service[]}){
         const [totalCost, setCost] = useState(0);
+        const submit = useSubmit();
+        const navigation = useNavigation();
+
         useEffect(() =>{
             const sum = services.reduce((s,x) => s + x.cost, 0);
             setCost(sum);
         },[]);
 
+        function getInputParams() {
+            const params: CartInput[] = services?.map(x => ({
+                vendorServiceGroupId: x.id,
+                date: '',
+                timeHour: 0,
+                duration: 1,
+                services: [],
+                location: '',
+                locationLat: 0,
+                locationLon: 0
+            })) || [];
+
+            return params;
+        }
+
+        function expresCheckout() {
+            const input = getInputParams();
+            submit({ cart: JSON.stringify(input), packageId }, {
+                action: '/order/checkout',
+                method: 'post',
+            });
+        }
+
         return <Box pos={'sticky'} bottom={20}>
-            <Card withBorder shadow="sm" bg={'yellow.0'}>
+            <Card withBorder shadow="md" bg={'yellow.0'}>
                 <Grid align="center">
                     <Grid.Col span={'content'}>
                     <Avatar.Group>
@@ -116,7 +144,7 @@ const Page = {
                         <Divider orientation="vertical" h={40}/>
                     </Grid.Col>
                     <Grid.Col span={'content'}>
-                        <Button>Proceed to payment</Button>
+                        <Button loading={  ['loading','submitting'].includes(navigation.state)} type="submit" onClick={expresCheckout}>Proceed to payment</Button>
                     </Grid.Col>
                 </Grid>
             </Card>

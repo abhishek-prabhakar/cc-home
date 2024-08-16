@@ -854,6 +854,7 @@ async function packageById(username: string, keyName: string) {
 
     const services = await db.vendorServiceGroup.findMany({
         select:{
+            id: true,
             groupId: true,
             cost: true,
             costExtraHour: true,

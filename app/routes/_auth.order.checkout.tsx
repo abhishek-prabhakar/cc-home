@@ -24,6 +24,7 @@ export async function action({
     let redirectUrl;
     try {
         const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
+        const packageId = body.get('packageId')?.toString();
         if (newItem) {
             currentCart = newItem;
         }
