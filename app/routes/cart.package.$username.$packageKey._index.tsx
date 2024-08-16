@@ -52,7 +52,7 @@ const Page = {
                         <Title order={5}>Services included in this package</Title>
                         <Space h="md"/>
                         <Grid gutter={{base: 'md', md: 'xl'}}>
-                        {response?.services.map(item => <Grid.Col span={{base: 12, md: 3}}>
+                        {response?.services.map(item => <Grid.Col key={item.groupId} span={{base: 12, md: 3}}>
                             <Card radius={'md'} withBorder>
                             <Card.Section pos={'relative'}>
                                 <Image height={100} src={PATH.RESOURCE_URL+item.group.imageName}/>
@@ -67,17 +67,17 @@ const Page = {
                             <Space h="md"/>
                             <Title order={4}><Currency discountType={response.packageData.discountType} discountValue={response.packageData.discountValue} value={item.cost}/></Title>
                             <Space h="md"/>
-                            <Popover width={200} position="bottom" withArrow shadow="md">
+                            {item.vendorService.length? <Popover width={200} position="bottom" withArrow shadow="md">
                                 <Popover.Target>
-                                    <Pill styles={{label:{ margin: 'auto'}}} ta={'center'} style={{cursor:'pointer'}}>{item.vendorService[0].service.name} & {item.vendorService.length-1} features</Pill>
+                                    <Pill styles={{label:{ margin: 'auto'}}} ta={'center'} style={{cursor:'pointer'}}>{item.vendorService[0]?.service.name} & {item.vendorService.length-1} features</Pill>
                                 </Popover.Target>
                                 <Popover.Dropdown>
                                     <Text fw="bold">Included:</Text>
                                     <List>
-                                        {item.vendorService.map(s => <ListItem><Text size="sm">{s.service.name}</Text></ListItem>)}
+                                        {item.vendorService.map(s => <ListItem key={s.service.name}><Text size="sm">{s.service.name}</Text></ListItem>)}
                                     </List>
                                 </Popover.Dropdown>
-                            </Popover>
+                            </Popover>: ''}
                         </Card></Grid.Col>
                         )}
                         </Grid>
@@ -100,7 +100,7 @@ const Page = {
                 <Grid align="center">
                     <Grid.Col span={'content'}>
                     <Avatar.Group>
-                       {services.map(item=> <Avatar src={PATH.RESOURCE_URL+item.group.imageName}/>)}
+                       {services.map(item=> <Avatar key={item.groupId} src={PATH.RESOURCE_URL+item.group.imageName}/>)}
                     </Avatar.Group>
                     </Grid.Col>
                     <Grid.Col span={'auto'}>
