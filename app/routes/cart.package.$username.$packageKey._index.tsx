@@ -77,7 +77,7 @@ const Page = {
                                         {item.vendorService.map(s => <ListItem key={s.service.name}><Text size="sm">{s.service.name}</Text></ListItem>)}
                                     </List>
                                 </Popover.Dropdown>
-                            </Popover>: ''}
+                            </Popover>: <Space h={22}/>}
                         </Card></Grid.Col>
                         )}
                         </Grid>
