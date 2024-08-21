@@ -35,13 +35,13 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           <Group gap={'sm'} align="center">
             <Link to={profileUrl}><Title order={4}>{name}</Title></Link>
             {tag && <Badge color="green" size="xs">{tag}</Badge>}
-            <Box pos="relative">
+            {rating? [<Box pos="relative" key={0}>
               <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
               <Overlay color="#fff" backgroundOpacity={0} />
-            </Box>
-            <Text c="dimmed">
-             {rating? `(${rating})`: ''}
-            </Text>
+            </Box>,
+            <Text key={1} c="dimmed">
+             (${rating})
+            </Text>]:''}
           </Group>
         </Grid.Col>
       </Grid>

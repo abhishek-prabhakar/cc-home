@@ -140,7 +140,7 @@ export default function () {
     }
 
 
-    const Disablebadge = <Badge variant="outline" color="gray" size="xs">DISABLED</Badge>;
+    const Disablebadge = <Badge variant="outline" color="gray" size="xs">NOT AVAILABLE</Badge>;
 
     return <Container>
         <Title order={4}>Choose payment method</Title>
