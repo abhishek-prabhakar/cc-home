@@ -233,7 +233,7 @@ const Home = {
     const [searchValue, setSearchValue] = useState('');
     const [debounced] = useDebouncedValue(searchValue, 200);
 
-    const typewriterWords = ['work done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
+    const typewriterWords = ['events done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
 
     useEffect(() => {
       setSearchBusy(fetcher.state === 'loading');
@@ -268,7 +268,7 @@ const Home = {
               <div className="homepage-hero-search-container">
                 <Grid gutter={20}>
                   <Grid.Col span={12}>
-                    <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
+                    <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100}  delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, md: 9 }}>
                     <Stack gap={'sm'}>
