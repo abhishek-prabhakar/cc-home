@@ -66,7 +66,7 @@ const UserLogin = {
             </fetcher.Form>;
         }
 
-        return inlineMode && modalOpen ? <FormBody /> : <Modal title="Verify OTP" opened={modalOpen} onClose={() => onClose()} centered>
+        return inlineMode && modalOpen ? <FormBody /> : <Modal closeOnClickOutside={false} title="Verify OTP" opened={modalOpen} onClose={() => onClose()} centered>
             <FormBody />
         </Modal>;
     }
