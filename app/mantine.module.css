@@ -6,7 +6,7 @@
 
         &[color='green']{
             background: linear-gradient(0deg, #60DED0 10%, #6BD0B3 90%);
-            --coupon-seperator-color: #57CEAF;
+            --coupon-seperator-color: #30B794;
         }
         
         [data-first-section='true']{

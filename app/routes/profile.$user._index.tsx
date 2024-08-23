@@ -390,6 +390,7 @@ const ProfileHome = {
                             <Card.Section p={'lg'} style={{flex: 1}}>
                                 <Stack align="center" justify="center" gap={0} h={'100%'}>
                                     <Title order={5} ta={'center'} tt={'capitalize'}>{item.name}</Title>
+                                    <Text ta={'center'} size="md">{item.PackageItem.length} services</Text>
                                     <Space h={'md'}/>
                                     <Group>
                                         <Title order={3}>{item.discountType === DiscountType.FLAT? <Currency value={item.discountValue}/>: item.discountValue+'%'}</Title>
