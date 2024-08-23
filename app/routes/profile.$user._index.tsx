@@ -14,7 +14,9 @@ import Routes from "~/routes.data";
 import StoriesStrip, { Story } from "~/components/StoriesStrip";
 import { DiscountType } from "@prisma/client";
 import Currency from "~/utils/currency.transformer";
-import { IconDiscount2 } from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconDiscount2 } from "@tabler/icons-react";
+import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
+import { useMediaQuery } from "@mantine/hooks";
 
 type ProfileService = { id: string,name: string, description: string };
 enum ActionType {
@@ -357,6 +359,9 @@ const ProfileHome = {
     },
     Packages: () =>{
         const data = useLoaderData<typeof loader>();
+        const isWideScreen = useMediaQuery('(min-width: 56.25em)');
+
+        function sliderCount() { return isWideScreen ? 4 : 2; }
 
         return <Suspense fallback={<Skeleton/>}>
             <Await resolve={data.packageDeals}>
@@ -369,24 +374,38 @@ const ProfileHome = {
                         </Box>
                     </Group>
                     <Space h={'md'}/>
-                    <SimpleGrid cols={{base: 1, md:3 }}>
-                        {response.map(item => <Card key={item.id} variant="coupon" radius={'lg'}>
-                            <Card.Section p={'lg'}>
-                                <Stack align="center" justify="center" gap={0}>
-                                    <Title order={5} tt={'uppercase'}>{item.name}</Title>
+                    <CarouselProvider
+                        naturalSlideWidth={300}
+                        naturalSlideHeight={400}
+                        totalSlides={response.length}
+                        visibleSlides={sliderCount()}
+                        isIntrinsicHeight={true}
+                        step={sliderCount()} dragStep={sliderCount()}
+                        className="carousel-slider-wrapper"
+                    >
+
+                        <Slider>
+                        {response.map((item,i) => <Slide key={'s' + item.id} index={i}>
+                            <Card key={item.id} variant="coupon" radius={'lg'} h={'100%'} color={i%2? 'green':''}>
+                            <Card.Section p={'lg'} style={{flex: 1}}>
+                                <Stack align="center" justify="center" gap={0} h={'100%'}>
+                                    <Title order={5} ta={'center'} tt={'capitalize'}>{item.name}</Title>
                                     <Space h={'md'}/>
-                                    <Title order={1}>{item.discountType === DiscountType.FLAT? <Currency value={item.discountValue}/>: item.discountValue+'%'}</Title>
-                                    <Title order={3}>OFF</Title>
-                                    <Space h={'md'}/>
-                                    <Text ta={'center'} size="sm" fw={'bold'}>SERVICES INCLUDED</Text>
-                                    <Text ta={'center'} size="sm">{item.PackageItem.map(x => x.ServiceGroup.name).join(' + ')}</Text>
+                                    <Group>
+                                        <Title order={3}>{item.discountType === DiscountType.FLAT? <Currency value={item.discountValue}/>: item.discountValue+'%'}</Title>
+                                        <Title order={5}>OFF</Title>
+                                    </Group>
                                 </Stack>
                             </Card.Section>
                             <Center>
-                                <Link to={Routes.get('VendorPackage',{ username: data.username, id: item.keyName})}><Button size="sm" radius="xl">Book Now</Button></Link>
+                                <Link to={Routes.get('VendorPackage',{ username: data.username, id: item.keyName})}><Button size="sm" color="black" radius="xl">Book Now</Button></Link>
                             </Center>
-                        </Card>) }
-                    </SimpleGrid> 
+                        </Card>
+                        </Slide>) }
+                    </Slider>
+                    <ButtonBack className="btn _prev"><IconArrowNarrowLeft /></ButtonBack>
+                    <ButtonNext className="btn _next"><IconArrowNarrowRight /></ButtonNext>
+                    </CarouselProvider>
                     </Box>: <></>}
             </Await>
         </Suspense>

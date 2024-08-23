@@ -1,11 +1,17 @@
 .cardRoot{
     &[data-variant='coupon'] {
-        background: linear-gradient(0deg, #DF5092 10%, #C96AAB 90%);
+        background: linear-gradient(0deg, #DF5092 10%, #CD1092 90%);
         color: var(--mantine-color-white);
+        --coupon-seperator-color: #A73181;
+
+        &[color='green']{
+            background: linear-gradient(0deg, #60DED0 10%, #6BD0B3 90%);
+            --coupon-seperator-color: #57CEAF;
+        }
         
         [data-first-section='true']{
             position: relative;
-            border-bottom: 2px dashed #A73181;
+            border-bottom: 2px dashed var(--coupon-seperator-color);
             margin-bottom: 10px;
             --border-radius: 15px;
             &::before,&::after{
