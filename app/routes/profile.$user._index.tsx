@@ -383,7 +383,7 @@ const ProfileHome = {
                                 </Stack>
                             </Card.Section>
                             <Center>
-                                <Link to={Routes.get('VendorPackage',{ username: data.username, id: item.keyName})}><Button size="sm" radius="xl">Redeem</Button></Link>
+                                <Link to={Routes.get('VendorPackage',{ username: data.username, id: item.keyName})}><Button size="sm" radius="xl">Book Now</Button></Link>
                             </Center>
                         </Card>) }
                     </SimpleGrid> 

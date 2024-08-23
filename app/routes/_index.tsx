@@ -382,7 +382,7 @@ const Home = {
                     <div className="btn-wrapper">
                       <Link to={item.path}>
                         <Button radius="xl">
-                          Explore
+                          Book now
                         </Button>
                       </Link>
                     </div>
@@ -456,7 +456,7 @@ const Home = {
                     {CatIconList.find(x => item.title.toLowerCase().includes(x.name))?.icon}
                     <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
                     <Group className="hover-active" align="center">
-                      <Text fw={500} c={'white'}>Explore</Text>
+                      <Text fw={500} c={'white'}>Book now</Text>
                       <IconArrowNarrowRight />
                     </Group>
                   </Stack>
