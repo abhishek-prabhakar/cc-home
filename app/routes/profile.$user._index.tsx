@@ -365,7 +365,7 @@ const ProfileHome = {
                         <IconDiscount2/>
                         <Box>
                             <Title order={4}>Deals & Offers</Title>
-                            <Text>Save more with combo packs.</Text>
+                            <Text>Save big with combo packs.</Text>
                         </Box>
                     </Group>
                     <Space h={'md'}/>

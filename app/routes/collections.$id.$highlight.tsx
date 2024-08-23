@@ -63,7 +63,7 @@ const CollectionsHighlightPage = {
                         <div style={{ paddingBottom: '40px' }}></div>
                         <Grid gutter={{ base: 20,  md: 40}}>
                             {response?.services.map(service => <Grid.Col key={service.id} span={{ base: 6, md: 3 }}>
-                                <ServiceQuickCard url={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })} title={service.name} img={service.imageName} services={service.description} />
+                                <ServiceQuickCard url={Routes.get('ServiceGroup', { id: data?.highlightId || '', subId: service.id })} title={service.name} img={service.imageName} />
                             </Grid.Col>)
                             }
                         </Grid>

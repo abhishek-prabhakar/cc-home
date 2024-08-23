@@ -9,7 +9,7 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
             id: string,
             name: string,
             imageName: string,
-            description: string[]
+            description?: string[]
         }[]
     } | null>(function (resovle, reject) {
         db.serviceGroupType.findFirst({
@@ -33,22 +33,6 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                             select: {
                                 name: true
                             }
-                        },
-                        serviceGroupItem: {
-                            select: {
-                                service: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
-                            },
-                            where: {
-                                isOptional: false
-                            },
-                            orderBy: {
-                                position: 'asc'
-                            },
-                            take: 5
                         }
                     }
                 }
@@ -65,7 +49,6 @@ function getCollectionByType(type: string, vendorTypeKey: string) {
                     name: service.name,
                     id: service.id,
                     imageName: service.imageName ? PATH.THUMB_URL + service.imageName : PATH.FALLBACK_IMG,
-                    description: service.serviceGroupItem.map(x => x.service.name?.toLocaleLowerCase())
                 })),
                 vendorType: r?.ServiceGroup[0].vendorType.name
             });
@@ -141,11 +124,6 @@ function getServicesGroupsByCollection(keyName?: string | null) {
             id: string;
             name: string;
             imageName: string | null;
-            serviceGroupItem: {
-                service: {
-                    name: string;
-                };
-            }[];
             VendorServiceGroup: {
                 cost: number;
             }[];
@@ -173,16 +151,6 @@ function getServicesGroupsByCollection(keyName?: string | null) {
                         name: true,
                         id: true,
                         imageName: true,
-                        serviceGroupItem: {
-                            take: 4,
-                            select: {
-                                service: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
-                            }
-                        },
                         VendorServiceGroup: {
                             take: 1,
                             orderBy: {
