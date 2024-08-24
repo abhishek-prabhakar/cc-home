@@ -27,8 +27,8 @@ const PaymentMethodList: PaymentType[] = [
     {
         id: BookingPaymentMode.FULL,
         title: 'Pay in full',
-        offer: '5% Off',
-        description: 'Pay upfront for a 5% discount',
+        offer: COMMON_DATA.FULL_PAYMENT_DISCOUNT+'% Off',
+        description: 'Pay upfront for a '+COMMON_DATA.FULL_PAYMENT_DISCOUNT+'% discount. (maximum discount '+COMMON_DATA.currency+COMMON_DATA.FULL_PAYMENT_DISCOUNT_MAX_VALUE+')',
         disabled: false,
     },
     {

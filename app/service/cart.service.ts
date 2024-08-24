@@ -3,10 +3,11 @@ import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
 import { BookingPaymentMode, BookingStatus, Coupons_chargeType, DiscountType, FareMode } from "@prisma/client";
 import { db } from "~/utils/database";
+import COMMON_DATA from "~/data/common.data";
 
-const GST_PERCENTAGE = 18;
-const FULL_PAYMENT_DISCOUNT = 5; //in percentage
-const FULL_PAYMENT_DISCOUNT_MAX_VALUE = 2000;
+const GST_PERCENTAGE = COMMON_DATA.GST_PERCENTAGE;
+const FULL_PAYMENT_DISCOUNT = COMMON_DATA.FULL_PAYMENT_DISCOUNT; //in percentage
+const FULL_PAYMENT_DISCOUNT_MAX_VALUE = COMMON_DATA.FULL_PAYMENT_DISCOUNT_MAX_VALUE;
 
 async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: string) {
     const vendor = await db.vendorServiceGroup.findFirst({

@@ -4,8 +4,6 @@ import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, use
 import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import ConfigureBooking from "~/components/ConfigureBooking";
 import COMMON_DATA from "~/data/common.data";
 import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
@@ -17,7 +15,6 @@ import { IconMapPin } from "@tabler/icons-react";
 import { IconHeart } from "@tabler/icons-react";
 import Currency from "~/utils/currency.transformer";
 import { IconPoint } from "@tabler/icons-react";
-import { IconCircleArrowDownFilled } from "@tabler/icons-react";
 import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
 import { LOCATION_CODE, locationMap } from "~/data/locations.data";
 
@@ -192,7 +189,7 @@ const ProfileLayout = {
                             Choose easy EMI
                         </Text>
                         <Text>
-                            Pay 100% upfront for a 5% discount. Flexible, hassle-free, and tailored to your financial preferences.
+                            Pay 100% upfront for a {COMMON_DATA.FULL_PAYMENT_DISCOUNT}% discount. Flexible, hassle-free, and tailored to your financial preferences.
                         </Text>
                         <Image src="/assets/savings.png" width={'50%'} />
                     </Stack>
