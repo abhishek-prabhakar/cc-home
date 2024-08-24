@@ -126,10 +126,10 @@ const Page = {
         return <Box pos={'sticky'} bottom={20}>
             <Card withBorder shadow="md" bg={'yellow.0'}>
                 <Grid align="center">
-                    <Grid.Col span={'content'}>
-                    <Avatar.Group>
-                       {services.map(item=> <Avatar key={item.groupId} src={PATH.RESOURCE_URL+item.group.imageName}/>)}
-                    </Avatar.Group>
+                    <Grid.Col span={'content'} visibleFrom="md">
+                        <Avatar.Group>
+                        {services.map(item=> <Avatar key={item.groupId} src={PATH.RESOURCE_URL+item.group.imageName}/>)}
+                        </Avatar.Group>
                     </Grid.Col>
                     <Grid.Col span={'auto'}>
                         <Title  order={4}>{name}</Title>
