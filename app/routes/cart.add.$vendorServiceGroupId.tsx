@@ -107,7 +107,14 @@ export async function loader(args: LoaderArgs) {
     const searchParams = new URL(args.request.url).searchParams;
     const source = searchParams.get('source');
 
-    const currentCart: CartInput[] = source === 'cart' ? await userCartCookie.parse(cookieHeader) : await cartCheckoutCookie.parse(cookieHeader);
+    let currentCart: CartInput[] | null;
+    
+    if(source === 'cart'){ 
+        currentCart = await userCartCookie.parse(cookieHeader);
+     } else{
+        const r = await cartCheckoutCookie.parse(cookieHeader);
+        currentCart = r?.cart || null;
+    }
 
     const savedData = currentCart?.find(x => x.vendorServiceGroupId === id);
 

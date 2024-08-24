@@ -29,16 +29,16 @@ type Service = {
 
 export function loader(args:LoaderArgs){
     const vendorUsername = args.params.username;
-    const packageId = args.params.packageKey;
-    if(!packageId || !vendorUsername){
+    const packageKey = args.params.packageKey;
+    if(!packageKey || !vendorUsername){
         throw new Response('Page not found',{
 			status: 404,
 		});
     }
 
-    const data = VendorQuery.packageById(vendorUsername, packageId);
+    const data = VendorQuery.packageById(vendorUsername, packageKey);
     const vendorDetails = VendorQuery.getVendorBasicInfo(vendorUsername);
-    return defer({ packageId, vendorDetails, package: data });
+    return defer({ vendorDetails, package: data });
 }
 
 const Page = {
@@ -84,7 +84,7 @@ const Page = {
                         )}
                         </Grid>
                         <Space h={'xl'}/>
-                        <Page.SummaryBar packageId={data.packageId} name={response.packageData.name} discountType={response.packageData.discountType} discountValue={response.packageData.discountValue} services={response.services}/>
+                        <Page.SummaryBar packageId={response.packageData.id} name={response.packageData.name} discountType={response.packageData.discountType} discountValue={response.packageData.discountValue} services={response.services}/>
                     </Box>}
                 </Await>
             </Suspense>

@@ -21,10 +21,10 @@ export async function action({
     const payment = Routes.get('CheckoutPayment') + '?source=' + source;
     // if source is cart, then after placing the order the cart will be cleared.
 
-    let redirectUrl;
+    let redirectUrl, packageId;
     try {
         const newItem: any = JSON.parse(body.get('cart')?.toString() || '');
-        const packageId = body.get('packageId')?.toString();
+        packageId = body.get('packageId')?.toString();
         if (newItem) {
             currentCart = newItem;
         }
@@ -36,7 +36,7 @@ export async function action({
     }
     return redirect(redirectUrl ? redirectUrl.href : payment, {
         headers: {
-            "Set-Cookie": await cartCheckoutCookie.serialize(currentCart),
+            "Set-Cookie": await cartCheckoutCookie.serialize({cart:currentCart, packageId }),
         },
     });
 }

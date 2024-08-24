@@ -1,13 +1,34 @@
 import { createCookie, createCookieSessionStorage, redirect } from "@remix-run/node";
+import { CartInput } from "./types";
 // import invariant from "tiny-invariant";
 // invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 const cookieAge = 60 * 60 * 24 * 7 * 364;
 export const userCartCookie = createCookie("cart", {
     maxAge: cookieAge
 });
-export const cartCheckoutCookie = createCookie("checkout", {
+const cartCheckoutCookieData = createCookie("checkout", {
     maxAge: cookieAge
 });
+
+type CartCheckout = {
+    cart: CartInput[] | null, packageId?: string | null
+} | null
+
+function parseCartCheckoutCookie(cookieHeader: string | null):Promise<CartCheckout>{
+    return cartCheckoutCookieData.parse(cookieHeader);
+}
+
+function serializeCartCheckoutCookie(data: CartCheckout ){
+    return cartCheckoutCookieData.serialize(data);
+}
+
+export const cartCheckoutCookie = {
+    parse: parseCartCheckoutCookie,
+    serialize: serializeCartCheckoutCookie
+}
+
+
+
 export const vendorSignupCookie = createCookie("vendor-signup", {
     maxAge: cookieAge
 });

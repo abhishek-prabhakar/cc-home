@@ -44,11 +44,11 @@ const ACTIVE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER
 // Few services may not have fixed price. The total cost will be calculated during the field day.
 const ESTIMATED_SERVICE_PAYMENT_MODES: BookingPaymentMode[] = [BookingPaymentMode.PAY_LATER, BookingPaymentMode.FULL];
 
-async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode) {
+async function cartSummary(input: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode, packageId?: string | null) {
     const cartSummary = await CartService.summary(input);
     const groupCost = cartSummary.map<number>(x => x.cost);
     const addonCost = cartSummary.reduce<number[]>((acc,i) => { return acc.concat(i.services.filter(x=>!!x.id).map(x => x.cost)); }, []);
-    const estimation = await CartService.calculate(groupCost,addonCost, coupon, paymentMode);
+    const estimation = await CartService.calculate(groupCost,addonCost, coupon, paymentMode, packageId);
     return {
         estimation
     };
@@ -60,13 +60,14 @@ export async function action({ request }: ActionArgs) {
     const paymentMode = form.get('paymentMode')?.toString() as BookingPaymentMode;
 
     const cookieHeader = request.headers.get("Cookie");
-    const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
+    const currentCart = await cartCheckoutCookie.parse(cookieHeader);
 
-    if (!currentCart?.length) {
+    if (!currentCart?.cart?.length) {
         return redirect('/');
     }
-    
-    return cartSummary(currentCart, coupon, paymentMode);
+
+    const packageId = currentCart.packageId;
+    return cartSummary(currentCart.cart, coupon, paymentMode, packageId);
 }
 
 
@@ -74,12 +75,12 @@ export async function loader({
     request,
 }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");
-    const currentCart: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
+    const currentCart = await cartCheckoutCookie.parse(cookieHeader);
 
     let paymentModes: PaymentType[] = [...PaymentMethodList];
     let estimatedPaymentModes: BookingPaymentMode[] = ACTIVE_PAYMENT_MODES;
 
-    const cartSummary = await CartService.summary(currentCart);
+    const cartSummary = await CartService.summary(currentCart?.cart);
     
     const containsEstimated = cartSummary.filter(item => item.isEstimated).length;
     if (containsEstimated) {
@@ -100,7 +101,7 @@ export async function loader({
 function CouponSection({ invalid, applyCoupon }: { invalid: boolean, applyCoupon: Function }) {
     const [getCoupon, setCoupon] = useState('');
 
-    return  <Input.Wrapper  label="Coupon" error={invalid ? 'Coupon expired' : ''} >
+    return  <Input.Wrapper  label="Coupon" error={invalid ? 'Coupon expired or not eligible' : ''} >
             <Group gap={'md'} align="start">
                 <Input size="xs"  flex={1}  error={invalid} onChange={v => setCoupon(v.target.value)} />
             <Button variant="outline" size="xs" onClick={() => applyCoupon(getCoupon)}>Apply</Button>

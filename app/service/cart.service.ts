@@ -1,7 +1,7 @@
 import { CartInput, CartItem, CartItemService } from "~/types";
 import { ServiceQuery } from "./services.service";
 import { PATH } from "~/path.data";
-import { BookingPaymentMode, BookingStatus, Coupons_chargeType, FareMode } from "@prisma/client";
+import { BookingPaymentMode, BookingStatus, Coupons_chargeType, DiscountType, FareMode } from "@prisma/client";
 import { db } from "~/utils/database";
 
 const GST_PERCENTAGE = 18;
@@ -106,7 +106,7 @@ async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, pay
     }
 }
 
-function cartSummary(cart: CartInput[]) {
+function cartSummary(cart?: CartInput[] | null) {
     return new Promise<CartItem[]>(async function (resolve) {
         if (!cart?.length) {
             resolve([]);
@@ -187,16 +187,61 @@ function calculateFullPaymentPromo(value: number) {
     }
 }
 
-async function cartCalculateCost(groupCosts: number[], addonsCost: number[], coupon?: string, paymentMode?: BookingPaymentMode) {
+
+async function calculatePackageDiscount(packageId: string, total: number): Promise<{ code?: string; value: number; discount: number; promo: string | null}> {
+    const packageData = await db.package.findFirst({
+        where: {
+            id: packageId,
+        },
+        select:{
+            discountType: true,
+            discountValue: true
+        }
+    });
+
+    let discount = 0;
+    let value = total;
+    let promo = null;
+
+    switch (packageData?.discountType) {
+        case DiscountType.FLAT:
+            discount = packageData.discountValue;
+            promo = 'FLAT '+ discount;
+            break;
+        case DiscountType.PERCENTAGE:
+            discount = (packageData.discountValue * value) / 100;
+            promo = packageData.discountValue+'%';
+            break;
+    }
+    discount = Math.round(discount);
+
+    return {
+        value: value - discount,
+        discount,
+        promo
+    }
+}
+
+async function cartCalculateCost(groupCosts: number[], addonsCost: number[], coupon?: string, paymentMode?: BookingPaymentMode,packageId?: string | null) {
     const gst = GST_PERCENTAGE;
     const total = groupCosts.concat(addonsCost).reduce((sum, item) => sum + item, 0);
-    let couponData;
     let discount = 0;
     let additionalPromo = 0;
-    if (coupon) {
-        couponData = await calculateCouponDiscount(coupon, total);
+    let appliedPromo = null;
+    let appliedCoupon = null;
+    
+
+    if(packageId){
+       const packageData = await calculatePackageDiscount(packageId, total);
+       discount =  packageData.discount;
+       appliedPromo = packageData.promo;
+    } else if (coupon) {
+        const couponData = await calculateCouponDiscount(coupon, total);
         discount = couponData.discount;
+        appliedPromo = couponData.code;
+        appliedCoupon = couponData.code;
     }
+
     if (paymentMode === BookingPaymentMode.FULL) {
         additionalPromo = calculateFullPaymentPromo(total);
     }
@@ -211,8 +256,8 @@ async function cartCalculateCost(groupCosts: number[], addonsCost: number[], cou
         additionalPromo,
         final: finalTotal + tax,
         discount,
-        coupon: couponData?.code,
-        invalidCoupon: coupon && !couponData?.code ? true : false
+        coupon: appliedPromo,
+        invalidCoupon: coupon && !appliedCoupon ? true : false
     };
 }
 
@@ -221,5 +266,6 @@ export const CartService = {
     calculate: cartCalculateCost,
     summary: cartSummary, 
     getVendorServiceBookingsByDate,
-    cartEstimationForCheckout
+    cartEstimationForCheckout,
+    calculateCouponDiscount
 }

@@ -57,19 +57,19 @@ export async function action({
             return redirect('/user/login');
         }
 
-        const cartData: CartInput[] = await cartCheckoutCookie.parse(cookieHeader);
+        const cartData = await cartCheckoutCookie.parse(cookieHeader);
 
-        if (!cartData?.length) {
+        if (!cartData?.cart?.length) {
             return redirect('/cart/checkout');
         }
         debug_point = '2';
 
-        if (!cartData?.length) {
+        if (!cartData?.cart?.length) {
             return;
         }
 
         debug_point = '3';
-        const summary = await CartService.cartEstimationForCheckout(cartData, coupon, paymentMode);
+        const summary = await CartService.cartEstimationForCheckout(cartData.cart, coupon, paymentMode);
         orderId = genOrderId(+loggedInUser.username);
         debug_point = '4';
         let rpOrderRef: string = '';
@@ -114,7 +114,7 @@ export async function action({
         debug_point = '7';
         for (let i = 0; i < summary.groupData.length; i++) {
             const item = summary.groupData[i];
-            const cartItem = cartData.find(x => x.vendorServiceGroupId === item.id);
+            const cartItem = cartData.cart.find(x => x.vendorServiceGroupId === item.id);
             const addons = summary.addonData.filter(x => x.vendorServiceGroupId === item.id);
             if(!cartItem){
                 continue;
