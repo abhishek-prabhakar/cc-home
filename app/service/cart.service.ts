@@ -181,7 +181,7 @@ async function calculateCouponDiscount(coupon: string, total: number): Promise<{
 
 function calculateFullPaymentPromo(value: number) {
     const discount = Math.round((FULL_PAYMENT_DISCOUNT * value) / 100);
-    if (discount > FULL_PAYMENT_DISCOUNT_MAX_VALUE) {
+    if (FULL_PAYMENT_DISCOUNT_MAX_VALUE && discount > FULL_PAYMENT_DISCOUNT_MAX_VALUE) {
         return FULL_PAYMENT_DISCOUNT_MAX_VALUE;
     } else {
         return discount;
@@ -190,16 +190,23 @@ function calculateFullPaymentPromo(value: number) {
 
 
 async function calculatePackageDiscount(packageId: string, total: number): Promise<{ code?: string; value: number; discount: number; promo: string | null}> {
-    const packageData = await db.package.findFirst({
-        where: {
-            id: packageId,
-        },
-        select:{
-            discountType: true,
-            discountValue: true
+    let packageData;
+    if(packageId === 'CUSTOM'){
+         packageData = {
+            discountType: DiscountType.PERCENTAGE,
+            discountValue: COMMON_DATA.MAKE_YOUR_PACKAGE_MAX_DISCOUNT_VALUE
         }
-    });
-
+    } else{
+         packageData = await db.package.findFirst({
+            where: {
+                id: packageId,
+            },
+            select:{
+                discountType: true,
+                discountValue: true
+            }
+        });
+    }
     let discount = 0;
     let value = total;
     let promo = null;

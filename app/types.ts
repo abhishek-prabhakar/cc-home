@@ -235,6 +235,22 @@ export type ChatOutput = {
 }
 
 
+export type PackageService = {
+    id: string;
+    groupId: string;
+    cost: number;
+    group: {
+        name: string;
+        imageName: string | null;
+    };
+    vendorService: {
+        service: {
+            name: string;
+        };
+    }[];
+};
+
+
 export enum CHAT_DATA_TYPE {
     RECENT = 'RECENT',
     ALL_THREADS = 'ALL_THREADS'

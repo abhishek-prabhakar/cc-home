@@ -6,26 +6,9 @@ import { Suspense, useEffect, useState } from "react";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
-import { CartInput } from "~/types";
+import { CartInput, PackageService } from "~/types";
 import Currency from "~/utils/currency.transformer";
 
-type Service = {
-    id: string;
-    groupId: string;
-    cost: number;
-    costExtraHour: number;
-    group: {
-        name: string;
-        imageName: string | null;
-        minHour: number;
-        commitFullDay: boolean;
-    };
-    vendorService: {
-        service: {
-            name: string;
-        };
-    }[];
-};
 
 export function loader(args:LoaderArgs){
     const vendorUsername = args.params.username;
@@ -90,7 +73,7 @@ const Page = {
             </Suspense>
         </Container>
     },
-    SummaryBar:function({packageId, name, services, discountType, discountValue}: {packageId: string, name: string, discountType: DiscountType, discountValue:number, services : Service[]}){
+    SummaryBar:function({packageId, name, services, discountType, discountValue}: {packageId: string, name: string, discountType: DiscountType, discountValue:number, services : PackageService[]}){
         const [totalCost, setCost] = useState(0);
         const submit = useSubmit();
         const navigation = useNavigation();

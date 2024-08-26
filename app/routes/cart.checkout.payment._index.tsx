@@ -13,6 +13,7 @@ type PaymentType = {
     id: BookingPaymentMode,
     title: string,
     description: string,
+    subtext?: string,
     disabled: boolean,
     offer?: string,
 };
@@ -28,7 +29,8 @@ const PaymentMethodList: PaymentType[] = [
         id: BookingPaymentMode.FULL,
         title: 'Pay in full',
         offer: COMMON_DATA.FULL_PAYMENT_DISCOUNT+'% Off',
-        description: 'Pay upfront for a '+COMMON_DATA.FULL_PAYMENT_DISCOUNT+'% discount. (maximum discount '+COMMON_DATA.currency+COMMON_DATA.FULL_PAYMENT_DISCOUNT_MAX_VALUE+')',
+        description: 'Pay upfront for a '+COMMON_DATA.FULL_PAYMENT_DISCOUNT+'% discount.',
+        subtext: COMMON_DATA.FULL_PAYMENT_DISCOUNT_MAX_VALUE? '(maximum discount '+COMMON_DATA.currency+COMMON_DATA.FULL_PAYMENT_DISCOUNT_MAX_VALUE+')': '',
         disabled: false,
     },
     {

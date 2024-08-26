@@ -1,6 +1,6 @@
 import { DiscountType, UserSource } from "@prisma/client";
 import { PATH } from "~/path.data";
-import { AddonGroupItem, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption, VendorServicePublic } from "~/types";
+import { AddonGroupItem, PackageService, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
@@ -305,6 +305,92 @@ function getVendorByUsername(username: string) {
                 resolve(null);
             }
         }).catch(e => reject(false));
+    });
+}
+
+async function getServicesByGroupType(vendorGroupId: string){
+    const group = await db.vendorServiceGroup.findFirstOrThrow({
+        where:{
+            id: vendorGroupId
+        },
+        select:{
+            vendor:{
+                select:{
+                    username: true
+                }
+            },
+            group:{
+                select:{
+                    groupTypeId: true
+                }
+            }
+        }
+    });
+
+    const profiles = await getLinkedProfiles(group.vendor.username);
+    const usernames = profiles.map(x => x.username);
+    return new Promise<PackageService[]>(function (resolve, reject) {
+        db.vendorServiceGroup.findMany({
+            orderBy: [{
+                group: {
+                    name: 'asc'
+                }
+            }],
+            where: {
+                isActive: true,
+                vendor: {
+                    username:{
+                        in: usernames
+                    }
+                },
+                group:{
+                    groupTypeId: group.group.groupTypeId
+                }
+            },
+            select: {
+                id: true,
+                cost: true,
+                group: {
+                    select: {
+                        id: true,
+                        name: true,
+                        imageName: true,
+                    },
+                },
+                vendorService: {
+                    select: {
+                        service: {
+                            select: {
+                                name: true,
+                            }
+                        }
+                    }
+                }
+            },
+        }).then(r => {
+            const services: PackageService[] = [];
+            r.forEach(x => {
+
+                // const includedIds = x.group.serviceGroupItem.filter(i => !i.isOptional).map(i => i.serviceId);
+                // const included = x.vendorService.filter(i => includedIds.includes(i.service.id));
+                // let optional = x.vendorService.filter(i => !includedIds.includes(i.service.id))
+
+                services.push({
+                    id: x.id,
+                    groupId: x.group.id,
+                    cost: x.cost,
+                    group:{
+                        name: x.group.name,
+                        imageName: x.group.imageName ? PATH.THUMB_URL + x.group.imageName : PATH.FALLBACK_IMG,
+                    },  
+                    vendorService:  x.vendorService
+                });
+            });
+
+            resolve(services);
+        }).catch(e => {
+            reject('Connection failed');
+        });;
     });
 }
 
@@ -857,12 +943,9 @@ async function packageById(username: string, keyName: string) {
             id: true,
             groupId: true,
             cost: true,
-            costExtraHour: true,
             group:{
                 select:{
                     name: true,
-                    minHour: true,
-                    commitFullDay: true,
                     imageName: true,
                 },
             },
@@ -916,5 +999,6 @@ export const VendorQuery = {
     topRatedVendorsByType,
     getVendorContactsByUsername,
     packageDeals,
-    packageById
+    packageById,
+    getServicesByGroupType
 }

@@ -13,7 +13,8 @@ const RoutesList = {
     PaymentGateway: '/order/payment?id=:id',
     UserManageOrder: '/user/order/:id',
     VendorManageOrder: '/vendor/manage/:id',
-    VendorPackage: '/cart/package/:username/:id'
+    VendorPackage: '/cart/package/:username/:id',
+    MakeYourPackage: '/cart/package/:vendorGroupId'
 }
 
 type RoutesKeys = keyof typeof RoutesList;

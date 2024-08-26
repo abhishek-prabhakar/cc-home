@@ -93,7 +93,6 @@ const ProfileLayout = {
                     {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} preSelectedGroup={setPreselectedGrpData} />}
                 </Await>
             </Suspense>
-            <ProfileLayout.CartSuggestion />
             <ChatWithVendorAffix avatar={profileData?.avatar}/>
         </Container>
     },
@@ -157,6 +156,7 @@ const ProfileLayout = {
     Pricing: ({ services, preSelectedGroupId, preSelectedGroup }: { services: ServiceGroup[], preSelectedGroupId: string | null, preSelectedGroup: (d?: VendorServicePublic | null) => void }) => {
         const [activeService, setActive] = useState<VendorServicePublic>();
         const [flatList, setFlatList] = useState<VendorServicePublic[]>([]);
+        const [showGroupBookDialog, setShowGroupBookDialog] = useState(false);
 
         useEffect(() => {
             const list = services.reduce<VendorServicePublic[]>((acc, x) => acc.concat(x.services), []);
@@ -177,7 +177,8 @@ const ProfileLayout = {
             }
         }
 
-        return <Grid gutter={'xl'} id="book-now-section">
+        return <>
+        <Grid gutter={'xl'} id="book-now-section">
             <Grid.Col span={{ base: 12, md: 3 }}>
                 <Card withBorder style={{ borderColor: '#1D4ED7' }} p="10px">
                     <Title order={3} mb={rem(20)}>Save your money now.</Title>
@@ -214,7 +215,7 @@ const ProfileLayout = {
                             data={services.map(group => ({ group: group.name, items: group.services.map(x => ({ value: x.vendorServiceGroupId, label: x.title })) }))} />
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, md: 6 }}>
-                        <Card bg={'#F2F5FB'}>
+                        <Card shadow="lg" bg={'#F2F5FB'}>
                             <Stack>
                                 <Group justify="space-between" align="center">
                                     <Title order={5}>{activeService?.title}</Title>
@@ -252,10 +253,7 @@ const ProfileLayout = {
                                 </Stack> : ''
                                 }
 
-                                {activeService?.vendorServiceGroupId && <Link to={Routes.get('CartItem', { id: activeService?.vendorServiceGroupId })} >
-                                    <Button variant="filled" w={'100%'}>Book Now</Button>
-                                </Link>
-                                }
+                                {activeService?.vendorServiceGroupId && <Button onClick={()=> setShowGroupBookDialog(true)} variant="filled" w={'100%'}>Book Now</Button>}
                             </Stack>
                         </Card>
                     </Grid.Col>
@@ -293,25 +291,26 @@ const ProfileLayout = {
                 </Grid>
             </Grid.Col>
         </Grid>
+        <ProfileLayout.BookGroupSuggestion show={showGroupBookDialog} onClose={() => setShowGroupBookDialog(false)} vendorServiceGroupId={activeService?.vendorServiceGroupId || ''} />
+        </>
     },
-    CartSuggestion: () => {
+    BookGroupSuggestion: (props:{ show: boolean, vendorServiceGroupId: string, onClose: Function }) => {
         const location = useLocation();
         const navigate = useNavigate();
-        const [showModal, setModal] = useState(false);
-
-        useEffect(() => {
-            const url = new URLSearchParams(location.search);
-            if (url.get('cartStatus')) {
-                setModal(true);
-            }
-        }, [location.pathname]);
 
         function gotoCart() {
             navigate(Routes.get('Cart'));
         }
 
-        return <Modal title="Your cart has been updated." opened={showModal} onClose={() => setModal(false)} >
-            <Title order={5}>Forgot to add something?</Title>
+        const dialogTitle = <Title order={5}>Forgot to add something?</Title>;
+        return <Modal styles={{body:{ background:'#c6d86c'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
+            <Image src={'/assets/ads/combo-offer.png'}/>
+            <Title ta={'center'} order={4}>Add 2 more services & Save upto 30%</Title>
+            <Space h={'lg'}/>
+            <Stack>
+                <Link to={Routes.get('MakeYourPackage', { vendorGroupId: props.vendorServiceGroupId })} ><Button fullWidth  color="teal">Add more services</Button></Link>
+                <Link to={Routes.get('CartItem', { id: props.vendorServiceGroupId })} ><Button fullWidth variant="outline" color="white">Skip this offer</Button></Link>
+            </Stack>
         </Modal>;
     }
 }
