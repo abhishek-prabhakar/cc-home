@@ -10,7 +10,7 @@ import { VendorQuery } from "~/service/vendor.service";
 import { CartInput, PackageService } from "~/types";
 import Currency from "~/utils/currency.transformer";
 
-const PACKAGE_MIN_SERVICE_COUNT = 3;
+const PACKAGE_MIN_SERVICE_COUNT = COMMON_DATA.MAKE_YOUR_PACKAGE_MIN_SERVICE_COUNT;
 
 export function loader(args:LoaderArgs){
     const vendorGroupId = args.params.vendorGroupId;

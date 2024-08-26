@@ -157,6 +157,7 @@ const ProfileLayout = {
         const [activeService, setActive] = useState<VendorServicePublic>();
         const [flatList, setFlatList] = useState<VendorServicePublic[]>([]);
         const [showGroupBookDialog, setShowGroupBookDialog] = useState(false);
+        const navigate = useNavigate();
 
         useEffect(() => {
             const list = services.reduce<VendorServicePublic[]>((acc, x) => acc.concat(x.services), []);
@@ -174,6 +175,18 @@ const ProfileLayout = {
             const item = flatList.find(x => x.vendorServiceGroupId === id);
             if (item) {
                 setActive(item);
+            }
+        }
+        function showComboOfferDialog(){
+            if(!activeService){
+                return;
+            }
+            
+            const eligibleForOffer = services.find(x => x.services.find(y => y.groupId === activeService.groupId))?.services.length || 0;
+            if(eligibleForOffer >= COMMON_DATA.MAKE_YOUR_PACKAGE_MIN_SERVICE_COUNT){
+                setShowGroupBookDialog(true);
+            } else{
+                navigate(Routes.get('CartItem', { id: activeService.vendorServiceGroupId }));
             }
         }
 
@@ -253,7 +266,7 @@ const ProfileLayout = {
                                 </Stack> : ''
                                 }
 
-                                {activeService?.vendorServiceGroupId && <Button onClick={()=> setShowGroupBookDialog(true)} variant="filled" w={'100%'}>Book Now</Button>}
+                                {activeService?.vendorServiceGroupId && <Button onClick={showComboOfferDialog} variant="filled" w={'100%'}>Book Now</Button>}
                             </Stack>
                         </Card>
                     </Grid.Col>
@@ -262,7 +275,7 @@ const ProfileLayout = {
                             <Stack>
                                 <Title order={5}>Browse Services</Title>
                                 <Divider size="md" w={'10%'} />
-                                <Accordion unstyled defaultValue={String(services.findIndex(x => x.services.find(i => i.groupId === preSelectedGroupId)) || 0)}>
+                                <Accordion unstyled defaultValue={String(services.findIndex(x => !!x.services.find(i => i.groupId === activeService?.groupId)) || 0)}>
                                     {services.map((group, index) => <Accordion.Item value={'' + index} key={'' + index}>
                                         <Accordion.Control style={{
                                             width: '100%',
@@ -295,13 +308,6 @@ const ProfileLayout = {
         </>
     },
     BookGroupSuggestion: (props:{ show: boolean, vendorServiceGroupId: string, onClose: Function }) => {
-        const location = useLocation();
-        const navigate = useNavigate();
-
-        function gotoCart() {
-            navigate(Routes.get('Cart'));
-        }
-
         const dialogTitle = <Title order={5}>Forgot to add something?</Title>;
         return <Modal styles={{body:{ background:'rgba(198, 216, 108, 0.25)'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
             <Image src={'/assets/ads/combo-offer.png'}/>
