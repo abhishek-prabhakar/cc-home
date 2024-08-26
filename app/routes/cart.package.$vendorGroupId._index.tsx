@@ -22,7 +22,7 @@ export function loader(args:LoaderArgs){
 
     const data = VendorQuery.getServicesByGroupType(vendorGroupId);
     // const vendorDetails = VendorQuery.getVendorBasicInfo(vendorUsername);
-    return defer({  services: data });
+    return defer({  services: data, preSelectedServices: [vendorGroupId] });
 }
 
 const Page = {

@@ -305,6 +305,7 @@ const ProfileLayout = {
         const dialogTitle = <Title order={5}>Forgot to add something?</Title>;
         return <Modal styles={{body:{ background:'#c6d86c'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
             <Image src={'/assets/ads/combo-offer.png'}/>
+            <Space h={'lg'}/>
             <Title ta={'center'} order={4}>Add 2 more services & Save upto 30%</Title>
             <Space h={'lg'}/>
             <Stack>
