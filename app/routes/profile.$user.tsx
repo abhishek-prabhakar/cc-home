@@ -303,14 +303,14 @@ const ProfileLayout = {
         }
 
         const dialogTitle = <Title order={5}>Forgot to add something?</Title>;
-        return <Modal styles={{body:{ background:'#c6d86c'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
+        return <Modal styles={{body:{ background:'rgba(198, 216, 108, 0.25)'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
             <Image src={'/assets/ads/combo-offer.png'}/>
             <Space h={'lg'}/>
             <Title ta={'center'} order={4}>Add 2 more services & Save upto 30%</Title>
             <Space h={'lg'}/>
             <Stack>
                 <Link to={Routes.get('MakeYourPackage', { vendorGroupId: props.vendorServiceGroupId })} ><Button fullWidth  color="teal">Add more services</Button></Link>
-                <Link to={Routes.get('CartItem', { id: props.vendorServiceGroupId })} ><Button fullWidth variant="outline" color="white">Skip this offer</Button></Link>
+                <Link to={Routes.get('CartItem', { id: props.vendorServiceGroupId })} ><Button fullWidth variant="light" color="gray">Skip this offer</Button></Link>
             </Stack>
         </Modal>;
     }
