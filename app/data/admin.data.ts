@@ -3,7 +3,9 @@ const EMAIL_DATA = {
 };
 
 const PHONE_DATA = {
-    ADMIN_PHONE: '9148908849'
+    PHONE_PREFIX:'+91',
+    ADMIN_PHONE: '6363369715',
+    WHATSAPP_CHAT: 'https://wa.me/6363369715'
 };
 
 

@@ -18,6 +18,7 @@ import { IconHanger } from "@tabler/icons-react";
 import { FuseResult } from "fuse.js";
 import classNames from "classnames";
 import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
+import { SupportCenterAffix } from "~/components/SupportCenterAffix";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -174,11 +175,11 @@ const Home = {
   Index: () => {
     const data = useLoaderData<HomePage>();
 
-    return [
-      <Home.Jumbotron />,
+    return <>
+      <Home.Jumbotron />
       <div className="container no-spacer">
         <Home.Services />
-      </div>,
+      </div>
       <Container size={'xl'}>
         <Grid>
           <Grid.Col span={12}>
@@ -223,7 +224,8 @@ const Home = {
           </Grid.Col>
         </Grid>
       </Container>
-    ]
+      <SupportCenterAffix/>
+    </>
   },
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
