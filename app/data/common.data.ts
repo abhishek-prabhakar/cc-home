@@ -8,4 +8,11 @@ const COMMON_DATA = {
     MAKE_YOUR_PACKAGE_MIN_SERVICE_COUNT: 3
 };
 
+const SUPPORT_CENTER = {
+    EMAIL: '',
+    PHONE: '+91 8123575169',
+    WHATSAPP_CHAT: 'https://wa.me/8123575169'
+}
+
+export {SUPPORT_CENTER};
 export default COMMON_DATA;

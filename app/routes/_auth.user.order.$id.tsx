@@ -11,6 +11,7 @@ import { Suspense, useState } from "react";
 import { ChatBox } from "~/components/ChatBox";
 import Skeleton from "~/components/Skeleton";
 import adminData from "~/data/admin.data";
+import { SUPPORT_CENTER } from "~/data/common.data";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import ChatService from "~/service/chat.service";
@@ -365,7 +366,7 @@ const UserOrderHome = {
                             <Tooltip hidden={service.status !== BookingStatus.PENDING} label={service.status === BookingStatus.PENDING ? 'Call button will enabled after the vendor confirmation' : ''}>
                                 {service.status !== BookingStatus.ACCEPTED ? <Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'} disabled={true}>
                                     Call
-                                </Button> : <a href={'tel:'+adminData.PHONE_DATA.PHONE_PREFIX+adminData.PHONE_DATA.ADMIN_PHONE}><Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'}>
+                                </Button> : <a href={'tel:'+SUPPORT_CENTER.PHONE}><Button radius={'xl'} leftSection={<PhoneOutlined />} size={'middle'}>
                                     Call
                                 </Button></a>}
                             </Tooltip>

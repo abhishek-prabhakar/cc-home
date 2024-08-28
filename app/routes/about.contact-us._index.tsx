@@ -1,6 +1,6 @@
 import { Container, Grid, List, Space, Text, ThemeIcon, Title, rem } from "@mantine/core";
 import { IconBrandWhatsapp, IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
-import adminData from "~/data/admin.data";
+import { SUPPORT_CENTER } from "~/data/common.data";
 
 export default function () {
 
@@ -15,7 +15,7 @@ export default function () {
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconPhone style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }>+91-{adminData.PHONE_DATA.ADMIN_PHONE}</List.Item>
+                    }>{SUPPORT_CENTER.PHONE}</List.Item>
                     <List.Item icon={
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconMail style={{ width: rem(16), height: rem(16) }} />
@@ -31,7 +31,7 @@ export default function () {
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconBrandWhatsapp style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }><a href={adminData.PHONE_DATA.WHATSAPP_CHAT}>chat on whatsapp</a></List.Item>
+                    }><a href={SUPPORT_CENTER.WHATSAPP_CHAT}>chat on whatsapp</a></List.Item>
                 </List>
             </Grid.Col>
         </Grid>

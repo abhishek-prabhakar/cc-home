@@ -3,13 +3,14 @@ import { useMediaQuery, useWindowScroll } from "@mantine/hooks";
 import { IconPhoneCall } from "@tabler/icons-react";
 import { useState } from "react";
 import adminData from "~/data/admin.data";
+import { SUPPORT_CENTER } from "~/data/common.data";
 
 export function SupportCenterAffix(){
     const [scroll] = useWindowScroll();
     const [showCard, setShowCard] = useState(true);
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
 
-    const btnText = isWideScreen? `Call us at ${adminData.PHONE_DATA.PHONE_PREFIX} ${adminData.PHONE_DATA.ADMIN_PHONE}`: 'Call us now'
+    const btnText = isWideScreen? `Call us at ${SUPPORT_CENTER.PHONE}`: 'Call us now'
 
     return   <Affix position={{ bottom: 30, right: 30 }}>
           <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
@@ -22,7 +23,7 @@ export function SupportCenterAffix(){
                     <Text>Get start with a service to chat with me.</Text> */}
                     <Space h="lg"/>
                     <Group justify="center">
-                        <a href={'tel:'+adminData.PHONE_DATA.PHONE_PREFIX+adminData.PHONE_DATA.ADMIN_PHONE}>
+                        <a href={'tel:'+SUPPORT_CENTER.PHONE}>
                             <Button radius={'xl'} leftSection={<IconPhoneCall/>}  variant="gradient" gradient={{ from: 'blue', to: 'violet', deg: 122 }}>{btnText}</Button>
                         </a>
                     </Group>
