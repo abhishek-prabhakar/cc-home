@@ -185,10 +185,10 @@ export default function () {
                                             <Text size="sm" fw={500}>Additional Promo</Text>
                                             <Text size="sm" fw={500}>-<Currency value={response?.estimation.additionalPromo} /></Text>
                                         </Flex> : ''}
-                                        <Flex justify={'space-between'}>
+                                        {response?.estimation.gst? <Flex justify={'space-between'}>
                                             <Text size="sm" c="dimmed">GST ({response?.estimation.gst}%)</Text>
                                             <Text size="sm" ><Currency value={response?.estimation.tax} /></Text>
-                                        </Flex>
+                                        </Flex>: ''}
                                         <Flex justify={'space-between'}>
                                             <Text size="sm" fw={500}>Total</Text>
                                             <Text size="sm" fw={500}><Currency value={response?.estimation.final} /></Text>

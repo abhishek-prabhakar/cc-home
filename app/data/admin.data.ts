@@ -1,3 +1,6 @@
+/*
+    Used for communication with admins on alerts/notification
+*/
 const EMAIL_DATA = {
     ADMIN_EMAIL: 'rakshitharavi@celebriacollective.com'
 };
