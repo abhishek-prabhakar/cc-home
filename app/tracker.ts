@@ -1,6 +1,4 @@
-import { v4 as uuidV4 } from 'uuid'
-
-export const OPENREPLY_KEY = 'rTOIL6yXtT3QWBpBcTSB';
+import { v4 as uuidV4 } from 'uuid';
 
 function defaultGetUserId() {
     return uuidV4()

@@ -33,7 +33,6 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
-import { OPENREPLY_KEY, startTracker } from "./tracker";
 import '@mantine/carousel/styles.css';
 import Analytics from "./components/Analytics";
 
@@ -159,8 +158,8 @@ export async function loader({ request }: LoaderArgs) {
     pages,
     cartCount: userCart?.length || 0,
     ENV: {
-      openReplyprojectKey: process.env.NODE_ENV === "production" ? OPENREPLY_KEY : null,
-      FB_PIXEL_ID: process.env.NODE_ENV === "production" ? '350261611458429' : null
+      openReplyprojectKey: process.env.OPENREPLY_KEY || '',
+      FB_PIXEL_ID: process.env.FB_PIXEL_ID || ''
     }
   });
 }
