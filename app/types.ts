@@ -86,9 +86,9 @@ export type UserVerifyOtpInput = {
 }
 export type User = {
     id: string,
-    name: string,
-    phone: number,
-    email?: string
+    name: string | null,
+    phone: string,
+    email?: string | null
 }
 
 export type UserBooking = {

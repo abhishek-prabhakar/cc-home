@@ -85,8 +85,8 @@ export async function loader({ request }: LoaderArgs) {
       if (loggedInUser) {
         resolve({
           id: loggedInUser.id,
-          phone: +loggedInUser.username,
-          name: ''
+          phone: loggedInUser.username,
+          name: loggedInUser.name
         });
       } else{
         resolve(null);
@@ -189,7 +189,9 @@ export default function App() {
         <meta property="twitter:image" content="https://celebriacollective.com/assets/og-img.jpg" />
 
         <meta name="facebook-domain-verification" content="8ozo7sh586esta23ov0bh2slajstw4"/>
+        
         <ColorSchemeScript />
+        <script src='//in.fw-cdn.com/32099065/1119582.js' chat='true'/>
         {/* <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script> */}
       </head>
       <body>

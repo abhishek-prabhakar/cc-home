@@ -1,11 +1,13 @@
-import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input, Skeleton } from "@mantine/core";
+import { Alert, Badge, Button, Card, Checkbox, Container, Grid, Group, Stack, Text, Title, Space, Divider, Flex, Input, Skeleton, Modal, TextInput } from "@mantine/core";
 import { BookingPaymentMode } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
 import { Await, Form, useActionData, useFetcher, useLoaderData, useLocation, useNavigation } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import COMMON_DATA from "~/data/common.data";
 import { CartService } from "~/service/cart.service";
 import { cartCheckoutCookie } from "~/session.server";
+import { getUser } from "~/store/user.store";
 import { CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 
@@ -204,5 +206,20 @@ export default function () {
                 </Card>
             </Grid.Col>
         </Grid>
+        <UserNameDialog/>
     </Container>
+}
+
+function UserNameDialog(){
+    const user = useSelector(getUser);
+    const fetcher = useFetcher();
+    
+    return <Modal centered opened={!user.name && !fetcher.data?.name} closeOnClickOutside={false} withCloseButton={false} onClose={() => null} title="Complete your profile">
+        <fetcher.Form action="/profile/update" method="post">
+            <TextInput label="Your name" name="fullName" placeholder="Enter you full name"/>
+            <Group justify="end" mt={'md'}>
+                <Button type="submit" name="action" value="update-profile" variant="primary">Save</Button>
+            </Group>
+    </fetcher.Form>
+  </Modal>
 }

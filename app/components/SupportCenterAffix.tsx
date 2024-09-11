@@ -12,7 +12,7 @@ export function SupportCenterAffix(){
 
     const btnText = isWideScreen? `Call us at ${SUPPORT_CENTER.PHONE}`: 'Call us now'
 
-    return   <Affix position={{ bottom: 30, right: 30 }}>
+    return   <Affix position={{ bottom: 100, right: 20 }}>
           <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
             {(transitionStyles) => (
               <Card style={{...transitionStyles, overflow: 'unset'}} bg={'#fffbed'} radius={'lg'} withBorder shadow='xl' pos="relative">

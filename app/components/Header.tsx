@@ -27,7 +27,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
     const [opened, { close, open }] = useDisclosure(false);
 
     useEffect(() => {
-        dispatch(setUser(user?.id));
+        dispatch(setUser(user));
     }, [user]);
 
     function handleLocationMenuClick(key: string) {
