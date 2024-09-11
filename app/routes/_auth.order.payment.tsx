@@ -1,9 +1,10 @@
 import { Center, Loader, Stack, Text } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import {  LoaderArgs } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation, useSubmit } from "@remix-run/react";
+import { useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 import { useEffect } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import Routes from "~/routes.data";
 import PaymentService from "~/service/payment.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import { db } from "~/utils/database";
@@ -53,8 +54,8 @@ export default () => {
     const loaderData = useLoaderData<typeof loader>();
     const [Razorpay, isLoaded] = useRazorpay();
     const submit = useSubmit();
-    const actionData = useActionData();
     const navigation = useNavigation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!isLoaded || !loaderData) {
@@ -70,6 +71,9 @@ export default () => {
             order_id: loaderData?.rpData.id,
             handler: (res) => {
                 submitPaymentResponse(res);
+            },
+            modal: {
+                ondismiss: redirectToOrderInfo
             },
             prefill: {
                 email: loaderData.orderData.user.email || '',
@@ -88,6 +92,9 @@ export default () => {
     }, [isLoaded]);
 
 
+    function redirectToOrderInfo(){
+        navigate(Routes.get('UserManageOrder',{ id: loaderData.orderData.orderId}));
+    }
 
 
     function submitPaymentResponse(data: { razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string }) {
