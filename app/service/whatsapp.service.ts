@@ -8,7 +8,7 @@ const END_POINT = " https://graph.facebook.com/v19.0/335976452932928/messages";
 
 enum TEMPLATES {
     booking_confirmation_user = "booking_confirmation_user",
-    order_confirmation = "order_confirmation",
+    booking_payment_reminder_user = "booking_payment_reminder_user",
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
     user_cancellation_vendor = "user_cancellation_vendor",
     booking_rejection_user = "booking_rejection_user",
@@ -65,28 +65,6 @@ const Request = {
                  }
         });
     }
-}
-
-async function orderConfirmation(to: string, orderId: string, cost: number){
-        const params:Param[] = [ 
-            {
-                "type": "text",
-                "text": 'Customer'
-            },
-            {
-            "type": "text",
-            "text": orderId
-            },
-            {
-                "type": "text",
-                "text": '₹'+cost
-            },
-            {
-                "type": "text",
-                "text": "Celebria Collective"
-            }];
-
-    await Request.post({ template: TEMPLATES.order_confirmation, to, params });
 }
 
 
@@ -250,6 +228,54 @@ async function notifyUserOnOrderReject(input:{
  await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
+
+async function remindUserOrderPayment(input:{
+    to: string,
+    orderId: string,
+    vendorName: string,
+    service: string,
+    date: string,
+    time: string
+}){
+    
+    if(!input.to){
+        return;
+    }
+
+    const params:Param[] = [ 
+        {
+            "type": "text",
+            "text": input.vendorName
+        },
+        {
+            "type": "text",
+            "text": input.service
+        },
+        {
+            "type": "text",
+            "text": input.date
+        },
+        {
+            "type": "text",
+            "text": input.time
+        },
+    ];
+
+        const interaction:Interaction[]= [{
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": [
+                {
+                    "type": "payload",
+                    "payload": Routes.get('PaymentGateway',{ id: input.orderId })
+                }
+            ]
+        }];    
+
+ await Request.post({template: TEMPLATES.booking_payment_reminder_user, to: input.to, params,interaction, lang:  'en' });
+}
+
 async function  notifyOnNewChat(to: string, fromName: string, message:string, url: string) {
     const params:Param[] = [ 
         {
@@ -295,7 +321,8 @@ const WhatsappService = {
     notifyVendorOrderCancel,
     notifyUserOnOrderReject,
     notifyAdmin,
-    notifyOnNewChat
+    notifyOnNewChat,
+    remindUserOrderPayment
 }
 
 

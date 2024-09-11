@@ -46,7 +46,6 @@ export async function action({
         if (!userId) {
             return redirect('/user/login');
         }
-
         const loggedInUser = await db.user.findFirst({
             where: {
                 id: userId
@@ -110,6 +109,19 @@ export async function action({
             chatGroupId: chatGroup.id,
             userId: loggedInUser.id
         });
+
+        if(paymentMode === BookingPaymentMode.PAY_LATER){
+            const firstItem = cartData.cart[0];
+            const firstItemInfo = summary.groupData[0];
+            notification.whatsapp(WhatsappService.remindUserOrderPayment({
+                to: loggedInUser.username,
+                time: DateFormatter.timeHourTo12Hrs(firstItem.timeHour),
+                date: firstItem.date,
+                vendorName: '',
+                service: firstItemInfo.group.name,
+                orderId: orderId
+            }));
+        }
 
         debug_point = '7';
         for (let i = 0; i < summary.groupData.length; i++) {
