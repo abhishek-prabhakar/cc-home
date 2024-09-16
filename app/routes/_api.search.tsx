@@ -68,7 +68,7 @@ export function loader(args: LoaderArgs) {
                     isActive: true
                 },
                 username: {
-                    startsWith: query
+                    equals: query
                 }
             },
             select: {
