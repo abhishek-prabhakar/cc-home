@@ -15,7 +15,9 @@ export default function () {
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconPhone style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }>{SUPPORT_CENTER.PHONE}</List.Item>
+                    }>
+                        {SUPPORT_CENTER.PHONE} <br/>MON-SUN: 10AM to 6PM
+                        </List.Item>
                     <List.Item icon={
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconMail style={{ width: rem(16), height: rem(16) }} />

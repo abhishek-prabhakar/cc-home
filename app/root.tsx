@@ -197,7 +197,7 @@ export default function App() {
       <body>
         <MantineProvider theme={theme}>
           <Provider store={store}>
-            <OfferTicker />
+            {/* <OfferTicker /> */}
             <Box style={headerStyle}>
               <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.user}>

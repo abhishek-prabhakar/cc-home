@@ -229,8 +229,7 @@ const Home = {
   },
   Jumbotron: () => {
     const data = useLoaderData<HomePage>();
-    const fetcher = useFetcher<{ results: FuseResult<SearchResultItem>[] }>();
-    const navigate = useNavigate();
+    const fetcher = useFetcher<{ results: FuseResult<SearchResultItem>[], vendors: FuseResult<SearchResultItem>[], }>();
     const [searchBusy, setSearchBusy] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [debounced] = useDebouncedValue(searchValue, 200);
@@ -258,10 +257,6 @@ const Home = {
       })
     }
 
-    function gotoSearchItemPage(type: string, id: string) {
-      navigate(Routes.get('ServiceGroup', { id: type, subId: id }))
-    }
-
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
         <Grid.Col span={{ base: 12, md: 6 }}>
@@ -281,10 +276,8 @@ const Home = {
                     </Stack>
                     <div className="hero-search-results-panel-wrapper">
                       <Suspense fallback={<Skeleton />}>
-                        <Await resolve={fetcher.data}>
-                          {response =>searchValue && response?.results && <div className="hero-search-results-panel">{response.results?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType.keyName, item.item.id)}>
-                            {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType.name}</Text>
-                          </div>)}{!response.results?.length && <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>}</div>}
+                        <Await resolve={fetcher.data}> 
+                          {response =>searchValue && <SearchResultList services={response?.results} vendors={response?.vendors}/>}
                         </Await>
                       </Suspense>
                     </div>
@@ -533,5 +526,30 @@ const Home = {
   }
 }
 
+
+function SearchResultList({services, vendors}:{
+  services?: FuseResult<SearchResultItem>[], vendors?: FuseResult<SearchResultItem>[]
+}){
+  const navigate = useNavigate();
+
+  function gotoSearchItemPage(type: string, id: string) {
+    navigate(Routes.get('ServiceGroup', { id: type, subId: id }))
+  }
+
+  function gotoVendorProfile( id: string) {
+    navigate(Routes.get('VendorProfile', { id}))
+  }
+
+
+  return <div className="hero-search-results-panel">
+    {vendors?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoVendorProfile(item.item.id)}>
+        {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType?.name}</Text>
+    </div>)}
+    {services?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType?.keyName || '', item.item.id)}>
+        {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType?.name}</Text>
+    </div>)}
+    {!services?.length && !vendors?.length? <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>: ''}
+    </div>
+}
 
 export default Home.Index;

@@ -60,9 +60,38 @@ export function loader(args: LoaderArgs) {
         });
     });
 
+    const vendors = new Promise<{item: SearchResultItem}[]>(function (resolve, reject) {
+        db.vendor.findMany({
+            where: {
+                isActive: true,
+                vendorType: {
+                    isActive: true
+                },
+                username: {
+                    startsWith: query
+                }
+            },
+            select: {
+                username: true,
+                vendorType: {
+                    select: {
+                        name: true,
+                        keyName: true
+                    },
+                }
+            }
+        }).then(r => {
+            const fuse = r.map(x => ({ item: { id: x.username, name: x.username,vendorType: x.vendorType, serviceGroupItem: [], serviceGroupType: null } }));
+            resolve(fuse);
+        }, e => {
+            reject('Invalid search')
+        });
+    });
+
 
     return defer({
-        results: groups
+        results: groups,
+        vendors: vendors
     })
 
 }

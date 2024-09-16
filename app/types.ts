@@ -187,9 +187,9 @@ export type SearchResultItem = {
     id: string,
     name: string,
     vendorType: {
-        keyName: string,
-        name: string
-    },
+        keyName: string | null,
+        name: string | null
+    } | null,
     serviceGroupType: { name: string } | null,
     serviceGroupItem: {
         service: {
