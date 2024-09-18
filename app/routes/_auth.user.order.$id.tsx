@@ -288,7 +288,7 @@ const UserOrderHome = {
                 {orderData => !orderData? <></> :<>
                     <UserOrderHome.PaymentAlert mode={orderData.paymentMode} />
                     <Card withBorder>
-                    <Grid align={'middle'} gutter={20}>
+                    <Grid align={'center'} gutter={20}>
                         <Grid.Col span="auto">
                             <Group>
                                 <div>
@@ -331,10 +331,14 @@ const UserOrderHome = {
                             {![BookingStatus.CANCELLED, BookingStatus.REJECTED, BookingStatus.COMPLETED].some(x => x === orderData.status) ? <Timeline.Item title="Waiting for updates..."></Timeline.Item> : <></>}
                         </Timeline>
                     </div>
+                    </Card>
+                    <Space h="md" />
+                    <Card withBorder>
+                    <Title order={5}>Services</Title>
                     <Space h="md" />
                     <Divider />
                     <Space h="md" />
-                    {orderData.services.map(service => <Grid align="center" key={service.id}>
+                    {orderData.services.map(service => <Grid  key={service.id}>
                         <Grid.Col span={'content'}>
                             <Link to={'/profile/' + service.vendor.username}><Avatar src={PATH.THUMB_URL + service.vendor.profileImageName} /></Link>
                         </Grid.Col>
@@ -371,10 +375,12 @@ const UserOrderHome = {
                                 </Button></a>}
                             </Tooltip>
                         </Grid.Col>
+                        <Grid.Col span={12}>
+                            <Divider />
+                            <Space h="md" />
+                        </Grid.Col>
                     </Grid>)}
-                    <Space h="md" />
-                    <Divider />
-                    <Space h="md" />
+                    
                     <Modal opened={showModal} onClose={() => setModal(false)} title="Confirm cancellation" >
                         <Form method="post">
                             <Text>The amount deducted will be refunded to your original payment menthod in 3-10 days.</Text>
