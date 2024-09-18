@@ -35,7 +35,7 @@ type UserBooking = {
     total: number,
     services: {
         id: string,
-        date: Date,
+        date: Date | null,
         status: BookingStatus,
         timeHour: number,
         duration: number,
@@ -346,10 +346,10 @@ const UserOrderHome = {
                                 </Group>
                                 <Title order={5}>{service.name}</Title>
                                 <Text>
-                                    Date: {DateFormatter.short(service.date)}, at {DateFormatter.timeHourTo12Hrs(service.timeHour)} ({service.duration} hours)
+                                    Date: {service.date? `${DateFormatter.short(service.date)}, at ${DateFormatter.timeHourTo12Hrs(service.timeHour)} (${service.duration} hours)`: 'Our support agent will contact you shortly.'}
                                 </Text>
                                 <Text>
-                                    Venue: {service.location}
+                                    Venue: {service.location || 'Our support agent will contact you shortly.'}
                                 </Text>
                             </Stack>
                             <Space h="md" />
