@@ -1,3 +1,4 @@
+import { BookingStatus } from "@prisma/client";
 import Razorpay from "razorpay"
 import { Orders } from "razorpay/dist/types/orders";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
@@ -69,7 +70,10 @@ async function getPendingPayment(orderId:string): Promise<PendingPayment | null>
     const paymentRefList = await db.bookingPayments.findMany({
         where:{
             Booking:{
-                orderId
+                orderId,
+                status:{
+                    notIn: [BookingStatus.REJECTED,BookingStatus.CANCELLED]
+                }
             }
         },
         orderBy:{
