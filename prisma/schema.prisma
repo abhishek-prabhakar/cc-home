@@ -107,22 +107,23 @@ model VendorFiles {
 }
 
 model Booking {
-  id             String             @id
-  orderId        String             @unique
-  userId         String
-  status         BookingStatus
-  total          Int
-  tax            Int
-  discount       Int
-  coupon         String?
-  created_at     DateTime           @default(now()) @db.Timestamp(6)
-  updated_at     DateTime?          @default(now()) @db.Timestamp(6)
-  paymentMode    BookingPaymentMode
-  paymentRef     String?
-  subTotal       Int                @default(0)
-  user           User               @relation(fields: [userId], references: [id])
-  bookingService BookingService[]
-  ChatGroup      ChatGroup[]
+  id              String             @id
+  orderId         String             @unique
+  userId          String
+  status          BookingStatus
+  total           Int
+  tax             Int
+  discount        Int
+  coupon          String?
+  created_at      DateTime           @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?          @default(now()) @db.Timestamp(6)
+  paymentMode     BookingPaymentMode
+  paymentRef      String?
+  subTotal        Int                @default(0)
+  user            User               @relation(fields: [userId], references: [id])
+  bookingService  BookingService[]
+  ChatGroup       ChatGroup[]
+  BookingPayments BookingPayments[]
 }
 
 model BookingService {
@@ -411,6 +412,15 @@ model ChatThread {
   created_at  DateTime        @default(now()) @db.Timestamp(6)
   member      ChatGroupMember @relation(fields: [memberId], references: [id])
   chatGroup   ChatGroup       @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
+}
+
+model BookingPayments {
+  id         String    @id
+  bookingId  String
+  paymentRef String
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  Booking    Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 enum UserSource {
