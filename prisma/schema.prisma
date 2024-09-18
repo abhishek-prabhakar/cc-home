@@ -129,14 +129,14 @@ model BookingService {
   id                   String             @id
   bookingId            String
   status               BookingStatus
-  date                 DateTime
+  date                 DateTime?
   timeHour             Int
   duration             Int
   location             String
   cost                 Int
   created_at           DateTime           @default(now()) @db.Timestamp(6)
   updated_at           DateTime?          @default(now()) @db.Timestamp(6)
-  endDate              DateTime
+  endDate              DateTime?
   endTime              Int
   userNote             String?
   vendorServiceGroupId String
@@ -374,6 +374,7 @@ model Coupons {
   singleUse        Boolean            @default(false)
   expireAt         DateTime?          @db.Timestamp(6)
   created_at       DateTime           @default(now()) @db.Timestamp(6)
+  isActive         Boolean            @default(false)
 }
 
 model ChatGroup {

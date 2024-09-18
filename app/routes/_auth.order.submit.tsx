@@ -131,8 +131,11 @@ export async function action({
             if(!cartItem){
                 continue;
             }
-            const endDate = new Date(cartItem.date);
-            endDate.setHours(cartItem.timeHour);
+            let endDate = '';
+            if(cartItem.date){
+                const endDate = new Date(cartItem.date);
+                endDate.setHours(cartItem.timeHour);
+            }
 
             const serviceData = await db.bookingService.create({
                 data: {
@@ -143,11 +146,11 @@ export async function action({
                     cost: item.cost,
                     originalCost: item.cost,
                     vendorCost: item.costByVendor,
-                    date: cartItem.date,
+                    date: cartItem.date || null,
                     timeHour: cartItem.timeHour,
                     duration: cartItem.duration,
                     endTime: cartItem.timeHour + cartItem.duration,
-                    endDate: endDate,
+                    endDate: endDate || null,
                     location: cartItem.location,
                     locationLat: cartItem.locationLat,
                     locationLon: cartItem.locationLon
@@ -173,6 +176,7 @@ export async function action({
         
         REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
     } catch(e){
+        console.log(e)
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
 

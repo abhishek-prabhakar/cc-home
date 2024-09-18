@@ -1,7 +1,7 @@
 import { Avatar, Badge, Box, Button, Card, Center, Container, Divider, Grid, Image, List, ListItem, Overlay, Pill, Popover, SimpleGrid, Space, Text, Title } from "@mantine/core";
 import { DiscountType } from "@prisma/client";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
-import { Await, Form, useLoaderData, useNavigation, useSubmit } from "@remix-run/react";
+import { Await, Form, useLoaderData, useLocation, useNavigation, useSubmit } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
@@ -77,6 +77,7 @@ const Page = {
         const [totalCost, setCost] = useState(0);
         const submit = useSubmit();
         const navigation = useNavigation();
+        const location = useLocation();
 
         useEffect(() =>{
             const sum = services.reduce((s,x) => s + x.cost, 0);
@@ -100,7 +101,7 @@ const Page = {
 
         function expresCheckout() {
             const input = getInputParams();
-            submit({ cart: JSON.stringify(input), packageId }, {
+            submit({ cart: JSON.stringify(input), packageId, redirectUrl: location.pathname  }, {
                 action: '/order/checkout',
                 method: 'post',
             });
