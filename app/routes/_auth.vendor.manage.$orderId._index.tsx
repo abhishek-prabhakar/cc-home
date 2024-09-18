@@ -1,4 +1,4 @@
-import { Alert, Avatar, Badge, Box, Button, Card, Container, Divider, Grid, Group, LoadingOverlay, PinInput, Space, Text, Title } from "@mantine/core";
+import { Alert, Avatar, Badge, Box, Button, Card, Container, Divider, Grid, Group, LoadingOverlay, PinInput, Space, Stack, Text, Title } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
@@ -50,34 +50,21 @@ export async function action(args:ActionArgs) {
 
     const formData = await args.request.formData();
     const orderStatus = formData.get('orderStatus');
+    const bookingServiceId = formData.get('bookingServiceId')?.toString();
 
-
-    const vendorIds = await getAssociatedVendorIdByUser(userId);
-    const booking = await db.bookingService.findFirstOrThrow({
-        where:{
-            Booking:{
-                orderId
-            },
-            vendorServiceGroup:{
-                vendorId: {
-                    in: vendorIds
-                }
-            }
-        },
-        select:{
-            id: true
-        }
-    });
+    if(!bookingServiceId){
+        return false;
+    }
 
     switch(orderStatus){
         case BookingStatus.ACCEPTED: 
             await OrderService.vendorAcceptOrder({
-                id: booking.id
+                id: bookingServiceId
             });
         break;
         case BookingStatus.REJECTED: 
             await OrderService.vendorRejectOrder({
-                id: booking.id
+                id: bookingServiceId
             });
         break;
     }
@@ -89,7 +76,7 @@ export async function action(args:ActionArgs) {
 async function loaderResponse(userId: string, orderId:string){
    const vendorIds = await getAssociatedVendorIdByUser(userId);
    
-   const orderData =  await db.bookingService.findFirstOrThrow({
+   const orderData =  await db.bookingService.findMany({
        where:{
            Booking:{
                orderId
@@ -126,7 +113,7 @@ async function loaderResponse(userId: string, orderId:string){
        }
    });
 
-  const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData.vendorServiceGroup.vendorId);   
+  const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData[0].vendorServiceGroup.vendorId);   
 
    return {orderData,chatGroup};
 }
@@ -158,33 +145,34 @@ const Page = {
     
         return <Container size={'xl'}>
             <Title order={5} c={'gray'}>Manage Booking</Title>
-            <Title order={4}>Order Id: {orderData.Booking.orderId}</Title>
+            {/* <Title order={4}>Order Id: {orderData.Booking.orderId}</Title> */}
             <Space h="md"/>
             <Grid>
                 <Grid.Col span={{base: 12, md: 8}}>
-                    <Card withBorder>
+                    {orderData.map(service => <Stack>
+                        <Card withBorder>
                         <Grid align="center">
                             <Grid.Col span={'content'}>
-                                <Avatar variant="filled" radius="md" size="lg" src={PATH.THUMB_URL+ orderData.vendorServiceGroup.group.imageName} />
+                                <Avatar variant="filled" radius="md" size="lg" src={PATH.THUMB_URL+ service.vendorServiceGroup.group.imageName} />
                             </Grid.Col>
                             <Grid.Col span={'auto'}>
                                 <Group>
-                                    <Title order={5}>{orderData.vendorServiceGroup.group.name}</Title>
-                                    <Badge>{orderData.status}</Badge>
+                                    <Title order={5}>{service.vendorServiceGroup.group.name}</Title>
+                                    <Badge>{service.status}</Badge>
                                 </Group>
-                                <Text>Date: {DateFormatter.short(orderData.date)}</Text>
-                                <Text>Time: {DateFormatter.timeHourTo12Hrs(orderData.timeHour)}</Text>
-                                <Text>Cost: <Currency value={orderData.cost}/></Text>
+                                <Text>Date: {service.date? DateFormatter.short(service.date): 'To be notified'}</Text>
+                                <Text>Time: {service.date? DateFormatter.timeHourTo12Hrs(service.timeHour): '-'}</Text>
+                                <Text>Cost: <Currency value={service.cost}/></Text>
                             </Grid.Col>
                         </Grid>
                     </Card>
-                    <Space h="md"/>
                     <Alert variant="outline" color="yellow" title="RSVP your availability" icon={<IconInfoCircle/>}>
                     Lorem ipsum dolor sit, amet consectetur adipisicing elit. At officiis, quae tempore necessitatibus placeat saepe.
                     <Space h="md"/>
                     <Box pos="relative">
                     <LoadingOverlay visible={navigation.state !== 'idle'} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-                       {orderData.status === BookingStatus.PENDING? <Form action="" method="post">
+                       {service.status === BookingStatus.PENDING? <Form action="" method="post">
+                        <input type="hidden" name="bookingServiceId" value={service.id}/>
                         <Group>
                             <Button type="submit" name="orderStatus" value={BookingStatus.ACCEPTED} variant="filled" color="green">Accept</Button>
                             <Button type="submit" name="orderStatus" value={BookingStatus.REJECTED} variant="outline" color="red">Decline</Button>
@@ -193,7 +181,8 @@ const Page = {
                     </Box>
                     </Alert>
                     <Space h={'lg'}/>
-                    {orderData.status === BookingStatus.ACCEPTED? <Page.StartService/>: ''}
+                    {service.status === BookingStatus.ACCEPTED? <Page.StartService/>: ''}
+                    </Stack>)}
                 </Grid.Col>
                 <Grid.Col span={{base: 12, md: 4}}>
                     <Page.ChatSection chatGroupId={chatGroup?.id || ''} memberId={chatGroup?.ChatGroupMember[0]?.id || ''} isDisabled={chatGroup?.isDisabled || false} />

@@ -55,7 +55,7 @@ async function cancelOrder(bookingId: string){
                 to: service.vendorServiceGroup.vendor.mobileNumber,
                 orderId: orderInfo.orderId,
                 service: service.vendorServiceGroup.group.name,
-                date: DateFormatter.short(service.date),
+                date:service.date? DateFormatter.short(service.date): '-',
                 time: DateFormatter.timeHourTo12Hrs(service.timeHour)
             })
         );
@@ -133,7 +133,7 @@ async function vendorRejectOrder(params: {
         orderId: data.Booking.orderId,
         vendorName: data.vendorServiceGroup.vendor.username,
         service: data.vendorServiceGroup.group.name,
-        date: DateFormatter.short(data.date),
+        date: data.date? DateFormatter.short(data.date): '-',
         time: DateFormatter.timeHourTo12Hrs(data.timeHour)
     }));
 
