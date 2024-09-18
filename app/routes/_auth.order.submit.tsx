@@ -57,6 +57,7 @@ export async function action({
         }
 
         const cartData = await cartCheckoutCookie.parse(cookieHeader);
+        const packageId = cartData?.packageId;
 
         if (!cartData?.cart?.length) {
             return redirect('/cart/checkout');
@@ -68,7 +69,7 @@ export async function action({
         }
 
         debug_point = '3';
-        const summary = await CartService.cartEstimationForCheckout(cartData.cart, coupon, paymentMode);
+        const summary = await CartService.cartEstimationForCheckout(cartData.cart, coupon, paymentMode, packageId);
         orderId = genOrderId(+loggedInUser.username);
         debug_point = '4';
         let rpOrderRef: string = '';

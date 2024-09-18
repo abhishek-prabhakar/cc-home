@@ -11,6 +11,8 @@ import { getUser } from "~/store/user.store";
 import { CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
 
+const PAYMENTGATEWAY_LIMIT = 390000;
+
 type PaymentType = {
     id: BookingPaymentMode,
     title: string,
@@ -84,11 +86,17 @@ export async function loader({
     let paymentModes: PaymentType[] = [...PaymentMethodList];
     let estimatedPaymentModes: BookingPaymentMode[] = ACTIVE_PAYMENT_MODES;
 
-    const cartSummary = await CartService.summary(currentCart?.cart);
-    
-    const containsEstimated = cartSummary.filter(item => item.isEstimated).length;
+    const cartSummaryInfo = await CartService.summary(currentCart?.cart);
+
+    const packageId = currentCart?.packageId;
+    const containsEstimated = cartSummaryInfo.filter(item => item.isEstimated).length;
     if (containsEstimated) {
         estimatedPaymentModes = ESTIMATED_SERVICE_PAYMENT_MODES;
+    }
+
+    const estimation =  await cartSummary(currentCart?.cart || [], '', undefined, packageId);
+    if(estimation.estimation.total > PAYMENTGATEWAY_LIMIT){
+        estimatedPaymentModes = estimatedPaymentModes.filter(x => x !== BookingPaymentMode.FULL);
     }
 
     paymentModes.forEach(x => {
