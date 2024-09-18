@@ -85,7 +85,8 @@ export async function action({
                 tax: summary.estimation.tax,
                 discount: summary.estimation.discount,
                 coupon: summary.estimation.coupon,
-                paymentMode
+                paymentMode,
+                packageId
             }
         });
 
@@ -123,12 +124,12 @@ export async function action({
 
         if(paymentMode === BookingPaymentMode.PAY_LATER){
             const firstItemInfo = summary.groupData[0];
-            // notification.whatsapp(WhatsappService.remindUserOrderPayment({
-            //     to: loggedInUser.username,
-            //     vendorName: '',
-            //     service: firstItemInfo.group.name,
-            //     orderId: orderId
-            // }));
+            notification.whatsapp(WhatsappService.remindUserOrderPayment({
+                to: loggedInUser.username,
+                vendorName: '',
+                service: firstItemInfo.group.name,
+                orderId: orderId
+            }));
         }
 console.log('passed')
         debug_point = '7';
@@ -179,6 +180,7 @@ console.log('passed')
                 chatGroupId: chatGroup.id,
                 vendorId: item.vendorId
             });
+            console.log(i)
         }
         debug_point = '8';
         
