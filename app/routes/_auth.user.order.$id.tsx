@@ -56,21 +56,8 @@ type UserBooking = {
 }
 
 async function razerPayPaymentStatus(userId:string,orderId:string){
-    const rpPaymentRef = await db.booking.findFirstOrThrow({
-        where: {
-            userId,
-            orderId
-        },
-        select:{
-            status: true,
-            paymentRef: true
-        }
-    });
-    if(!rpPaymentRef?.paymentRef || rpPaymentRef.status!== BookingStatus.PENDING){
-        return null;
-    }
-
-    return await PaymentService.getOrder(rpPaymentRef.paymentRef);
+    const pendingPayment = await PaymentService.getPendingPayment(orderId);
+    return pendingPayment?.data || null;
 }
 
 export async function action(args: ActionArgs) {

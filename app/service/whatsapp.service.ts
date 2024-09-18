@@ -233,9 +233,7 @@ async function remindUserOrderPayment(input:{
     to: string,
     orderId: string,
     vendorName: string,
-    service: string,
-    date: string,
-    time: string
+    service: string
 }){
     
     if(!input.to){
@@ -250,15 +248,7 @@ async function remindUserOrderPayment(input:{
         {
             "type": "text",
             "text": input.service
-        },
-        {
-            "type": "text",
-            "text": input.date
-        },
-        {
-            "type": "text",
-            "text": input.time
-        },
+        }
     ];
 
         const interaction:Interaction[]= [{

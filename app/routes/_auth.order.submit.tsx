@@ -72,22 +72,8 @@ export async function action({
         const summary = await CartService.cartEstimationForCheckout(cartData.cart, coupon, paymentMode, packageId);
         orderId = genOrderId(+loggedInUser.username);
         debug_point = '4';
-        let rpOrderRef: string = '';
-        if (paymentMode !== BookingPaymentMode.EMI) {
-            const rpOrder = await PaymentService.createOrder({
-                amount: summary.estimation.final * 100,
-                orderId,
-                partialPay: paymentMode === BookingPaymentMode.PAY_LATER
-            });
-            rpOrderRef = rpOrder.id;
-            debug_point = '5';
-        }
+      
 
-        if(paymentMode === BookingPaymentMode.FULL){
-            REDIRECT_SUCCESS = '/order/payment';
-        }
-
-        debug_point = '6';
         const data = await db.booking.create({
             data: {
                 id: generateUuid(),
@@ -99,10 +85,34 @@ export async function action({
                 tax: summary.estimation.tax,
                 discount: summary.estimation.discount,
                 coupon: summary.estimation.coupon,
-                paymentMode,
-                paymentRef: rpOrderRef
+                paymentMode
             }
         });
+
+
+        debug_point = '5';
+        const orderValue:number[] = [];
+        if (paymentMode === BookingPaymentMode.FULL) {
+            orderValue.push(summary.estimation.final);
+        }
+
+        if (paymentMode === BookingPaymentMode.PAY_LATER) {
+            const splitAmount = summary.estimation.final/2;
+            orderValue.push(splitAmount);
+            orderValue.push(splitAmount);
+        }
+        for(let i =0;i<orderValue.length;i++){
+             await PaymentService.createOrder({
+                amount: orderValue[i] * 100,
+                orderId,
+                bookingId: data.id,
+                partialPay: false
+            });
+        }
+        debug_point = '6';
+        if(paymentMode === BookingPaymentMode.FULL){
+            REDIRECT_SUCCESS = '/order/payment';
+        }
 
         const chatGroup = await ChatService.createChatGroup(data.id);
         
@@ -112,18 +122,15 @@ export async function action({
         });
 
         if(paymentMode === BookingPaymentMode.PAY_LATER){
-            const firstItem = cartData.cart[0];
             const firstItemInfo = summary.groupData[0];
-            notification.whatsapp(WhatsappService.remindUserOrderPayment({
-                to: loggedInUser.username,
-                time: DateFormatter.timeHourTo12Hrs(firstItem.timeHour),
-                date: firstItem.date,
-                vendorName: '',
-                service: firstItemInfo.group.name,
-                orderId: orderId
-            }));
+            // notification.whatsapp(WhatsappService.remindUserOrderPayment({
+            //     to: loggedInUser.username,
+            //     vendorName: '',
+            //     service: firstItemInfo.group.name,
+            //     orderId: orderId
+            // }));
         }
-
+console.log('passed')
         debug_point = '7';
         for (let i = 0; i < summary.groupData.length; i++) {
             const item = summary.groupData[i];
@@ -177,10 +184,9 @@ export async function action({
         
         REDIRECT_SUCCESS = REDIRECT_SUCCESS + '?id=' + orderId;
     } catch(e){
-        console.log(e)
         REDIRECT_SUCCESS = '/order/failed?id='+orderId+'&p='+debug_point+'e='+JSON.stringify(e)
     }
-
+    console.log('notifi')
     notification.admin('You have a new order: ' + orderId);
     await notification.publish();
 

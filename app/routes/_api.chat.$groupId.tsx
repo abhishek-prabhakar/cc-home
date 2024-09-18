@@ -127,7 +127,6 @@ export async function action(args: ActionArgs){
         } else{
             url= Routes.get('UserManageOrder', {id: member?.chatGroup?.booking?.orderId });
         }
-        console.log(toNum, message)
         if(toNum){ notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, message, url)); }
     });
     await notification.publish();

@@ -50,7 +50,7 @@ async function getVendorServiceBookingsByDate(vendorServiceGrpId: string, date: 
     })
 }
 
-async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode){
+async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, paymentMode?: BookingPaymentMode, packageId?: string | null){
     const vendorGrpIds:string[] = [];
     let addonsIds:string[] = [];
     cart.forEach(x => {
@@ -98,7 +98,8 @@ async function cartEstimationForCheckout(cart: CartInput[], coupon?: string, pay
         groupData.map(x => x.cost),
         addonData.map(x => x.cost),
         coupon,
-        paymentMode
+        paymentMode,
+        packageId
     );
     return {
         groupData,

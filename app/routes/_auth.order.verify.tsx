@@ -15,12 +15,13 @@ export async function action({
 
     const form = await request.formData();
     const orderId = form.get('orderId')?.toString();
+    const bookingPaymentId = form.get('bookingPaymentId')?.toString();
     const razorpayPaymentId = form.get('razorpayPaymentId')?.toString();
     const razorpaySignature = form.get('razorpaySignature')?.toString();
     const userId = session.get(USER_SESSION_KEY);
 
-    if (!razorpayPaymentId || !razorpaySignature || !orderId || !userId) {
-        return;
+    if (!razorpayPaymentId || !bookingPaymentId || !razorpaySignature || !orderId || !userId) {
+        return null;
     }
 
     const orderData = await db.booking.findFirstOrThrow({
@@ -30,7 +31,6 @@ export async function action({
         },
         select: {
             orderId: true,
-            paymentRef: true,
             total: true,
             user:{
                 select:{
@@ -61,12 +61,13 @@ export async function action({
             }
         }
     });
+    const pendingPayment = await PaymentService.getPaymentByBookingPaymentId(bookingPaymentId);
 
-    if (!orderData?.paymentRef) {
-        return;
+    if (!pendingPayment) {
+        return null;
     }
 
-    const success = await PaymentService.validatePayment(orderData.paymentRef, razorpayPaymentId, razorpaySignature);
+    const success = await PaymentService.validatePayment(pendingPayment.id, razorpayPaymentId, razorpaySignature);
 
     let redirectUrl;
     const notification = new Notification();
@@ -76,7 +77,7 @@ export async function action({
         orderData.bookingService.forEach(item =>{
             notification.email(EmailService.notifyVendorNewOrder({
                 email: item.vendorServiceGroup.vendor?.email,
-                date: DateFormatter.short(item.date),
+                date: item.date? DateFormatter.short(item.date): 'To be notified',
                 serviceName: item.vendorServiceGroup.group.name,
                 orderId: orderData.orderId
             }));
@@ -84,7 +85,7 @@ export async function action({
                 to: item.vendorServiceGroup.vendor?.mobileNumber, 
                 orderId: orderData.orderId,
                 service: item.vendorServiceGroup.group.name,
-                date: DateFormatter.short(item.date),
+                date: item.date? DateFormatter.short(item.date): 'To be notified',
                 cost: item.vendorCost,
                 time: DateFormatter.timeHourTo12Hrs(item.timeHour)
             }));
@@ -94,7 +95,7 @@ export async function action({
                 to: orderData.user.username, 
                 orderId,
                 cost: orderData.total,
-                date: DateFormatter.short(orderData.bookingService[0].date),
+                date: orderData.bookingService[0].date? DateFormatter.short(orderData.bookingService[0].date): 'To be notified',
                 time: DateFormatter.timeHourTo12Hrs(orderData.bookingService[0].timeHour),
                 serviceName: orderData.bookingService[0].vendorServiceGroup.group.name
             })

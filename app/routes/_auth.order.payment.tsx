@@ -2,6 +2,7 @@ import { Center, Loader, Stack, Text } from "@mantine/core";
 import { BookingStatus } from "@prisma/client";
 import {  LoaderArgs } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
+import { Orders } from "razorpay/dist/types/orders";
 import { useEffect } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import Routes from "~/routes.data";
@@ -24,7 +25,6 @@ export async function loader({ request }: LoaderArgs) {
         select: {
             status: true,
             orderId: true,
-            paymentRef: true,
             total: true,
             user: {
                 select: {
@@ -35,19 +35,22 @@ export async function loader({ request }: LoaderArgs) {
         }
     });
 
-    if (!orderData.paymentRef || orderData.status !== BookingStatus.PENDING) {
+   
+
+    if (!orderId || orderData.status !== BookingStatus.PENDING) {
         throw new Response('Invalid data',{
 			status: 500,
 		});
     }
+    const pendingPayment = await PaymentService.getPendingPayment(orderId);
 
-    const data = await PaymentService.getOrder(orderData.paymentRef);
-    if (data.amount_paid === orderData.total * 100) {
+    if (!pendingPayment) {
         throw new Response('No pending order found',{
 			status: 500,
 		});
     }
-    return { orderData, rpData: data, key: process.env.RPAY_KEY || '' };
+
+    return { orderData, rpData: pendingPayment.data, bookingPaymentId: pendingPayment.bookingPaymentId, key: process.env.RPAY_KEY || '' };
 }
 
 export default () => {
@@ -104,7 +107,8 @@ export default () => {
         submit({
             orderId: loaderData?.orderData.orderId,
             razorpayPaymentId: data.razorpay_payment_id,
-            razorpaySignature: data.razorpay_signature
+            razorpaySignature: data.razorpay_signature,
+            bookingPaymentId: loaderData.bookingPaymentId
         }, {
             method: 'post',
             action: '/order/verify'
@@ -115,7 +119,7 @@ export default () => {
     return <Center h={200}>
         <Stack justify="center" align="center">
         <Loader  size={'lg'}/> 
-         <Text>{navigation.state === 'idle'? '': 'Processing your order. Please wait...' }</Text>
+         <Text>{navigation.state === 'idle'? 'Kindly reload this page if you are not redirected.': 'Processing your order. Please wait...' }</Text>
          </Stack>
          </Center>
 }
