@@ -75,11 +75,13 @@ export async function action({
     }
 
     const success = await PaymentService.validatePayment(pendingPayment.id, razorpayPaymentId, razorpaySignature);
-
+    
     let redirectUrl;
     const notification = new Notification();
 
     if (success) {
+        await PaymentService.markPaymentDone({ bookingPaymentId });
+
         redirectUrl = '/order/success?id=' + orderData.orderId;
         if(!checkFirstPaymentDone){
             if(orderData.packageId){

@@ -22,7 +22,7 @@ async function createOrder(props: {
 }) {
     const entryId = generateUuid();
     const data = await rpInstance.orders.create({
-        amount: props.amount,
+        amount: props.amount * 100,
         currency: "INR",
         receipt: props.orderId,
         notes: {
@@ -110,13 +110,28 @@ async function getPendingPayment(orderId:string): Promise<PendingPayment | null>
     return rpData[0];
 }
 
+async function markPaymentDone(params:{
+    bookingPaymentId: string
+}) {
+        await db.bookingPayments.update({
+            where:{
+                id: params.bookingPaymentId
+            },
+            data:{
+                paymentDone: true
+            }
+        });
+        return true;
+}
+
 const PaymentService = {
     createOrder,
     getOrder,
     validatePayment,
     getPendingPayment,
     getPaymentByBookingPaymentId,
-    checkFirstPaymentDone
+    checkFirstPaymentDone,
+    markPaymentDone
 }
 
 export default PaymentService;

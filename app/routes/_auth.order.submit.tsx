@@ -106,7 +106,7 @@ export async function action({
         }
         for(let i =0;i<orderValue.length;i++){
              await PaymentService.createOrder({
-                amount: orderValue[i] * 100,
+                amount: orderValue[i],
                 orderId,
                 bookingId: data.id,
                 partialPay: false
