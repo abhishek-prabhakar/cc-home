@@ -1,6 +1,7 @@
 import { BookingPaymentMode, BookingStatus } from "@prisma/client";
 import { ActionArgs, redirect } from "@remix-run/node";
 import adminData from "~/data/admin.data";
+import COMMON_DATA from "~/data/common.data";
 import { CartService } from "~/service/cart.service";
 import ChatService from "~/service/chat.service";
 import EmailService from "~/service/email.service";
@@ -98,9 +99,10 @@ export async function action({
         }
 
         if (paymentMode === BookingPaymentMode.PAY_LATER) {
-            const splitAmount = summary.estimation.final/2;
-            orderValue.push(splitAmount);
-            orderValue.push(splitAmount);
+            const firstPaymentAmount = summary.estimation.final*(COMMON_DATA.PAY_LATER_SLAB_PERCENTAGE/100);
+            const remainingAmount = summary.estimation.final - firstPaymentAmount;
+            orderValue.push(firstPaymentAmount);
+            orderValue.push(remainingAmount);
         }
         for(let i =0;i<orderValue.length;i++){
              await PaymentService.createOrder({

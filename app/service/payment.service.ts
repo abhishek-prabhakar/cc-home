@@ -30,13 +30,13 @@ async function createOrder(props: {
             bookingPaymentId: entryId
         },
         partial_payment: props.partialPay,
-        first_payment_min_amount: props.amount*(COMMON_DATA.PAY_LATER_SLAB_PERCENTAGE/100)
     });
     await db.bookingPayments.create({
         data:{
             id: entryId,
             paymentRef: data.id,
-            bookingId: props.bookingId
+            bookingId: props.bookingId,
+            amount: props.amount
         }
     })
     return data;
