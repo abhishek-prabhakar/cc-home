@@ -176,7 +176,7 @@ export default function () {
                                 <Space h="md" />
                                 <Divider />
                                 <Space h="md" />
-                                <Form method="post" action="/order/submit">
+                                <Form method="post" action="/order/submit" onSubmit={() => setLoading(true)}>
                                     <input type="hidden" name="source" value={new URLSearchParams(location.search).get('source') || ''} />
                                     <input type="hidden" name="paymentMode" value={paymentMethod || ''} />
                                     <input type="hidden" name="coupon" value={response?.estimation.coupon || ''} />
@@ -205,7 +205,7 @@ export default function () {
                                             <Text size="sm" fw={500}><Currency value={response?.estimation.final} /></Text>
                                         </Flex>
                                         <Divider />
-                                        <Button onClick={() => setLoading(true)} type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={isLoading || ['loading', 'submitting'].includes(fetcher.state || navigation.state)}>Place Order</Button>
+                                        <Button type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={isLoading || ['loading', 'submitting'].includes(fetcher.state || navigation.state)}>Place Order</Button>
                                     </Stack>
                                 </Form>
                             </>
