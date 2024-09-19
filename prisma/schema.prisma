@@ -424,6 +424,7 @@ model BookingPayments {
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime? @default(now()) @db.Timestamp(6)
   paymentDone Boolean   @default(false)
+  amount      Int       @default(0)
   Booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
