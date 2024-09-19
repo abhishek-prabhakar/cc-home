@@ -68,6 +68,7 @@ export async function action({
         }
     });
     const pendingPayment = await PaymentService.getPaymentByBookingPaymentId(bookingPaymentId);
+    const checkFirstPaymentDone =  await PaymentService.checkFirstPaymentDone(orderId);
 
     if (!pendingPayment) {
         return null;
@@ -80,49 +81,51 @@ export async function action({
 
     if (success) {
         redirectUrl = '/order/success?id=' + orderData.orderId;
-        if(orderData.packageId){
-            notification.email(EmailService.notifyVendorNewOrder({
-                email: orderData.bookingService[0].vendorServiceGroup.vendor?.email,
-                date:  'To be notified',
-                serviceName: orderData.Package?.name || '',
-                orderId: orderData.orderId
-            }));
-            notification.whatsapp(WhatsappService.notifyVendorNewOrder({
-                to: orderData.bookingService[0].vendorServiceGroup.vendor?.mobileNumber, 
-                orderId: orderData.orderId,
-                service: orderData.Package?.name || '',
-                date: 'To be notified',
-                cost: 0,
-                time:  'To be notified',
-            }));
-        } else{
-            orderData.bookingService.forEach(item =>{
+        if(!checkFirstPaymentDone){
+            if(orderData.packageId){
                 notification.email(EmailService.notifyVendorNewOrder({
-                    email: item.vendorServiceGroup.vendor?.email,
-                    date: item.date? DateFormatter.short(item.date): 'To be notified',
-                    serviceName: item.vendorServiceGroup.group.name,
+                    email: orderData.bookingService[0].vendorServiceGroup.vendor?.email,
+                    date:  'To be notified',
+                    serviceName: orderData.Package?.name || '',
                     orderId: orderData.orderId
                 }));
                 notification.whatsapp(WhatsappService.notifyVendorNewOrder({
-                    to: item.vendorServiceGroup.vendor?.mobileNumber, 
+                    to: orderData.bookingService[0].vendorServiceGroup.vendor?.mobileNumber, 
                     orderId: orderData.orderId,
-                    service: item.vendorServiceGroup.group.name,
-                    date: item.date? DateFormatter.short(item.date): 'To be notified',
-                    cost: item.vendorCost,
-                    time: DateFormatter.timeHourTo12Hrs(item.timeHour)
+                    service: orderData.Package?.name || '',
+                    date: 'To be notified',
+                    cost: 0,
+                    time:  'To be notified',
                 }));
-            });
+            } else{
+                orderData.bookingService.forEach(item =>{
+                    notification.email(EmailService.notifyVendorNewOrder({
+                        email: item.vendorServiceGroup.vendor?.email,
+                        date: item.date? DateFormatter.short(item.date): 'To be notified',
+                        serviceName: item.vendorServiceGroup.group.name,
+                        orderId: orderData.orderId
+                    }));
+                    notification.whatsapp(WhatsappService.notifyVendorNewOrder({
+                        to: item.vendorServiceGroup.vendor?.mobileNumber, 
+                        orderId: orderData.orderId,
+                        service: item.vendorServiceGroup.group.name,
+                        date: item.date? DateFormatter.short(item.date): 'To be notified',
+                        cost: item.vendorCost,
+                        time: DateFormatter.timeHourTo12Hrs(item.timeHour)
+                    }));
+                });
+            }
+            notification.whatsapp(
+                WhatsappService.orderConfirmationUser({
+                    to: orderData.user.username, 
+                    orderId,
+                    cost: orderData.total,
+                    date: orderData.bookingService[0].date? DateFormatter.short(orderData.bookingService[0].date): 'To be notified',
+                    time: DateFormatter.timeHourTo12Hrs(orderData.bookingService[0].timeHour),
+                    serviceName: orderData.bookingService[0].vendorServiceGroup.group.name
+                })
+            );
         }
-        notification.whatsapp(
-            WhatsappService.orderConfirmationUser({
-                to: orderData.user.username, 
-                orderId,
-                cost: orderData.total,
-                date: orderData.bookingService[0].date? DateFormatter.short(orderData.bookingService[0].date): 'To be notified',
-                time: DateFormatter.timeHourTo12Hrs(orderData.bookingService[0].timeHour),
-                serviceName: orderData.bookingService[0].vendorServiceGroup.group.name
-            })
-        );
         notification.admin('Payment recieved for ' + orderId);
     } else {
         redirectUrl = '/order/failed?id=' + orderData.orderId;

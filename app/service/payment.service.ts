@@ -66,6 +66,23 @@ async function getPaymentByBookingPaymentId(bookingPaymentId:string) {
     return  await getOrder(paymentRef.paymentRef);
 }
 
+async function checkFirstPaymentDone(orderId:string) {
+    const paymentRef = await db.bookingPayments.findFirstOrThrow({
+        where:{
+            Booking:{
+                orderId
+            }
+        },
+        select:{
+            paymentDone: true
+        },
+        orderBy:{
+            created_at: 'asc'
+        }
+    });
+    return  paymentRef.paymentDone;
+}
+
 async function getPendingPayment(orderId:string): Promise<PendingPayment | null> {
     const paymentRefList = await db.bookingPayments.findMany({
         where:{
@@ -98,7 +115,8 @@ const PaymentService = {
     getOrder,
     validatePayment,
     getPendingPayment,
-    getPaymentByBookingPaymentId
+    getPaymentByBookingPaymentId,
+    checkFirstPaymentDone
 }
 
 export default PaymentService;
