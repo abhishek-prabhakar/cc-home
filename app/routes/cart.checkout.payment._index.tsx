@@ -205,7 +205,7 @@ export default function () {
                                             <Text size="sm" fw={500}><Currency value={response?.estimation.final} /></Text>
                                         </Flex>
                                         <Divider />
-                                        <Button onClick={() => setLoading(true)} type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={isLoading || ['loading', 'submitting'].includes(fetcher.state || navigation.state)}>Place Order</Button>
+                                        <Button onClick={() => setLoading(true)} type="submit" variant="filled" fullWidth disabled={!paymentMethod} loading={['loading', 'submitting'].includes(fetcher.state || navigation.state)}>Place Order</Button>
                                     </Stack>
                                 </Form>
                             </>
