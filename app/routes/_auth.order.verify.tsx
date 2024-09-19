@@ -37,6 +37,12 @@ export async function action({
                     username: true
                 }
             },
+            packageId: true,
+            Package:{
+                select:{
+                    name: true
+                }
+            },
             bookingService:{
                 select:{
                     date: true,
@@ -74,22 +80,39 @@ export async function action({
 
     if (success) {
         redirectUrl = '/order/success?id=' + orderData.orderId;
-        orderData.bookingService.forEach(item =>{
+        if(orderData.packageId){
             notification.email(EmailService.notifyVendorNewOrder({
-                email: item.vendorServiceGroup.vendor?.email,
-                date: item.date? DateFormatter.short(item.date): 'To be notified',
-                serviceName: item.vendorServiceGroup.group.name,
+                email: orderData.bookingService[0].vendorServiceGroup.vendor?.email,
+                date:  'To be notified',
+                serviceName: orderData.Package?.name || '',
                 orderId: orderData.orderId
             }));
             notification.whatsapp(WhatsappService.notifyVendorNewOrder({
-                to: item.vendorServiceGroup.vendor?.mobileNumber, 
+                to: orderData.bookingService[0].vendorServiceGroup.vendor?.mobileNumber, 
                 orderId: orderData.orderId,
-                service: item.vendorServiceGroup.group.name,
-                date: item.date? DateFormatter.short(item.date): 'To be notified',
-                cost: item.vendorCost,
-                time: DateFormatter.timeHourTo12Hrs(item.timeHour)
+                service: orderData.Package?.name || '',
+                date: 'To be notified',
+                cost: 0,
+                time:  'To be notified',
             }));
-        });
+        } else{
+            orderData.bookingService.forEach(item =>{
+                notification.email(EmailService.notifyVendorNewOrder({
+                    email: item.vendorServiceGroup.vendor?.email,
+                    date: item.date? DateFormatter.short(item.date): 'To be notified',
+                    serviceName: item.vendorServiceGroup.group.name,
+                    orderId: orderData.orderId
+                }));
+                notification.whatsapp(WhatsappService.notifyVendorNewOrder({
+                    to: item.vendorServiceGroup.vendor?.mobileNumber, 
+                    orderId: orderData.orderId,
+                    service: item.vendorServiceGroup.group.name,
+                    date: item.date? DateFormatter.short(item.date): 'To be notified',
+                    cost: item.vendorCost,
+                    time: DateFormatter.timeHourTo12Hrs(item.timeHour)
+                }));
+            });
+        }
         notification.whatsapp(
             WhatsappService.orderConfirmationUser({
                 to: orderData.user.username, 
