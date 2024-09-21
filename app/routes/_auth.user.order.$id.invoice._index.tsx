@@ -125,7 +125,7 @@ export async function loader({ request, params }: LoaderArgs) {
         "field4": "Description",
         "field5": "Amount (INR)",
         "gstNo": "GST: ",
-        "date": "Date: "+ (orderSummary.BookingPayments[0].updated_at? DateFormatter.short(orderSummary.BookingPayments[0].updated_at || ''): '-'),
+        "date": "Date: "+ (orderSummary.BookingPayments[0]?.updated_at? DateFormatter.short(orderSummary.BookingPayments[0].updated_at || ''): '-'),
         "invoice": "Invoice #"+ orderId,
         "subTotalLabel": "Sub Total",
         "totalLabel": "Total",
