@@ -178,10 +178,52 @@ async function updateBookingStatue(bookingId:string, status: BookingStatus) {
         })
 }
 
+async function orderSummary(orderId:string) {
+    return db.booking.findFirstOrThrow({
+        where:{
+            orderId
+        },
+        select:{
+            coupon: true,
+            discount: true,
+            tax: true,
+            subTotal: true,
+            total: true,
+            paymentMode: true,
+            BookingPayments:{
+                select:{
+                    amount: true,
+                    paymentDone: true
+                }
+            },
+            Package:{
+                select:{
+                    name: true
+                }
+            },
+            bookingService: {
+                select: {
+                    cost: true,
+                    vendorServiceGroup:{
+                        select:{
+                            group:{
+                                select:{
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+}
+
 const OrderService = {
     cancelOrder,
     vendorAcceptOrder,
-    vendorRejectOrder
+    vendorRejectOrder,
+    orderSummary
 }
 
 

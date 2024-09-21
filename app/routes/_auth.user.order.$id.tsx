@@ -1,5 +1,5 @@
 import { EditOutlined, PhoneOutlined, SmileOutlined } from "@ant-design/icons";
-import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
+import { Alert, Avatar, Badge, Button, Card, Divider, Grid, Group, List, Menu, Modal, Space, Stack, Table, Text, ThemeIcon, Timeline, Title, Tooltip } from "@mantine/core";
 import { BookingPaymentMode, BookingStatus, PaymentMode } from "@prisma/client";
 import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData, useRouteError } from "@remix-run/react";
@@ -11,7 +11,7 @@ import { Suspense, useState } from "react";
 import { ChatBox } from "~/components/ChatBox";
 import Skeleton from "~/components/Skeleton";
 import adminData from "~/data/admin.data";
-import { SUPPORT_CENTER } from "~/data/common.data";
+import COMMON_DATA, { SUPPORT_CENTER } from "~/data/common.data";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import ChatService from "~/service/chat.service";
@@ -101,11 +101,18 @@ export async function loader({ request, params }: LoaderArgs) {
                 total: true,
                 tax: true,
                 status: true,
+                subTotal: true,
                 paymentMode: true,
+                Package:{
+                    select:{
+                        name: true
+                    }
+                },
                 bookingService: {
                     select: {
                         id: true,
                         cost: true,
+                        discount: true,
                         duration: true,
                         date: true,
                         timeHour: true,
@@ -184,9 +191,12 @@ export async function loader({ request, params }: LoaderArgs) {
         paymentStatus = null;
     }
 
+    const orderSummary = OrderService.orderSummary(orderId);
+
     return defer({
         orderId,
         data,
+        orderSummary,
         chatGroup,
         paymentStatus
     });
@@ -262,6 +272,8 @@ const UserOrderHome = {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 4 }}>
                 <UserOrderHome.ChatBox />
+                <Space h={'md'}/>
+                <UserOrderHome.OrderSummary/>
             </Grid.Col>
         </Grid>
         </>
@@ -392,9 +404,6 @@ const UserOrderHome = {
                         Contact support to enable chat for this order.
                 </Card>
             }
-            {/* {
-                response => <Testt d={response}/>
-            } */}
         </Await>
         </Suspense>
     },
@@ -414,6 +423,53 @@ const UserOrderHome = {
         }
 
         return  <PaymentFailedCard orderId={data?.orderId || ''}/>;
+    },
+    OrderSummary: () =>{
+        const data = useLoaderData<typeof loader>();
+
+        return  <Suspense fallback={<Skeleton/>}>
+            <Await resolve={data?.orderSummary}>
+                {response => <Card withBorder>
+                    <Grid>
+                        <Grid.Col span={'auto'}>
+                            <Title order={4}>Order Summary</Title>
+                        </Grid.Col>
+                        <Grid.Col span={'content'}>
+                            <Button variant="subtle" size="xs">View Invoice</Button>
+                        </Grid.Col>
+                    </Grid>
+                    <Space h={'md'}/>
+                    <Table>
+                        <Table.Tbody>
+                        {response?.bookingService.map(item => <Table.Tr key={item.vendorServiceGroup.group.name}>
+                            <Table.Td>{item.vendorServiceGroup.group.name}</Table.Td>
+                            <Table.Td ta={'right'}><Currency value={item.cost}/></Table.Td>
+                        </Table.Tr>)}
+                        </Table.Tbody>
+                        <Table.Tfoot>
+                        <Table.Tr>
+                            <Table.Td pt={'xl'}>Sub Total</Table.Td>
+                            <Table.Td pt={'xl'} ta={'right'}><Currency value={response?.subTotal}/></Table.Td>
+                        </Table.Tr>
+                        <Table.Tr>
+                            <Table.Td>Discount</Table.Td>
+                            <Table.Td ta={'right'}>-<Currency value={response?.discount}/></Table.Td>
+                        </Table.Tr>
+                        {response?.paymentMode === BookingPaymentMode.FULL? <Table.Tr>
+                            <Table.Td>Additional Promo</Table.Td>
+                            <Table.Td ta={'right'}>-<Currency value={response?.subTotal*(COMMON_DATA.FULL_PAYMENT_DISCOUNT/100)}/></Table.Td>
+                        </Table.Tr>: ''
+                        }
+                        <Table.Tr>
+                            <Table.Td><b>Total</b></Table.Td>
+                            <Table.Td ta={'right'}><b><Currency value={response?.total}/></b></Table.Td>
+                        </Table.Tr>
+                        </Table.Tfoot>
+                    </Table>
+                </Card>
+                }
+            </Await>
+        </Suspense>;
     }
 }
 
