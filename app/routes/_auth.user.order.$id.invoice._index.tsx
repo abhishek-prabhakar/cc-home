@@ -51,7 +51,7 @@ export async function loader({ request, params }: LoaderArgs) {
                 "width": 107.71,
                 "height": 13.71,
                 "fontSize": 10,
-                "fontColor": "#000000",
+                "fontColor": "#999999",
               },
               "gstNo": {
                 "type": "text",
