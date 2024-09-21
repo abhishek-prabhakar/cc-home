@@ -4,11 +4,11 @@ import COMMON_DATA from "~/data/common.data";
 import Routes from "~/routes.data";
 
 const API_KEY = process.env.WHATSAPP_KEY;
-const END_POINT = " https://graph.facebook.com/v19.0/335976452932928/messages";
+const END_POINT = "https://graph.facebook.com/v19.0/335976452932928/messages";
 
 enum TEMPLATES {
+    payment_reminder_user = "payment_reminder_user",
     booking_confirmation_user = "booking_confirmation_user",
-    booking_payment_reminder_user = "booking_payment_reminder_user",
     vendor_order_confirmation_regular  = "vendor_order_confirmation_regular ",
     user_cancellation_vendor = "user_cancellation_vendor",
     booking_rejection_user = "booking_rejection_user",
@@ -55,7 +55,7 @@ const Request = {
         },
         };
 
-        return axios({
+        return {
             method: 'post',
             url: END_POINT, 
             data: JSON.stringify(MESSAGE_BODY),
@@ -63,7 +63,7 @@ const Request = {
                 "Authorization": "Bearer "+API_KEY,
                  "Content-Type": "application/json"
                  }
-        });
+        };
     }
 }
 
@@ -114,15 +114,11 @@ async function orderConfirmationUser(input: {
             ]
         }];   
 
-await Request.post({ template: TEMPLATES.booking_confirmation_user, to: input.to, params, interaction, lang:'en' });
+        return Request.post({ template: TEMPLATES.booking_confirmation_user, to: input.to, params, interaction, lang:'en' });
 }
 
 
-async function notifyVendorNewOrder(input: { to?: string, orderId: string, service: string, date: string, time: string, cost: number }){
-        if(!input.to){
-            return;
-        }
-  
+async function notifyVendorNewOrder(input: { to: string, orderId: string, service: string, date: string, time: string, cost: number }){
         const params:Param[] = [ 
             {
                 "type": "text",
@@ -153,7 +149,7 @@ async function notifyVendorNewOrder(input: { to?: string, orderId: string, servi
                 ]
             }];    
 
-    await Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params,interaction, lang:  'en_US' });
+            return Request.post({template: TEMPLATES.vendor_order_confirmation_regular, to: input.to, params,interaction, lang:  'en_US' });
 }
 
 async function notifyVendorOrderCancel(input: { to: string, orderId: string, service: string, date: string, time: string }){
@@ -175,7 +171,7 @@ async function notifyVendorOrderCancel(input: { to: string, orderId: string, ser
             "text": input.time
         }];
 
-    await Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
+        return Request.post({template: TEMPLATES.user_cancellation_vendor, to: input.to, params, lang:  'en_US' });
 }
 
 async function notifyUserOnOrderReject(input:{
@@ -186,10 +182,6 @@ async function notifyUserOnOrderReject(input:{
     date: string,
     time: string
 }){
-    
-    if(!input.to){
-        return;
-    }
 
     const params:Param[] = [ 
         {
@@ -225,25 +217,20 @@ async function notifyUserOnOrderReject(input:{
             ]
         }];    
 
- await Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
+        return Request.post({template: TEMPLATES.booking_rejection_user, to: input.to, params,interaction, lang:  'en' });
 }
 
 
 async function remindUserOrderPayment(input:{
     to: string,
     orderId: string,
-    vendorName: string,
     service: string
 }){
-    
-    if(!input.to){
-        return;
-    }
 
     const params:Param[] = [ 
         {
             "type": "text",
-            "text": input.vendorName
+            "text": input.orderId
         },
         {
             "type": "text",
@@ -259,11 +246,12 @@ async function remindUserOrderPayment(input:{
                 {
                     "type": "payload",
                     "payload": Routes.get('PaymentGateway',{ id: input.orderId })
-                }
+                },
+                
             ]
         }];    
 
- await Request.post({template: TEMPLATES.booking_payment_reminder_user, to: input.to, params,interaction, lang:  'en' });
+        return Request.post({template: TEMPLATES.payment_reminder_user, to: input.to, params,interaction, lang:  'en' });
 }
 
 async function  notifyOnNewChat(to: string, fromName: string, message:string, url: string) {
@@ -289,7 +277,7 @@ async function  notifyOnNewChat(to: string, fromName: string, message:string, ur
             ]
         }];   
 
- await Request.post({template: TEMPLATES.new_chat_msg, to: to, params,interaction, lang:  'en_US' });
+ return Request.post({template: TEMPLATES.new_chat_msg, to: to, params,interaction, lang:  'en_US' });
 }
 
 async function  notifyAdmin(message:string) {
@@ -302,7 +290,7 @@ async function  notifyAdmin(message:string) {
             "text": message
         }];
 
- await Request.post({template: TEMPLATES.admin_notify, to: to, params, lang:  'en_US' });
+        return Request.post({template: TEMPLATES.admin_notify, to: to, params, lang:  'en_US' });
 }
 
 const WhatsappService = {

@@ -128,12 +128,11 @@ export async function action({
             const firstItemInfo = summary.groupData[0];
             notification.whatsapp(WhatsappService.remindUserOrderPayment({
                 to: loggedInUser.username,
-                vendorName: '',
                 service: firstItemInfo.group.name,
                 orderId: orderId
             }));
         }
-console.log('passed')
+        console.log('passed')
         debug_point = '7';
         for (let i = 0; i < summary.groupData.length; i++) {
             const item = summary.groupData[i];

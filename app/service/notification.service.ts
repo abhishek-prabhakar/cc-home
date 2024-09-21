@@ -1,28 +1,37 @@
+import axios, { AxiosResponse } from "axios";
 import EmailService from "./email.service";
 import WhatsappService from "./whatsapp.service";
 
+const END_POINT = "https://graph.facebook.com/v19.0/335976452932928/messages";
+
 class Notification {
-    private  notificationQueue:Promise<void>[] = [];
+    private  emailQueue:Promise<AxiosResponse<any, any> | void>[] = [];
+    private  whatsappQueue:any[] = [];
 
     constructor(){
-        this.notificationQueue = [];
+        this.emailQueue = [];
+        this.whatsappQueue = [];
     }
 
     public email(type: Promise<void>){
-        this.notificationQueue.push(type);
+        this.emailQueue.push(type);
     }
 
-    public whatsapp(type: Promise<void>){
-        this.notificationQueue.push(type);
+    public whatsapp(type: Object){
+        this.whatsappQueue.push(type);
     }
 
     public admin(message: string){
-        this.notificationQueue.push(WhatsappService.notifyAdmin(message));
+        this.whatsappQueue.push(WhatsappService.notifyAdmin(message));
     }
 
     public async publish(){
         try{
-            await Promise.allSettled(this.notificationQueue);
+            await Promise.allSettled(this.emailQueue);
+            for(let i =0; i< this.whatsappQueue.length;i++){
+                const params = await this.whatsappQueue[i];
+                await axios(params);
+            }
         } catch(e){
             console.log('Notification failed')
         }

@@ -52,15 +52,17 @@ async function notifyVendorNewOrder(input: {
     `;
     const text = 'Hello, You have a new booking on ' + input.date;
 
+
     await sendEmail({
-        to: input.email,
+        to: adminData.EMAIL_DATA.ADMIN_EMAIL,
         subject,
         html,
         text
     });
 
-    await sendEmail({
-        to: adminData.EMAIL_DATA.ADMIN_EMAIL,
+
+    return sendEmail({
+        to: input.email,
         subject,
         html,
         text
