@@ -12,6 +12,7 @@ const RoutesList = {
     CheckoutPayment: '/cart/checkout/payment',
     PaymentGateway: '/order/payment?id=:id',
     UserManageOrder: '/user/order/:id',
+    OrderInvoice: '/user/order/:id/invoice',
     VendorManageOrder: '/vendor/manage/:id',
     VendorPackage: '/cart/package/:username/:id',
     MakeYourPackage: '/cart/package/:vendorGroupId'

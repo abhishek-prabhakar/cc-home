@@ -435,7 +435,9 @@ const UserOrderHome = {
                             <Title order={4}>Order Summary</Title>
                         </Grid.Col>
                         <Grid.Col span={'content'}>
-                            <Button variant="subtle" size="xs">View Invoice</Button>
+                            <Link to={'invoice'} target="_BLANK">
+                                <Button variant="subtle" size="xs">View Invoice</Button>
+                            </Link>
                         </Grid.Col>
                     </Grid>
                     <Space h={'md'}/>
@@ -462,6 +464,10 @@ const UserOrderHome = {
                         }
                         <Table.Tr>
                             <Table.Td><b>Total</b></Table.Td>
+                            <Table.Td ta={'right'}><b><Currency value={response?.total}/></b></Table.Td>
+                        </Table.Tr>
+                        <Table.Tr>
+                            <Table.Td><b>Total Payable</b></Table.Td>
                             <Table.Td ta={'right'}><b><Currency value={response?.total}/></b></Table.Td>
                         </Table.Tr>
                         </Table.Tfoot>

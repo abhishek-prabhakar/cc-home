@@ -21,6 +21,8 @@
     "@mantine/hooks": "^7.9.1",
     "@mantine/modals": "^7.9.1",
     "@openreplay/tracker": "^12.0.2",
+    "@pdfme/common": "^4.5.2",
+    "@pdfme/generator": "^4.5.2",
     "@prisma/client": "^5.3.1",
     "@reduxjs/toolkit": "^1.9.6",
     "@remix-run/css-bundle": "^1.19.3",
@@ -58,6 +60,8 @@
     "react-youtube": "^10.1.0",
     "rxjs": "^7.8.1",
     "source-map-support": "^0.5.21",
+    "stream-chat": "^8.40.5",
+    "stream-chat-react": "^11.23.9",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

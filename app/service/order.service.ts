@@ -192,6 +192,7 @@ async function orderSummary(orderId:string) {
             paymentMode: true,
             BookingPayments:{
                 select:{
+                    updated_at: true,
                     amount: true,
                     paymentDone: true
                 }
