@@ -470,6 +470,10 @@ const UserOrderHome = {
                             <Table.Td><b>Total Payable</b></Table.Td>
                             <Table.Td ta={'right'}><b><Currency value={response?.total}/></b></Table.Td>
                         </Table.Tr>
+                        <Table.Tr>
+                            <Table.Td><b>Total Due</b></Table.Td>
+                            <Table.Td ta={'right'}><b><Currency value={response?.BookingPayments.filter(x => !x.paymentDone).reduce((sum,i) => sum+i.amount,0)}/></b></Table.Td>
+                        </Table.Tr>
                         </Table.Tfoot>
                     </Table>
                 </Card>
