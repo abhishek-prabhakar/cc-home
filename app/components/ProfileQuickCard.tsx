@@ -23,7 +23,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
     <Grid.Col span={{ base: 12, md: 5 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
-          <Link to={profileUrl}>
+          <Link to={profileUrl} target="_BLANK">
             <Avatar
               size={'xl'}
               src={profileImg}
@@ -33,7 +33,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
         </Grid.Col>
         <Grid.Col span={{ base: 'auto', md: 12 }}>
           <Group gap={'sm'} align="center">
-            <Link to={profileUrl}><Title order={4}>{name}</Title></Link>
+            <Link to={profileUrl} target="_BLANK"><Title order={4}>{name}</Title></Link>
             {tag && <Badge color="green" size="xs">{tag}</Badge>}
             {rating? [<Box pos="relative" key={0}>
               <Rating defaultValue={rating} fractions={3} readOnly={true} size="sm" />
@@ -77,7 +77,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
             <Box key="empty-box-3" w={'95px'} h={'95px'}></Box>,
             <Box key="empty-box-4" w={'95px'} h={'95px'} opacity={0.3}><div style={itemDataThumbSetStyles}></div></Box>,
             <Box key="empty-box-5" w={'95px'} h={'95px'} opacity={0.2}><div style={itemDataThumbSetStyles}></div></Box>] : <></>}
-          <Link to={profileUrl}>
+          <Link to={profileUrl} target="_BLANK">
             <Button w={'95px'} h={'95px'} variant="outline">
               View<br />Profile
             </Button>
