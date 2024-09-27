@@ -954,8 +954,8 @@ async function packageById(username: string, keyName: string) {
                     service:{
                         select: {
                             name: true
-                        }
-                    }
+                        },
+                    },
                 }
             }
         },
@@ -970,7 +970,8 @@ async function packageById(username: string, keyName: string) {
             vendor:{
                 username:{
                     in: usernames
-                }
+                },
+                isActive: true
             },
             group:{
                 isActive: true

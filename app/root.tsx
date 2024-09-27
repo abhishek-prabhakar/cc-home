@@ -154,12 +154,14 @@ export async function loader({ request }: LoaderArgs) {
   });
 
   return defer({
+    userId,
     user,
     pages,
     cartCount: userCart?.length || 0,
     ENV: {
       openReplyprojectKey: process.env.OPENREPLY_KEY || '',
-      FB_PIXEL_ID: process.env.FB_PIXEL_ID || ''
+      FB_PIXEL_ID: process.env.FB_PIXEL_ID || '',
+      GOOGLE_TAG_ID: process.env.GOOGLE_TAG_ID || ''
     }
   });
 }
@@ -217,6 +219,7 @@ export default function App() {
           <LiveReload />
           <Analytics.Pixel pixelId={data.ENV.FB_PIXEL_ID}/>
           <Analytics.OpenReply projectkey={ data.ENV.openReplyprojectKey}/>
+          <Analytics.GoogleTag gtmId={data.ENV.GOOGLE_TAG_ID} userId={data.userId}/>
         </MantineProvider>
       </body>
     </html>
