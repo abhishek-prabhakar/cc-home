@@ -57,7 +57,7 @@ const Page = {
                                     <Pill styles={{label:{ margin: 'auto'}}} ta={'center'} style={{cursor:'pointer'}}>{item.vendorService[0]?.service.name} & {item.vendorService.length-1} features</Pill>
                                 </Popover.Target>
                                 <Popover.Dropdown>
-                                    <Text fw="bold">Included:</Text>
+                                    <Text fw="bold">Available Services:</Text>
                                     <List>
                                         {item.vendorService.map(s => <ListItem key={s.service.name}><Text size="sm">{s.service.name}</Text></ListItem>)}
                                     </List>

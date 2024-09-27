@@ -1,4 +1,4 @@
-import { Box, Button, Card, Center, Divider,  Grid, Group, Image,   Overlay, Rating,  SimpleGrid,  Space, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Card, Center, Divider,  Grid, Group, Image,   List,   Overlay, Popover, Rating,   Space, Stack, Text, Title } from "@mantine/core";
 import { ActionArgs, LoaderArgs,  defer } from "@remix-run/node";
 import { Await, Link, useFetcher, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -390,7 +390,16 @@ const ProfileHome = {
                             <Card.Section p={'lg'} style={{flex: 1}}>
                                 <Stack align="center" justify="center" gap={0} h={'100%'}>
                                     <Title order={5} ta={'center'} tt={'capitalize'}>{item.name}</Title>
-                                    <Text ta={'center'} size="md">{item.PackageItem.length} services</Text>
+                                    <Popover width={200} position="bottom" withArrow shadow="md">
+                                        <Popover.Target>
+                                            <Text style={{cursor: 'pointer'}} ta={'center'} size="md">{item.PackageItem.length} services</Text>
+                                        </Popover.Target>
+                                        <Popover.Dropdown style={{ pointerEvents: 'none' }}>
+                                            <List>
+                                            {item.PackageItem.map((x,i) => <List.Item key={i}>{x.ServiceGroup.name}</List.Item>)}
+                                            </List>
+                                        </Popover.Dropdown>
+                                    </Popover>
                                     <Space h={'md'}/>
                                     <Group>
                                         <Title order={3}>{item.discountType === DiscountType.FLAT? <Currency value={item.discountValue}/>: item.discountValue+'%'}</Title>
