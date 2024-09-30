@@ -169,7 +169,7 @@ const ProfileLayout = {
             } else {
                 setActive(list[0]);
             }
-        }, [preSelectedGroupId]);
+        }, [services, preSelectedGroupId]);
 
         function setActiveService(id: string | null) {
             const item = flatList.find(x => x.vendorServiceGroupId === id);
@@ -312,7 +312,7 @@ const ProfileLayout = {
         return <Modal styles={{body:{ background:'rgba(198, 216, 108, 0.25)'}}} withCloseButton={false} centered opened={props.show} onClose={() => props.onClose()} >
             <Image src={'/assets/ads/combo-offer.png'}/>
             <Space h={'lg'}/>
-            <Title ta={'center'} order={4}>Add 2 more services & Save upto 30%</Title>
+            <Title ta={'center'} order={4}>Add {COMMON_DATA.MAKE_YOUR_PACKAGE_MIN_SERVICE_COUNT-1} more services & Save upto 30%</Title>
             <Space h={'lg'}/>
             <Stack>
                 <Link to={Routes.get('MakeYourPackage', { vendorGroupId: props.vendorServiceGroupId })} ><Button fullWidth  color="teal">Add more services</Button></Link>

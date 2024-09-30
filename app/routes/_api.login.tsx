@@ -2,6 +2,7 @@ import { ActionFunction, json } from "@remix-run/node";
 import { PrismaClient, UserSource } from "@prisma/client";
 import generateUuid from "~/utils/uuid.generator";
 import SmsService from "~/service/sms.service";
+import { generateOtp } from "~/utils/otp.generator";
 var bcrypt = require('bcryptjs');
 
 export async function action({
@@ -29,7 +30,7 @@ export async function action({
             });
         }
 
-        const otp = Math.floor(1000 + Math.random() * 9000);
+        const otp = generateOtp(); 
         const otpHash = await bcrypt.hash('' + otp, 10);
         await prisma.userOtp.deleteMany({
             where: {

@@ -49,7 +49,7 @@ const Page = {
                     {response => <Box>
                         <Title order={3}>Make your own package</Title>
                         <Space h="xl"/>
-                        <Title order={5}>Choose atleast 3 services to continue.</Title>
+                        <Title order={5}>Choose atleast {COMMON_DATA.MAKE_YOUR_PACKAGE_MIN_SERVICE_COUNT} services to continue.</Title>
                         <Space h="md"/>
                         <Grid gutter={{base: 'md', md: 'xl'}}>
                         {response?.map(item => <Grid.Col key={item.groupId} span={{base: 12, md: 3}}>
