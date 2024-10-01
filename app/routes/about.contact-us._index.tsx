@@ -1,6 +1,11 @@
 import { Container, Grid, List, Space, Text, ThemeIcon, Title, rem } from "@mantine/core";
 import { IconBrandWhatsapp, IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
 import { SUPPORT_CENTER } from "~/data/common.data";
+import PageMetaFunction from "~/utils/page.meta";
+
+export const meta = PageMetaFunction({
+	title: 'Contact Us',
+});
 
 export default function () {
 

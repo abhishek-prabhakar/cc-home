@@ -1,5 +1,5 @@
 import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
-import { LoaderArgs, TypedDeferredData, TypedResponse, defer, redirect } from "@remix-run/node";
+import { LoaderArgs, TypedDeferredData, TypedResponse, V2_MetaFunction, defer, redirect } from "@remix-run/node";
 import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
@@ -18,6 +18,7 @@ import { IconPoint } from "@tabler/icons-react";
 import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
 import { LOCATION_CODE, locationMap } from "~/data/locations.data";
 import ShareOptions from "~/components/ShareOptions";
+import PageMetaFunction from "~/utils/page.meta";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -25,6 +26,10 @@ const pageWrapperStyles: React.CSSProperties = { padding: '40px 0' };
 const locationStyles: React.CSSProperties = { borderLeft: '1px solid var(--ui-color-black)', padding: '0 20px' };
 
 type ServiceGroup = { name: string, services: VendorServicePublic[] };
+
+export const meta = PageMetaFunction({
+	title: 'Book Now',
+});
 
 export async function loader({ params, request }: LoaderArgs) {
     const id = params.user || '';

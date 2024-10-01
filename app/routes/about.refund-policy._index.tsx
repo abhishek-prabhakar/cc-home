@@ -1,4 +1,5 @@
 import { Container, Space, Text, Title } from "@mantine/core";
+import PageMetaFunction from "~/utils/page.meta";
 
 // export default function () {
 
@@ -63,6 +64,10 @@ import { Container, Space, Text, Title } from "@mantine/core";
 //     </Container>
 
 // }
+
+export const meta = PageMetaFunction({
+	title: 'Refund Policy',
+});
 
 
 export default function () {

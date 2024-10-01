@@ -10,6 +10,7 @@ import { cartCheckoutCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
 import { CartInput } from "~/types";
 import Currency from "~/utils/currency.transformer";
+import PageMetaFunction from "~/utils/page.meta";
 
 const PAYMENTGATEWAY_LIMIT = 390000;
 
@@ -121,6 +122,10 @@ function CouponSection({ invalid, applyCoupon }: { invalid: boolean, applyCoupon
         </Input.Wrapper>
         ;
 };
+
+export const meta = PageMetaFunction({
+	title: 'Checkout',
+});
 
 export default function () {
     const [paymentMethod, setPayMethod] = useState<BookingPaymentMode | null>();

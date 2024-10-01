@@ -7,7 +7,11 @@ import Skeleton from "~/components/Skeleton";
 import Routes from "~/routes.data";
 import CollectionService from "~/service/collections.service";
 import { VendorQuery } from "~/service/vendor.service";
+import PageMetaFunction from "~/utils/page.meta";
 
+export const meta = PageMetaFunction({
+	title: 'Collection',
+});
 
 export function loader(args: LoaderArgs) {
     const collectionKey = args.params.id;

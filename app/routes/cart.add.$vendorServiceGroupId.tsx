@@ -22,6 +22,7 @@ import Currency from "~/utils/currency.transformer";
 import { db } from "~/utils/database";
 import { Carousel } from '@mantine/carousel';
 import LocationPicker from "~/components/LocationPicker";
+import PageMetaFunction from "~/utils/page.meta";
 
 enum ActionType {
     ESTIMATION = 'ESTIMATION',
@@ -64,6 +65,10 @@ function arrayRange(start: number, stop: number, step = 1) {
 }
 
 const BUFFER_TIME_IN_HRS = 2;
+
+export const meta = PageMetaFunction({
+	title: 'Modify Booking',
+});
 
 export async function action(args: ActionArgs) {
     const form = await args.request.formData();

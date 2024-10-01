@@ -9,7 +9,11 @@ import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { CartInput, PackageService } from "~/types";
 import Currency from "~/utils/currency.transformer";
+import PageMetaFunction from "~/utils/page.meta";
 
+export const meta = PageMetaFunction({
+	title: 'Package',
+});
 
 export function loader(args:LoaderArgs){
     const vendorUsername = args.params.username;

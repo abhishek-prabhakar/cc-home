@@ -1,5 +1,5 @@
 import { ActionIcon, Avatar, Badge, Button, Card, Container, Divider, Flex, Grid, Group, Image, Modal, Space, Stack, Text, Textarea, Title } from "@mantine/core";
-import { ActionArgs, LoaderArgs, TypedDeferredData, defer, json, redirect } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, TypedDeferredData, V2_MetaFunction, defer, json, redirect } from "@remix-run/node";
 import { Await, Form, Link, useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import { IconTrash } from "@tabler/icons-react";
@@ -14,6 +14,11 @@ import { userCartCookie } from "~/session.server";
 import { getUser } from "~/store/user.store";
 import { CartActiveService, CartInput, CartItem, CartItemService } from "~/types";
 import { DateFormatter } from "~/utils/date.transform";
+import PageMetaFunction from "~/utils/page.meta";
+
+export const meta = PageMetaFunction({
+	title: 'Cart',
+});
 
 export async function action({ request }: ActionArgs) {
     const cookieHeader = request.headers.get("Cookie");

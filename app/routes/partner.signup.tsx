@@ -1,4 +1,9 @@
 import { Outlet } from "@remix-run/react"
+import PageMetaFunction from "~/utils/page.meta";
+
+export const meta = PageMetaFunction({
+	title: 'Vendor Signup',
+});
 
 export function loader() {
     return null;

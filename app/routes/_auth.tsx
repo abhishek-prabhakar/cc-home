@@ -1,15 +1,13 @@
 import { Grid } from "@mantine/core";
-import { LoaderArgs, TypedResponse, V2_MetaFunction, redirect } from "@remix-run/node"
+import { LoaderArgs, TypedResponse } from "@remix-run/node"
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react"
 import UserLogin from "~/components/UserLogin";
 import { getSession, USER_SESSION_KEY } from "~/session.server";
+import PageMetaFunction from "~/utils/page.meta";
 
-export const meta: V2_MetaFunction = () => {
-    return [
-        { title: "My Account" },
-        { name: "description", content: "Celebria Collective, Find your Pefect vendor" },
-    ];
-};
+export const meta = PageMetaFunction({
+	title: 'My Account',
+});
 
 export async function loader(args: LoaderArgs): Promise<boolean | TypedResponse> {
     const session = await getSession(

@@ -1,4 +1,10 @@
 import { Container, Space, Title } from "@mantine/core";
+import PageMetaFunction from "~/utils/page.meta";
+
+export const meta = PageMetaFunction({
+	title: 'Terms & Conditions',
+});
+
 
 export default function () {
 

@@ -7,8 +7,11 @@ import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import CollectionService from "~/service/collections.service";
 import Currency from "~/utils/currency.transformer";
-import { db } from "~/utils/database";
+import PageMetaFunction from "~/utils/page.meta";
 
+export const meta = PageMetaFunction({
+	title: 'Collection',
+});
 
 export function loader(args: LoaderArgs) {
     const id = args.params.id;
