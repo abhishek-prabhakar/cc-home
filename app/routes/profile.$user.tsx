@@ -17,6 +17,7 @@ import Currency from "~/utils/currency.transformer";
 import { IconPoint } from "@tabler/icons-react";
 import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
 import { LOCATION_CODE, locationMap } from "~/data/locations.data";
+import ShareOptions from "~/components/ShareOptions";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -71,6 +72,8 @@ const ProfileLayout = {
                             {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} onLoad={setProfileData} />}
                         </Await>
                     </Suspense>
+                    <Space h={'lg'}/>
+                    <ShareOptions/>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 9 }}>
                     <Stack justify="center" align="center">

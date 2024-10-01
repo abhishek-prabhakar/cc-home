@@ -3,6 +3,7 @@ import { DiscountType } from "@prisma/client";
 import { ActionArgs, LoaderArgs, defer } from "@remix-run/node";
 import { Await, Form, useLoaderData, useLocation, useNavigation, useSubmit } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
+import ShareOptions from "~/components/ShareOptions";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
@@ -32,7 +33,14 @@ const Page = {
             <Suspense fallback={<Skeleton/>}>
                 <Await resolve={data.package}>
                     {response => <Box>
-                        <Title order={3}>{response.packageData.name}</Title>
+                        <Grid>
+                            <Grid.Col span={{base: 12, md: 'auto'}}>
+                                <Title order={3}>{response.packageData.name}</Title>
+                            </Grid.Col>
+                            <Grid.Col span={{base: 12, md: 'content'}}>
+                                <ShareOptions/>
+                            </Grid.Col>
+                        </Grid>
                         <Space h="xl"/>
                         <Title order={5}>Services included in this package</Title>
                         <Space h="md"/>
