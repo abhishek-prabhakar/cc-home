@@ -20,7 +20,7 @@ export default function Portfolio() {
     return <div className="container">
         <Title order={4}>Best works</Title>
         <Space h="md" />
-        <PhotoProvider>
+        <PhotoProvider loop={false}>
             <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={3}>
                 {data?.map((image, key) =>
                     image.fileType === 'youtube' ?

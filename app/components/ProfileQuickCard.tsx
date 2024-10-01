@@ -58,7 +58,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
     </Grid.Col>
     <Grid.Col span={{ base: 12, md: 'auto' }}>
       <Space h={'md'} />
-      <PhotoProvider>
+      <PhotoProvider loop={false}>
         <Flex direction={'column'} gap={'xs'} wrap={'wrap'} mah={'240px'} justify={'end'} align={'end'} style={{ alignContent: 'end' }}>
           {portfolio?.map((imageItem, i) => <Box key={i} style={i === 0 || portfolio.length % 2 == 1 && i < 2 ? { width: '200px', height: '200px' } : { width: '95px', height: '95px' }}>
             {imageItem.type === 'youtube' ? <VideoPreviewItem ytId={imageItem.value} /> :

@@ -309,7 +309,7 @@ const ProfileHome = {
                 </Grid.Col>
             </Grid>
             <div>
-                <PhotoProvider>
+                <PhotoProvider loop={false}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.portfolio}>
                             {portfolio => <>
@@ -327,28 +327,26 @@ const ProfileHome = {
                             }
                         </Await>
                     </Suspense>
-                </PhotoProvider>
                 <Space h={'xl'}/>
-               {data.preselectedServiceGrpId? <PhotoProvider>
-                    <Suspense fallback={<Skeleton />}>
-                        <Await resolve={data.featuredPortfolio}>
-                            {portfolio => <>
-                            <Title order={5}>Other works</Title>
-                            <Space h={'sm'}/>
-                                <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{default: 5, '800': 3 }}>{portfolio?.map((image, key) =>
-                                    image.type === 'youtube' ?
-                                        <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}>
-                                            <VideoPreviewItem ytId={image.value} />
-                                        </div> :
-                                        <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
-                                            <Image radius={'md'} src={PATH.THUMB_URL + image.value} className="cursor-pointer" />
-                                        </PhotoView>)}
-                                </Masonry>
-                            </>
-                            }
-                        </Await>
-                    </Suspense>
-                </PhotoProvider> : ''}
+                {data.preselectedServiceGrpId? <Suspense fallback={<Skeleton />}>
+                            <Await resolve={data.featuredPortfolio}>
+                                {portfolio => <>
+                                <Title order={5}>Other works</Title>
+                                <Space h={'sm'}/>
+                                    <Masonry className="masonry-grid" columnClassName="masonry-grid_column" breakpointCols={{default: 5, '800': 3 }}>{portfolio?.map((image, key) =>
+                                        image.type === 'youtube' ?
+                                            <div key={'thumb' + key} style={{ height: '240px', marginBottom: '30px' }}>
+                                                <VideoPreviewItem ytId={image.value} />
+                                            </div> :
+                                            <PhotoView key={'thumb' + key} src={PATH.RESOURCE_URL + image.value}>
+                                                <Image radius={'md'} src={PATH.THUMB_URL + image.value} className="cursor-pointer" />
+                                            </PhotoView>)}
+                                    </Masonry>
+                                </>
+                                }
+                            </Await>
+                        </Suspense> : ''}
+                </PhotoProvider>
                 <div style={viewAllProjectsStyles}>
                     <Button variant="outline" size="xs" radius={'xl'} onClick={() => navigate('portfolio')} >
                         See all works
