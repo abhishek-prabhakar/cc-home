@@ -390,10 +390,11 @@ const ProfileHome = {
                                     <Title order={5} ta={'center'} tt={'capitalize'}>{item.name}</Title>
                                     <Popover width={200} position="bottom" withArrow shadow="md">
                                         <Popover.Target>
-                                            <Text style={{cursor: 'pointer'}} ta={'center'} size="md">{item.PackageItem.length} services</Text>
+                                            <Text style={{cursor: 'pointer'}} ta={'center'} size="md">View {item.PackageItem.length} services</Text>
                                         </Popover.Target>
                                         <Popover.Dropdown style={{ pointerEvents: 'none' }}>
-                                            <List>
+                                            <Text fw={'bold'} ta={'center'}>Services Included</Text>
+                                            <List mt={'xs'}>
                                             {item.PackageItem.map((x,i) => <List.Item key={i}>{x.ServiceGroup.name}</List.Item>)}
                                             </List>
                                         </Popover.Dropdown>

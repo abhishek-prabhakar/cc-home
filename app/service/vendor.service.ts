@@ -76,9 +76,11 @@ function portfolioByUsername(username?: string) {
             fileType: true,
             fileName: true
         },
-        orderBy: {
-            createdAt: 'desc'
-        }
+        orderBy: [{
+            position:'desc'
+        },{
+            createdAt:'desc'
+        }],
     });
 }
 
@@ -148,9 +150,11 @@ function getFilteredVendors(params: {
                                     take: 5,
                                 },
                                 vendorPortfolio: {
-                                    orderBy: {
-                                        createdAt: 'desc'
-                                    },
+                                    orderBy: [{
+                                        position:'desc'
+                                    },{
+                                        createdAt:'desc'
+                                    }],
                                     select: {
                                         fileName: true,
                                         fileType: true,
