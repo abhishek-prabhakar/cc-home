@@ -47,9 +47,6 @@ export default (props: DefaultProps & { path?: string }) => {
         inputFieldName="image"
         destination={{
             url: props.path || PATH.FILE_UPLOAD,
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            },
         }}
         
         accept="image/*"
