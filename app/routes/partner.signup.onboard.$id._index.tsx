@@ -195,7 +195,7 @@ export async function action(args: ActionArgs) {
                 }
                 await db.vendorServiceGroup.update({
                     data: {
-                        cost: parseInt(groupCost || '0'),
+                        cost: 0,
                         costByVendor: parseInt(groupCost || '0'),
                         costExtraHour: parseInt(grpExtraHourCost || '0')
                     },
