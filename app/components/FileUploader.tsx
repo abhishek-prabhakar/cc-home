@@ -15,7 +15,7 @@ const Uploader = (props: DefaultProps) => {
     }, []);
 
     useItemFinishListener((item, options) => {
-        const data = item.uploadResponse.data;
+        const data = JSON.parse(item.uploadResponse.data);
         if (data) {
             (data.names as string[])?.forEach(fid => {
                 if (props?.onUpload) { props.onUpload(fid) }
