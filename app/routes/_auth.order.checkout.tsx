@@ -12,16 +12,10 @@ export async function action({
     const userId = session.get(USER_SESSION_KEY);
     const body = await request.formData();
 
-    let redirectUrl = body.get('redirectUrl');
-    if (!userId) {
-        return redirect('/user/login?redirectUrl='+redirectUrl);
-    }
-
-
     let currentCart: CartInput[] = [];
     
     const source = body.get('source')?.toString();
-    const payment = Routes.get('CheckoutPayment') + '?source=' + source;
+    const paymentUrl = Routes.get('CheckoutPayment') + '?source=' + source;
     // if source is cart, then after placing the order the cart will be cleared.
 
     let redirectUrlInstance, packageId;
@@ -32,12 +26,20 @@ export async function action({
             currentCart = newItem;
         }
 
-        redirectUrlInstance = new URL(body.get('redirectUrl')?.toString() || payment);
+        redirectUrlInstance = new URL(body.get('redirectUrl')?.toString() || paymentUrl);
         redirectUrlInstance.searchParams.set('cartStatus', 'true');
     } catch (e) {
         redirectUrlInstance = null
     }
-    return redirect(redirectUrlInstance ? redirectUrlInstance.href : payment, {
+
+
+    let redirectUrl = redirectUrlInstance ? redirectUrlInstance.href : paymentUrl;
+    if (!userId) {
+        redirectUrl = '/user/login?redirectUrl='+redirectUrl;
+    }
+
+
+    return redirect(redirectUrl, {
         headers: {
             "Set-Cookie": await cartCheckoutCookie.serialize({cart:currentCart, packageId }),
         },
