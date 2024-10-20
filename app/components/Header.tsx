@@ -93,7 +93,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                                                 <Stack>
                                                                     <Title order={5}>Hey!</Title>
                                                                     <Link to={'/user/home'}>My Bookings</Link>
-                                                                    <Link to={'/user/wishlist'}>Wishlist</Link>
+                                                                    <Link to={'/user/wishlist'}>Favorites</Link>
                                                                 </Stack>
                                                             </Box>
                                                             <Box>
