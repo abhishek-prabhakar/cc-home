@@ -1,7 +1,7 @@
 import { Accordion, ActionIcon, Badge, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, List, Mark, Modal, NumberFormatter, SegmentedControl, Select, Skeleton, Space, Stack, Text, Title, rem } from "@mantine/core";
-import { LoaderArgs, TypedDeferredData, TypedResponse, V2_MetaFunction, defer, redirect } from "@remix-run/node";
-import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation } from "@remix-run/react";
-import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconPlus } from "@tabler/icons-react";
+import { ActionArgs, LoaderArgs, TypedDeferredData, TypedResponse, V2_MetaFunction, defer } from "@remix-run/node";
+import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
+import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconHeartFilled, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
 import COMMON_DATA from "~/data/common.data";
@@ -19,6 +19,8 @@ import { ChatWithVendorAffix } from "~/components/ChatWithVendorAffix";
 import { LOCATION_CODE, locationMap } from "~/data/locations.data";
 import ShareOptions from "~/components/ShareOptions";
 import PageMetaFunction from "~/utils/page.meta";
+import { USER_SESSION_KEY, getSession } from "~/session.server";
+import WishlistService from "~/service/wishlist.service";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -31,8 +33,45 @@ export const meta = PageMetaFunction({
 	title: 'Book Now',
 });
 
+enum ActionType {
+    WISHLIST_ADD = 'WISHLIST_ADD',
+    WISHLIST_REMOVE = 'WISHLIST_REMOVE'
+}
+export async function action({params, request}: ActionArgs){
+    const vendorUsername = params.user || '';
+    const form =  await request.formData();
+    const actionType = form.get('actionType') as ActionType;
+
+    const session = await getSession(request.headers.get('Cookie'));
+    const userId = session.get(USER_SESSION_KEY);
+
+    if(!userId || !vendorUsername){
+        return null;
+    }
+
+    switch(actionType){
+        case ActionType.WISHLIST_ADD:
+            await WishlistService.add({
+                userId,
+                vendorUsername
+            });
+            return true;
+        break;
+        case ActionType.WISHLIST_REMOVE:
+            await WishlistService.remove({
+                userId,
+                vendorUsername
+            });
+            return true;
+        break;
+    }
+
+}
+
 export async function loader({ params, request }: LoaderArgs) {
     const id = params.user || '';
+    const session = await getSession(request.headers.get('Cookie'));
+    const userId = session.get(USER_SESSION_KEY);
 
     const searchParams = new URL(request.url).searchParams;
     const preselectedServiceGrpId = searchParams.get('service')?.toString();
@@ -40,13 +79,18 @@ export async function loader({ params, request }: LoaderArgs) {
     const vendorDetails = VendorQuery.getVendorByUsername(id);
     const serviceList = VendorQuery.getServices(id);
     const getLinkedProfiles = VendorQuery.getLinkedProfiles(id);
+    const wishlistExists = await WishlistService.checkItemExists({
+        vendorUsername: id,
+        userId
+    });
 
     return defer({
         username: id,
         profile: vendorDetails,
         services: serviceList,
         serviceGroupId: preselectedServiceGrpId,
-        otherProfiles: getLinkedProfiles
+        otherProfiles: getLinkedProfiles,
+        wishlistExists
     });
 }
 
@@ -74,7 +118,7 @@ const ProfileLayout = {
                 <Grid.Col span={{ base: 12, md: 3 }}>
                     <Suspense fallback={<Skeleton />}>
                         <Await resolve={data.profile}>
-                            {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} onLoad={setProfileData} />}
+                            {profile => <ProfileLayout.Cover profile={profile} activeGroupData={activeGroupData} onLoad={setProfileData} wishlistExists={data.wishlistExists} />}
                         </Await>
                     </Suspense>
                     <Space h={'lg'}/>
@@ -104,14 +148,29 @@ const ProfileLayout = {
             <ChatWithVendorAffix avatar={profileData?.avatar}/>
         </Container>
     },
-    Cover: ({ profile, activeGroupData, onLoad }: { profile: VendorProfile | null, activeGroupData?: VendorServicePublic | null, onLoad: (d: VendorProfile | null) => void }) => {
+    Cover: ({ profile, activeGroupData,wishlistExists, onLoad }: { wishlistExists: number, profile: VendorProfile | null, activeGroupData?: VendorServicePublic | null, onLoad: (d: VendorProfile | null) => void }) => {
+        const submit = useSubmit();
+        const navigate = useNavigate();
+        const location = useLocation();
 
         useEffect(() => {
             onLoad(profile)
         }, [])
 
         function addToWishlist(){
-            alert('Something went wrong.');
+            if(wishlistExists === -1){
+                navigate(Routes.get('UserLogin',{
+                    redirectUrl: location.pathname
+                }))
+                return;
+            }
+            const type = wishlistExists? ActionType.WISHLIST_REMOVE: ActionType.WISHLIST_ADD;
+            submit({
+                actionType: type
+            },{
+                method: 'post',
+            })
+            
         }
 
         return <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -140,7 +199,7 @@ const ProfileLayout = {
                                     </a>
                                 </Box>
                                 <ActionIcon size="lg" variant="light" color="pink" aria-label="Favourite" onClick={addToWishlist}>
-                                    <IconHeart style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                                   {wishlistExists > 0? <IconHeartFilled style={{ width: '70%', height: '70%' }} stroke={1.5} />: <IconHeart style={{ width: '70%', height: '70%' }} stroke={1.5} /> }
                                 </ActionIcon>
                             </Flex>
                         </Box>

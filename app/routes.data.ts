@@ -1,4 +1,5 @@
 const RoutesList = {
+    UserLogin: '/user/login?redirectUrl=:redirectUrl',
     VendorProfile: '/profile/:id',
     VendorProfileWithService: '/profile/:id?service=:sGrpId',
     Collections: '/collections/:id',

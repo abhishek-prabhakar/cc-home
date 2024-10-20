@@ -88,10 +88,13 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                             <div style={userMenuStyle}>
                                                 <div style={{ padding: '12px' }}>
                                                     {user?.id ?
-                                                        <Group align="center" justify={'space-between'}>
+                                                        <Group align="start" justify={'space-between'}>
                                                             <Box>
-                                                                <Title order={5}>Hey!</Title>
-                                                                <Link to={'/user/home'}>My Bookings</Link>
+                                                                <Stack>
+                                                                    <Title order={5}>Hey!</Title>
+                                                                    <Link to={'/user/home'}>My Bookings</Link>
+                                                                    <Link to={'/user/wishlist'}>Wishlist</Link>
+                                                                </Stack>
                                                             </Box>
                                                             <Box>
                                                                 <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>

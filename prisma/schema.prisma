@@ -19,6 +19,7 @@ model User {
   updatedAt       DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
   bookings        Booking[]
   ChatGroupMember ChatGroupMember[]
+  Wishlist        Wishlist[]
 
   @@map("user")
 }
@@ -62,24 +63,26 @@ model Vendor {
   JumbotronData      JumbotronData[]
   VendorServiceGroup VendorServiceGroup[]
   ChatGroupMember    ChatGroupMember[]
+  Wishlist           Wishlist[]
 
   @@map("vendors")
 }
 
 model VendorServiceGroup {
-  id                String                               @id
-  vendorId          String
-  groupId           String
-  cost              Int
-  costExtraHour     Int                                  @default(0)
-  isActive          Boolean                              @default(true)
-  costByVendor      Int                                  @default(0)
-  serviceChargeType VendorServiceGroup_serviceChargeType @default(FLAT)
-  serviceCharge     Int                                  @default(0)
-  group             ServiceGroup                         @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  vendor            Vendor                               @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorService     VendorService[]
-  BookingService    BookingService[]
+  id                 String                               @id
+  vendorId           String
+  groupId            String
+  cost               Int
+  costExtraHour      Int                                  @default(0)
+  isActive           Boolean                              @default(true)
+  costByVendor       Int                                  @default(0)
+  serviceChargeType  VendorServiceGroup_serviceChargeType @default(FLAT)
+  serviceCharge      Int                                  @default(0)
+  enableCustomCharge Boolean                              @default(false)
+  group              ServiceGroup                         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  vendor             Vendor                               @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorService      VendorService[]
+  BookingService     BookingService[]
 }
 
 model VendorPortfolio {
@@ -427,6 +430,15 @@ model BookingPayments {
   paymentDone Boolean   @default(false)
   amount      Int       @default(0)
   Booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Wishlist {
+  id         String   @id
+  userId     String
+  vendorId   String
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  Vendor     Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum UserSource {
