@@ -47,7 +47,7 @@ const WishlistHome = {
     Index: () => {
         return <Grid>
             <Grid.Col span={12}>
-                <Title order={3}>My Wishlist</Title>
+                <Title order={3}>My Favorites</Title>
                 <Space h={'lg'}/>
                 <WishlistHome.AllItems />
             </Grid.Col>
