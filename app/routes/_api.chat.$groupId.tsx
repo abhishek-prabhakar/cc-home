@@ -76,7 +76,7 @@ export async function action(args: ActionArgs){
         }
     });
     
-    const invalidOrder = [BookingStatus.COMPLETED, BookingStatus.REJECTED, BookingStatus.CANCELLED].includes(member.chatGroup.booking.status as any);
+    const invalidOrder = [BookingStatus.COMPLETED, BookingStatus.REJECTED, BookingStatus.CANCELLED].includes(member.chatGroup.booking?.status as any);
     if(!message || !chatGroupId || invalidOrder ){
         return false;
     }
@@ -122,12 +122,19 @@ export async function action(args: ActionArgs){
         const toNum = x.user?.username || x.vendor?.mobileNumber;
         const fromName =  member.vendor?.username || 'Customer';
         let url = '/';
-        if(x.vendor?.mobileNumber){
-            url= Routes.get('VendorManageOrder', {id: member?.chatGroup?.booking?.orderId });
+        const orderId = member?.chatGroup?.booking?.orderId;
+        if(!orderId){
+            url= Routes.get('UserChatChannels');
+        } else if(x.vendor?.mobileNumber){
+            url= Routes.get('VendorManageOrder', {id: orderId });
         } else{
-            url= Routes.get('UserManageOrder', {id: member?.chatGroup?.booking?.orderId });
+            url= Routes.get('UserManageOrder', {id: orderId });
         }
-        if(toNum){ notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, message, url)); }
+        if(toNum){
+            let msgContent = message;
+            if(msgType === ChatThread_type.VOICE){ msgContent = 'Voice Note'; }
+             notification.whatsapp(WhatsappService.notifyOnNewChat(toNum, fromName, msgContent, url));
+        }
     });
     await notification.publish();
 
