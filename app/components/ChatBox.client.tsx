@@ -233,7 +233,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
    
 
     return  <>
-        <Box style={{cursor:'pointer'}}   onClick={onPlayPause} w={200}>
+        <Box  style={{cursor:'pointer',zIndex: 0 }}   onClick={onPlayPause} w={200}>
             <Box style={{pointerEvents: 'none'}} id={getId}></Box>
         </Box>
     </>;
