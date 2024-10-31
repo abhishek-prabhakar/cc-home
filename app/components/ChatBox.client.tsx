@@ -152,10 +152,10 @@ export function ChatBox(input: inputProps){
            {!input.disabled? <form onSubmit={submitTextMsg}>
             <Grid pos={'relative'} gutter={'xs'} align="center">
                 <Grid.Col span={'auto'}>
-                    <TextInput ref={inputRef} name="ccmsginput" autoComplete="false" placeholder="Type your message here..."/>
+                    <TextInput radius={'xl'} ref={inputRef} name="ccmsginput" autoComplete="false" placeholder="Type your message here..."/>
                 </Grid.Col>
                 <Grid.Col span={'content'}>
-                    <ActionIcon  size="lg" type="submit" variant="filled" color="green" aria-label="Send">
+                    <ActionIcon  radius={'xl'} size="lg" type="submit" variant="filled" color="green" aria-label="Send">
                         <IconSend2 style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </Grid.Col>
@@ -270,7 +270,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
       }
       
     return <Box>
-            <Card display={mediaRecorder || audioOutput? 'block': 'none'} withBorder radius={'sm'} p={'8'} pos={'absolute'} top={0} left={0} w={'calc(100% - 38px)'} bg={'white'}>
+            <Card display={mediaRecorder || audioOutput? 'block': 'none'} withBorder radius={'xl'} p={'8'} pos={'absolute'} top={0} left={0} w={'calc(100% - 38px)'} bg={'white'}>
                 {
                     mediaRecorder?  
                         <LiveAudioVisualizer
@@ -287,7 +287,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
                         <Box flex={1}>
                             <AudioPreview id="new-voice-note" media={audioOutput}/>
                         </Box>
-                    <ActionIcon onClick={() => setAudioOutput(null)} variant="light" color="gray" size="md"  aria-label="Settings">
+                    <ActionIcon radius="xl" onClick={() => setAudioOutput(null)} variant="light" color="gray" size="md"  aria-label="Settings">
                         <IconX style={{ width: '70%', height: '70%' }} />
                     </ActionIcon>
                 </Group>: ''
@@ -304,7 +304,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
                 }
                 
                 {
-                    audioOutput?  <ActionIcon onClick={submitAudio}  size="lg" type="submit" variant="filled" color="green" aria-label="Send">
+                    audioOutput?  <ActionIcon  radius={'xl'}  onClick={submitAudio}  size="lg" type="submit" variant="filled" color="green" aria-label="Send">
                     <IconSend2 style={{ width: '70%', height: '70%' }} stroke={1.5} />
                 </ActionIcon> : ''
                 }
