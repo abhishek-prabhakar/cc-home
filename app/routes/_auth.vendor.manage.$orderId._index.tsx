@@ -3,6 +3,7 @@ import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { ChatBox } from "~/components/ChatBox.client";
 import { PATH } from "~/path.data";
 import ChatService from "~/service/chat.service";
@@ -25,7 +26,6 @@ async function getAssociatedVendorIdByUser(userId: string){
     const vendor =  await db.vendor.findMany({
         where:{
             mobileNumber: user.username,
-            isActive: true
         },
         select:{
             id: true
@@ -75,7 +75,6 @@ export async function action(args:ActionArgs) {
 
 async function loaderResponse(userId: string, orderId:string){
    const vendorIds = await getAssociatedVendorIdByUser(userId);
-   
    const orderData =  await db.bookingService.findMany({
        where:{
            Booking:{
@@ -114,7 +113,6 @@ async function loaderResponse(userId: string, orderId:string){
    });
 
   const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData[0].vendorServiceGroup.vendorId);   
-
    return {orderData,chatGroup};
 }
 
@@ -124,11 +122,9 @@ export async function loader(args: LoaderArgs){
     );
     const userId = session.get(USER_SESSION_KEY);
     const orderId = args.params.orderId;
-
     if(!userId){
         return null;
     }
-
     if (!orderId) {
         throw new Response('Page not found',{
 			status: 404,
@@ -191,7 +187,11 @@ const Page = {
         </Container>;
     },
     ChatSection:(props:{ chatGroupId: string, memberId: string, isDisabled: boolean}) =>{
-        return  <ChatBox title="Chat with customer" chatGroupId={props.chatGroupId} memberId={props.memberId} disabled={props.isDisabled}/>
+        const [pageReady, setPageReady] = useState(false);
+        useEffect(() =>{
+            setPageReady(true);
+        },[])
+        return pageReady? <ChatBox title="Chat with customer" chatGroupId={props.chatGroupId} memberId={props.memberId} disabled={props.isDisabled}/>: <></>;
     },
     StartService: () =>{
         return <Card withBorder>
