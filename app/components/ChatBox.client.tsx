@@ -186,13 +186,13 @@ function LoadAudioFile({ url}:{ url: string}){
     },[]);
 
 
-    return fileBlob? <AudioPreview id={url} media={fileBlob} />:  <Loader color="gray" size="xs" />;
+    return fileBlob? <Card p={5}  radius={'lg'} withBorder>
+        <AudioPreview id={url} media={fileBlob} />
+        </Card>:  <Loader color="gray" size="xs" />;
 };
 
 function AudioPreview({media, id}:{id: string, media: Blob}){
     const [wavesurfer, setWavePlayer] = useState<WaveSurfer>();
-    // const [wavesurfer, setWavesurfer] = useState<WaveSurfer>()
-    const [isPlaying, setIsPlaying] = useState(false);
     const [getId, setId] = useState<string>();
 
     useEffect(() =>{
@@ -203,11 +203,6 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
     useEffect(() =>{
         genPlayer();
     },[getId]);
-  
-    // const onReady = (ws:WaveSurfer) => {
-    //   setWavesurfer(ws)
-    //   setIsPlaying(false)
-    // }
     
 
     function genPlayer(){
@@ -238,9 +233,9 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
    
 
     return  <>
-        <Card p={5} style={{cursor:'pointer'}} radius={'lg'} withBorder onClick={onPlayPause} w={200}>
+        <Box style={{cursor:'pointer'}}   onClick={onPlayPause} w={200}>
             <Box style={{pointerEvents: 'none'}} id={getId}></Box>
-        </Card>
+        </Box>
     </>;
 }
 
