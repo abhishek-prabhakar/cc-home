@@ -387,10 +387,10 @@ model Coupons {
 
 model ChatGroup {
   id              String            @id
-  bookingId       String
+  bookingId       String?
   created_at      DateTime          @default(now()) @db.Timestamp(6)
   isDisabled      Boolean           @default(false)
-  booking         Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking         Booking?           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   ChatGroupMember ChatGroupMember[]
   ChatThread      ChatThread[]
 }
@@ -503,12 +503,13 @@ enum Coupons_chargeType {
   PERCENTAGE
 }
 
-enum ChatThread_type {
-  TEXT
-  IMAGE
-}
-
 enum vendors_profileType {
   BASIC
   PRO
+}
+
+enum ChatThread_type {
+  TEXT
+  IMAGE
+  VOICE
 }

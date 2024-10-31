@@ -8,7 +8,7 @@ import { IconCreditCardRefund } from "@tabler/icons-react";
 import { IconAlertCircleFilled, IconCheck, IconCircleX } from "@tabler/icons-react";
 import { Orders } from "razorpay/dist/types/orders";
 import { Suspense, useState } from "react";
-import { ChatBox } from "~/components/ChatBox";
+import { ChatBox } from "~/components/ChatBox.client";
 import Skeleton from "~/components/Skeleton";
 import adminData from "~/data/admin.data";
 import COMMON_DATA, { SUPPORT_CENTER } from "~/data/common.data";

@@ -3,7 +3,7 @@ import { BookingStatus } from "@prisma/client";
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData, useNavigation } from "@remix-run/react";
 import { IconInfoCircle } from "@tabler/icons-react";
-import { ChatBox } from "~/components/ChatBox";
+import { ChatBox } from "~/components/ChatBox.client";
 import { PATH } from "~/path.data";
 import ChatService from "~/service/chat.service";
 import OrderService from "~/service/order.service";
