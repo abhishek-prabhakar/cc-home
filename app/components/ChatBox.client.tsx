@@ -1,8 +1,8 @@
 import { ActionIcon, Badge, Box, Card, Divider, Flex, Grid, Group, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
-import { IconX } from "@tabler/icons-react";
-import { IconMicrophone, IconPlayerStopFilled, IconSend } from "@tabler/icons-react";
+import { IconSend2, IconX } from "@tabler/icons-react";
+import { IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import {  LiveAudioVisualizer } from "react-audio-visualize";
@@ -156,7 +156,7 @@ export function ChatBox(input: inputProps){
                 </Grid.Col>
                 <Grid.Col span={'content'}>
                     <ActionIcon  size="lg" type="submit" variant="filled" color="green" aria-label="Send">
-                        <IconSend style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                        <IconSend2 style={{ width: '70%', height: '70%' }} stroke={1.5} />
                     </ActionIcon>
                 </Grid.Col>
                 <Grid.Col span={'content'}>
@@ -305,7 +305,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
                 
                 {
                     audioOutput?  <ActionIcon onClick={submitAudio}  size="lg" type="submit" variant="filled" color="green" aria-label="Send">
-                    <IconSend style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                    <IconSend2 style={{ width: '70%', height: '70%' }} stroke={1.5} />
                 </ActionIcon> : ''
                 }
   </Box>
