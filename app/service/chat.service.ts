@@ -29,11 +29,30 @@ async function addVendorAsChatGroupMember(input: {
     vendorId: string,
     chatGroupId: string
 }){
+   const vendorPhone = await db.vendor.findFirstOrThrow({
+        where:{
+            id: input.vendorId
+        },
+        select:{
+            mobileNumber: true
+        }
+    });
+
+    const user = await db.user.findFirstOrThrow({
+        where:{
+            username: vendorPhone.mobileNumber
+        },
+        select:{
+            id: true
+        }
+    })
+
     return await db.chatGroupMember.create({
         data:{
             id: generateUuid(),
             chatGroupId: input.chatGroupId,
             vendorId:  input.vendorId,
+            userId: user.id
         }
     });
 }
@@ -134,6 +153,22 @@ async function disableChatForVendor(bookingId: string, vendorId: string){
 }
 
 
+function getAllChatGroupsByUser(userId: string){
+    return db.chatGroup.findMany({
+        select:{
+            created_at: true
+        },
+        where:{
+            ChatGroupMember:{
+                some:{ 
+                    userId,
+                    vendorId: userId
+                }
+            }
+        }
+    })
+}
+
 
 const ChatService = {
     getChatgroupByBookingId,
@@ -142,7 +177,8 @@ const ChatService = {
     addUserAsChatGroupMember,
     addVendorAsChatGroupMember,
     disableChatGroup,
-    disableChatForVendor
+    disableChatForVendor,
+    getAllChatGroupsByUser
 }
 
 export default ChatService;

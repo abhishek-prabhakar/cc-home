@@ -3,6 +3,7 @@ import { PrismaClient, UserSource } from "@prisma/client";
 import generateUuid from "~/utils/uuid.generator";
 import SmsService from "~/service/sms.service";
 import { generateOtp } from "~/utils/otp.generator";
+import UserService from "~/service/user.service";
 var bcrypt = require('bcryptjs');
 
 export async function action({
@@ -21,13 +22,7 @@ export async function action({
         });
 
         if (!existingUser?.id) {
-            data = await prisma.user.create({
-                data: {
-                    id: generateUuid(),
-                    username,
-                    source: UserSource.ORGANIC
-                },
-            });
+            data = await UserService.Create(username);
         }
 
         const otp = generateOtp(); 

@@ -3,6 +3,7 @@ import { PATH } from "~/path.data";
 import { AddonGroupItem, PackageService, VendorProfile, VendorResultListItem, VendorService, VendorServiceOption, VendorServicePublic } from "~/types";
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
+import UserService from "./user.service";
 
 
 function Stories(username?: string) {
@@ -230,7 +231,7 @@ function getFilteredVendors(params: {
     return result
 }
 
-function signup(props: {
+async function signup(props: {
     fullName: string,
     mobileNumber: string,
     email: string,
@@ -238,11 +239,33 @@ function signup(props: {
     socialUrl?: string | null,
     categoryId?: string | null
 }) {
+    const replaced = props.mobileNumber?.replace(/ /g, '');
+    const formattedNumber = replaced?.substr(replaced.length - 10);
+
+    if(!formattedNumber){
+        throw new Response('Not found',{
+            status: 500,
+        });
+    }
+
+    const existingUser = await db.user.findFirst({
+        where:{
+            username: formattedNumber
+        },
+        select:{
+            id: true
+        }
+    });
+
+    if(!existingUser?.id){
+        await UserService.Create(formattedNumber);
+    }
+
     return db.vendor.create({
         data: {
             id: generateUuid(),
             name: props.fullName,
-            mobileNumber: props.mobileNumber,
+            mobileNumber: formattedNumber,
             email: props.email,
             username: props.username,
             usernameSuggestion: props.username,

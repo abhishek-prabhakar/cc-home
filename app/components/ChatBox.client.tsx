@@ -230,13 +230,9 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
       wavesurfer && wavesurfer.playPause()
     }
 
-   
-
-    return  <>
-        <Box  style={{cursor:'pointer',zIndex: 0 }}   onClick={onPlayPause} w={200}>
+    return  <Box  style={{cursor:'pointer',zIndex: 0 }}   onClick={onPlayPause} w={200}>
             <Box style={{pointerEvents: 'none'}} id={getId}></Box>
-        </Box>
-    </>;
+        </Box>;
 }
 
  function VoiceNote(props:{
