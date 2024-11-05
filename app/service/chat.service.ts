@@ -100,14 +100,7 @@ async function getChatgroupByBookingId(bookingId: string, userId: string){
                 },
                 take: 1,
                 where:{
-                    OR:[
-                        {
-                            userId
-                        },
-                        {
-                            vendorId: userId
-                        }
-                    ]
+                    userId
                 }
             }
         }
@@ -168,6 +161,27 @@ function getAllChatGroupsByUser(userId: string){
     })
 }
 
+function getChatGroupByUserId(userId: string, chatGroupId: string){
+    return  db.chatGroup.findFirst({
+        where:{
+            id: chatGroupId
+        },
+        select:{
+            id: true,
+            isDisabled: true,
+            ChatGroupMember:{
+                select:{
+                    id: true
+                },
+                take: 1,
+                where:{
+                    userId
+                }
+            }
+        }
+    });
+}
+
 
 const ChatService = {
     getChatgroupByBookingId,
@@ -177,7 +191,8 @@ const ChatService = {
     addVendorAsChatGroupMember,
     disableChatGroup,
     disableChatForVendor,
-    getAllChatGroupsByUser
+    getAllChatGroupsByUser,
+    getChatGroupByUserId
 }
 
 export default ChatService;

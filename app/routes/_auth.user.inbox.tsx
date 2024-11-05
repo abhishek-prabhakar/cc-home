@@ -5,9 +5,8 @@ import { Await, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { Suspense } from "react";
 import Skeleton from "~/components/Skeleton";
 import ChatService from "~/service/chat.service";
-import UserService from "~/service/user.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
-import classes from '../styles/accordian.module.css';
+import classes from '../styles/accordionInbox.module.css';
 import { DateFormatter } from "~/utils/date.transform";
 import Routes from "~/routes.data";
 
@@ -33,7 +32,7 @@ const Inbox = {
                 <Space h={'lg'}/>
                     <Grid>
                         <Grid.Col span={{ base: 12, md: 4 }}>
-                            <Card withBorder>
+                            <Card withBorder p={2}>
                                 <Inbox.Groups />
                             </Card>
                         </Grid.Col>
@@ -54,7 +53,7 @@ const Inbox = {
         return <Box>
             <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.groups}>
-                    {_response =>  <Accordion  defaultValue="0" className="classes">
+                    {_response =>  <Accordion  defaultValue="0" classNames={classes}>
                         {_response?.map(item => <Accordion.Item key={item.id} value={item.id}>
                                 <Accordion.Control onClick={v => navigateToChat(item.id)}>{item.name || DateFormatter.short(item.created_at)}</Accordion.Control>
                             </Accordion.Item>) }
