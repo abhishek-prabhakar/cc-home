@@ -28,11 +28,18 @@ export function ChatBox(input: inputProps){
     const [pendingThreads, setPendingThreads] = useState<{ type: ChatThread_type, data: string}[]>([]);
     const [refresh, setRefresh] = useState(false);
     const [pageReady, setPageReady] = useState(false);
+    const [loadNewMsgBusy, setLoadNewMsgBusy] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const viewport = useRef<HTMLDivElement>(null);
 
     const CHAT_ENDPOINT = '/chat/'+input.chatGroupId;
     const title = input.title || 'Chat with your vendor';
+
+    useEffect(() =>{
+        setPendingThreads([]);
+        setThreads([]);
+        setPageReady(false);
+    },[input.chatGroupId]);
    
     useEffect(() =>{
         if(refresh){
@@ -45,12 +52,12 @@ export function ChatBox(input: inputProps){
         if(!fetcher.data){
             return;
         }
-
+        setLoadNewMsgBusy(false);
         setIncomingMsg(fetcher.data?.threads);
         if(!pageReady){
             setPageReady(true);
         }
-    },[fetcher.data]);
+    },[fetcher.data, input.chatGroupId]);
 
     function dataPolling(){
         setRefresh(false);
@@ -65,6 +72,8 @@ export function ChatBox(input: inputProps){
             setRefresh(true);
             return;
         }
+        if(loadNewMsgBusy){ return; }
+        setLoadNewMsgBusy(true);
         fetcher.submit({
             memberId: input.memberId,
             type: getRecent? CHAT_DATA_TYPE.RECENT: CHAT_DATA_TYPE.ALL_THREADS,
