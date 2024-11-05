@@ -58,7 +58,7 @@ async function addVendorAsChatGroupMember(input: {
 }
 
 async function getChatgroupByOrderId(orderId: string, userId: string){
-    return await db.chatGroup.findFirst({
+    return await db.chatGroup.findFirst({ 
         where:{
             booking:{
                 orderId
@@ -76,9 +76,6 @@ async function getChatgroupByOrderId(orderId: string, userId: string){
                     OR:[
                         {
                             userId
-                        },
-                        {
-                            vendorId: userId
                         }
                     ]
                 }

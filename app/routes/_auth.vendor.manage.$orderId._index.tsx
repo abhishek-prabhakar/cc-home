@@ -112,7 +112,7 @@ async function loaderResponse(userId: string, orderId:string){
        }
    });
 
-  const chatGroup = await ChatService.getChatgroupByOrderId(orderId, orderData[0].vendorServiceGroup.vendorId);   
+  const chatGroup = await ChatService.getChatgroupByOrderId(orderId, userId);   
    return {orderData,chatGroup};
 }
 
@@ -190,7 +190,7 @@ const Page = {
         const [pageReady, setPageReady] = useState(false);
         useEffect(() =>{
             setPageReady(true);
-        },[])
+        },[]);
         return pageReady? <ChatBox title="Chat with customer" chatGroupId={props.chatGroupId} memberId={props.memberId} disabled={props.isDisabled}/>: <></>;
     },
     StartService: () =>{

@@ -24,37 +24,31 @@ export async function action(args: ActionArgs){
         status: 404,
     }); }
 
-    const currentUserInfo = await db.user.findFirstOrThrow({
-        where:{
-            id: currentUserId
-        },
-        select:{
-            username: true
-        }
-    });
+    // const currentUserInfo = await db.user.findFirstOrThrow({
+    //     where:{
+    //         id: currentUserId
+    //     },
+    //     select:{
+    //         username: true
+    //     }
+    // });
 
-    const vendorInfo = await db.vendor.findMany({
-        where:{
-            mobileNumber: currentUserInfo.username
-        },
-        select:{
-            id: true
-        }
-    });
-    const memberLookupIds = vendorInfo.map(x => x.id).concat([currentUserId])
+    // const vendorInfo = await db.vendor.findMany({
+    //     where:{
+    //         mobileNumber: currentUserInfo.username
+    //     },
+    //     select:{
+    //         id: true
+    //     }
+    // });
+    // const memberLookupIds = vendorInfo.map(x => x.id).concat([currentUserId])
+
+    const memberLookupIds = [currentUserId];
     
     const member =  await db.chatGroupMember.findFirstOrThrow({
         where:{
             chatGroupId,
-            OR:[{
-                userId: {
-                    in: memberLookupIds
-                }
-            },{
-                vendorId: {
-                    in: memberLookupIds
-                }
-            }]
+            userId: currentUserId
         },
         select:{
             id: true,
@@ -86,8 +80,6 @@ export async function action(args: ActionArgs){
             chatGroupId,
             OR:[{
                 userId: { notIn: memberLookupIds }
-            },{
-                vendorId: { notIn: memberLookupIds }
             }]
         },
         select:{

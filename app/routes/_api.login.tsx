@@ -1,21 +1,20 @@
-import { ActionFunction, json } from "@remix-run/node";
-import { PrismaClient, UserSource } from "@prisma/client";
+import {  json } from "@remix-run/node";
 import generateUuid from "~/utils/uuid.generator";
 import SmsService from "~/service/sms.service";
 import { generateOtp } from "~/utils/otp.generator";
 import UserService from "~/service/user.service";
+import { db } from "~/utils/database";
 var bcrypt = require('bcryptjs');
 
 export async function action({
     request,
 }: any) {
     const body = await request.formData();
-    const prisma = new PrismaClient();
     const username = body.get('phone');
     let data;
     let success = false;
     try {
-        const existingUser = await prisma.user.findFirst({
+        const existingUser = await db.user.findFirst({
             where: {
                 username
             }
@@ -27,13 +26,13 @@ export async function action({
 
         const otp = generateOtp(); 
         const otpHash = await bcrypt.hash('' + otp, 10);
-        await prisma.userOtp.deleteMany({
+        await db.userOtp.deleteMany({
             where: {
                 username
             },
         });
 
-        await prisma.userOtp.create({
+        await db.userOtp.create({
             data: {
                 id: generateUuid(),
                 username,

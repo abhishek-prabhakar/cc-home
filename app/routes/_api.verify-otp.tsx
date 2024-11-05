@@ -1,5 +1,4 @@
-import { ActionFunction, json, redirect } from "@remix-run/node"
-import { PrismaClient } from "@prisma/client";
+import {  json, redirect } from "@remix-run/node"
 import { db } from "~/utils/database";
 import { USER_SESSION_KEY, commitSession, getSession } from "~/session.server";
 var bcrypt = require('bcryptjs');
@@ -8,7 +7,6 @@ export async function action({
     request,
 }: any) {
     const body = await request.formData();
-    const prisma = new PrismaClient();
     const username = body.get('phone');
     const otp = body.get('otp');
     const redirectUrl = body.get('redirectUrl')?.toString() || '/user/home';
@@ -16,7 +14,7 @@ export async function action({
     let success = false;
     let resCode = 400;
     try {
-        const existingUser = await prisma.userOtp.findFirstOrThrow({
+        const existingUser = await db.userOtp.findFirstOrThrow({
             where: {
                 username
             }
@@ -24,7 +22,7 @@ export async function action({
 
         const verified = await bcrypt.compare(otp, existingUser.otpHash);
         if (verified) {
-            await prisma.userOtp.deleteMany({
+            await db.userOtp.deleteMany({
                 where: {
                     username
                 },
