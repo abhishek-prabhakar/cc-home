@@ -32,11 +32,9 @@ export async function loader({ request }: LoaderArgs) {
 			status: 404,
 		});
     }
-   // await db.wishlist.deleteMany();
     const items = WishlistService.getAllItems({
         userId
-    })
-
+    });
 
     return defer({ items });
 }

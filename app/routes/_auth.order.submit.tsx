@@ -117,7 +117,7 @@ export async function action({
             REDIRECT_SUCCESS = '/order/payment';
         }
 
-        const chatGroup = await ChatService.createChatGroup(data.id);
+        const chatGroup = await ChatService.createChatGroup(orderId, data.id);
         
         await ChatService.addUserAsChatGroupMember({
             chatGroupId: chatGroup.id,

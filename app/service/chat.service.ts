@@ -1,10 +1,11 @@
 import { db } from "~/utils/database";
 import generateUuid from "~/utils/uuid.generator";
 
-async function createChatGroup(orderId: string){
+async function createChatGroup(name: string, orderId: string){
     return  await db.chatGroup.create({
         data:{
             id: generateUuid(),
+            name,
             bookingId: orderId
         }
     });
@@ -153,13 +154,14 @@ async function disableChatForVendor(bookingId: string, vendorId: string){
 function getAllChatGroupsByUser(userId: string){
     return db.chatGroup.findMany({
         select:{
+            id: true,
+            name: true,
             created_at: true
         },
         where:{
             ChatGroupMember:{
                 some:{ 
-                    userId,
-                    vendorId: userId
+                    userId
                 }
             }
         }
