@@ -34,13 +34,6 @@ export function ChatBox(input: inputProps){
 
     const CHAT_ENDPOINT = '/chat/'+input.chatGroupId;
     const title = input.title || 'Chat with your vendor';
-
-    useEffect(() =>{
-        setPendingThreads([]);
-        setThreads([]);
-        setPageReady(false);
-        dataPolling();
-    },[input.chatGroupId]);
    
     useEffect(() =>{
         if(refresh){
@@ -63,7 +56,7 @@ export function ChatBox(input: inputProps){
     function dataPolling(){
         setRefresh(false);
         if(loadNewMsgBusy){ return; }
-        
+
         setTimeout(() => {
             fetchMessages(!!threads.length);
         }, CHAT_REFRESH_INTERVAL);

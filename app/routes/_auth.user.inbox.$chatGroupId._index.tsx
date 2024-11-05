@@ -27,9 +27,11 @@ export async function loader({request, params}: LoaderArgs){
 export default function(){
     const [pageReady, setPageReady] = useState(false);
     const data = useLoaderData<typeof loader>();
+
         useEffect(() =>{
-            setPageReady(true);
-        },[]);
+            setPageReady(false);
+            setTimeout(() => setPageReady(true),500);// important. This will destroy ChatBox and repaint.
+        },[data.group?.id]);
 
     return pageReady && data.group?.id? <ChatBox title={data?.group.name} chatGroupId={data?.group?.id} memberId={data.group?.ChatGroupMember[0]?.id} disabled={data.group.isDisabled}/>: <Card withBorder title="Chat is disabled">
         Contact support to enable chat for this order.
