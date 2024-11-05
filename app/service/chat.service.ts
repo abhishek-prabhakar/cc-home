@@ -169,6 +169,7 @@ function getChatGroupByUserId(userId: string, chatGroupId: string){
         select:{
             id: true,
             isDisabled: true,
+            name: true,
             ChatGroupMember:{
                 select:{
                     id: true

@@ -16,7 +16,7 @@ type inputProps ={
     memberId: string;
     chatGroupId: string;
     disabled: boolean;
-    title?: string
+    title?: string | null
 }
 
 const CHAT_REFRESH_INTERVAL = 5000;
@@ -39,6 +39,7 @@ export function ChatBox(input: inputProps){
         setPendingThreads([]);
         setThreads([]);
         setPageReady(false);
+        dataPolling();
     },[input.chatGroupId]);
    
     useEffect(() =>{
@@ -57,10 +58,12 @@ export function ChatBox(input: inputProps){
         if(!pageReady){
             setPageReady(true);
         }
-    },[fetcher.data, input.chatGroupId]);
+    },[fetcher.data]);
 
     function dataPolling(){
         setRefresh(false);
+        if(loadNewMsgBusy){ return; }
+        
         setTimeout(() => {
             fetchMessages(!!threads.length);
         }, CHAT_REFRESH_INTERVAL);
@@ -72,7 +75,6 @@ export function ChatBox(input: inputProps){
             setRefresh(true);
             return;
         }
-        if(loadNewMsgBusy){ return; }
         setLoadNewMsgBusy(true);
         fetcher.submit({
             memberId: input.memberId,

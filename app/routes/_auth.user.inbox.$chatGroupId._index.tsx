@@ -31,7 +31,7 @@ export default function(){
             setPageReady(true);
         },[]);
 
-    return pageReady && data.group?.id? <ChatBox chatGroupId={data?.group?.id} memberId={data.group?.ChatGroupMember[0]?.id} disabled={data.group.isDisabled}/>: <Card withBorder title="Chat is disabled">
+    return pageReady && data.group?.id? <ChatBox title={data?.group.name} chatGroupId={data?.group?.id} memberId={data.group?.ChatGroupMember[0]?.id} disabled={data.group.isDisabled}/>: <Card withBorder title="Chat is disabled">
         Contact support to enable chat for this order.
 </Card>;
 }
