@@ -1,5 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import { defer, TypedDeferredData, type LinksFunction, type LoaderArgs } from "@remix-run/node";
+import { defer, type LinksFunction, type LoaderArgs } from "@remix-run/node";
 import {
   Await,
   Links,
@@ -9,7 +9,6 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-  useFetcher,
   useLoaderData,
   useNavigation,
   useRouteError,
@@ -18,17 +17,16 @@ import cssTransitions from '~/transitions.css';
 import styles from '~/root.css';
 import carouselStyles from 'react-photo-view/dist/react-photo-view.css';
 import { Footer } from "~/components/Footer";
-import { OfferTicker } from "~/components/OfferTicker";
 import { Header } from "./components/Header";
-import { HeaderNavListItem, RootLoaderData, User } from "./types";
+import { HeaderNavListItem, User } from "./types";
 import { USER_SESSION_KEY, getSession, userCartCookie } from "./session.server";
 import { db } from "./utils/database";
 import { Provider } from 'react-redux';
 import store from './store/store';
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import Routes from "./routes.data";
 import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, Grid, MantineProvider, Container, LoadingOverlay, Space, Alert, Progress } from "@mantine/core";
+import { ColorSchemeScript, Box, MantineProvider,  Progress } from "@mantine/core";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import theme from "./mantine.theme";

@@ -15,9 +15,7 @@ export async function loader({ params, request }: LoaderArgs) {
     const userId = session.get(USER_SESSION_KEY);
 
     if(!userId){
-        throw new Response('',{
-            status: 404,
-        });
+        return null;
     }
 
     const groups = await ChatService.getAllChatGroupsByUser(userId);
@@ -52,7 +50,7 @@ const Inbox = {
 
         return <Box>
             <Suspense fallback={<Skeleton />}>
-                <Await resolve={data.groups}>
+                <Await resolve={data?.groups}>
                     {_response =>  <Accordion  defaultValue="0" classNames={classes}>
                         {_response?.map(item => <Accordion.Item key={item.id} value={item.id}>
                                 <Accordion.Control onClick={v => navigateToChat(item.id)}>{item.name || DateFormatter.short(item.created_at)}</Accordion.Control>

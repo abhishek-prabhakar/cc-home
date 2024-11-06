@@ -10,6 +10,8 @@ import {  useAudioRecorder } from "react-audio-voice-recorder";
 import WaveSurfer from "wavesurfer.js";
 import { PATH } from "~/path.data";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
+import Linkify from 'react-linkify';
+
 const stringHash = require("string-hash");
 
 type inputProps ={
@@ -176,8 +178,20 @@ function ChatThread(props: {
     type: ChatThread_type;
     message: string;
 }){
-    return props.type === ChatThread_type.VOICE? <LoadAudioFile  url={PATH.RESOURCE_URL_VOICE+props.message}/> : <Badge tt="none" color="gray" size="lg">{props.message}</Badge>
+    return props.type === ChatThread_type.VOICE? <LoadAudioFile  url={PATH.RESOURCE_URL_VOICE+props.message}/> : <PreviewTextMessage message={props.message}/>
 }
+
+function PreviewTextMessage(props: {
+    message: string;
+}){
+    useEffect(() =>{
+        // getLinkPreview(props.message).then(r =>{
+        //     console.log(r)
+        // })
+    },[]);
+    return  <Badge tt="none" color="gray" size="lg"><Linkify>{props.message}</Linkify> </Badge>;
+}
+
 
 function LoadAudioFile({ url}:{ url: string}){
     const [fileBlob, setFileBlob] = useState<Blob>();
@@ -215,7 +229,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
         };
 
         const elRef = document.getElementById(getId);
-        wavesurfer?.destroy();
+        // wavesurfer?.destroy();
         if(elRef && !wavesurfer){
             const wavesurferRef = WaveSurfer.create({
                 container: elRef,
