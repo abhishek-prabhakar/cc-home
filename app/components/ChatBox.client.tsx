@@ -11,6 +11,7 @@ import WaveSurfer from "wavesurfer.js";
 import { PATH } from "~/path.data";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 import Linkify from 'react-linkify';
+const getWaveBlob = require("wav-blob-util");
 
 const stringHash = require("string-hash");
 
@@ -184,12 +185,7 @@ function ChatThread(props: {
 function PreviewTextMessage(props: {
     message: string;
 }){
-    useEffect(() =>{
-        // getLinkPreview(props.message).then(r =>{
-        //     console.log(r)
-        // })
-    },[]);
-    return  <Badge tt="none" color="gray" size="lg"><Linkify>{props.message}</Linkify> </Badge>;
+    return  <Badge tt="none" color="gray" size="lg"><Linkify>{props.message}</Linkify></Badge>;
 }
 
 
@@ -219,7 +215,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
     },[]);
 
     useEffect(() =>{
-        genPlayer();
+       setTimeout(()=> genPlayer());
     },[getId]);
     
 
@@ -232,15 +228,15 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
         // wavesurfer?.destroy();
         if(elRef && !wavesurfer){
             const wavesurferRef = WaveSurfer.create({
-                container: elRef,
-                waveColor: '#184BFF',
-                progressColor: 'violet',
-                url: URL.createObjectURL(media),
-                barWidth: 2,
-                barGap: 2,
-                height: 20,
+                    container: elRef,
+                    waveColor: '#184BFF',
+                    progressColor: 'violet',
+                    url: URL.createObjectURL(media),
+                    barWidth: 2,
+                    barGap: 2,
+                    height: 20,
             });
-            setWavePlayer(wavesurferRef);
+            setWavePlayer(wavesurferRef);  
         }
     }
 
@@ -272,9 +268,10 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
     
       async function submitAudio(){
         if(!audioOutput) return;
+        const waveData = await getWaveBlob(audioOutput, false);
         axios({
             method: 'post', url: PATH.VOICE_FILE_UPLOAD, data: {
-                file: audioOutput
+                file: waveData
             },
             headers: { "Content-Type": "multipart/form-data" }
         }).then( data =>{
