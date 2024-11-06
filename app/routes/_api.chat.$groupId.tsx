@@ -116,7 +116,7 @@ export async function action(args: ActionArgs){
         let url = '/';
         const orderId = member?.chatGroup?.booking?.orderId;
         if(!orderId){
-            url= Routes.get('UserChatChannels');
+            url= Routes.get('UserInboxGroup',{id: chatGroupId});
         } else if(x.vendor?.mobileNumber){
             url= Routes.get('VendorManageOrder', {id: orderId });
         } else{

@@ -30,7 +30,7 @@ const Inbox = {
         return <Box>
                 <Title order={3}>Inbox</Title>
                 <Space h={'lg'}/>
-                    <Grid gutter={'lg'}>
+                    <Grid gutter={'xl'}>
                         <Grid.Col span={{ base: 12, md: 4 }}>
                             <Card withBorder p={2}>
                                 <Inbox.Groups />
