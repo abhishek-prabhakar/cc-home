@@ -17,7 +17,6 @@ const RoutesList = {
     UserManageOrder: '/user/order/:id',
     OrderInvoice: '/user/order/:id/invoice',
     VendorManageOrder: '/vendor/manage/:id',
-    UserChatChannels: '/user/chats/',
     VendorPackage: '/cart/package/:username/:id',
     MakeYourPackage: '/cart/package/:vendorGroupId'
 }
