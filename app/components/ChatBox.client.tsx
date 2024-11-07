@@ -1,7 +1,7 @@
-import { ActionIcon, Badge, Box, Card, Divider, Flex, Grid, Group, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Badge, Box, Card, Divider, Flex, Grid, Group, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, ThemeIcon, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
 import { useFetcher } from "@remix-run/react";
-import { IconSend2, IconX } from "@tabler/icons-react";
+import { IconPlayerPlay, IconPlayerPlayFilled, IconSend2, IconX } from "@tabler/icons-react";
 import { IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -133,10 +133,10 @@ export function ChatBox(input: inputProps){
             <Title order={5}>{title}</Title>
             <Space h="md"/>
             <Divider/>
-            <Space h="md"/>
-            <Box pos={'relative'} mx={'-18px'}>
+            <Box pos={'relative'} mx={'-18px'} bg={'#f3f3f3'}>
                 <LoadingOverlay visible={!threads.length} zIndex={1} loaderProps={{ children: pageReady && !threads.length?'Start a conversation': <Loader color="blue" type="bars" /> }} />
                 <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars  type="always" px={10}>
+                            <Space h="lg"/>
                             <Grid gutter={'sm'}  >
                                 {threads.map(item =>  <Grid.Col span={12} key={item.created_at.toString()}>
                                     <Flex justify={item.memberId === input.memberId? 'flex-end': 'flex-start'}>
@@ -154,7 +154,7 @@ export function ChatBox(input: inputProps){
                                 </Grid.Col> )}
                             </Grid>
                 </ScrollArea>
-                </Box>
+            </Box>
             <Space h="md"/>
            {!input.disabled? <form onSubmit={submitTextMsg}>
             <Grid pos={'relative'} gutter={'xs'} align="center">
@@ -185,7 +185,7 @@ function ChatThread(props: {
 function PreviewTextMessage(props: {
     message: string;
 }){
-    return  <Badge tt="none" color="gray" size="lg"><Linkify>{props.message}</Linkify></Badge>;
+    return  <Card withBorder radius={"md"} p={'xs'}><Linkify>{props.message}</Linkify></Card>;
 }
 
 
@@ -201,7 +201,7 @@ function LoadAudioFile({ url}:{ url: string}){
 
 
     return fileBlob? <Card p={5}  radius={'lg'} withBorder>
-        <AudioPreview id={url} media={fileBlob} />
+            <AudioPreview id={url} media={fileBlob} />
         </Card>:  <Loader color="gray" size="xs" />;
 };
 
@@ -244,8 +244,13 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
       wavesurfer && wavesurfer.playPause()
     }
 
-    return  <Box  style={{cursor:'pointer',zIndex: 0 }}   onClick={onPlayPause} w={200}>
-            <Box style={{pointerEvents: 'none'}} id={getId}></Box>
+    return  <Box  style={{cursor:'pointer',zIndex: 0 }}   onClick={onPlayPause}>
+            <Group>
+                <ThemeIcon variant="white" color="#c0c0c0">
+                    <IconPlayerPlayFilled/>
+                </ThemeIcon>
+                <Box  w={200} style={{pointerEvents: 'none'}} id={getId}></Box>
+            </Group>
         </Box>;
 }
 

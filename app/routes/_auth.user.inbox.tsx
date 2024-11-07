@@ -1,14 +1,14 @@
-import { Accordion, Box, Card, Grid, Space, Title } from "@mantine/core";
-import { UserSource } from "@prisma/client";
+import { Accordion, Box, Card, Grid, Space, Title, em } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
-import { Await, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
-import { Suspense } from "react";
+import { Await, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
+import { Suspense, useEffect, useState } from "react";
 import Skeleton from "~/components/Skeleton";
 import ChatService from "~/service/chat.service";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import classes from '../styles/accordionInbox.module.css';
 import { DateFormatter } from "~/utils/date.transform";
 import Routes from "~/routes.data";
+import { useMediaQuery } from "@mantine/hooks";
 
 export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));
@@ -25,11 +25,23 @@ export async function loader({ params, request }: LoaderArgs) {
 
 const Inbox = {
     Home: () => {
+        const location = useLocation();
+        const isMobile = useMediaQuery(`(max-width: ${em(992)})`);
+        const [showChatGroupsList, setChatGroupsListVisible] = useState(false);
+
+        useEffect(() =>{
+            if(isMobile){
+                setChatGroupsListVisible(location.pathname === Routes.get('UserInbox'));
+            } else{
+                setChatGroupsListVisible(true);
+            }
+        },[location.pathname, isMobile]);
+
         return <Box>
                 <Title order={3}>Inbox</Title>
                 <Space h={'lg'}/>
                     <Grid gutter={'xl'}>
-                        <Grid.Col span={{ base: 12, md: 4 }}>
+                        <Grid.Col hidden={!showChatGroupsList} span={{ base: 12, md: 4 }}>
                             <Card withBorder p={2}>
                                 <Inbox.Groups />
                             </Card>
@@ -45,7 +57,7 @@ const Inbox = {
         const navigate = useNavigate(); 
 
         function navigateToChat(id: string){
-            navigate(Routes.get('UserInboxGroup',{ id }));
+                navigate(Routes.get('UserInboxGroup',{ id }));
         }
 
         return <Box>
