@@ -1,5 +1,6 @@
 const RoutesList = {
     UserLogin: '/user/login?redirectUrl=:redirectUrl',
+    UserFavorites:'/user/wishlist',
     UserInbox: '/user/inbox',
     UserInboxGroup: '/user/inbox/:id',
     VendorProfile: '/profile/:id',
