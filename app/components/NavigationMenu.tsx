@@ -154,7 +154,9 @@ const AppNavigation = {
           {user?.id ?
             <>
               <Link to={'/user/home'} onClick={() => toggleDrawer(false)}><Button variant="white" fullWidth>My Bookings</Button></Link>
-              <Link to="/logout"><Button size="sm" variant="subtle">Logout</Button></Link>
+              <Link to={Routes.get('UserInbox')} onClick={() => toggleDrawer(false)}><Button variant="white" fullWidth>Messages</Button></Link>
+              <Link to={Routes.get('UserFavorites')} onClick={() => toggleDrawer(false)}><Button variant="white" fullWidth>Favorites</Button></Link>
+              <Link to="/logout" onClick={() => toggleDrawer(false)}><Button size="sm" variant="subtle">Logout</Button></Link>
             </> :
             <UserLogin onSuccess={() => toggleDrawer(false)} inlineMode={true} />}
           <Stack gap={'lg'}>

@@ -93,8 +93,8 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                                                 <Stack>
                                                                     <Title order={5}>Hey!</Title>
                                                                     <Link to={'/user/home'}>My Bookings</Link>
-                                                                    <Link to={'/user/inbox'}>Messages</Link>
-                                                                    <Link to={'/user/wishlist'}>Favorites</Link>
+                                                                    <Link to={Routes.get('UserInbox')}>Messages</Link>
+                                                                    <Link to={Routes.get('UserFavorites')}>Favorites</Link>
                                                                 </Stack>
                                                             </Box>
                                                             <Box>
