@@ -39,7 +39,7 @@ async function addVendorAsChatGroupMember(input: {
     if(exists?.id){
         return null;
     }
-    
+
    const vendorPhone = await db.vendor.findFirstOrThrow({
         where:{
             id: input.vendorId
@@ -176,6 +176,9 @@ function getChatGroupByUserId(userId: string, chatGroupId: string){
     return  db.chatGroup.findFirst({
         where:{
             id: chatGroupId
+        },
+        orderBy:{
+            created_at:'desc'
         },
         select:{
             id: true,
