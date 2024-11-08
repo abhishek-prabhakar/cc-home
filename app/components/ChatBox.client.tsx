@@ -12,6 +12,7 @@ import { PATH } from "~/path.data";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 import Linkify from 'react-linkify';
 import Routes from "~/routes.data";
+import { DateFormatter } from "~/utils/date.transform";
 const getWaveBlob = require("wav-blob-util");
 
 const stringHash = require("string-hash");
@@ -29,6 +30,7 @@ const VOICE_BLOB_TYPE = 'audio/ogg; codecs=opus';
 export function ChatBox(input: inputProps){
     const fetcher = useFetcher<ChatOutput>();
     const [threads, setThreads] = useState<ChatOutputThread[]>([]);
+    const [getMembers, setMembers] = useState<{[key in string]: string}>({});
     const [pendingThreads, setPendingThreads] = useState<{ type: ChatThread_type, data: string}[]>([]);
     const [refresh, setRefresh] = useState(false);
     const [pageReady, setPageReady] = useState(false);
@@ -52,6 +54,7 @@ export function ChatBox(input: inputProps){
         }
         setLoadNewMsgBusy(false);
         setIncomingMsg(fetcher.data?.threads);
+        setMembers(fetcher.data.members.reduce<{[key in string]: string}>((acc, item) => { acc[item.id] = item.vendor?.username || item.user?.name || 'Unknown'; return acc; } ,{}))
         if(!pageReady){
             setPageReady(true);
         }
@@ -146,9 +149,10 @@ export function ChatBox(input: inputProps){
                 <ScrollArea scrollbars="y" h={400} viewportRef={viewport} offsetScrollbars  type="always" px={10}>
                             <Space h="lg"/>
                             <Grid gutter={'sm'}  >
-                                {threads.map(item =>  <Grid.Col span={12} key={item.created_at.toString()}>
+                                {threads.map((item,_index) =>  <Grid.Col span={12} key={item.created_at.toString()}>
                                     <Flex justify={item.memberId === input.memberId? 'flex-end': 'flex-start'}>
                                         <Box maw={'80%'}>
+                                            {_index == 0 || threads[_index -1].memberId !== item.memberId?<Text mb={4} size="xs" c="dimmed">{getMembers[item.memberId]}, {DateFormatter.short(item.created_at)}</Text>: ''}
                                             <ChatThread type={item.type} message={item.message}/>
                                         </Box>
                                     </Flex>

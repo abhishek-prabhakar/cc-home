@@ -224,6 +224,7 @@ export type ChatOutputThread = {
 export type ChatOutput = {
    threads: ChatOutputThread[],
     members: {
+        id: string;
         user: {
             name: string | null;
         } | null;

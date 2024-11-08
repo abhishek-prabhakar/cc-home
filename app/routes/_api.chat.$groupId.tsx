@@ -148,6 +148,7 @@ export async function loader(args: LoaderArgs):Promise<ChatOutput>{
             chatGroupId
         },
         select:{
+            id: true,
             user:{
                 select:{
                     name: true
