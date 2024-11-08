@@ -261,7 +261,7 @@ function AudioPreview({media, id}:{id: string, media: Blob}){
                 <ThemeIcon variant="white" color="#c0c0c0">
                     <IconPlayerPlayFilled/>
                 </ThemeIcon>
-                <Box  w={200} style={{pointerEvents: 'none'}} id={getId}></Box>
+                <Box  w={160} style={{pointerEvents: 'none'}} id={getId}></Box>
             </Group>
         </Box>;
 }

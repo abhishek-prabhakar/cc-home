@@ -30,6 +30,16 @@ async function addVendorAsChatGroupMember(input: {
     vendorId: string,
     chatGroupId: string
 }){
+    const exists = await db.chatGroupMember.findFirst({
+        where:{
+            chatGroupId: input.chatGroupId,
+            vendorId: input.vendorId
+        }
+    });
+    if(exists?.id){
+        return null;
+    }
+    
    const vendorPhone = await db.vendor.findFirstOrThrow({
         where:{
             id: input.vendorId
@@ -46,7 +56,8 @@ async function addVendorAsChatGroupMember(input: {
         select:{
             id: true
         }
-    })
+    });
+
 
     return await db.chatGroupMember.create({
         data:{
