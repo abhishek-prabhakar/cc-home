@@ -1,4 +1,4 @@
-import { Accordion, Box, Card, Grid, Space, Title, em } from "@mantine/core";
+import { Accordion, Box, Card, Grid, Space, ThemeIcon, Title, em } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { Await, Outlet, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { Suspense, useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import classes from '../styles/accordionInbox.module.css';
 import { DateFormatter } from "~/utils/date.transform";
 import Routes from "~/routes.data";
 import { useMediaQuery } from "@mantine/hooks";
+import { IconAlertSmall } from "@tabler/icons-react";
 
 export async function loader({ params, request }: LoaderArgs) {
     const session = await getSession(request.headers.get('Cookie'));
@@ -65,7 +66,7 @@ const Inbox = {
                 <Await resolve={data?.groups}>
                     {_response =>  <Accordion  defaultValue="0" classNames={classes}>
                         {_response?.map(item => <Accordion.Item key={item.id} value={item.id}>
-                                <Accordion.Control onClick={v => navigateToChat(item.id)}>{item.name || DateFormatter.short(item.created_at)}</Accordion.Control>
+                                <Accordion.Control icon={item.ChatThread.length && item.ChatGroupMember[0].lastSeen < item.ChatThread[0].created_at? <ThemeIcon size="sm" radius="lg"  color="yellow"><IconAlertSmall/></ThemeIcon>:''} onClick={v => navigateToChat(item.id)}>{item.name || DateFormatter.short(item.created_at)}</Accordion.Control>
                             </Accordion.Item>) }
                     </Accordion>}
                 </Await>

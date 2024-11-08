@@ -160,7 +160,22 @@ function getAllChatGroupsByUser(userId: string){
         select:{
             id: true,
             name: true,
-            created_at: true
+            created_at: true,
+            ChatGroupMember:{
+                select:{
+                    lastSeen: true
+                },
+                take: 1,
+                where:{
+                    userId
+                }
+            },
+            ChatThread:{
+                take: 1,
+                orderBy:{
+                    created_at: 'desc'
+                }
+            }
         },
         where:{
             ChatGroupMember:{
