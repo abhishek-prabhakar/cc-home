@@ -143,6 +143,25 @@ export async function loader(args: LoaderArgs):Promise<ChatOutput>{
     const memberId =  url.searchParams.get('memberId')?.toString() || '';
     let threads:ChatOutputThread[], members: { user: { name: string | null; } | null; vendor: { username: string; profileImageName: string | null; } | null; }[] = [];
 
+    members = await db.chatGroupMember.findMany({
+        where:{
+            chatGroupId
+        },
+        select:{
+            user:{
+                select:{
+                    name: true
+                }
+            },
+            vendor:{
+                select:{
+                    username: true,
+                    profileImageName: true
+                }
+            }
+        }
+    });
+
     switch(requestType){
         case CHAT_DATA_TYPE.RECENT:
             threads = await db.chatThread.findMany({
@@ -164,25 +183,6 @@ export async function loader(args: LoaderArgs):Promise<ChatOutput>{
             });
         break;
         default:
-             members = await db.chatGroupMember.findMany({
-                where:{
-                    chatGroupId
-                },
-                select:{
-                    user:{
-                        select:{
-                            name: true
-                        }
-                    },
-                    vendor:{
-                        select:{
-                            username: true,
-                            profileImageName: true
-                        }
-                    }
-                }
-            });
-        
             threads = await db.chatThread.findMany({
                 where:{
                     chatGroupId

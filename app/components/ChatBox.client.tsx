@@ -1,6 +1,6 @@
-import { ActionIcon, Badge, Box, Card, Divider, Flex, Grid, Group, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, ThemeIcon, Title } from "@mantine/core";
+import { ActionIcon, Avatar, Badge, Box, Card, Divider, Flex, Grid, Group, Loader, LoadingOverlay, ScrollArea, Space, Stack, Text, TextInput, ThemeIcon, Title } from "@mantine/core";
 import { ChatThread_type } from "@prisma/client";
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { IconPlayerPlay, IconPlayerPlayFilled, IconSend2, IconX } from "@tabler/icons-react";
 import { IconMicrophone, IconPlayerStopFilled } from "@tabler/icons-react";
 import axios from "axios";
@@ -11,6 +11,7 @@ import WaveSurfer from "wavesurfer.js";
 import { PATH } from "~/path.data";
 import { CHAT_DATA_TYPE, ChatOutput, ChatOutputThread } from "~/types";
 import Linkify from 'react-linkify';
+import Routes from "~/routes.data";
 const getWaveBlob = require("wav-blob-util");
 
 const stringHash = require("string-hash");
@@ -60,9 +61,11 @@ export function ChatBox(input: inputProps){
         setRefresh(false);
         if(loadNewMsgBusy){ return; }
 
+        const GET_RECENT = !!threads.length;
+
         setTimeout(() => {
-            fetchMessages(!!threads.length);
-        }, CHAT_REFRESH_INTERVAL);
+            fetchMessages(GET_RECENT);
+        }, GET_RECENT? CHAT_REFRESH_INTERVAL: 0);
     }
     
 
@@ -130,7 +133,12 @@ export function ChatBox(input: inputProps){
 
     return <Box>
         <Card withBorder>
-            <Title order={5}>{title}</Title>
+            <Group justify="space-between">
+                <Title order={5}>{title}</Title>
+                <Avatar.Group>
+                    {fetcher.data?.members.map(user  => user?.vendor?.username? <Link to={Routes.get('VendorProfile',{id: user.vendor.username})}><Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/></Link>: <Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/>)}
+                </Avatar.Group>
+            </Group>
             <Space h="md"/>
             <Divider/>
             <Box pos={'relative'} mx={'-18px'} bg={'#f3f3f3'}>
