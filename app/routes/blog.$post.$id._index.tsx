@@ -1,8 +1,9 @@
-import {  Container,  Grid,  Space, Title } from "@mantine/core";
+import {  Box, Center, Container,  Grid,  Group,  Space, Stack, Text, Title } from "@mantine/core";
 import { LoaderArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import ShareOptions from "~/components/ShareOptions";
 import BlogService from "~/service/blog.service";
-
+import classes from '../styles/blog.module.css';
 
 export async function loader({params}:LoaderArgs){
     const postId = params.id;
@@ -19,13 +20,23 @@ export default function(){
 
 
     return  <Container size={'xl'} >
-        <Link to={'/blog'}><Title order={5}>Blog</Title></Link>
-        <Space h={"sm"}/>
-        <Title order={1}>{data.title}</Title>
-        <Space h={"md"}/>
-        <Grid>
+        <Stack justify="center" align="center">
+            <Group>
+                <Link to={'/'}><Text>Home</Text></Link>
+                <Text>/</Text>
+                <Link to={'/blog'}><Text>Blog</Text></Link>
+            </Group>
+            <Title maw={{sm: '100%', md: '60%'}} order={1} ta={'center'}>{data.title}</Title>
+            <Space h={"xs"}/>
+            <ShareOptions fullWidth={false}/>
+        </Stack>
+        <Space h={"xl"}/>
+        <Space h={"xl"}/>
+        <Grid justify="center">
             <Grid.Col span={{base: 12, md: 7}}>
-                <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                <Box className={classes.blogContainer}>
+                    <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                </Box>
             </Grid.Col>
         </Grid>
     </Container>

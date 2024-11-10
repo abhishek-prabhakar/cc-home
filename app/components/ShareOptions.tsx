@@ -19,7 +19,7 @@ import {
     TwitterIcon,
   } from "react-share";
 
-function ShareOptions(){
+function ShareOptions({fullWidth = true}:{ fullWidth?: boolean }){
     const [url, setUrl] = useState('');
     const location = useLocation();
     useEffect(() =>{
@@ -29,7 +29,7 @@ function ShareOptions(){
     const size = '24px';
     return  <Popover width={204} position="bottom" withArrow shadow="md">
     <Popover.Target>
-        <Button fullWidth variant="light"  color="violet" rightSection={<IconShare3 style={{ width: rem(20), height: rem(20) }}/>}>Share</Button>
+        <Button fullWidth={fullWidth} variant="light"  color="violet" rightSection={<IconShare3 style={{ width: rem(20), height: rem(20) }}/>}>Share</Button>
     </Popover.Target>
     <Popover.Dropdown>
         <Box>
