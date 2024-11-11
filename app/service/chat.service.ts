@@ -157,6 +157,9 @@ async function disableChatForVendor(bookingId: string, vendorId: string){
 
 function getAllChatGroupsByUser(userId: string){
     return db.chatGroup.findMany({
+        orderBy:{
+            created_at: 'desc'
+        },
         select:{
             id: true,
             name: true,

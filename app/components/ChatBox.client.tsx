@@ -29,6 +29,7 @@ const VOICE_BLOB_TYPE = 'audio/ogg; codecs=opus';
 
 export function ChatBox(input: inputProps){
     const fetcher = useFetcher<ChatOutput>();
+    const submitMsgfetcher = useFetcher<boolean>();
     const [threads, setThreads] = useState<ChatOutputThread[]>([]);
     const [getMembers, setMembers] = useState<{[key in string]: string}>({});
     const [pendingThreads, setPendingThreads] = useState<{ type: ChatThread_type, data: string}[]>([]);
@@ -54,7 +55,7 @@ export function ChatBox(input: inputProps){
         }
         setLoadNewMsgBusy(false);
         setIncomingMsg(fetcher.data?.threads);
-        setMembers(fetcher.data.members.reduce<{[key in string]: string}>((acc, item) => { acc[item.id] = item.vendor?.username || item.user?.name || 'Unknown'; return acc; } ,{}))
+        setMembers((fetcher.data?.members || []).reduce<{[key in string]: string}>((acc, item) => { acc[item.id] = item.vendor?.username || item.user?.name || 'Unknown'; return acc; } ,{}))
         if(!pageReady){
             setPageReady(true);
         }
@@ -111,7 +112,7 @@ export function ChatBox(input: inputProps){
     function submitForm(type: ChatThread_type, message: string){
         if(!message || !type) {return; }
         setPendingThreads(pendingThreads.concat([{ data: message, type: type }]));
-        fetcher.submit({
+        submitMsgfetcher.submit({
             message: message,
             type
         },{
@@ -139,7 +140,7 @@ export function ChatBox(input: inputProps){
             <Group justify="space-between">
                 <Title order={5}>{title}</Title>
                 <Avatar.Group>
-                    {fetcher.data?.members.map(user  => user?.vendor?.username? <Link to={Routes.get('VendorProfile',{id: user.vendor.username})}><Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/></Link>: <Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/>)}
+                    {fetcher.data?.members?.map(user  => user?.vendor?.username? <Link to={Routes.get('VendorProfile',{id: user.vendor.username})}><Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/></Link>: <Avatar src={PATH.THUMB_URL + user.vendor?.profileImageName}/>)}
                 </Avatar.Group>
             </Group>
             <Space h="md"/>
