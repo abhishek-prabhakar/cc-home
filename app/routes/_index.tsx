@@ -19,6 +19,7 @@ import { FuseResult } from "fuse.js";
 import classNames from "classnames";
 import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { SupportCenterAffix } from "~/components/SupportCenterAffix";
+import SearchInput from "~/components/SearchInput";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -228,38 +229,10 @@ const Home = {
     </>
   },
   Jumbotron: () => {
-    const data = useLoaderData<HomePage>();
-    const fetcher = useFetcher<{ results: FuseResult<SearchResultItem>[], vendors: FuseResult<SearchResultItem>[], }>();
-    const [searchBusy, setSearchBusy] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
-    const [debounced] = useDebouncedValue(searchValue, 200);
-
     const typewriterWords = ['events done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
-
-    useEffect(() => {
-      setSearchBusy(fetcher.state === 'loading');
-    }, [fetcher.state]);
-
-    useEffect(() =>{
-      if(debounced){
-       search(debounced)
-      }
-    },[debounced]);
-
-
-    function search(q: string) {
-      setSearchBusy(true);
-      fetcher.submit({
-        q
-      }, {
-        method: 'get',
-        action: '/search'
-      })
-    }
-
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
-        <Grid.Col span={{ base: 12, md: 6 }}>
+        <Grid.Col visibleFrom="md" span={{ base: 12, md: 6 }}>
           <Box style={{ display: 'flex', justifyContent: 'end', height: '100%' }}>
             <div className="homepage-hero-search-wrapper">
               <div className="homepage-hero-search-container">
@@ -268,19 +241,7 @@ const Home = {
                     <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100}  delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, md: 9 }}>
-                    <Stack gap={'sm'}>
-                      <Text fw={500} c="dimmed">Get Started</Text>
-                      <div style={{ background: 'white', padding: '6px 12px', borderRadius: '24px', boxShadow: '0 4px 4px #e1e1e1' }}>
-                        <Input variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} onChange={v => setSearchValue(v.target.value)} />
-                      </div>
-                    </Stack>
-                    <div className="hero-search-results-panel-wrapper">
-                      <Suspense fallback={<Skeleton />}>
-                        <Await resolve={fetcher.data}> 
-                          {response =>searchValue && <SearchResultList services={response?.results} vendors={response?.vendors}/>}
-                        </Await>
-                      </Suspense>
-                    </div>
+                    <SearchInput/>
                   </Grid.Col>
                 </Grid>
               </div>
@@ -526,30 +487,5 @@ const Home = {
   }
 }
 
-
-function SearchResultList({services, vendors}:{
-  services?: FuseResult<SearchResultItem>[], vendors?: FuseResult<SearchResultItem>[]
-}){
-  const navigate = useNavigate();
-
-  function gotoSearchItemPage(type: string, id: string) {
-    navigate(Routes.get('ServiceGroup', { id: type, subId: id }))
-  }
-
-  function gotoVendorProfile( id: string) {
-    navigate(Routes.get('VendorProfile', { id}))
-  }
-
-
-  return <div className="hero-search-results-panel">
-    {vendors?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoVendorProfile(item.item.id)}>
-        {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType?.name}</Text>
-    </div>)}
-    {services?.map((item) => <div key={item.item.id} className="result-row" onClick={_ => gotoSearchItemPage(item.item.vendorType?.keyName || '', item.item.id)}>
-        {item.item.name} <Text c="dimmed" fs="italic">in {item.item.vendorType?.name}</Text>
-    </div>)}
-    {!services?.length && !vendors?.length? <div className="result-row" > <Text c="dimmed" fs="italic">Sorry, we couldn't find any results on that. Kindly narrow the search term.</Text></div>: ''}
-    </div>
-}
 
 export default Home.Index;

@@ -16,6 +16,7 @@ import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Modal, Space
 import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
 import Skeleton from "./Skeleton";
 import ComingSoonModal from "./ComingSoonModal";
+import SearchInput from "./SearchInput";
 
 const menuArtisantStyle: React.CSSProperties = {
   borderRadius: "3px",
@@ -121,10 +122,13 @@ const AppNavigation = {
         <Drawer
           position="left"
           w={300}
-          title="Browse"
+          title=""
           onClose={() => toggleDrawer()}
           opened={openDrawer}
         >
+          <SearchInput/>
+          <Space h={'xl'}/>
+          <Title order={5}>Browse</Title>
           <Suspense fallback={<Skeleton />}>
             <Await resolve={data.pages}>
               {(navList) => (
