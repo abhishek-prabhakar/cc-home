@@ -1,4 +1,4 @@
-import { Input, Loader, Stack, Text } from "@mantine/core";
+import { CloseButton, Input, Loader, Stack, Text } from "@mantine/core";
 import { Suspense, useEffect, useState } from "react";
 import Skeleton from "./Skeleton";
 import { Await, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
@@ -46,7 +46,7 @@ function SearchInput(){
         <Stack gap={'sm'}>
                       <Text fw={500} c="dimmed">Get Started</Text>
                       <div style={{ background: 'white', padding: '6px 12px', borderRadius: '24px', boxShadow: '0 4px 4px #e1e1e1' }}>
-                        <Input variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} rightSection={searchValue? <IconX onClick={clearSearch}/>: ''} onChange={v => setSearchValue(v.target.value)} />
+                        <Input value={searchValue} variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} rightSection={searchValue? <CloseButton onClick={clearSearch}/>: ''} rightSectionPointerEvents="all" onChange={v => setSearchValue(v.target.value)} />
                       </div>
                     </Stack>
                     <div className="hero-search-results-panel-wrapper">
