@@ -4,6 +4,11 @@ import { Link, useLoaderData } from "@remix-run/react";
 import ShareOptions from "~/components/ShareOptions";
 import BlogService from "~/service/blog.service";
 import classes from '../styles/blog.module.css';
+import PageMetaFunction from "~/utils/page.meta";
+
+export const meta = PageMetaFunction({
+	title: 'Blog',
+});
 
 export async function loader({params}:LoaderArgs){
     const postId = params.id;

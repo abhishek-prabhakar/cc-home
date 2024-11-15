@@ -3,7 +3,11 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import BlogService from "~/service/blog.service";
 import { DateFormatter } from "~/utils/date.transform";
+import PageMetaFunction from "~/utils/page.meta";
 
+export const meta = PageMetaFunction({
+	title: 'Blog',
+});
 
 export async function loader(){
     return await BlogService.getLatestPosts();
