@@ -9,7 +9,13 @@ const wpClient = wordpress.createClient({
 type PostPreview = {
     id: string, 
     title: string,
-    name: string
+    name: string,
+    content: string,
+    date: string,
+    thumbnail: {
+        link: string,
+        thumbnail: string
+    }
 }
 
 type Post = {
@@ -17,14 +23,15 @@ type Post = {
     title: string,
     name: string,
     content: string,
-    type: string
+    type: string,
+    date: string
 }
 
 
 
 function getLatestPosts(){
     return new Promise<PostPreview[]>((resolve, reject)=>{
-        wpClient.getPosts([],["id","name","title"],function( error:any, posts:any ) {
+        wpClient.getPosts([],["id","name","title","thumbnail"],function( error:any, posts:any ) {
             resolve(posts)
         });
     });
@@ -32,7 +39,7 @@ function getLatestPosts(){
 
 function getPost(id: string){
     return new Promise<Post>((resolve, reject)=>{
-        wpClient.getPost(id,["id","title","content","type"],function( error:any, post:any ) {
+        wpClient.getPost(id,["id","title","content","type","date"],function( error:any, post:any ) {
             resolve(post)
         });
     });

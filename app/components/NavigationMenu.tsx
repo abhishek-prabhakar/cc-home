@@ -12,7 +12,7 @@ import {
 import { redirect } from "@remix-run/node";
 import { HeaderNavListItem, RootLoaderData, User } from "~/types";
 import Routes from "~/routes.data";
-import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Modal, Space, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Box, Button, Divider, Drawer, Flex, Grid, Menu, Modal, NavLink, Space, Stack, Text, Title } from "@mantine/core";
 import { IconChevronDown, IconMenu, IconWorld } from "@tabler/icons-react";
 import Skeleton from "./Skeleton";
 import ComingSoonModal from "./ComingSoonModal";
@@ -66,19 +66,15 @@ const AppNavigation = {
       <Suspense fallback={<Skeleton />}>
         <Await resolve={data.pages}>
           {(navList) => (
-            <Flex justify={"center"} gap={'sm'} py={'md'}>
+            <Flex justify={"center"} gap={0} py={'md'}>
               {navList.map((item) => (
                 <Box key={"menu-" + item.id} style={{ cursor: "pointer" }}>
                   <Menu trigger="click-hover" shadow="md" >
                     <Menu.Target>
-                      <Flex
-                        align={'center'}
-                        className="header-nav-item-text"
-                        gap={'xs'}
-                      >
-                        <span>{item.name}</span>
-                        <IconChevronDown size={12} />
-                      </Flex>
+                    <NavLink
+                      label={item.name}
+                      rightSection={<IconChevronDown size={12} />}
+                    />
                     </Menu.Target>
                     <Menu.Dropdown>
                       <DropdownContent navitem={item}/>
@@ -86,6 +82,9 @@ const AppNavigation = {
                   </Menu>
                 </Box>
               ))}
+              <Link to={Routes.get('Blog')}>
+                  <NavLink c={'dark'} label="Blog"/>
+              </Link>
             </Flex>
           )}
         </Await>
@@ -154,7 +153,10 @@ const AppNavigation = {
               )}
             </Await>
           </Suspense>
-          <Space h="sm" />
+          <Link to={Routes.get('Blog')} onClick={() => toggleDrawer(false)}>
+              <NavLink c={'dark'} label="Blog" pl={'md'}/>
+          </Link>
+          <Space h="xl" />
           {user?.id ?
             <>
               <Link to={'/user/home'} onClick={() => toggleDrawer(false)}><Button variant="white" fullWidth>My Bookings</Button></Link>

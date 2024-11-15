@@ -19,7 +19,8 @@ const RoutesList = {
     OrderInvoice: '/user/order/:id/invoice',
     VendorManageOrder: '/vendor/manage/:id',
     VendorPackage: '/cart/package/:username/:id',
-    MakeYourPackage: '/cart/package/:vendorGroupId'
+    MakeYourPackage: '/cart/package/:vendorGroupId',
+    Blog: '/blog'
 }
 
 type RoutesKeys = keyof typeof RoutesList;

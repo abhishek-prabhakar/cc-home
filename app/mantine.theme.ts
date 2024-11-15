@@ -1,4 +1,4 @@
-import { Card, Container, MantineColorsTuple, MantineProvider, MantineTheme, MantineThemeColors, createTheme, rem } from '@mantine/core';
+import { Card, Container, MantineColorsTuple, MantineProvider, MantineTheme, MantineThemeColors, NavLink, createTheme, rem } from '@mantine/core';
 import classes from './mantine.module.css';
 
 const CONTAINER_SIZES: Record<string, string> = {
@@ -45,6 +45,13 @@ const theme = createTheme({
             classNames: {
 				root: classes.cardRoot,
 			},
+        }),
+        NavLink: NavLink.extend({
+            styles:{
+                label:{
+                    fontSize: 'var(--mantine-font-size-md)'
+                }
+            }
         })
     },
 });
