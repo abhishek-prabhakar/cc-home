@@ -31,7 +31,7 @@ type Post = {
 
 function getLatestPosts(){
     return new Promise<PostPreview[]>((resolve, reject)=>{
-        wpClient.getPosts([],["id","name","title","thumbnail"],function( error:any, posts:any ) {
+        wpClient.getPosts([],["id","name","title","thumbnail","date"],function( error:any, posts:any ) {
             resolve(posts)
         });
     });
