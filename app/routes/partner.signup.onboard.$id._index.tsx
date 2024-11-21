@@ -171,6 +171,7 @@ export async function action(args: ActionArgs) {
                             vendorServiceGroupId: vendorGroupId,
                             serviceId: data.toString(),
                             cost: parseInt(costs[index]?.toString()),
+                            costByVendor: parseInt(costs[index]?.toString()),
                             duration: parseInt(durations[index]?.toString()),
                             fareMode: fareModes[index]?.toString() as FareMode
                         }
@@ -218,6 +219,7 @@ export async function action(args: ActionArgs) {
                             vendorServiceGroupId: vendorGroupId,
                             serviceId: data.toString(),
                             cost: parseInt(costs[index]?.toString()),
+                            costByVendor: parseInt(costs[index]?.toString()),
                             duration: parseInt(durations[index]?.toString()),
                             fareMode: fareModes[index]?.toString() as FareMode
                         }
