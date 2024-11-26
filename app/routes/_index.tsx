@@ -11,7 +11,7 @@ import { getCategoryCollection, getCollections, getPopularServices, topVendorsBy
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Container, Flex, Grid, Group, Image, Input, Loader, Modal, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Avatar, Box, Button, Center, Container, Flex, Grid, Group, Image, Input, Loader, Modal, Space, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
@@ -177,10 +177,12 @@ const Home = {
     const data = useLoaderData<HomePage>();
 
     return <>
-      <Home.Jumbotron />
-      <div className="container no-spacer">
-        <Home.Services />
-      </div>
+      <Container size={'xl'} p={0}>
+        <Home.Jumbotron />
+        <div className="container no-spacer">
+          <Home.Services />
+        </div>
+      </Container>
       <Container size={'xl'}>
         <Grid>
           <Grid.Col span={12}>
@@ -233,10 +235,10 @@ const Home = {
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
         <Grid.Col visibleFrom="md" span={{ base: 12, md: 6 }}>
-          <Box style={{ display: 'flex', justifyContent: 'end', height: '100%' }}>
-            <div className="homepage-hero-search-wrapper">
-              <div className="homepage-hero-search-container">
-                <Grid gutter={20}>
+            <Box className="homepage-hero-search-wrapper" p={'xl'}>
+                <Space h={'xl'}/>
+                <Center>
+                <Grid gutter={20} w={'70%'}>
                   <Grid.Col span={12}>
                     <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100}  delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                   </Grid.Col>
@@ -244,13 +246,12 @@ const Home = {
                     <SearchInput/>
                   </Grid.Col>
                 </Grid>
-              </div>
-            </div>
-          </Box>
+                </Center>
+            </Box>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6 }}>
           {/* style={{ padding: '5px' }} */}
-          <img className="homepage-hero-img" src="/assets/homepage-hero-2.png" width={'100%'} style={{ maxWidth: '665px' }} />
+          <img className="homepage-hero-img" src="/assets/homepage-hero-2.png"  width={'100%'} style={{ maxHeight: '400px',objectFit:'contain' }} />
         </Grid.Col>
       </Grid>
     </div>;

@@ -386,15 +386,15 @@ a, a:active{
 }
 
 .homepage-hero-search-wrapper{
-    display: flex;
-    justify-content: end;
+    height: 100%;
     background:  #f1f1f1;
      align-items: center;
       margin: 5px;
-       height: 100%;
-        max-width: 670px;
-        width: 100%;
         border-radius: 5px;
+        
+        .title-wrapper span{
+            color:red;
+          }
 }
 .homepage-hero-search-container{
                 width: 100%;
