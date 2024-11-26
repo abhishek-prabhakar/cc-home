@@ -391,9 +391,10 @@ a, a:active{
      align-items: center;
       margin: 5px;
         border-radius: 5px;
-        
+
         .title-wrapper span{
             color:red;
+            font-weight: normal;
           }
 }
 .homepage-hero-search-container{
