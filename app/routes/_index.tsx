@@ -250,7 +250,7 @@ const Home = {
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6 }}>
           {/* style={{ padding: '5px' }} */}
-          <img className="homepage-hero-img" src="/assets/homepage-hero.jpg" width={'100%'} style={{ maxWidth: '665px' }} />
+          <img className="homepage-hero-img" src="/assets/homepage-hero-2.png" width={'100%'} style={{ maxWidth: '665px' }} />
         </Grid.Col>
       </Grid>
     </div>;
