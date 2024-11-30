@@ -402,7 +402,7 @@ const Page = {
                             <Space h="md" />
                             {['loading', 'submitting'].includes(fetcher.state) && <Text c="dimmed">Please wait...</Text>}
                             {response?.slots.length ? <Alert variant="light" color="green" icon={<IconInfoCircle />}>
-                                <Text>The estimated duration of this job is {data.serviceGroup.minHour} hours.</Text>
+                                <Text>The estimated duration of this service is {data.serviceGroup.minHour} hours.</Text>
                                 {data.serviceGroup.costExtraHour ? <>
                                     An additional amount of <Currency value={data.serviceGroup.costExtraHour} /> per extra hour will be charged if applicable.</> : ''}
                             </Alert> : <Alert variant="light" color="yellow" icon={<IconInfoCircle />}>Please select a date first.</Alert>}
