@@ -182,7 +182,7 @@ const Photography = {
                 </div>
             }
         >
-            <Stack gap={'xl'}>
+            <Stack>
                 {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} startsFrom={item.startsFrom} />)}
             </Stack>
         </InfiniteScroll>;

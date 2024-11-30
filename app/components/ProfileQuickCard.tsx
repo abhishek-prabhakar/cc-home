@@ -1,4 +1,4 @@
-import {  Avatar, Badge, Box, Button, Flex, Grid, Group, Image, Overlay, Rating, Space, Text, Title } from "@mantine/core";
+import {  Avatar, Badge, Box, Button, Divider, Flex, Grid, Group, Image, Overlay, Rating, Space, Text, Title } from "@mantine/core";
 import { Link } from "@remix-run/react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import Routes from "~/routes.data";
@@ -84,6 +84,10 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
           </Link>
         </Flex>
       </PhotoProvider>
+    </Grid.Col>
+    <Grid.Col span={12}>
+      <Space h={'xl'}/>
+            <Divider h={1}/>
     </Grid.Col>
   </Grid>
 }
