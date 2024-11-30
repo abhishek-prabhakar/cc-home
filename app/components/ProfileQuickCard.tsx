@@ -12,7 +12,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
 
   const profileUrl = categoryId ? Routes.get('VendorProfileWithService', { id: id, sGrpId: categoryId }) : Routes.get('VendorProfile', { id: id });
 
-  return <Grid pt={'xl'} gutter={0} align="end" className={classes.profileCardStyle}>
+  return <Grid pt={'lg'} gutter={0} align="end" className={classes.profileCardStyle}>
     <Grid.Col span={{ base: 12, md: 5 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
