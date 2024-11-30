@@ -381,7 +381,7 @@ const Page = {
 
     function loadNextPage() {
       const searchParams = new URLSearchParams(location.search);
-      searchParams.set("page", "" + data.page + 1);
+      searchParams.set("page", (data.page + 1).toString());
       navigate(location.pathname + "?" + searchParams.toString(), {
         preventScrollReset: true,
       });
