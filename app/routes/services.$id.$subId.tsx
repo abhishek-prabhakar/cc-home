@@ -93,6 +93,7 @@ const Photography = {
         function sortItems(x: string | null) {
             const searchParams = new URLSearchParams(location.search);
             searchParams.set('sort', x || '');
+            searchParams.set('page', '0')
 
             navigate(`${location.pathname}?${searchParams.toString()}`);
         }
