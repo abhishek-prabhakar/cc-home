@@ -1,0 +1,12 @@
+
+.itemDataThumbSetStyles{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    background: '#808080';
+}
+  
+.profileCardStyle:hover{
+    box-shadow: 0 0 10px #e1e1e1;
+}

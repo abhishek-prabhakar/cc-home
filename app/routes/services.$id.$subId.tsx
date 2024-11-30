@@ -16,7 +16,7 @@ import Banner from "~/components/Banner";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Badge, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PortfolioItem, VendorResultListItem } from "~/types";
@@ -182,9 +182,9 @@ const Photography = {
                 </div>
             }
         >
-            <Stack>
+            <Box>
                 {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} startsFrom={item.startsFrom} />)}
-            </Stack>
+            </Box>
         </InfiniteScroll>;
     },
 };

@@ -1,4 +1,4 @@
-import { Accordion, Badge, Checkbox, Container, Drawer, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Box, Checkbox, Container, Drawer, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
 import {
   TypedDeferredData,
   defer,
@@ -25,8 +25,6 @@ import { PortfolioItem, VendorResultListItem } from "~/types";
 import { db } from "~/utils/database";
 import sortFieldMapper from "~/utils/sortField.map";
 
-const ITEMS_PER_PAGE = 20;
-
 export const meta: V2_MetaFunction = () => {
   return [
     { title: "Celebria Collective" },
@@ -39,11 +37,6 @@ type Filter = {
   name: string;
   category: { id: string; name: string }[];
 };
-
-type Result = {
-  data: VendorResultListItem[];
-  loadMore: boolean;
-}
 
 export async function loader({
   request,
@@ -61,6 +54,7 @@ export async function loader({
     ?.toString()
     ?.split(",")
     .filter((x) => x);
+  const limit = 20;
 
   if (!categoryIds?.length) {
     categoryIds = undefined;
@@ -78,6 +72,14 @@ export async function loader({
   });
 
   const sortBy = sortFieldMapper(sortField);
+
+  const result = VendorQuery.getFilteredVendors({
+    page,
+    limit,
+    serviceGroupIds: categoryIds || [],
+    vendorType: pageId || '',
+    sortBy
+  });
 
   const filters = new Promise<Filter[]>(function (resolve, reject) {
     of(true)
@@ -151,6 +153,7 @@ export async function loader({
   });
 
   return defer({
+    result,
     filters,
     page,
     pageId,
@@ -227,32 +230,14 @@ function BadgeCounter({category, activeFilters}:{category: {
 const Page = {
   Index: () => {
     const data = useLoaderData<typeof loader>();
-    const fetcher = useFetcher<Result>();
     const navigate = useNavigate();
     const location = useLocation();
-
-
-    useEffect(() =>{
-      loadPreviousResults();
-    },[]);
 
     function sortItems(x: string | null) {
       const searchParams = new URLSearchParams(location.search);
       searchParams.set('sort', x || '');
 
       navigate(`${location.pathname}?${searchParams.toString()}`);
-    }
-
-    function loadPreviousResults(){
-      const searchParams = new URLSearchParams(location.search);
-        fetcher.submit({
-          ...Object.fromEntries(searchParams),
-          page: data.page,
-          fromBegining: true
-        },{
-          method: 'get',
-          action: '/results/vendor/' + data.pageId
-      });
     }
 
     return (
@@ -273,7 +258,7 @@ const Page = {
                 <Suspense
                   fallback={<Skeleton />}
                 >
-                  <Await resolve={fetcher.data}>
+                  <Await resolve={data.result}>
                     {(response) => (
                       <Page.Results
                         vendors={response?.data || []}
@@ -282,7 +267,6 @@ const Page = {
                     )}
                   </Await>
                 </Suspense>
-                {/* <Page.Results /> */}
               </Stack>
             </Grid.Col>
           </Grid>
@@ -382,14 +366,12 @@ const Page = {
     loadMore: boolean;
   }) => {
     const data = useLoaderData<typeof loader>();
-    const fetcher = useFetcher<Result>();
     const navigate = useNavigate();
     const location = useLocation();
     const [result, setResult] = useState<VendorResultListItem[]>([]);
 
 
     useEffect(() => {
-      console.log(loadMore)
       if (!vendors) {
         return;
       }
@@ -397,27 +379,12 @@ const Page = {
       setResult(data.page === 0 ? vendors : result.concat(vendors));
     }, [vendors]);
 
-    useEffect(() =>{
-      if(!fetcher.data){return;}
-      setResult(data.page === 0 ? fetcher.data.data : result.concat(fetcher.data.data));
-    },[fetcher.data])
-
-
     function loadNextPage() {
       const searchParams = new URLSearchParams(location.search);
       searchParams.set("page", "" + data.page + 1);
       navigate(location.pathname + "?" + searchParams.toString(), {
         preventScrollReset: true,
       });
-
-      fetcher.submit({
-        ...Object.fromEntries(searchParams),
-        fromBegining: false,
-        
-      },{
-        method: 'get',
-        action: '/results/vendor/' + data.pageId
-    });
     }
 
     return (
@@ -436,9 +403,9 @@ const Page = {
           </div>
         }
       >
-        <Stack>
+        <Box>
           {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} startsFrom={item.startsFrom} />)}
-        </Stack>
+        </Box>
       </InfiniteScroll>
     );
   },
