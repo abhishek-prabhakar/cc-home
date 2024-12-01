@@ -461,6 +461,7 @@ a, a:active{
     position: relative;
     overflow: hidden;
     padding: 20px;
+    background-color: beige;
 
     /* &::after */
     .card-style-item{

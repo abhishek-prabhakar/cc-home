@@ -262,10 +262,15 @@ function getCollections() {
     });
 }
 
+function getRandom8Vendors():Promise<{profileImageName: string}[]>{
+    return db.$queryRaw`SELECT profileImageName from vendors where isActive=true  ORDER BY RAND() LIMIT 8 `;
+}
+
 export {
     getJumbotronList,
     getCategoryCollection,
     topVendorsByCategory,
     getPopularServices,
-    getCollections
+    getCollections,
+    getRandom8Vendors
 }

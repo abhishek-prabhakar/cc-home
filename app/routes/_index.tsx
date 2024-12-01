@@ -7,11 +7,11 @@ import { PATH } from "~/path.data";
 import { BannerLocation } from "@prisma/client";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 import { BannerItem, Collection, HomeCategoryItem, Jumbotron, SearchResultItem } from "~/types";
-import { getCategoryCollection, getCollections, getPopularServices, topVendorsByCategory } from "~/service/homepage.service";
+import { getCategoryCollection, getCollections, getPopularServices, getRandom8Vendors, topVendorsByCategory } from "~/service/homepage.service";
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Center, Container, Flex, Grid, Group, Image, Input, Loader, Modal, Space, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Avatar, Box, Button, Card, Center, Container, Flex, Grid, Group, Image, Input, Loader, Modal, Space, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
@@ -159,8 +159,9 @@ export async function loader({ params }: LoaderArgs) {
   const popularServices = getPopularServices();
   const topVendors = topVendorsByCategory();
   const collections = getCollections();
+  const random8Vendors = await getRandom8Vendors();
 
-  return defer({ categories, quickLinks, popularServices: popularServices, collections, topVendors });
+  return defer({ categories, quickLinks, popularServices: popularServices, collections, topVendors, random8Vendors });
 }
 
 export const meta: V2_MetaFunction = () => {
@@ -172,9 +173,14 @@ export const meta: V2_MetaFunction = () => {
 
 const FALLBACK_IMG = 'https://static.miraheze.org/widdershinswiki/thumb/4/47/Placeholder.png/800px-Placeholder.png';
 
+function Test({a}:{a:[]}){
+  console.log(a.length)
+  return <div>sdf</div>
+}
+
 const Home = {
   Index: () => {
-    const data = useLoaderData<HomePage>();
+    const data = useLoaderData<typeof loader>();
 
     return <>
       <Container size={'xl'} p={0}>
@@ -192,9 +198,9 @@ const Home = {
             <Home.Collections />
           </Grid.Col>
           <Grid.Col span={12}>
-            <div className="card-style-3">
+            <Card radius={'md'} withBorder className="card-style-3">
               <Grid gutter={{ base: 20,  md: 40}} align={'center'} justify={'center'}>
-                <Grid.Col span={{ base: 12, md: 7 }}>
+                <Grid.Col span={{ base: 12, md: 6 }}>
                   <Stack align="center">
                     <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>
                     <Flex align={'center'} gap={'md'}>
@@ -203,27 +209,27 @@ const Home = {
                     </Flex>
                   </Stack>
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 4 }}>
+                <Grid.Col span={{ base: 12, md: 'content' }}>
                   <div className="card-style-item">
                     <Stack gap="md">
                       <Flex align="center" gap={'sm'} justify={'center'}>
                         <Title order={5}>50+</Title><Text c="dimmed">professionals</Text>
                       </Flex>
-                      <Avatar.Group>
-                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                        <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
-                        <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
-                        <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                        <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
-                        <Avatar style={{ backgroundColor: '#87d068' }} src={PATH.AVATAR_PLACEHOLDER} />
-                        <Avatar style={{ backgroundColor: '#1677ff' }} >A</Avatar>
-                      </Avatar.Group>
+                      <Suspense>
+                        <Await resolve={data.random8Vendors}>
+                        {response => <Center>
+                            <Avatar.Group>
+                              {response?.map(v => <Avatar size="lg" key={v?.profileImageName} src={PATH.THUMB_URL+v?.profileImageName} />)}
+                            </Avatar.Group>
+                          </Center>
+                          }
+                        </Await>
+                        </Suspense>
                     </Stack>
                   </div>
                 </Grid.Col>
               </Grid>
-            </div>
+            </Card>
           </Grid.Col>
         </Grid>
       </Container>
