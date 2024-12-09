@@ -198,10 +198,8 @@ a, a:active{
     border: 0;
 }
 
-.carousel-slider-wrapper.slider-homepage-focused .carousel__slider-tray{
-    display: flex;
+.carousel-slider-wrapper.slider-justify-center .carousel__slider-tray{
     margin: auto;
-    gap: 0;
 }
 
 .carousel-slider-wrapper .carousel__slider-tray {
@@ -234,6 +232,10 @@ a, a:active{
 }
 
 .slider-homepage-focused{
+    .carousel__slider-tray{
+        display: flex;
+        gap: 0;
+    }
     
     .carousel-slider{
         padding: 0 30px;
@@ -465,8 +467,8 @@ a, a:active{
 
     /* &::after */
     .card-style-item{
-        border-radius: 20px;
-        background-color: white;
+        border-radius: 10px;
+        background-color: #fffff0;
         padding: 24px;
         overflow: hidden;
         border: 1px solid #eee;
@@ -502,4 +504,9 @@ a, a:active{
 
 .mantine-Calendar-day[data-outside=true]{
     display: none;
+}
+
+
+.animate-banner-ad{
+    background-size: contain, cover;
 }

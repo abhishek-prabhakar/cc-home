@@ -1,6 +1,7 @@
+import { BannerLocation } from "@prisma/client";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
-import { Collection, CollectionType, HomeCategoryItem, Jumbotron } from "~/types";
+import { BannerItem, Collection, CollectionType, HomeCategoryItem, Jumbotron } from "~/types";
 import { db } from "~/utils/database";
 import { generateJumbotronUrl } from "~/utils/generateJumbotronUrl";
 
@@ -49,7 +50,8 @@ function getJumbotronList() {
                     title: x.title,
                     description: x.description,
                     img: x.imageName ? PATH.THUMB_URL + x.imageName : '',
-                    url: url.replace(':vendorType', x.vendorType?.keyName || x.group?.vendorType.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || '')
+                    url: url.replace(':vendorType', x.vendorType?.keyName || x.group?.vendorType.keyName || '').replace(':serviceGroupId', x.serviceGroupId || '').replace(':serviceId', x.serviceId || ''),
+                    cost: null
                 }
             })
             );
@@ -266,11 +268,84 @@ function getRandom8Vendors():Promise<{profileImageName: string}[]>{
     return db.$queryRaw`SELECT profileImageName from vendors where isActive=true  ORDER BY RAND() LIMIT 8 `;
 }
 
+function BannerSet(){
+    return new Promise<BannerItem[]>(async function (resolve) {
+        const bannerlist = await db.websiteBanner.findMany({
+          where: {
+            targetPage: {
+              in: [BannerLocation.HOME_1, BannerLocation.HOME_2, BannerLocation.HOME_3]
+            }
+          },
+          select: {
+            targetPage: true,
+            jumbotron: {
+              select: {
+                title: true,
+                description: true,
+                vendorId: true,
+                vendorTypeId: true,
+                serviceGroupId: true,
+                serviceId: true,
+                imageName: true,
+                vendorType: {
+                  select: {
+                    keyName: true
+                  }
+                },
+                group: {
+                  select: {
+                    id: true,
+                    name: true,
+                    imageName: true,
+                    vendorType: {
+                      select: {
+                        keyName: true
+                      }
+                    },
+                    VendorServiceGroup:{
+                      take:1,
+                      orderBy:{
+                        cost: 'asc'
+                      },
+                      select:{
+                        cost: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        const finalList = bannerlist.map<BannerItem>(item => {
+            const x = item.jumbotron;
+            const url = generateJumbotronUrl({
+              vendorTypeId: x.vendorType?.keyName || x.group?.vendorType.keyName,
+              serviceGroupId: x.serviceGroupId,
+              serviceId: x.serviceId
+            });
+      
+            return {
+              title: x.title,
+              description: x.description,
+              img: PATH.THUMB_URL + (x.imageName || x.group?.imageName),
+              url,
+              bannerLocation: item.targetPage,
+              cost: item.jumbotron.group?.VendorServiceGroup[0]?.cost
+            }
+          });
+      
+          resolve(finalList);
+    });
+}
+
 export {
     getJumbotronList,
     getCategoryCollection,
     topVendorsByCategory,
     getPopularServices,
     getCollections,
-    getRandom8Vendors
+    getRandom8Vendors,
+    BannerSet
 }

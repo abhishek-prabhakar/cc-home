@@ -151,7 +151,8 @@ export type Jumbotron = {
     title: string,
     description: string,
     img: string,
-    url: string
+    url: string,
+    cost: number | null | undefined
 }
 export type BannerItem = Jumbotron & { bannerLocation: BannerLocation }
 
