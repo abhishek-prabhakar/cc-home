@@ -491,7 +491,7 @@ const Home = {
   },
   KeyFeatures(){
     return <Grid pt={'xl'} gutter={'lg'} align="center" justify="center">
-        <Grid.Col span={{md: 'content', base: 12}}>
+        <Grid.Col span={{md: 'content', base: 'content'}}>
           <Group justify="center">
             <Image w={60} h={60} src={'/assets/icons/quality-assurance.png'}/>
             <Title order={4}>CC Promise</Title>
@@ -500,22 +500,22 @@ const Home = {
         <Grid.Col visibleFrom="md" span={'content'}>
           <Divider  orientation="vertical" h={40} size="sm"/>
         </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 'content'}}>
-        <Group justify="center">
+        <Grid.Col span={{md: 'content', base: 10}}>
+        <Group >
             <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={4}>Verified Professionals</Title>
+            <Title order={5}>Verified Professionals</Title>
           </Group>
         </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 'content'}}>
-        <Group justify="center">
+        <Grid.Col span={{md: 'content', base: 10}}>
+        <Group >
             <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={4}>Hassle Free Booking</Title>
+            <Title order={5}>Hassle Free Booking</Title>
           </Group>
         </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 'content'}}>
-        <Group justify="center">
+        <Grid.Col span={{md: 'content', base: 10}}>
+        <Group>
             <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={4}>Transparent Pricing</Title>
+            <Title order={5}>Transparent Pricing</Title>
           </Group>
         </Grid.Col>
     </Grid>
