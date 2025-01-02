@@ -1,4 +1,4 @@
-import { Accordion, Badge, Box, Checkbox, Container, Drawer, Flex, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Box, Checkbox, Container, Drawer, Flex, Grid, Group, Pagination, Select, Stack, Text, Title } from "@mantine/core";
 import {
   TypedDeferredData,
   defer,
@@ -263,6 +263,7 @@ const Page = {
                       <Page.Results
                         vendors={response?.data || []}
                         loadMore={response?.loadMore || true}
+                        total={response?.total || 0}
                       />
                     )}
                   </Await>
@@ -289,7 +290,7 @@ const Page = {
           ?.split(",")
           .filter((x) => !!x) || []
       );
-    }, []);
+    }, [location.search]);
 
     function toggleCategoryFilterItem(value: string) {
       let list = getCategoryFitlers;
@@ -360,10 +361,12 @@ const Page = {
   },
   Results: ({
     vendors,
+    total,
     loadMore,
   }: {
     vendors: VendorResultListItem[];
     loadMore: boolean;
+    total: number;
   }) => {
     const data = useLoaderData<typeof loader>();
     const navigate = useNavigate();
@@ -376,7 +379,8 @@ const Page = {
         return;
       }
 
-      setResult(data.page === 0 ? vendors : result.concat(vendors));
+      // setResult(data.page === 0 ? vendors : result.concat(vendors));
+      setResult(vendors);
     }, [vendors]);
 
     function loadNextPage() {
@@ -387,25 +391,32 @@ const Page = {
       });
     }
 
+    function loadByPage(page: number){
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set("page", (page-1).toString());
+      navigate(location.pathname + "?" + searchParams.toString());
+    }
+
     return (
       <InfiniteScroll
         dataLength={result.length}
         next={loadNextPage}
-        hasMore={loadMore}
+        hasMore={false}
         loader={
           <div style={{ padding: "40px" }}>
             <Skeleton />
           </div>
         }
         endMessage={
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            End of results.
+          <div>
+            <Pagination  defaultValue={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/>
           </div>
         }
       >
         <Box>
           {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} startsFrom={item.startsFrom} />)}
         </Box>
+        
       </InfiniteScroll>
     );
   },

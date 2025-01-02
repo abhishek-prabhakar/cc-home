@@ -16,7 +16,7 @@ import Banner from "~/components/Banner";
 import { Suspense, useEffect, useState } from "react";
 import { db } from "~/utils/database";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Badge, Box, Card, Container, Grid, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Container, Grid, Group, Pagination, Select, Stack, Text, Title } from "@mantine/core";
 import ProfileQuickCard from "~/components/ProfileQuickCard";
 import Skeleton from "~/components/Skeleton";
 import { PortfolioItem, VendorResultListItem } from "~/types";
@@ -120,6 +120,7 @@ const Photography = {
                                                 categoryId={data.meta.categoryId}
                                                 vendors={response.data}
                                                 loadMore={response.loadMore}
+                                                total={response.total}
                                             />
                                         )}
                                     </Await>
@@ -141,11 +142,13 @@ const Photography = {
     Results: ({
         vendors,
         loadMore,
-        categoryId
+        categoryId,
+        total
     }: {
         categoryId?: string;
         vendors: VendorResultListItem[];
         loadMore: boolean;
+        total: number;
     }) => {
         const data = useLoaderData<typeof loader>();
         const navigate = useNavigate();
@@ -157,7 +160,8 @@ const Photography = {
                 return;
             }
 
-            setResult(data.page === 0 ? vendors : result.concat(vendors));
+            // setResult(data.page === 0 ? vendors : result.concat(vendors));
+            setResult(vendors);
         }, [vendors]);
 
         function loadNextPage() {
@@ -168,20 +172,22 @@ const Photography = {
             });
         }
 
+        function loadByPage(page: number){
+            const searchParams = new URLSearchParams(location.search);
+            searchParams.set("page", (page-1).toString());
+            navigate(location.pathname + "?" + searchParams.toString());
+          }
+
         return <InfiniteScroll
             dataLength={result.length}
             next={loadNextPage}
-            hasMore={loadMore}
+            hasMore={false}
             loader={
                 <div style={{ padding: "40px" }}>
                     <Skeleton />
                 </div>
             }
-            endMessage={
-                <div style={{ textAlign: "center", padding: "40px" }}>
-                    End of results.
-                </div>
-            }
+            endMessage={ <Pagination  defaultValue={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/>}
         >
             <Box>
                 {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} startsFrom={item.startsFrom} />)}

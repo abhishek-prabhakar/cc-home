@@ -92,7 +92,7 @@ function getFilteredVendors(params: {
     }
 }) {
 
-    const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean }>(function (resolve, reject) {
+    const result = new Promise<{ data: VendorResultListItem[], loadMore: boolean, total: number }>(function (resolve, reject) {
         db.vendorType
             .findFirstOrThrow({
                 where: {
@@ -220,6 +220,7 @@ function getFilteredVendors(params: {
                         services: x.vendor.services.map((x) => x.service.name),
                     })),
                     loadMore,
+                    total: Math.ceil(countData.length/params.limit)
                 });
             }, e => {
                 reject('Connection failed');
