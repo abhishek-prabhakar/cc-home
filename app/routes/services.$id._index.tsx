@@ -1,4 +1,4 @@
-import { Accordion, Badge, Box, Checkbox, Container, Drawer, Flex, Grid, Group, Pagination, Select, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Badge, Box, Center, Checkbox, Container, Drawer, Flex, Grid, Group, Pagination, Select, Stack, Text, Title } from "@mantine/core";
 import {
   TypedDeferredData,
   defer,
@@ -408,9 +408,9 @@ const Page = {
           </div>
         }
         endMessage={
-          <div>
+          <Center>
             <Pagination  defaultValue={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/>
-          </div>
+          </Center>
         }
       >
         <Box>
