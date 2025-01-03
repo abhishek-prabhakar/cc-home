@@ -409,7 +409,7 @@ const Page = {
         }
         endMessage={
           <Center>
-            <Pagination  defaultValue={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/>
+            <Pagination  value={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/>
           </Center>
         }
       >

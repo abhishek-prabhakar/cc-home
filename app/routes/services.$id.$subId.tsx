@@ -187,7 +187,7 @@ const Photography = {
                     <Skeleton />
                 </div>
             }
-            endMessage={<Center><Pagination  defaultValue={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/></Center>}
+            endMessage={<Center><Pagination  value={data.page+1} pt={'xl'}  total={total} onChange={loadByPage}/></Center>}
         >
             <Box>
                 {result?.map(item => <ProfileQuickCard key={item.id} id={item.id} name={item.name} portfolio={item.portfolio} profileImg={item.profileImg} services={item.services} tag={item.tag} rating={item.rating} categoryId={categoryId} startsFrom={item.startsFrom} />)}
