@@ -23,7 +23,7 @@ export function ChatWithVendorAffix(p:{
                     <Group justify="center">
                     <a href={ctaUrl || '#book-now-section'}>
                         <Button radius={'xl'}  variant="gradient"
-      gradient={{ from: 'blue', to: 'violet', deg: 122 }}>View Services</Button>
+      gradient={{ from: 'blue', to: 'violet', deg: 122 }}>Call Now</Button>
                     </a></Group>
                 </Card>
             )}
