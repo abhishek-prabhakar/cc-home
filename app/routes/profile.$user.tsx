@@ -4,7 +4,7 @@ import { Await, Form, Link, Outlet, useLoaderData, useLocation, useNavigate, use
 import { IconArrowDown, IconArrowLeft, IconAsterisk, IconCheck, IconCircle, IconHeartFilled, IconPlus } from "@tabler/icons-react";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Suspense, useEffect, useState } from "react";
-import COMMON_DATA from "~/data/common.data";
+import COMMON_DATA, { SUPPORT_CENTER } from "~/data/common.data";
 import Routes from "~/routes.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { VendorProfile, VendorServicePublic } from "~/types";
@@ -281,7 +281,7 @@ const ProfileLayout = {
                     <Title order={3}>Book now<br />and <Mark color="lime">Pay later</Mark>.</Title>
                     <Box ta={'right'}>
                         <Text fw={500}>Having trouble?</Text>
-                        <Text><a href="mailto:support@celebriacollective.com" target="_BLANK">Contact us</a></Text>
+                        <Text><a href={`mailto:${SUPPORT_CENTER.EMAIL}`} target="_BLANK">Contact us</a></Text>
                     </Box>
                 </Group>
                 <Grid gutter={'xl'}>
@@ -332,7 +332,7 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''
                                 }
-
+                                {activeService?.vendorServiceGroupId && <a href={`tel:${SUPPORT_CENTER.PHONE}`}><Button onClick={showComboOfferDialog} variant="outline" w={'100%'}>Call Now</Button></a>}
                                 {activeService?.vendorServiceGroupId && <Button onClick={showComboOfferDialog} variant="filled" w={'100%'}>Book Now</Button>}
                             </Stack>
                         </Card>

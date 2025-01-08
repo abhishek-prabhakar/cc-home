@@ -1,12 +1,14 @@
 import { Affix, Avatar, Button, Card, CloseButton, Group, Space, Text, Title, Transition } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
 import { useState } from "react";
+import { SUPPORT_CENTER } from "~/data/common.data";
 
 export function ChatWithVendorAffix(p:{
     avatar?: string
 }){
     const [scroll, scrollTo] = useWindowScroll();
     const [showCard, setShowCard] = useState(true);
+    const ctaUrl = 'tel:'+SUPPORT_CENTER.PHONE;
 
     return   <Affix position={{ bottom: 30, right: 30 }}>
           <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
@@ -19,7 +21,7 @@ export function ChatWithVendorAffix(p:{
                     <Text>Get start with a service to chat with me.</Text>
                     <Space h="lg"/>
                     <Group justify="center">
-                    <a href="#book-now-section">
+                    <a href={ctaUrl || '#book-now-section'}>
                         <Button radius={'xl'}  variant="gradient"
       gradient={{ from: 'blue', to: 'violet', deg: 122 }}>View Services</Button>
                     </a></Group>
