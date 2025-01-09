@@ -1,5 +1,7 @@
 const wordpress = require( "wordpress" );
 
+const POST_LIMIT = 1000;
+
 const wpClient = wordpress.createClient({
     url:'https://cc.eddeclothing.com',
     username: "rakshitharavi@celebriacollective.com",
@@ -27,12 +29,11 @@ type Post = {
     date: string
 }
 
-
-
 function getLatestPosts(){
     return new Promise<PostPreview[]>((resolve, reject)=>{
         wpClient.getPosts({
-            status:	"publish"
+            status:	"publish",
+            number: POST_LIMIT
         },["id","name","title","thumbnail","date"],function( error:any, posts:any ) {
             resolve(posts)
         });
