@@ -22,12 +22,13 @@ import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import { VendorQuery } from "~/service/vendor.service";
 import { PortfolioItem, VendorResultListItem } from "~/types";
+import capitalize from "~/utils/capitalize.trasformer";
 import { db } from "~/utils/database";
 import sortFieldMapper from "~/utils/sortField.map";
 
-export const meta: V2_MetaFunction = () => {
+export const meta: V2_MetaFunction = ({params}) => {
   return [
-    { title: "Celebria Collective" },
+    { title: capitalize(params.id?.replace(/-/g,' '))+" | Celebria Collective" },
     { name: "description", content: "Find your Pefect vendor" },
   ];
 };

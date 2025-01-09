@@ -1,17 +1,23 @@
 import { Badge, Button, Container, Divider, Flex, Grid, Group, Image, Stack, Tabs, Text, Title } from "@mantine/core";
-import { LoaderArgs, defer } from "@remix-run/node";
+import { LoaderArgs, V2_MetaFunction, defer } from "@remix-run/node";
 import { Await, Link, Outlet, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 import Skeleton from "~/components/Skeleton";
 import { PATH } from "~/path.data";
 import Routes from "~/routes.data";
 import CollectionService from "~/service/collections.service";
+import capitalize from "~/utils/capitalize.trasformer";
 import Currency from "~/utils/currency.transformer";
-import PageMetaFunction from "~/utils/page.meta";
 
-export const meta = PageMetaFunction({
-	title: 'Collection',
-});
+
+export const meta: V2_MetaFunction = ({params}) => {
+    const label = 'Collection - '+capitalize(params.id?.replace(/-/g,' '));
+
+    return [
+        { title: label+" | Celebria Collective" },
+        { name: "description", content: "Find your Pefect vendor" },
+    ];
+};
 
 export function loader(args: LoaderArgs) {
     const id = args.params.id;
