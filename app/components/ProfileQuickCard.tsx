@@ -16,7 +16,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
     <Grid.Col span={{ base: 12, md: 5 }}>
       <Grid gutter={'md'} align="center">
         <Grid.Col span={{ base: 'content' }}>
-          <Link to={profileUrl} >
+          <Link to={profileUrl}>
             <Avatar
               size={'xl'}
               src={profileImg}

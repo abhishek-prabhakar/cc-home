@@ -21,6 +21,7 @@ import ShareOptions from "~/components/ShareOptions";
 import PageMetaFunction from "~/utils/page.meta";
 import { USER_SESSION_KEY, getSession } from "~/session.server";
 import WishlistService from "~/service/wishlist.service";
+import VendorCallNowButton from "~/components/VendorCallNowButton";
 
 const coverStyles: React.CSSProperties = { backgroundPosition: 'center center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', padding: '40px 0', marginTop: '-40px', borderRadius: '12px' }
 
@@ -145,7 +146,7 @@ const ProfileLayout = {
                     {services => <ProfileLayout.Pricing services={services} preSelectedGroupId={data.serviceGroupId} preSelectedGroup={setPreselectedGrpData} />}
                 </Await>
             </Suspense>
-            <ChatWithVendorAffix avatar={profileData?.avatar}/>
+            <ChatWithVendorAffix profileId={data.username} avatar={profileData?.avatar}/>
         </Container>
     },
     Cover: ({ profile, activeGroupData,wishlistExists, onLoad }: { wishlistExists: number, profile: VendorProfile | null, activeGroupData?: VendorServicePublic | null, onLoad: (d: VendorProfile | null) => void }) => {
@@ -221,6 +222,7 @@ const ProfileLayout = {
         </Card>;
     },
     Pricing: ({ services, preSelectedGroupId, preSelectedGroup }: { services: ServiceGroup[], preSelectedGroupId: string | null, preSelectedGroup: (d?: VendorServicePublic | null) => void }) => {
+        const data = useLoaderData<typeof loader>();
         const [activeService, setActive] = useState<VendorServicePublic>();
         const [flatList, setFlatList] = useState<VendorServicePublic[]>([]);
         const [showGroupBookDialog, setShowGroupBookDialog] = useState(false);
@@ -332,7 +334,7 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''
                                 }
-                                {activeService?.vendorServiceGroupId && <a href={`tel:${SUPPORT_CENTER.PHONE}`}><Button onClick={showComboOfferDialog} variant="outline" w={'100%'}>Call Now</Button></a>}
+                                {activeService?.vendorServiceGroupId && <a href={`tel:${SUPPORT_CENTER.PHONE}`}><VendorCallNowButton profileId={data.username}><Button variant="outline" w={'100%'}>Call Now</Button></VendorCallNowButton></a>}
                                 {activeService?.vendorServiceGroupId && <Button onClick={showComboOfferDialog} variant="filled" w={'100%'}>Book Now</Button>}
                             </Stack>
                         </Card>

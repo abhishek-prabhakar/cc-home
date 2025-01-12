@@ -2,31 +2,35 @@ import { Affix, Avatar, Button, Card, CloseButton, Group, Space, Text, Title, Tr
 import { useWindowScroll } from "@mantine/hooks";
 import { useState } from "react";
 import { SUPPORT_CENTER } from "~/data/common.data";
+import VendorCallNowButton from "./VendorCallNowButton";
 
-export function ChatWithVendorAffix(p:{
-    avatar?: string
-}){
-    const [scroll, scrollTo] = useWindowScroll();
-    const [showCard, setShowCard] = useState(true);
-    const ctaUrl = 'tel:'+SUPPORT_CENTER.PHONE;
+export function ChatWithVendorAffix(p: {
+  avatar?: string;
+  profileId: string;
+}) {
+  const [scroll, scrollTo] = useWindowScroll();
+  const [showCard, setShowCard] = useState(true);
+  const ctaUrl = 'tel:' + SUPPORT_CENTER.PHONE;
 
-    return   <Affix position={{ bottom: 30, right: 30 }}>
-          <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
-            {(transitionStyles) => (
-              <Card style={{...transitionStyles, overflow: 'unset'}} bg={'#fffbed'} radius={'lg'} withBorder shadow='xl' pos="relative">
-                    <CloseButton  size="sm" onClick={()=>setShowCard(false)} pos="absolute" right={'12px'} top={'12px'} bg="#e1e1e1"/>
-                    <Avatar bg={'white'} pos="absolute" size={'lg'} src={p.avatar} right={'-8px'} bottom={'-8px'}/>
-                    <Title order={5}>Got any queries?</Title>
-                    <Space h="5"/>
-                    <Text>Get start with a service to chat with me.</Text>
-                    <Space h="lg"/>
-                    <Group justify="center">
-                    <a href={ctaUrl || '#book-now-section'}>
-                        <Button radius={'xl'}  variant="gradient"
-      gradient={{ from: 'blue', to: 'violet', deg: 122 }}>Call Now</Button>
-                    </a></Group>
-                </Card>
-            )}
-          </Transition>
-        </Affix>
+  return <Affix position={{ bottom: 30, right: 30 }}>
+    <Transition transition="slide-up" mounted={showCard && scroll.y > 0}>
+      {(transitionStyles) => (
+        <Card style={{ ...transitionStyles, overflow: 'unset' }} bg={'#fffbed'} radius={'lg'} withBorder shadow='xl' pos="relative">
+          <CloseButton size="sm" onClick={() => setShowCard(false)} pos="absolute" right={'12px'} top={'12px'} bg="#e1e1e1" />
+          <Avatar bg={'white'} pos="absolute" size={'lg'} src={p.avatar} right={'-8px'} bottom={'-8px'} />
+          <Title order={5}>Got any queries?</Title>
+          <Space h="5" />
+          <Text>Get start with a service to chat with me.</Text>
+          <Space h="lg" />
+          <Group justify="center">
+            <a href={ctaUrl || '#book-now-section'}>
+              <VendorCallNowButton profileId={p.profileId}>
+                <Button radius={'xl'} variant="gradient"
+                  gradient={{ from: 'blue', to: 'violet', deg: 122 }}>Call Now</Button>
+              </VendorCallNowButton>
+            </a></Group>
+        </Card>
+      )}
+    </Transition>
+  </Affix>
 }

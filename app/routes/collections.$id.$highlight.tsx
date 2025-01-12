@@ -10,7 +10,7 @@ import { VendorQuery } from "~/service/vendor.service";
 import capitalize from "~/utils/capitalize.trasformer";
 
 export const meta: V2_MetaFunction = ({params}) => {
-    const label = capitalize(params.id?.replace(/-/g,' '))+' - '+capitalize(params.highlight?.replace(/-/g,' '));
+    const label = capitalize(params.id?.replace(/-/g,' '))+' in '+capitalize(params.highlight?.replace(/-/g,' '));
 
     return [
         { title: label+" | Celebria Collective" },
