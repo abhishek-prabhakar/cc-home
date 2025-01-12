@@ -334,7 +334,7 @@ const ProfileLayout = {
                                     </List>
                                 </Stack> : ''
                                 }
-                                {activeService?.vendorServiceGroupId && <a href={`tel:${SUPPORT_CENTER.PHONE}`}><VendorCallNowButton profileId={data.username}><Button variant="outline" w={'100%'}>Call Now</Button></VendorCallNowButton></a>}
+                                {activeService?.vendorServiceGroupId && <a href={`tel:${SUPPORT_CENTER.PHONE}`}><VendorCallNowButton service={activeService?.title} profileId={data.username}><Button variant="outline" w={'100%'}>Call Now</Button></VendorCallNowButton></a>}
                                 {activeService?.vendorServiceGroupId && <Button onClick={showComboOfferDialog} variant="filled" w={'100%'}>Book Now</Button>}
                             </Stack>
                         </Card>

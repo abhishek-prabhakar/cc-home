@@ -2,6 +2,7 @@ import { Form, useFetcher } from "@remix-run/react"
 
 type Props = {
     profileId: string,
+    service?: string;
     children: React.ReactNode
 }
 function VendorCallNowButton(props:Props){
@@ -9,7 +10,8 @@ function VendorCallNowButton(props:Props){
 
     function submit(){
         fetcher.submit({
-            profileId:  props.profileId
+            profileId:  props.profileId,
+            service: props.service || 'Nil'
         }, {
             method: 'post',
             action: '/notify/admin'

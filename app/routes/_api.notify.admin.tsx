@@ -1,4 +1,4 @@
-import {  json, redirect } from "@remix-run/node"
+import { json, redirect } from "@remix-run/node"
 import WhatsappService from "~/service/whatsapp.service";;
 
 export async function action({
@@ -6,13 +6,14 @@ export async function action({
 }: any) {
     const body = await request.formData();
     const profileId = body.get('profileId');
+    const service = body.get('service');
 
     try {
-        const message = `Someone has requested a call from profile ${profileId}`;
-        await WhatsappService.notifyAdmin(message)
+        const message = `Someone has requested a call from profile ${profileId} for service ${service}`;
+        await WhatsappService.notifyAdmin(message);
     } catch (r) {
 
     }
-    
+
     return json({ success: true });
 }
