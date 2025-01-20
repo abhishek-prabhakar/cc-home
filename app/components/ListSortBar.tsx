@@ -17,8 +17,9 @@ const list = [
     { value: SORT_BY.LOWEST_PRICE, label: "Lowest Price" },
     { value: SORT_BY.HIGHEST_PRICE, label: "Highest Price" },
     { value: SORT_BY.RATING, label: "Rating" },
-]
+];
 
+const DEFAULT_VALUE = SORT_BY.RATING;
 
 function ListSortBar({ onSort }: { onSort: (v: string | null) => void }) {
     function setValue(v: string | null) {
@@ -30,7 +31,7 @@ function ListSortBar({ onSort }: { onSort: (v: string | null) => void }) {
         <Group align={'center'} gap={'sm'}>
             <Text c="dimmed" size="sm">Sort By:</Text>
             <Select placeholder="Default"
-                defaultValue="0"
+                defaultValue={DEFAULT_VALUE}
                 onChange={x => setValue(x)}
                 data={list}
                 allowDeselect={false}
