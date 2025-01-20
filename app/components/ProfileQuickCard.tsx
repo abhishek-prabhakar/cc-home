@@ -33,7 +33,7 @@ function ProfileQuickCard({ id, name, rating, services, tag, profileImg, portfol
               <Overlay color="#fff" backgroundOpacity={0} />
             </Box>,
             <Text key={1} c="dimmed">
-             (${rating})
+             ({rating})
             </Text>]:''}
           </Group>
         </Grid.Col>

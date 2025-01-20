@@ -2,7 +2,10 @@ import { SORT_BY } from "~/components/ListSortBar";
 
 function sortFieldMapper(field: SORT_BY) {
     let sortBy: {
-        cost?: 'asc' | 'desc'
+        cost?: 'asc' | 'desc',
+        vendor?:{
+            ratingScore?: 'asc' | 'desc'
+        }
     } = {};
     switch (field) {
         case SORT_BY.HIGHEST_PRICE:
@@ -10,6 +13,12 @@ function sortFieldMapper(field: SORT_BY) {
             break
         case SORT_BY.LOWEST_PRICE:
             sortBy.cost = 'asc'
+            break
+        default:
+                sortBy.cost = undefined;
+                sortBy.vendor = {
+                    ratingScore: 'desc'
+                }
             break
     }
 

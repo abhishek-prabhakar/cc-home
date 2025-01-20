@@ -88,7 +88,10 @@ function portfolioByUsername(username?: string) {
 
 function getFilteredVendors(params: {
     vendorType: string, serviceGroupIds: string[], page: number, limit: number, sortBy: {
-        cost?: 'asc' | 'desc'
+        cost?: 'asc' | 'desc',
+        vendor?:{
+            ratingScore?: 'asc' | 'desc'
+        }
     }
 }) {
 
@@ -121,9 +124,7 @@ function getFilteredVendors(params: {
                     skip: params.page * params.limit,
                     take: params.limit,
                     distinct: ['vendorId'],
-                    orderBy: {
-                        cost: params.sortBy.cost
-                    },
+                    orderBy: params.sortBy,
                     select: {
                         cost: true,
                         vendor: {
