@@ -4,7 +4,7 @@ import { SUPPORT_CENTER } from "~/data/common.data";
 import PageMetaFunction from "~/utils/page.meta";
 
 export const meta = PageMetaFunction({
-	title: 'Contact Us',
+	title: 'About Us',
 });
 
 export default function () {
