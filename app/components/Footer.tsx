@@ -50,6 +50,7 @@ export function Footer() {
             <Text ta="center">© Celebria Collective {new Date()?.getFullYear()}. All Rights Reserved.</Text>
             <Space h="md" />
             <Group justify="center" gap="lg">
+            <Link to="about/company"><Text c="dimmed" ta="center">About Us</Text></Link>
                 <Link to="about/contact-us"><Text c="dimmed" ta="center">Contact Us</Text></Link>
                 <Link to="about/privacy-policy"><Text c="dimmed" ta="center">Privacy Policy</Text></Link>
                 <Link to="about/terms"><Text c="dimmed" ta="center">Terms And Conditions</Text></Link>
