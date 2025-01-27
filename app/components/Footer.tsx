@@ -38,7 +38,7 @@ export function Footer() {
                         <IconBrandInstagram />
                     </ThemeIcon>
                 </Link>
-                <Link to={'https://www.youtube.com/@celebria_collective'} target="_BLANK">
+                <Link to={'https://www.youtube.com/@CelebriaCollective-cc/videos'} target="_BLANK">
                     <ThemeIcon variant="light" radius="xl" size="lg" color="gray">
                         <IconBrandYoutube />
                     </ThemeIcon>
