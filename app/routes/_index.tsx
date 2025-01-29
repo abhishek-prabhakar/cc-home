@@ -21,6 +21,8 @@ import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { SupportCenterAffix } from "~/components/SupportCenterAffix";
 import SearchInput from "~/components/SearchInput";
 import Currency from "~/utils/currency.transformer";
+import StoriesStrip, { Story, StoryAlbum } from "~/components/StoriesStrip";
+import homePageStories from "~/contents/home-page-stories";
 
 const collectionBg = [
   'linear-gradient(0deg, rgba(34,193,195,0.4) 0%, rgba(253,187,45,0.4) 100%)',
@@ -52,14 +54,14 @@ type HomePage = {
   collections: Collection[];
   categories: Page[];
 };
- 
+
 export async function loader({ params }: LoaderArgs) {
   const id = params.user;
 
   const quickLinks = new Promise<Collection[]>(function (resolve, reject) {
     db.serviceGroup.findMany({
       take: 4,
-      where:{
+      where: {
         isActive: true,
       },
       select: {
@@ -132,16 +134,29 @@ const Home = {
       <Container size={'xl'}>
         <Grid>
           <Grid.Col span={12}>
-            <Home.KeyFeatures/>
+            <Home.KeyFeatures />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3}/>
+            <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
+          </Grid.Col>
+          <Grid.Col>
+            <Space h={'xl'} />
+            <Stack align="center">
+              <Title order={3}>Checkout our stories</Title>
+              <Space h={'lg'} />
+              <Stories />
+            </Stack>
+            <Space h={'xl'} />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Home.MainBannerAds/>
+            <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3}/>
+            <Space h={'xl'} />
+            <Home.MainBannerAds />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
           </Grid.Col>
           <Grid.Col span={12}>
             <Home.PopularServices />
@@ -151,7 +166,7 @@ const Home = {
           </Grid.Col>
           <Grid.Col span={12}>
             <Card radius={'md'} withBorder className="card-style-3">
-              <Grid gutter={{ base: 20,  md: 40}} align={'center'} justify={'center'}>
+              <Grid gutter={{ base: 20, md: 40 }} align={'center'} justify={'center'}>
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <Stack align="center">
                     <Title className="_text-center" order={3}>We are here to help<br />you build your brand</Title>
@@ -169,14 +184,14 @@ const Home = {
                       </Flex>
                       <Suspense>
                         <Await resolve={data.random8Vendors}>
-                        {response => <Center>
+                          {response => <Center>
                             <Avatar.Group>
-                              {response?.map(v => <Avatar size="lg" key={v?.profileImageName} src={PATH.THUMB_URL+v?.profileImageName} />)}
+                              {response?.map(v => <Avatar size="lg" key={v?.profileImageName} src={PATH.THUMB_URL + v?.profileImageName} />)}
                             </Avatar.Group>
                           </Center>
                           }
                         </Await>
-                        </Suspense>
+                      </Suspense>
                     </Stack>
                   </div>
                 </Grid.Col>
@@ -185,7 +200,7 @@ const Home = {
           </Grid.Col>
         </Grid>
       </Container>
-      <SupportCenterAffix/>
+      <SupportCenterAffix />
     </>
   },
   Jumbotron: () => {
@@ -193,23 +208,23 @@ const Home = {
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
         <Grid.Col visibleFrom="md" span={{ base: 12, md: 6 }}>
-            <Box className="homepage-hero-search-wrapper" p={'xl'}>
-                <Space h={'xl'}/>
-                <Center>
-                <Grid gutter={20} w={'70%'}>
-                  <Grid.Col span={12}>
-                    <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100}  delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 12, md: 9 }}>
-                    <SearchInput/>
-                  </Grid.Col>
-                </Grid>
-                </Center>
-            </Box>
+          <Box className="homepage-hero-search-wrapper" p={'xl'}>
+            <Space h={'xl'} />
+            <Center>
+              <Grid gutter={20} w={'70%'}>
+                <Grid.Col span={12}>
+                  <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100} delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 9 }}>
+                  <SearchInput />
+                </Grid.Col>
+              </Grid>
+            </Center>
+          </Box>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6 }}>
           {/* style={{ padding: '5px' }} */}
-          <img className="homepage-hero-img" src="/assets/homepage-hero-2.png"  width={'100%'} style={{ maxHeight: '400px',objectFit:'contain' }} />
+          <img className="homepage-hero-img" src="/assets/homepage-hero-2.png" width={'100%'} style={{ maxHeight: '400px', objectFit: 'contain' }} />
         </Grid.Col>
       </Grid>
     </div>;
@@ -362,7 +377,7 @@ const Home = {
             visibleSlides={sliderCount()}
             isIntrinsicHeight={true}
             step={sliderCount()} dragStep={sliderCount()}
-            className="carousel-slider-wrapper slider-homepage-focused slider-justify-center slider-uplift"
+            className="carousel-slider-wrapper slider-homepage-focused _center slider-uplift"
           >
             <Slider className="carousel-slider">{data.map((item, i) => <Slide className={classNames('item-wrapper', { _active: activeItemIndex === i })} key={'s' + item.id} index={i} onClick={() => showModal(item)} onMouseOver={() => setActiveItem(i)}>
               <div className="item-spacer">
@@ -444,82 +459,94 @@ const Home = {
       </Await>
     </Suspense>
   },
-  MainBannerAds(){
+  MainBannerAds() {
     const data = useLoaderData<typeof loader>();
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
-    function sliderCount(length: number) { 
+    function sliderCount(length: number) {
       // const minWidth = length > 3? 3: length
       return isWideScreen ? 3 : 1;
-     }
+    }
 
     return <Suspense>
       <Await resolve={data.bannerAds}>
         {response => <CarouselProvider
-              naturalSlideWidth={300}
-              naturalSlideHeight={400}
-              totalSlides={response.length}
-              visibleSlides={sliderCount(response.length)}
-              isIntrinsicHeight={true}
-              step={sliderCount(response.length)} dragStep={sliderCount(response.length)}
-              className="carousel-slider-wrapper slider-justify-center"
-            >
-              <Slider className="slider-spacer">
-            {response.map((item,i) => <Slide  key={'s' + item.bannerLocation} index={i}>
+          naturalSlideWidth={300}
+          naturalSlideHeight={400}
+          totalSlides={response.length}
+          visibleSlides={sliderCount(response.length)}
+          isIntrinsicHeight={true}
+          step={sliderCount(response.length)} dragStep={sliderCount(response.length)}
+          className="carousel-slider-wrapper _center"
+        >
+          <Slider className="slider-spacer">
+            {response.map((item, i) => <Slide key={'s' + item.bannerLocation} index={i}>
               <Link to={item.url}>
                 <Card withBorder p={3}>
-                <Card mih={200} className="animate-banner-ad"  style={{backgroundImage: 'url(/assets/card-gradient-overlay.png), url('+item.img+')'}}>
-                  <Space h={"xl"}/>
-                  <Stack gap={0} justify="center" align="center">
-                  <Title ta={'center'} c={'white'} order={3}>{item.title}</Title>
-                  <Box h={45}><Text ta={'center'}  c={'white'}>{item.description}</Text></Box>
-                  <Space h={"lg"}/>
-                  {item.cost && <Group fw={'bold'} c={'white'}><Text>Starts from</Text><Currency value={item.cost}/></Group>}
-                  <Space h={"md"}/>
-                  <Box>
-                    <Button variant="white" radius="lg">Book now</Button>
-                  </Box>
-                  </Stack>
-                </Card>
+                  <Card mih={200} className="animate-banner-ad" style={{ backgroundImage: 'url(/assets/card-gradient-overlay.png), url(' + item.img + ')' }}>
+                    <Space h={"xl"} />
+                    <Stack gap={0} justify="center" align="center">
+                      <Title ta={'center'} c={'white'} order={3}>{item.title}</Title>
+                      <Box h={45}><Text ta={'center'} c={'white'}>{item.description}</Text></Box>
+                      <Space h={"lg"} />
+                      {item.cost && <Group fw={'bold'} c={'white'}><Text>Starts from</Text><Currency value={item.cost} /></Group>}
+                      <Space h={"md"} />
+                      <Box>
+                        <Button variant="white" radius="lg">Book now</Button>
+                      </Box>
+                    </Stack>
+                  </Card>
                 </Card>
               </Link>
             </Slide>)}
           </Slider>
-          </CarouselProvider>
-          }
+        </CarouselProvider>
+        }
       </Await>
     </Suspense>
   },
-  KeyFeatures(){
+  KeyFeatures() {
     return <Grid pt={'xl'} gutter={'lg'} align="center" justify="center">
-        <Grid.Col span={{md: 'content', base: 'content'}}>
-          <Group justify="center">
-            <Image w={60} h={60} src={'/assets/icons/quality-assurance.png'}/>
-            <Title order={4}>CC Promise</Title>
-          </Group>
-        </Grid.Col>
-        <Grid.Col visibleFrom="md" span={'content'}>
-          <Divider  orientation="vertical" h={40} size="sm"/>
-        </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 10}}>
+      <Grid.Col span={{ md: 'content', base: 'content' }}>
+        <Group justify="center">
+          <Image w={60} h={60} src={'/assets/icons/quality-assurance.png'} />
+          <Title order={4}>CC Promise</Title>
+        </Group>
+      </Grid.Col>
+      <Grid.Col visibleFrom="md" span={'content'}>
+        <Divider orientation="vertical" h={40} size="sm" />
+      </Grid.Col>
+      <Grid.Col span={{ md: 'content', base: 10 }}>
         <Group >
-            <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={5}>Verified Professionals</Title>
-          </Group>
-        </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 10}}>
+          <ThemeIcon variant="white" color="yellow"><IconStarFilled /></ThemeIcon>
+          <Title order={5}>Verified Professionals</Title>
+        </Group>
+      </Grid.Col>
+      <Grid.Col span={{ md: 'content', base: 10 }}>
         <Group >
-            <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={5}>Hassle Free Booking</Title>
-          </Group>
-        </Grid.Col>
-        <Grid.Col span={{md: 'content', base: 10}}>
+          <ThemeIcon variant="white" color="yellow"><IconStarFilled /></ThemeIcon>
+          <Title order={5}>Hassle Free Booking</Title>
+        </Group>
+      </Grid.Col>
+      <Grid.Col span={{ md: 'content', base: 10 }}>
         <Group>
-            <ThemeIcon variant="white" color="yellow"><IconStarFilled/></ThemeIcon>
-            <Title order={5}>Transparent Pricing</Title>
-          </Group>
-        </Grid.Col>
+          <ThemeIcon variant="white" color="yellow"><IconStarFilled /></ThemeIcon>
+          <Title order={5}>Transparent Pricing</Title>
+        </Group>
+      </Grid.Col>
     </Grid>
   }
+}
+
+function Stories() {
+  const[activeStories, setStories] = useState<Story[]>([]);
+  const albums: StoryAlbum[] = homePageStories.homePageStoryAlbums;
+  const stories = homePageStories.homePageStories;
+
+  function onLoadStories(id: string) {
+    setStories(stories[id]);
+  }
+
+  return <StoriesStrip center radius={50} album={albums} stories={activeStories} onLoadStories={onLoadStories} />
 }
 
 

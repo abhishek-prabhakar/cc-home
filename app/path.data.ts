@@ -8,4 +8,5 @@ export const PATH = {
     VOICE_FILE_UPLOAD: 'https://hotmommy.in/asset/voice',
     GUEST_FILE_UPLOAD: "https://hotmommy.in/guest/upload",
     THUMB_URL: 'https://hotmommy.in/thumbs/',
+    GENERAL_ASSETS: 'https://hotmommy.in/website_assets',
 }

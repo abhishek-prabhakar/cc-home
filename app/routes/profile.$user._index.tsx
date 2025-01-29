@@ -11,7 +11,7 @@ import { db } from "~/utils/database";
 import { VendorQuery } from "~/service/vendor.service";
 import VideoPreviewItem from "~/components/VideoPreviewItem";
 import Routes from "~/routes.data";
-import StoriesStrip, { Story } from "~/components/StoriesStrip";
+import StoriesStrip, { Story, StoryAlbum } from "~/components/StoriesStrip";
 import { DiscountType } from "@prisma/client";
 import Currency from "~/utils/currency.transformer";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconDiscount2 } from "@tabler/icons-react";
@@ -136,17 +136,12 @@ export async function loader({ params, request }: LoaderArgs) {
         });
     });
 
-    const stories = new Promise<{
-        fileName: string;
-        serviceGroupId: string | null;
-        serviceGroup: {
-            name: string;
-            vendorType: {
-                name: string;
-            };
-        } | null;
-    }[]>(function (resolve) {
-        VendorQuery.Stories(username).then(r => resolve(r));
+    const stories = new Promise<StoryAlbum[]>(function (resolve) {
+        VendorQuery.Stories(username).then(r => resolve(r.map(x => ({
+            id: x.serviceGroupId || '',
+            name: x.serviceGroup?.name || '',
+            filePath: PATH.THUMB_URL+ x.fileName || '',
+        }))));
     });
 
 
@@ -208,7 +203,7 @@ const ProfileHome = {
                                     <Rating value={outletContext?.profileData?.rating} fractions={3} readOnly={true} size="sm" />
                                     <Overlay color="#fff" backgroundOpacity={0} />
                                 </Box>
-                                <Text c="dimmed">{reviews} reviews</Text>
+                                {reviews? <Text c="dimmed">{reviews} reviews</Text>: ''}
                                 </>: <Text c="dimmed">Not rated yet.</Text>}
                             </Grid.Col>
                         </Grid>
@@ -264,7 +259,7 @@ const ProfileHome = {
                 <Await resolve={data.stories}>
                     {
                         album => album?.length ? <>
-                            <Text fw={500}>Stories</Text>
+                            <Text fw={'bold'}>Stories</Text>
                             <Space h="sm" />
                             <StoriesStrip album={album} stories={stories} onLoadStories={loadStories} />
                         </> : ''}

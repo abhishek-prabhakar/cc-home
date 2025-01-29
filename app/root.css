@@ -198,7 +198,7 @@ a, a:active{
     border: 0;
 }
 
-.carousel-slider-wrapper.slider-justify-center .carousel__slider-tray{
+.carousel-slider-wrapper._center .carousel__slider-tray{
     margin: auto;
 }
 
@@ -488,12 +488,16 @@ a, a:active{
     }
 }
 
+.story-block-wrapper{
+    overflow: hidden;
+    background: linear-gradient(90deg, rgb(131, 58, 180) 0%, rgb(63, 94, 251) 17%, rgb(252, 70, 107) 34%, rgb(253, 29, 29) 52%, rgb(252, 176, 69) 69%, rgb(252, 70, 107) 85%, rgb(131, 58, 180) 100%);
+    padding: 2px;
+}
 
 .story-block{
-    border-style: solid;
-    border-width: 2px;
-    border-image: conic-gradient(#833ab4, #3f5efb, #fc466b, #fd1d1d, #fcb045, #fc466b, #833ab4) 1;
-    padding: 2px
+    border: 3px solid white;
+    overflow: hidden;
+    background-color: white;
 }
 
 

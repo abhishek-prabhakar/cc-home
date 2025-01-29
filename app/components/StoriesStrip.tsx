@@ -2,7 +2,6 @@ import { Flex, Image, Modal, Overlay, Text, px, rem } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { useEffect, useState } from "react";
-import { PATH } from "~/path.data";
 import Stories from 'react-insta-stories';
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -16,18 +15,22 @@ type Story = {
     preloadResource?: boolean;
 }
 
+type StoryAlbum = {
+    id: string,
+    filePath: string,
+    type?: 'video' | 'image',
+    name: string | null,
+}
+
 type props = {
-    album: {
-        serviceGroupId: string | null,
-        fileName: string,
-        name?: string| null,
-        serviceGroup?:{name: string | null } | null
-    }[],
+    album:StoryAlbum[],
     stories: Story[],
+    radius?: number,
+    center?: boolean,
     onLoadStories: (serviceGroupId: string) => void
 }
 
-function StoriesStrip({album,stories, onLoadStories}:props){
+function StoriesStrip({album,stories, radius = 10, center = false, onLoadStories}:props){
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
     // const [storiesList, setStories] = useState<{[key in string] : Story[] }>({});
     const [storiesList, setStories] = useState< Story[]>([]);
@@ -68,23 +71,25 @@ function StoriesStrip({album,stories, onLoadStories}:props){
         visibleSlides={sliderCount()}
         isIntrinsicHeight={true}
         step={sliderCount()} dragStep={sliderCount()}
-        className="carousel-slider-wrapper"
+        className={"carousel-slider-wrapper "+ (center? '_center': '')}
     >
 
         <Slider>
-            {album?.map((item, i) => <Slide key={'s' + item.serviceGroupId} index={i}>
-            <div style={{ borderRadius: '3px', overflow: 'hidden' }}>
-                    <div className="story-block" onClick={() => loadStories(item.serviceGroupId)}>
+            {album?.map((item, i) => <Slide key={'s' + item.id} index={i}>
+            <div className="story-block-wrapper" style={{ borderRadius: radius+ 'px' }}>
+                    <div className="story-block" style={{ borderRadius: radius+ 'px' }} onClick={() => loadStories(item.id)}>
                         <div style={{ position: 'relative', cursor: 'pointer' }}>
-                            <Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
-                            <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={PATH.THUMB_URL + item.fileName} fit="cover" />
+                            {item.type === 'video'? <VideoPreview file={item.filePath} />:
+                            <><Image visibleFrom="md" w={'100%'} h={px('12rem')} radius={'xs'} src={item.filePath} fit="cover" />
+                            <Image hiddenFrom="md" w={'100%'} h={px('10rem')} radius={'xs'} src={item.filePath} fit="cover" />
+                            </>}
                             <Overlay
                                 gradient="linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%)"
                                 opacity={0.85}
                                 p={{base: 'xs', md:  'md'}}
                             >
-                                <Flex align={'end'} h="100%">
-                                    <Text fw={500} c="white">{item?.name || item.serviceGroup?.name || 'Highlights'}</Text>
+                                <Flex align={'end'} justify={'center'} h="100%">
+                                    <Text ta={'center'} fw={500} c="white">{item?.name || 'Highlights'}</Text>
                                 </Flex>
                             </Overlay>
                         </div>
@@ -168,5 +173,11 @@ function StoriesStrip({album,stories, onLoadStories}:props){
 </>
 }
 
-export type { Story };
+function VideoPreview({file}:{file: string}){
+    return <video width="100%" height={'auto'} autoPlay={true} controls={false} muted={true} loop={true}>
+    <source src={file} type="video/mp4"/>
+  </video>
+}
+
+export type { Story, StoryAlbum };
 export default StoriesStrip;
