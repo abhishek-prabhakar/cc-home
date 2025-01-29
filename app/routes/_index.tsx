@@ -546,7 +546,11 @@ function Stories() {
     setStories(stories[id]);
   }
 
-  return <StoriesStrip center radius={50} album={albums} stories={activeStories} onLoadStories={onLoadStories} />
+  function reset(){
+    setStories([]);
+  }
+
+  return <StoriesStrip center radius={50} album={albums} stories={activeStories} onLoadStories={onLoadStories} onClose={reset} />
 }
 
 

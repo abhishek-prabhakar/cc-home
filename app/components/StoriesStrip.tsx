@@ -28,9 +28,10 @@ type props = {
     radius?: number,
     center?: boolean,
     onLoadStories: (serviceGroupId: string) => void
+    onClose?: () => void
 }
 
-function StoriesStrip({album,stories, radius = 10, center = false, onLoadStories}:props){
+function StoriesStrip({album,stories, radius = 10, center = false, onLoadStories, onClose}:props){
     const isWideScreen = useMediaQuery('(min-width: 56.25em)');
     // const [storiesList, setStories] = useState<{[key in string] : Story[] }>({});
     const [storiesList, setStories] = useState< Story[]>([]);
@@ -59,6 +60,7 @@ function StoriesStrip({album,stories, radius = 10, center = false, onLoadStories
 
     function closeStory(){
         setStories([]);
+        onClose?.();
     }
 
     const WIDTH = 400;
