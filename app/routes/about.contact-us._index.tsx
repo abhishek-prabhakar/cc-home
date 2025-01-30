@@ -38,12 +38,12 @@ export default function () {
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconBrandWhatsapp style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }><a href={SUPPORT_CENTER.WHATSAPP_CHAT}>chat on whatsapp</a></List.Item>
+                    }><a href={SUPPORT_CENTER.WHATSAPP_CHAT}  target="_BLANK">chat on whatsapp</a></List.Item>
                      <List.Item icon={
                         <ThemeIcon color="gray" size={24} variant="white">
                             <IconMessage style={{ width: rem(16), height: rem(16) }} />
                         </ThemeIcon>
-                    }><a href={SUPPORT_CENTER.ENQUIRY_FORM}>Contact Us</a></List.Item>
+                    }><a href={SUPPORT_CENTER.ENQUIRY_FORM} target="_BLANK">Contact Us</a></List.Item>
                 </List>
             </Grid.Col>
         </Grid>
