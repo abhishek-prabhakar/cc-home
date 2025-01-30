@@ -4,8 +4,8 @@ const POST_LIMIT = 1000;
 
 const wpClient = wordpress.createClient({
     url:'https://cc.eddeclothing.com',
-    username: "rakshitharavi@celebriacollective.com",
-    password: "#Godownonme69"
+    username: "cc_app_user",
+    password: "G2eC8%s5vA&SKn8BtAJFPx^a"
 });
 
 type PostPreview = {
