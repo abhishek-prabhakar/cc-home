@@ -11,7 +11,8 @@ const COMMON_DATA = {
 const SUPPORT_CENTER = {
     EMAIL: 'info@celebriacollective.com',
     PHONE: '+91 8123575169',
-    WHATSAPP_CHAT: 'https://wa.me/8123575169'
+    WHATSAPP_CHAT: 'https://wa.me/8123575169',
+    ENQUIRY_FORM: 'https://forms.gle/eNxF2hSXYba9wdTx5'
 }
 
 export {SUPPORT_CENTER};

@@ -43,17 +43,17 @@ const homePageStoryAlbums: StoryAlbum[] = [
         ],
         album2: [
             {
+                url: REMOTE_URL+'p3.mp4',
+                type:'video',
+                preloadResource: true
+            },
+            {
                 url: REMOTE_URL+'p1.mp4',
                 type:'video',
                 preloadResource: true
             },
             {
                 url: REMOTE_URL+'p2.mp4',
-                type:'video',
-                preloadResource: true
-            },
-            {
-                url: REMOTE_URL+'p3.mp4',
                 type:'video',
                 preloadResource: true
             },
