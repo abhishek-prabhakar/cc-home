@@ -72,6 +72,8 @@ const AppNavigation = {
                   <Menu trigger="click-hover" shadow="md" >
                     <Menu.Target>
                     <NavLink
+                     fw={'bold'}
+                     c={'dark'}
                       label={item.name}
                       rightSection={<IconChevronDown size={12} />}
                     />
@@ -83,7 +85,7 @@ const AppNavigation = {
                 </Box>
               ))}
               <Link to={Routes.get('Blog')}>
-                  <NavLink c={'dark'} label="Blog"/>
+                  <NavLink fw={'bold'} c={'dark'} label="Blog"/>
               </Link>
             </Flex>
           )}

@@ -42,7 +42,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
     return <>
         <div >
             <Container size={'xl'}>
-                <Grid justify={'space-between'} align="center" gutter={0} py={10}>
+                <Grid justify={'space-between'} align="center" gutter={0} py={5}>
                     <Grid.Col span={{ base: 'content', md: 3 }}>
                         <Group gap={'sm'}>
                             <Box hiddenFrom="md">
