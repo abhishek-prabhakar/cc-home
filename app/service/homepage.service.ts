@@ -309,6 +309,12 @@ function BannerSet(){
                       },
                       select:{
                         cost: true
+                      },
+                      where:{
+                        isActive: true,
+                        vendor:{
+                            isActive: true
+                        }
                       }
                     }
                   }
