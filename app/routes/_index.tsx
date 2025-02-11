@@ -386,7 +386,7 @@ const Home = {
                     {CatIconList.find(x => item.title.toLowerCase().includes(x.name))?.icon}
                     <Title order={5} style={{ color: 'white' }}>{item.title}</Title>
                     <Group className="hover-active" align="center">
-                      <Text fw={500} c={'white'}>Book now</Text>
+                      <Text fw={500} c={'white'}>Get Started</Text>
                       <IconArrowNarrowRight />
                     </Group>
                   </Stack>
