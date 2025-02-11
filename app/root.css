@@ -311,7 +311,7 @@ a:active {
     background: linear-gradient(#873CEA, #6828F5);
     border-radius: 10px;
     animation-name: ripple;
-    animation-duration: 1.8s;
+    animation-duration: 1.5s;
     animation-delay: 0s;
     animation-iteration-count: infinite;
     animation-timing-function: cubic-bezier(.65,0,.34,1);
