@@ -25,10 +25,11 @@ import { VendorQuery } from "~/service/vendor.service";
 import sortFieldMapper from "~/utils/sortField.map";
 import capitalize from "~/utils/capitalize.trasformer";
 
-export const meta: V2_MetaFunction = ({params}) => {
+export const meta: V2_MetaFunction = ({params, data}) => {
+    const title = data?.data?.name + ' in ' + capitalize(params.id?.replace(/-/g,' '));
     return [
-        { title: capitalize(params.id?.replace(/-/g,' '))+" | Celebria Collective" },
-        { name: "description", content: "Find your Pefect vendor" },
+        { title: title+" | Celebria Collective" },
+        { name: "description", content: data?.meta?.description },
     ];
 };
 
