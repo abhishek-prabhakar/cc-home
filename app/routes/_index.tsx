@@ -11,7 +11,7 @@ import { BannerSet, getCategoryCollection, getCollections, getPopularServices, g
 import Routes from "~/routes.data";
 import { ButtonBack, ButtonNext, CarouselProvider, Slide, Slider } from "pure-react-carousel";
 import { Typewriter } from "react-simple-typewriter";
-import { Avatar, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, Input, Loader, Modal, SimpleGrid, Space, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Avatar, Box, Button, Card, Center, Container, Divider, Flex, Grid, Group, Image, Indicator, Input, Loader, Modal, Popover, SimpleGrid, Space, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconBrush, IconCamera, IconChevronRight, IconFlame, IconSearch, IconStarFilled, IconVideo } from "@tabler/icons-react";
 import Skeleton from "~/components/Skeleton";
 import { IconHanger } from "@tabler/icons-react";
@@ -129,7 +129,7 @@ const Home = {
         <Home.Jumbotron />
         <div className="container no-spacer">
           <Home.Services />
-        </div>
+        </div> 
       </Container>
       <Container size={'xl'}>
         <Grid>
@@ -488,7 +488,7 @@ const Home = {
                       <Title ta={'center'} c={'white'} order={3}>{item.title}</Title>
                       <Box h={45}><Text ta={'center'} c={'white'}>{item.description}</Text></Box>
                       <Space h={"lg"} />
-                      {item.cost && <Group fw={'bold'} c={'white'}><Text>Starts from</Text><Currency value={item.cost} /></Group>}
+                      {item.cost ? <Group fw={'bold'} c={'white'}><Text>Starts from</Text><Currency value={item.cost} /></Group> : ''}
                       <Space h={"md"} />
                       <Box>
                         <Button variant="white" radius="lg">Book now</Button>
@@ -538,7 +538,7 @@ const Home = {
 }
 
 function Stories() {
-  const[activeStories, setStories] = useState<Story[]>([]);
+  const [activeStories, setStories] = useState<Story[]>([]);
   const albums: StoryAlbum[] = homePageStories.homePageStoryAlbums;
   const stories = homePageStories.homePageStories;
 
@@ -546,7 +546,7 @@ function Stories() {
     setStories(stories[id]);
   }
 
-  function reset(){
+  function reset() {
     setStories([]);
   }
 
