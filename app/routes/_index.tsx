@@ -147,10 +147,10 @@ const Home = {
               <Stories />
             </Stack>
             <Space h={'xl'} />
-          </Grid.Col> */}
+          </Grid.Col> 
           <Grid.Col span={12}>
             <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
-          </Grid.Col>
+          </Grid.Col> */}
           <Grid.Col span={12}>
             <Space h={'xl'} />
             <Home.MainBannerAds />
