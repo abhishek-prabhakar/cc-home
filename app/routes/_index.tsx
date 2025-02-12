@@ -139,7 +139,7 @@ const Home = {
           <Grid.Col span={12}>
             <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
           </Grid.Col>
-          <Grid.Col>
+          {/* <Grid.Col>
             <Space h={'xl'} />
             <Stack align="center">
               <Title order={3}>Checkout our stories</Title>
@@ -147,7 +147,7 @@ const Home = {
               <Stories />
             </Stack>
             <Space h={'xl'} />
-          </Grid.Col>
+          </Grid.Col> */}
           <Grid.Col span={12}>
             <Image src={'/assets/overlay-divider.png'} width={'100%'} h={90} opacity={0.3} />
           </Grid.Col>
