@@ -9,7 +9,8 @@
     "dbpull": "prisma db pull",
     "format": "prisma format",
     "generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "migrate": "prisma migrate dev -n init"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
