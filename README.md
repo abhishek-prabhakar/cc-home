@@ -8,10 +8,15 @@
 - Always run migrations from the admin repo 'celebria-admin'.
 - Never run migrations directly on production database.
 - Dont commit migrations during code push
+- Never use production variables/database for development
 
 ## Development
 
 The Remix dev server starts your app in development mode, rebuilding assets on file changes. To start the Remix dev server:
+
+## env
+- Create an env file using the template env.example
+- Never use production variables/database for development
 
 ## Follow these steps
 
