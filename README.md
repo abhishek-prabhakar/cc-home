@@ -34,6 +34,11 @@ npm run generate
 npm run dev
 ```
 
+- Incase compiling fails, switch to node version 16.13.0
+```sh
+nvm use 16.13.0
+```
+
 Open up [http://localhost:3000](http://localhost:3000), and you should be ready to go!
 
 ## Deployment
