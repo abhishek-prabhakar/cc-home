@@ -43,7 +43,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
         <div >
             <Container size={'xl'}>
                 <Grid justify={'space-between'} align="center" gutter={0} py={5}>
-                    <Grid.Col span={{ base: 'content', md: 3 }}>
+                    <Grid.Col span={{ base: 'content' }}>
                         <Group gap={'sm'}>
                             <Box hiddenFrom="md">
                                 <AppNavigation.Drawer user={user} />
@@ -56,7 +56,6 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                                     <Menu.Target>
                                         <Flex className="cursor-pointer" gap={'sm'} align={'center'}>
                                             <IconWorld size={16} />
-                                            {currentLocation}
                                         </Flex>
                                     </Menu.Target>
                                     <Menu.Dropdown>
@@ -69,7 +68,7 @@ export function Header({ user, cartCount }: { user?: User | null, cartCount: num
                     <Grid.Col span={'auto'} visibleFrom="md" >
                         <AppNavigation.MainMenu />
                     </Grid.Col>
-                    <Grid.Col span={{ base: 'content', md: 3 }}>
+                    <Grid.Col span={{ base: 'content'}}>
                         <Flex gap={20} justify={'end'} align="center">
                             <Link to={Routes.get('Cart')}>
                                 <Indicator disabled={!cartCount} inline processing color="red" size={12} label={cartCount}>

@@ -44,7 +44,7 @@ function SearchInput(){
 
     return <>
         <Stack gap={'sm'}>
-                      <Text fw={500} c="dimmed">Get Started</Text>
+                      <Text fw={500} c="dimmed">Premium experience and stress-free planning for modern Indian couples</Text>
                       <div style={{ background: 'white', padding: '6px 12px', borderRadius: '24px', boxShadow: '0 4px 4px #e1e1e1' }}>
                         <Input value={searchValue} variant="unstyled" placeholder="Search" leftSection={searchBusy ? <Loader size={'xs'} /> : <IconSearch size={20} />} rightSection={searchValue? <CloseButton onClick={clearSearch}/>: ''} rightSectionPointerEvents="all" onChange={v => setSearchValue(v.target.value)} />
                       </div>

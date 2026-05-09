@@ -204,7 +204,7 @@ const Home = {
     </>
   },
   Jumbotron: () => {
-    const typewriterWords = ['events done', 'photographers', 'videographers', 'makeup artists', 'stylists'];
+    const typewriterWords = ['planner'];
     return <div className=" homepage-hero-section">
       <Grid align={'stretch'} gutter={0}>
         <Grid.Col visibleFrom="md" span={{ base: 12, md: 6 }}>
@@ -213,7 +213,7 @@ const Home = {
             <Center>
               <Grid gutter={20} w={'70%'}>
                 <Grid.Col span={12}>
-                  <Title className="title-wrapper" order={1}>Now it's easy<br />to get <Typewriter typeSpeed={100} delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
+                  <Title className="title-wrapper" order={1}>Bangalore’s luxury<br />wedding <Typewriter typeSpeed={100} delaySpeed={400} words={typewriterWords} loop={true} cursor={true} cursorColor="red" /></Title>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 9 }}>
                   <SearchInput />
@@ -518,13 +518,13 @@ const Home = {
       <Grid.Col span={{ md: 'content', base: 10 }}>
         <Group >
           <ThemeIcon variant="white" color="yellow"><IconStarFilled /></ThemeIcon>
-          <Title order={5}>Verified Professionals</Title>
+          <Title order={5}>100+ weddings planned</Title>
         </Group>
       </Grid.Col>
       <Grid.Col span={{ md: 'content', base: 10 }}>
         <Group >
           <ThemeIcon variant="white" color="yellow"><IconStarFilled /></ThemeIcon>
-          <Title order={5}>Hassle Free Booking</Title>
+          <Title order={5}>Trusted by families across india</Title>
         </Group>
       </Grid.Col>
       <Grid.Col span={{ md: 'content', base: 10 }}>

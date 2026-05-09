@@ -13,52 +13,60 @@ import {
   useNavigation,
   useRouteError,
 } from "@remix-run/react";
-import cssTransitions from '~/transitions.css';
-import styles from '~/root.css';
-import carouselStyles from 'react-photo-view/dist/react-photo-view.css';
+import cssTransitions from "~/transitions.css";
+import styles from "~/root.css";
+import carouselStyles from "react-photo-view/dist/react-photo-view.css";
 import { Footer } from "~/components/Footer";
 import { Header } from "./components/Header";
 import { HeaderNavListItem, User } from "./types";
 import { USER_SESSION_KEY, getSession, userCartCookie } from "./session.server";
 import { db } from "./utils/database";
-import { Provider } from 'react-redux';
-import store from './store/store';
+import { Provider } from "react-redux";
+import store from "./store/store";
 import { Suspense } from "react";
 import Routes from "./routes.data";
-import CarouselSliderStyles from 'pure-react-carousel/dist/react-carousel.cjs.css';
-import { ColorSchemeScript, Box, MantineProvider,  Progress } from "@mantine/core";
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
+import CarouselSliderStyles from "pure-react-carousel/dist/react-carousel.cjs.css";
+import {
+  ColorSchemeScript,
+  Box,
+  MantineProvider,
+  Progress,
+} from "@mantine/core";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import theme from "./mantine.theme";
 import Skeleton from "./components/Skeleton";
-import '@mantine/carousel/styles.css';
+import "@mantine/carousel/styles.css";
 import Analytics from "./components/Analytics";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },
   { rel: "stylesheet", href: cssTransitions },
-  { rel: 'stylesheet', href: carouselStyles },
-  { rel: 'stylesheet', href: CarouselSliderStyles },
+  { rel: "stylesheet", href: carouselStyles },
+  { rel: "stylesheet", href: CarouselSliderStyles },
   {
-    rel: 'preconnect', href: 'https://fonts.googleapis.com'
+    rel: "preconnect",
+    href: "https://fonts.googleapis.com",
   },
   {
-    rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous'
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous",
   },
   {
-    rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap'
-  }
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap",
+  },
 ];
 
-
 const headerStyle: React.CSSProperties = {
-  padding: '0',
-  backgroundColor: '#fff',
-  position: 'sticky',
+  padding: "0",
+  backgroundColor: "#fff",
+  position: "sticky",
   top: 0,
-  boxShadow: '0 0 5px #c0c0c0',
-  zIndex: 1
+  boxShadow: "0 0 5px #c0c0c0",
+  zIndex: 1,
 };
 
 export async function loader({ request }: LoaderArgs) {
@@ -76,17 +84,17 @@ export async function loader({ request }: LoaderArgs) {
     try {
       const loggedInUser = await db.user.findFirst({
         where: {
-          id: userId
-        }
+          id: userId,
+        },
       });
 
       if (loggedInUser) {
         resolve({
           id: loggedInUser.id,
           phone: loggedInUser.username,
-          name: loggedInUser.name
+          name: loggedInUser.name,
         });
-      } else{
+      } else {
         resolve(null);
       }
     } catch (e) {
@@ -94,15 +102,16 @@ export async function loader({ request }: LoaderArgs) {
     }
   });
 
-
-
-  const pages = new Promise<HeaderNavListItem[]>(async function (resolve, reject) {
+  const pages = new Promise<HeaderNavListItem[]>(async function (
+    resolve,
+    reject
+  ) {
     const list = await db.vendorType.findMany({
       orderBy: {
-        name: 'asc'
+        name: "asc",
       },
       where: {
-        isActive: true
+        isActive: true,
       },
       select: {
         keyName: true,
@@ -112,43 +121,56 @@ export async function loader({ request }: LoaderArgs) {
             serviceGroupType: {
               select: {
                 keyName: true,
-                name: true
+                name: true,
               },
             },
           },
           where: {
             isActive: true,
             groupTypeId: {
-              not: null
-            }
+              not: null,
+            },
           },
-          distinct: ['groupTypeId'],
+          distinct: ["groupTypeId"],
           orderBy: {
             serviceGroupType: {
-              name: 'asc'
-            }
-          }
-        }
-      }
+              name: "asc",
+            },
+          },
+        },
+      },
     });
 
-    resolve(list.map(x => ({
-      id: x.keyName,
-      name: x.name,
-      children: [{
-        name: 'Collections',
-        list: x.serviceGroup.reduce<{ path: string, id: string, name: string }[]>((arr, item) => {
+    resolve(
+      list.map((x) => {
+        const items = x.serviceGroup.reduce<
+          { path: string; id: string; name: string }[]
+        >((arr, item) => {
           if (item.serviceGroupType?.keyName) {
             arr.push({
-              path: Routes.get('CollectionsByVendor', { vendorType: x.keyName, id: item.serviceGroupType.keyName }),
+              path: Routes.get("CollectionsByVendor", {
+                vendorType: x.keyName,
+                id: item.serviceGroupType.keyName,
+              }),
               id: item.serviceGroupType.keyName,
-              name: item.serviceGroupType.name
+              name: item.serviceGroupType.name,
             });
           }
           return arr;
-        }, [])
-      }]
-    })));
+        }, []);
+
+        return {
+          id: x.keyName,
+          name: x.name,
+          children: items.length? [
+            {
+              name: "Collections",
+              list: items,
+            },
+          ]:[],
+        };
+      })
+    );
   });
 
   return defer({
@@ -157,10 +179,10 @@ export async function loader({ request }: LoaderArgs) {
     pages,
     cartCount: userCart?.length || 0,
     ENV: {
-      openReplyprojectKey: process.env.OPENREPLY_KEY || '',
-      FB_PIXEL_ID: process.env.FB_PIXEL_ID || '',
-      GOOGLE_TAG_ID: process.env.GOOGLE_TAG_ID || ''
-    }
+      openReplyprojectKey: process.env.OPENREPLY_KEY || "",
+      FB_PIXEL_ID: process.env.FB_PIXEL_ID || "",
+      GOOGLE_TAG_ID: process.env.GOOGLE_TAG_ID || "",
+    },
   });
 }
 
@@ -175,23 +197,44 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <meta name="msapplication-TileImage" content="https://celebriacollective.com/assets/og-img.jpg" />
+        <meta
+          name="msapplication-TileImage"
+          content="https://celebriacollective.com/assets/og-img.jpg"
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.celebriacollective.com/" />
         <meta property="og:title" content="Celebria Collective" />
-        <meta property="og:description" content="Book a service with us! Find photographers, videographers and makeup artists" />
-        <meta property="og:image" content="https://celebriacollective.com/assets/og-img.jpg" />
+        <meta
+          property="og:description"
+          content="Book a service with us! Find photographers, videographers and makeup artists"
+        />
+        <meta
+          property="og:image"
+          content="https://celebriacollective.com/assets/og-img.jpg"
+        />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.celebriacollective.com/" />
+        <meta
+          property="twitter:url"
+          content="https://www.celebriacollective.com/"
+        />
         <meta property="twitter:title" content="Celebria Collective" />
-        <meta property="twitter:description" content="Book a service with us! Find photographers, videographers and makeup artists" />
-        <meta property="twitter:image" content="https://celebriacollective.com/assets/og-img.jpg" />
+        <meta
+          property="twitter:description"
+          content="Book a service with us! Find photographers, videographers and makeup artists"
+        />
+        <meta
+          property="twitter:image"
+          content="https://celebriacollective.com/assets/og-img.jpg"
+        />
 
-        <meta name="facebook-domain-verification" content="8ozo7sh586esta23ov0bh2slajstw4"/>
-        
+        <meta
+          name="facebook-domain-verification"
+          content="8ozo7sh586esta23ov0bh2slajstw4"
+        />
+
         <ColorSchemeScript />
-        <script src='//in.fw-cdn.com/32099065/1119582.js' chat='true'/>
+        <script src="//in.fw-cdn.com/32099065/1119582.js" chat="true" />
         {/* <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AlcwgxRanFuM02eYSYz58UqTHHXqq6OzzfT8Wd8E9gSEN8nooeI9zpfJIOHYOY1k' async defer></script> */}
       </head>
       <body>
@@ -201,13 +244,23 @@ export default function App() {
             <Box style={headerStyle}>
               <Suspense fallback={<Skeleton />}>
                 <Await resolve={data.user}>
-                  {response => <Header user={response} cartCount={data.cartCount} />}
+                  {(response) => (
+                    <Header user={response} cartCount={data.cartCount} />
+                  )}
                 </Await>
               </Suspense>
             </Box>
-            <div style={{ paddingTop: '40px', position: 'relative' }}>
+            <div style={{ paddingTop: "40px", position: "relative" }}>
               <Outlet />
-              <Box hidden={navigation.state !== 'loading'} pos='fixed' bottom={0} left={0} w={'100%'}><Progress color="gray" size="md" value={100} animated /></Box>
+              <Box
+                hidden={navigation.state !== "loading"}
+                pos="fixed"
+                bottom={0}
+                left={0}
+                w={"100%"}
+              >
+                <Progress color="gray" size="md" value={100} animated />
+              </Box>
               {/* <LoadingOverlay visible={navigation.state === 'loading'} overlayProps={{ radius: "sm", blur: 2 }} /> */}
             </div>
             <Footer />
@@ -215,9 +268,12 @@ export default function App() {
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
-          <Analytics.Pixel pixelId={data.ENV.FB_PIXEL_ID}/>
-          <Analytics.OpenReply projectkey={ data.ENV.openReplyprojectKey}/>
-          <Analytics.GoogleTag gtmId={data.ENV.GOOGLE_TAG_ID} userId={data.userId}/>
+          <Analytics.Pixel pixelId={data.ENV.FB_PIXEL_ID} />
+          <Analytics.OpenReply projectkey={data.ENV.openReplyprojectKey} />
+          <Analytics.GoogleTag
+            gtmId={data.ENV.GOOGLE_TAG_ID}
+            userId={data.userId}
+          />
         </MantineProvider>
       </body>
     </html>
@@ -232,14 +288,19 @@ export function ErrorBoundary() {
   const error: any = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return <div style={{textAlign: 'center'}}>
-      {error?.status}<br/>
-     {error?.data} <br/>
-      {error?.statusText}
-  </div>
+    return (
+      <div style={{ textAlign: "center" }}>
+        {error?.status}
+        <br />
+        {error?.data} <br />
+        {error?.statusText}
+      </div>
+    );
   }
 
-  return <div style={{textAlign: 'center'}}>
-         {error?.data || 'Oops, Something went wrong!'}
+  return (
+    <div style={{ textAlign: "center" }}>
+      {error?.data || "Oops, Something went wrong!"}
     </div>
+  );
 }
