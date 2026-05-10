@@ -73,6 +73,7 @@ import {
   IconChevronRight,
   IconFlame,
   IconLamp2,
+  IconMapPins,
   IconMicrophone2,
   IconSearch,
   IconStarFilled,
@@ -539,6 +540,10 @@ const Home = {
     }
 
     const CatIconList = [
+      {
+        name: "venue",
+        icon: <IconMapPins size={30} />,
+      },
       {
         name: "artists",
         icon: <IconMicrophone2 size={30} />,
