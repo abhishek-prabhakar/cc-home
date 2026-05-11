@@ -94,7 +94,7 @@ const AppNavigation = {
                           fw={"bold"}
                           c={"dark"}
                           label={item.name}
-                          style={{textWrap: 'nowrap'}}
+                          style={{ textWrap: "nowrap" }}
                           rightSection={<IconChevronDown size={12} />}
                         />
                       </Menu.Target>
@@ -103,7 +103,7 @@ const AppNavigation = {
                       </Menu.Dropdown>
                     </Menu>
                   ) : (
-                    <Link to={Routes.get('Services',{id: item.id})}>
+                    <Link to={Routes.get("Services", { id: item.id })}>
                       <NavLink fw={"bold"} c={"dark"} label={item.name} />
                     </Link>
                   )}
@@ -163,26 +163,25 @@ const AppNavigation = {
                     <Accordion.Item key={item.id} value={item.id}>
                       <Accordion.Control>{item.name}</Accordion.Control>
                       <Accordion.Panel>
+                        <Link
+                          to={Routes.get("Services", { id: item.id })}
+                          onClick={() => toggleDrawer(false)}
+                        >
+                          <Text>Browse all</Text>
+                        </Link>
+                        <Space h={"md"} />
                         {item.children.map((child, i) => (
                           <Stack key={"child" + i}>
                             <Title order={5}>{child.name}</Title>
-                            {[
-                              {
-                                id: item.id,
-                                path: Routes.get("Services", { id: item.id }),
-                                name: "Browse all ",
-                              },
-                            ]
-                              .concat(child.list)
-                              .map((menuItem) => (
-                                <Link
-                                  to={menuItem.path}
-                                  onClick={() => toggleDrawer(false)}
-                                  key={menuItem.id}
-                                >
-                                  <Text>{menuItem.name}</Text>
-                                </Link>
-                              ))}
+                            {child.list.map((menuItem) => (
+                              <Link
+                                to={menuItem.path}
+                                onClick={() => toggleDrawer(false)}
+                                key={menuItem.id}
+                              >
+                                <Text>{menuItem.name}</Text>
+                              </Link>
+                            ))}
                           </Stack>
                         ))}
                       </Accordion.Panel>
